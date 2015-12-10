@@ -1,0 +1,51 @@
+execute pathogen#infect()
+
+let delimitMate_expand_cr=1 " indenting with matched braces
+
+" spaces and tabs
+set tabstop=2 " show existing tabs with 2 spaces
+set softtabstop=2 " 2 spaces indented and backspaced
+set shiftwidth=2 " how many columns for automatic indentation
+set expandtab " insert spaces instead of tabs
+set autoindent " copy indentation from previous line
+" set cindent " automatic indenting as appropriate
+filetype plugin indent on
+
+" UI
+set number " line numbers
+set showcmd " show last command in bottom bar
+set cmdheight=2 " Set height of command bar
+set cursorline " highlight current line
+set wildmenu " visual autocomplete for command menu
+set wildmode=list:longest " Make autocomplete go up to a point of ambiguity while showing all options
+set showmatch " highlight matching brackets
+set mat=2 " how many tenths of a second blink when matching brackets
+set splitbelow " open new splits on bottom instead of top
+set splitright " open new splits on right instead of left
+set scrolloff=999 " keep cursor in middle
+set lazyredraw " avoid updating screen before commands are completed
+syntax on " highlighting yay
+
+" hide highlighting until next search after CTRL-L pressed
+nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
+
+" disable bell
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+set splitright " split right by default
+set splitbelow " split below by default
+
+" searching
+set incsearch " search as characters are entered
+set hlsearch " highlight all matches
+
+" movement
+" up and down traverse into wrapped lines
+nnoremap j gj
+nnoremap k gk
+
+set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of preformatted text
+
