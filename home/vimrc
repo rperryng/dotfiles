@@ -1,11 +1,14 @@
-""" Plugins """
+""" Plugins Begin """
 call plug#begin('~/.vim/plugged')
 
-" Delimitmate, autocompletion for quotes, bparens, brackets, etc
+" delimiteMate - autocompletion for quotes, parens, brackets, etc
 Plug 'https://github.com/Raimondi/delimitMate.git'
 
+" vim-indent-guides - indentation guides
+Plug 'https://github.com/nathanaelkane/vim-indent-guides.git'
+
 call plug#end()
-""" Plugins """
+""" Plugins End """
 
 " Place cursor in correc spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
@@ -39,7 +42,8 @@ set textwidth=0 " do not automatically wrap lines at a certain line
 set colorcolumn=80 " set a ruler 
 set number " show the current line's line number
 set relativenumber " show other line numbers relative to the current line 
-
+let g:indent_guides_enable_on_vim_startup = 1 " show indents
+let g:indent_guides_guide_size=1 " set indent guide size to 1
 " hide highlighting until next search after CTRL-L pressed
 nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
 
@@ -58,7 +62,7 @@ set backspace=indent,eol,start " enable backspace over these characters
 set incsearch " search as characters are entered
 set hlsearch " highlight all matches
 
-" movement
+" custom binds
 " up and down traverse into wrapped lines
 nnoremap j gj
 nnoremap k gk
@@ -69,6 +73,10 @@ nnoremap <S-L> :tabnext<CR>
 
 " go to normal mode without esc key"
 :imap jk <Esc>
+
+" shortcuts for entering end of line semicolons and commans
+inoremap ;; <END>;<CR>
+inoremap ,, <END>,<CR>
 
 set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of preformatted text
 
