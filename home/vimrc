@@ -1,5 +1,11 @@
 """ Plugins """
-execute pathogen#infect()
+call plug#begin('~/.vim/plugged')
+
+" Delimitmate, autocompletion for quotes, bparens, brackets, etc
+Plug 'https://github.com/Raimondi/delimitMate.git'
+
+call plug#end()
+""" Plugins """
 
 " Place cursor in correc spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
@@ -31,6 +37,8 @@ set lazyredraw " avoid updating screen before commands are completed
 syntax on " highlighting yay
 set textwidth=0 " do not automatically wrap lines at a certain line
 set colorcolumn=80 " set a ruler 
+set number " show the current line's line number
+set relativenumber " show other line numbers relative to the current line 
 
 " hide highlighting until next search after CTRL-L pressed
 nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
@@ -43,6 +51,8 @@ set tm=500
 
 set splitright " split right by default
 set splitbelow " split below by default
+
+set backspace=indent,eol,start " enable backspace over these characters
 
 " searching
 set incsearch " search as characters are entered
