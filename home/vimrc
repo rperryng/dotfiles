@@ -1,6 +1,10 @@
+""" Plugins """
 execute pathogen#infect()
 
-let delimitMate_expand_cr=1 " indenting with matched braces
+" Place cursor in correc spot
+imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
+
+""" End Plugins """ 
 
 " spaces and tabs
 set tabstop=2 " show existing tabs with 2 spaces
@@ -25,6 +29,8 @@ set splitright " open new splits on right instead of left
 set scrolloff=999 " keep cursor in middle
 set lazyredraw " avoid updating screen before commands are completed
 syntax on " highlighting yay
+set textwidth=0 " do not automatically wrap lines at a certain line
+set colorcolumn=80 " set a ruler 
 
 " hide highlighting until next search after CTRL-L pressed
 nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
@@ -46,6 +52,13 @@ set hlsearch " highlight all matches
 " up and down traverse into wrapped lines
 nnoremap j gj
 nnoremap k gk
+
+" tab movements
+nnoremap <S-H> :tabprevious<CR>
+nnoremap <S-L> :tabnext<CR>
+
+" go to normal mode without esc key"
+:imap jk <Esc>
 
 set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of preformatted text
 
