@@ -7,6 +7,28 @@ Plug 'https://github.com/Raimondi/delimitMate.git'
 " vim-indent-guides - indentation guides
 Plug 'https://github.com/nathanaelkane/vim-indent-guides.git'
 
+" vim-colorscheme - collection of colorschemes for vim
+Plug 'https://github.com/flazz/vim-colorschemes.git'
+
+" vim-surround - handy methods for inserting, deleting, and modifying
+" surrounding tokens
+Plug 'https://github.com/tpope/vim-surround.git'
+
+" vim-starify - fancy start screen for vim
+Plug 'https://github.com/mhinz/vim-startify.git'
+
+" nerdcommenter - plugin for commenting
+Plug 'https://github.com/scrooloose/nerdcommenter.git'
+
+" ctrlp - fuzz finder
+Plug 'https://github.com/ctrlpvim/ctrlp.vim'
+
+" vim-less - syntax support for less
+Plug 'https://github.com/groenewege/vim-less.git'
+
+" vim-jade - syntax support for jade
+Plug 'https://github.com/digitaltoad/vim-jade.git'
+
 call plug#end()
 """ Plugins End """
 
@@ -21,7 +43,6 @@ set softtabstop=2 " 2 spaces indented and backspaced
 set shiftwidth=2 " how many columns for automatic indentation
 set expandtab " insert spaces instead of tabs
 set autoindent " copy indentation from previous line
-" set cindent " automatic indenting as appropriate
 filetype plugin indent on
 
 " UI
