@@ -1,41 +1,37 @@
 """ Plugins Begin """
 call plug#begin('~/.vim/plugged')
 
-" delimiteMate - autocompletion for quotes, parens, brackets, etc
+" Functionality
 Plug 'https://github.com/Raimondi/delimitMate.git'
-
-" vim-indent-guides - indentation guides
-Plug 'https://github.com/nathanaelkane/vim-indent-guides.git'
-
-" vim-colorscheme - collection of colorschemes for vim
-Plug 'https://github.com/flazz/vim-colorschemes.git'
-
-" vim-surround - handy methods for inserting, deleting, and modifying
-" surrounding tokens
-Plug 'https://github.com/tpope/vim-surround.git'
-
-" vim-starify - fancy start screen for vim
-Plug 'https://github.com/mhinz/vim-startify.git'
-
-" nerdcommenter - plugin for commenting
-Plug 'https://github.com/scrooloose/nerdcommenter.git'
-
-" ctrlp - fuzz finder
 Plug 'https://github.com/ctrlpvim/ctrlp.vim'
+Plug 'https://github.com/scrooloose/nerdcommenter.git'
+Plug 'https://github.com/tpope/vim-surround.git'
+Plug 'https://github.com/tpope/vim-fugitive.git'
 
-" vim-less - syntax support for less
+" Pretty things
+Plug 'https://github.com/nathanaelkane/vim-indent-guides.git'
+Plug 'https://github.com/mhinz/vim-startify.git'
+Plug 'https://github.com/vim-airline/vim-airline.git'
+Plug 'https://github.com/vim-airline/vim-airline-themes.git'
+
+" Colorschemes
+Plug 'https://github.com/altercation/vim-colors-solarized.git'
+Plug 'https://github.com/chriskempson/vim-tomorrow-theme.git'
+Plug 'https://github.com/AlessandroYorba/Alduin.git'
+
+" Syntax
+Plug 'https://github.com/junegunn/vim-journal.git'
+Plug 'https://github.com/terryma/vim-multiple-cursors.git'
+Plug 'https://github.com/justinmk/vim-syntax-extra.git'
 Plug 'https://github.com/groenewege/vim-less.git'
-
-" vim-jade - syntax support for jade
 Plug 'https://github.com/digitaltoad/vim-jade.git'
+Plug 'https://github.com/sickill/vim-monokai.git'
 
 call plug#end()
 """ Plugins End """
 
 " Place cursor in correc spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
-
-""" End Plugins """ 
 
 " spaces and tabs
 set tabstop=2 " show existing tabs with 2 spaces
@@ -45,7 +41,7 @@ set expandtab " insert spaces instead of tabs
 set autoindent " copy indentation from previous line
 filetype plugin indent on
 
-" UI
+" UI things
 set number " line numbers
 set showcmd " show last command in bottom bar
 set cmdheight=2 " Set height of command bar
@@ -60,13 +56,22 @@ set scrolloff=999 " keep cursor in middle
 set lazyredraw " avoid updating screen before commands are completed
 syntax on " highlighting yay
 set textwidth=0 " do not automatically wrap lines at a certain line
-set colorcolumn=80 " set a ruler 
-set number " show the current line's line number
-set relativenumber " show other line numbers relative to the current line 
-let g:indent_guides_enable_on_vim_startup = 1 " show indents
-let g:indent_guides_guide_size=1 " set indent guide size to 1
+set colorcolumn=80 " set a ruler
 " hide highlighting until next search after CTRL-L pressed
 nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
+
+" Nested style for :Explore
+let g:netrw_liststyle=3
+
+" indent-guides customization
+let g:indent_guides_enable_on_vim_startup=1 " show indents
+let g:indent_guides_guide_size=1 " set indent guide size to 1
+let g:indent_guides_auto_colors=0
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=0
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=52
+
+" vim journal filetype
+au BufNewFile,BufRead *.journal set filetype=journal
 
 " disable bell
 set noerrorbells
@@ -101,3 +106,11 @@ inoremap ,, <END>,<CR>
 
 set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of preformatted text
 
+set number " show the current line's line number
+set relativenumber " show other line numbers relative to the current line
+
+" Theming
+syntax enable
+set background=dark
+colorscheme Tomorrow-Night
+let g:airline_theme='tomorrow'
