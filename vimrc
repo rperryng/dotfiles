@@ -2,36 +2,56 @@
 call plug#begin('~/.vim/plugged')
 
 " Functionality
-Plug 'https://github.com/Raimondi/delimitMate.git'
-Plug 'https://github.com/ctrlpvim/ctrlp.vim'
-Plug 'https://github.com/scrooloose/nerdcommenter.git'
-Plug 'https://github.com/tpope/vim-surround.git'
-Plug 'https://github.com/tpope/vim-fugitive.git'
+Plug 'Raimondi/delimitMate'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-obsession'
+Plug 'wellle/targets.vim'
+" Plug 'scrooloose/syntastic'
 
 " Pretty things
-Plug 'https://github.com/nathanaelkane/vim-indent-guides.git'
-Plug 'https://github.com/mhinz/vim-startify.git'
-Plug 'https://github.com/vim-airline/vim-airline.git'
-Plug 'https://github.com/vim-airline/vim-airline-themes.git'
+Plug 'Yggdroot/indentLine'
+Plug 'mhinz/vim-startify'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " Colorschemes
-Plug 'https://github.com/altercation/vim-colors-solarized.git'
-Plug 'https://github.com/chriskempson/vim-tomorrow-theme.git'
-Plug 'https://github.com/AlessandroYorba/Alduin.git'
+Plug 'altercation/vim-colors-solarized'
+Plug 'chriskempson/vim-tomorrow-theme'
 
 " Syntax
-Plug 'https://github.com/junegunn/vim-journal.git'
-Plug 'https://github.com/terryma/vim-multiple-cursors.git'
-Plug 'https://github.com/justinmk/vim-syntax-extra.git'
-Plug 'https://github.com/groenewege/vim-less.git'
-Plug 'https://github.com/digitaltoad/vim-jade.git'
-Plug 'https://github.com/sickill/vim-monokai.git'
+Plug 'junegunn/vim-journal'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'justinmk/vim-syntax-extra'
+Plug 'groenewege/vim-less'
+Plug 'digitaltoad/vim-jade'
+Plug 'sickill/vim-monokai'
 
 call plug#end()
 """ Plugins End """
 
 " Place cursor in correc spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
+
+" indentLines customization
+let g:indentLine_leadingSpaceEnabled=1
+let g:indentLine_leadingSpaceChar='.'
+let g:indentLine_color_term=239
+
+" Syntastic customization
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+" 
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+
+" change comment style
+autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
 
 " spaces and tabs
 set tabstop=2 " show existing tabs with 2 spaces
@@ -43,35 +63,32 @@ filetype plugin indent on
 
 " UI things
 set number " line numbers
+set scrolloff=999 " keep cursor in middle
+set textwidth=0 " do not automatically wrap lines at a certain line
+set colorcolumn=80 " set a ruler 
+set cursorline " highlight current line
+
 set showcmd " show last command in bottom bar
 set cmdheight=2 " Set height of command bar
-set cursorline " highlight current line
 set wildmenu " visual autocomplete for command menu
 set wildmode=list:longest " Make autocomplete go up to a point of ambiguity while showing all options
 set showmatch " highlight matching brackets
 set mat=2 " how many tenths of a second blink when matching brackets
+
 set splitbelow " open new splits on bottom instead of top
 set splitright " open new splits on right instead of left
-set scrolloff=999 " keep cursor in middle
 set lazyredraw " avoid updating screen before commands are completed
 syntax on " highlighting yay
-set textwidth=0 " do not automatically wrap lines at a certain line
-set colorcolumn=80 " set a ruler
+
 " hide highlighting until next search after CTRL-L pressed
 nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
 
 " Nested style for :Explore
 let g:netrw_liststyle=3
 
-" indent-guides customization
-let g:indent_guides_enable_on_vim_startup=1 " show indents
-let g:indent_guides_guide_size=1 " set indent guide size to 1
-let g:indent_guides_auto_colors=0
-    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=0
-    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=52
-
 " vim journal filetype
 au BufNewFile,BufRead *.journal set filetype=journal
+au BufNewFile,BufRead *.json set filetype=javascript
 
 " disable bell
 set noerrorbells
@@ -79,16 +96,23 @@ set novisualbell
 set t_vb=
 set tm=500
 
-set splitright " split right by default
-set splitbelow " split below by default
-
 set backspace=indent,eol,start " enable backspace over these characters
 
 " searching
 set incsearch " search as characters are entered
 set hlsearch " highlight all matches
+set ignorecase " used in conjunction with smartcase.
+set smartcase " only do case sensitive searching if there are capital letters in the query
 
 " custom binds
+
+" Reassign leader key
+let mapleader = "\<Space>"
+
+" Leader mappings
+nnoremap <Leader>o :CtrlP<CR>
+nnoremap <Leader>w :wa<CR>
+
 " up and down traverse into wrapped lines
 nnoremap j gj
 nnoremap k gk
@@ -107,7 +131,7 @@ inoremap ,, <END>,<CR>
 set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of preformatted text
 
 set number " show the current line's line number
-set relativenumber " show other line numbers relative to the current line
+set relativenumber " show other line numbers relative to the current line 
 
 " Theming
 syntax enable
