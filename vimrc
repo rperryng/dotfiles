@@ -3,7 +3,8 @@ call plug#begin('~/.vim/plugged')
 
 " Functionality
 Plug 'Raimondi/delimitMate'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
@@ -16,6 +17,7 @@ Plug 'Yggdroot/indentLine'
 Plug 'mhinz/vim-startify'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'ntpeters/vim-better-whitespace'
 
 " Colorschemes
 Plug 'altercation/vim-colors-solarized'
@@ -28,12 +30,29 @@ Plug 'justinmk/vim-syntax-extra'
 Plug 'groenewege/vim-less'
 Plug 'digitaltoad/vim-jade'
 Plug 'sickill/vim-monokai'
+Plug 'elzr/vim-json'
 
 call plug#end()
 """ Plugins End """
 
+let g:startify_custom_header = [
+\ '     ____                            ',
+\ '    (.   \     m                     ',
+\ '      \  |                           ',
+\ '       \ |___(\--/)           e      ',
+\ '    __/     (  . . )                 ',
+\ '    "''._.    ''-.O.''    o          ',
+\ '         ''-.  \ "|\         wwwwwww ',
+\ '            ''.,,/''.,               ',
+\ '',
+\ '',
+\ ]
+
 " Place cursor in correc spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
+
+" Stop hiding double quotes
+let g:vim_json_syntax_conceal = 0
 
 " indentLines customization
 let g:indentLine_leadingSpaceEnabled=1
@@ -86,9 +105,8 @@ nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
 " Nested style for :Explore
 let g:netrw_liststyle=3
 
-" vim journal filetype
+" File specific settings
 au BufNewFile,BufRead *.journal set filetype=journal
-au BufNewFile,BufRead *.json set filetype=javascript
 
 " disable bell
 set noerrorbells
@@ -110,8 +128,15 @@ set smartcase " only do case sensitive searching if there are capital letters in
 let mapleader = "\<Space>"
 
 " Leader mappings
-nnoremap <Leader>o :CtrlP<CR>
 nnoremap <Leader>w :wa<CR>
+nnoremap <Leader>q :q<CR>
+
+" fzf binds
+nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>b :Buffers<CR>
+nnoremap <Leader>l :BLines<CR>
+nnoremap <Leader>c :Commands<CR>
+imap <c-x><c-l> <plug>(fzf-complete-line)
 
 " up and down traverse into wrapped lines
 nnoremap j gj
@@ -131,7 +156,7 @@ inoremap ,, <END>,<CR>
 set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of preformatted text
 
 set number " show the current line's line number
-set relativenumber " show other line numbers relative to the current line 
+set relativenumber " show other line numbers relative to the current line
 
 " Theming
 syntax enable
