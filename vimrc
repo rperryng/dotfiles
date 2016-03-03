@@ -81,11 +81,11 @@ let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 let g:syntastic_check_on_open=1
 let g:syntastic_check_on_wq=0
-let g:syntastic_c_remove_include_errors=0
+let g:syntastic_c_remove_include_errors=1
 
 let g:syntastic_mode_map={
   \ "mode": "active",
-  \ "passive_filetypes": ["java"] }
+  \ "passive_filetypes": ["c", "java"] }
 
 " change comment style
 autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
@@ -104,6 +104,7 @@ set scrolloff=999 " keep cursor in middle
 set textwidth=0 " do not automatically wrap lines at a certain line
 set colorcolumn=80 " set a ruler
 set cursorline " highlight current line
+set cursorcolumn " highlight current column
 
 set showcmd " show last command in bottom bar
 set cmdheight=2 " Set height of command bar
@@ -146,14 +147,15 @@ set smartcase " only do case sensitive searching if there are capital letters in
 let mapleader="\<Space>"
 
 " Leader mappings
-nnoremap <Leader>w :wa<CR>
-nnoremap <Leader>q :q<CR>
+nnoremap <leader>w :wa<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>l :set wrap! wrap?<CR>
 
 " fzf binds
-nnoremap <Leader>ff :Files<CR>
-nnoremap <Leader>fb :Buffers<CR>
-nnoremap <Leader>fl :BLines<CR>
-nnoremap <Leader>fc :Commands<CR>
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>fl :BLines<CR>
+nnoremap <leader>fc :Commands<CR>
 imap <c-x><c-l> <plug>(fzf-complete-line)
 
 " up and down traverse into wrapped lines
@@ -189,3 +191,54 @@ syntax enable
 set background=dark
 colorscheme Tomorrow-Night
 let g:airline_theme='tomorrow'
+
+
+" Rotating lines screensaver
+" Press \r to start rotating lines and <C-c> (Control+c) to stop.
+function! s:RotateString(string)
+  let split_string = split(a:string, '\zs')
+  return join(split_string[-1:] + split_string[:-2], '')
+endfunction
+
+function! s:RotateLine(line, leading_whitespace, trailing_whitespace)
+  return substitute(
+        \ a:line,
+        \ '^\(' . a:leading_whitespace . '\)\(.\{-}\)\(' . a:trailing_whitespace . '\)$',
+        \ '\=submatch(1) . <SID>RotateString(submatch(2)) . submatch(3)',
+        \ ''
+        \ )
+endfunction
+
+function! s:RotateLines()
+  let saved_view = winsaveview()
+  let first_visible_line = line('w0')
+  let last_visible_line = line('w$')
+  let lines = getline(first_visible_line, last_visible_line)
+  let leading_whitespace = map(
+        \ range(len(lines)),
+        \ 'matchstr(lines[v:val], ''^\s*'')'
+        \ )
+  let trailing_whitespace = map(
+        \ range(len(lines)),
+        \ 'matchstr(lines[v:val], ''\s*$'')'
+        \ )
+  try
+    while 1 " <C-c> to exit
+      let lines = map(
+            \ range(len(lines)),
+            \ '<SID>RotateLine(lines[v:val], leading_whitespace[v:val], trailing_whitespace[v:val])'
+            \ )
+      call setline(first_visible_line, lines)
+      redraw
+      sleep 50m
+    endwhile
+  finally
+    if &modified
+      silent undo
+    endif
+    call winrestview(saved_view)
+  endtry
+endfunction
+
+nnoremap <silent> <Plug>(RotateLines) :<C-u>call <SID>RotateLines()<CR>
+nmap <leader>r <Plug>(RotateLines)
