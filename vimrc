@@ -175,7 +175,7 @@ nnoremap <S-H> :tabprevious<CR>
 nnoremap <S-L> :tabnext<CR>
 
 " go to normal mode without esc key"
-:imap jk <Esc>:w<CR>
+:imap jk <Esc>
 
 " shortcuts for entering end of line semicolons and commans
 inoremap ;; <END>;<CR>

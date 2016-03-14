@@ -1,0 +1,2 @@
+# vim bindings
+bindkey -v
