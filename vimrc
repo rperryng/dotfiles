@@ -1,12 +1,5 @@
 " Install vim plug https://github.com/junegunn/vim-plug
 
-" Install neovim.
-" To start the transition, link your previous configuration so Nvim can use it:
-
-" mkdir -p ${XDG_CONFIG_HOME:=$HOME/.config}
-" ln -s ~/.vim $XDG_CONFIG_HOME/nvim
-" ln -s ~/.vimrc $XDG_CONFIG_HOME/nvim/init.vim
-
 """ Plugins Begin """
 call plug#begin('~/.vim/plugged')
 
@@ -16,11 +9,11 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-obsession'
 Plug 'wellle/targets.vim'
 Plug 'sukima/xmledit'
-Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-vinegar'
+Plug 'justinmk/vim-sneak'
 
 " Pretty things
 Plug 'Yggdroot/indentLine'
@@ -32,6 +25,9 @@ Plug 'ntpeters/vim-better-whitespace'
 " Colorschemes
 Plug 'altercation/vim-colors-solarized'
 Plug 'chriskempson/vim-tomorrow-theme'
+Plug 'rakr/vim-one'
+Plug 'ajh17/Spacegray.vim'
+Plug 'chriskempson/base16-vim'
 
 " Syntax
 Plug 'junegunn/vim-journal'
@@ -41,19 +37,21 @@ Plug 'groenewege/vim-less'
 Plug 'digitaltoad/vim-jade'
 Plug 'sickill/vim-monokai'
 Plug 'elzr/vim-json'
+Plug 'sheerun/vim-polyglot'
 
 call plug#end()
 """ Plugins End """
 
+
 let g:startify_custom_header = [
-\ '     ____                            ',
-\ '    (.   \     m                     ',
-\ '      \  |                           ',
-\ '       \ |___(\--/)           e      ',
-\ '    __/     (  . . )                 ',
-\ '    "''._.    ''-.O.''    o          ',
-\ '         ''-.  \ "|\         wwwwwww ',
-\ '            ''.,,/''.,               ',
+\ '     ____',
+\ '    (.   \     m',
+\ '      \  |',
+\ '       \ |___(\--/)           e',
+\ '    __/     (  . . )',
+\ '    "''._.    ''-.O.''    o',
+\ '         ''-.  \ "|\         wwwwwww',
+\ '            ''.,,/''.,',
 \ '',
 \ '',
 \ ]
@@ -69,23 +67,51 @@ let g:indentLine_leadingSpaceEnabled=1
 let g:indentLine_leadingSpaceChar='.'
 let g:indentLine_color_term=239
 
-" jshint2
-" let jshint2_save=1
+" powerline fonts!!
+let g:airline_powerline_fonts=1
+" air-line
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols={}
+endif
+
+" unicode symbols
+let g:airline_left_sep='»'
+let g:airline_left_sep='▶'
+let g:airline_right_sep='«'
+let g:airline_right_sep='◀'
+let g:airline_symbols.linenr='␊'
+let g:airline_symbols.linenr='␤'
+let g:airline_symbols.linenr='¶'
+let g:airline_symbols.branch='⎇'
+let g:airline_symbols.paste='ρ'
+let g:airline_symbols.paste='Þ'
+let g:airline_symbols.paste='∥'
+let g:airline_symbols.whitespace='Ξ'
+
+" airline symbols
+let g:airline_left_sep=''
+let g:airline_left_alt_sep=''
+let g:airline_right_sep=''
+let g:airline_right_alt_sep=''
+let g:airline_symbols.branch=''
+let g:airline_symbols.readonly=''
+let g:airline_symbols.linenr=''
 
 " Syntastic customization
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_wq=0
-let g:syntastic_c_remove_include_errors=1
-
-let g:syntastic_mode_map={
-  \ "mode": "active",
-  \ "passive_filetypes": ["c", "java"] }
+" let g:syntastic_always_populate_loc_list=1
+" let g:syntastic_auto_loc_list=1
+" let g:syntastic_check_on_open=1
+" let g:syntastic_check_on_wq=0
+" let g:syntastic_c_remove_include_errors=1
+" 
+" let g:syntastic_mode_map={
+"   \ "mode": "active",
+"   \ "passive_filetypes": ["c", "java"] }
 
 " change comment style
 autocmd FileType c,cpp,cs,java setlocal commentstring=//\ %s
@@ -150,6 +176,9 @@ let mapleader="\<Space>"
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>l :set wrap! wrap?<CR>
+nnoremap <leader>c <c-^>
+nnoremap <leader>h :tabm -1<CR>
+nnoremap <leader>l :tabm +1<CR>
 
 " fzf binds
 nnoremap <leader>ff :Files<CR>
@@ -186,12 +215,11 @@ set pastetoggle=<F10> " For toggling paste mode when pasting large amounts of pr
 set number " show the current line's line number
 set relativenumber " show other line numbers relative to the current line
 
-" Theming
+" theming
 syntax enable
+colorscheme base16-eighties
 set background=dark
-colorscheme Tomorrow-Night
 let g:airline_theme='tomorrow'
-
 
 " Rotating lines screensaver
 " Press \r to start rotating lines and <C-c> (Control+c) to stop.
@@ -242,3 +270,4 @@ endfunction
 
 nnoremap <silent> <Plug>(RotateLines) :<C-u>call <SID>RotateLines()<CR>
 nmap <leader>r <Plug>(RotateLines)
+
