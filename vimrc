@@ -7,37 +7,39 @@ call plug#begin('~/.vim/plugged')
 Plug 'Raimondi/delimitMate'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-obsession'
-Plug 'wellle/targets.vim'
-Plug 'sukima/xmledit'
-Plug 'tpope/vim-vinegar'
 Plug 'justinmk/vim-sneak'
+Plug 'mhinz/vim-grepper'
+Plug 'sukima/xmledit'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-obsession'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-vinegar'
+Plug 'wellle/targets.vim'
 
 " Pretty things
 Plug 'Yggdroot/indentLine'
 Plug 'mhinz/vim-startify'
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'ntpeters/vim-better-whitespace'
 
 " Colorschemes
+Plug 'ajh17/Spacegray.vim'
 Plug 'altercation/vim-colors-solarized'
+Plug 'chriskempson/base16-vim'
 Plug 'chriskempson/vim-tomorrow-theme'
 Plug 'rakr/vim-one'
-Plug 'ajh17/Spacegray.vim'
-Plug 'chriskempson/base16-vim'
 
 " Syntax
-Plug 'junegunn/vim-journal'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'justinmk/vim-syntax-extra'
-Plug 'groenewege/vim-less'
 Plug 'digitaltoad/vim-jade'
-Plug 'sickill/vim-monokai'
 Plug 'elzr/vim-json'
+Plug 'groenewege/vim-less'
+Plug 'junegunn/vim-journal'
+Plug 'justinmk/vim-syntax-extra'
 Plug 'sheerun/vim-polyglot'
+Plug 'sickill/vim-monokai'
+Plug 'terryma/vim-multiple-cursors'
 
 call plug#end()
 """ Plugins End """
@@ -75,6 +77,9 @@ if !exists('g:airline_symbols')
     let g:airline_symbols={}
 endif
 
+" Don't conceal markdown
+let g:vim_markdown_conceal=0
+
 " unicode symbols
 let g:airline_left_sep='»'
 let g:airline_left_sep='▶'
@@ -108,7 +113,8 @@ let g:airline_symbols.linenr=''
 " let g:syntastic_check_on_open=1
 " let g:syntastic_check_on_wq=0
 " let g:syntastic_c_remove_include_errors=1
-" 
+
+
 " let g:syntastic_mode_map={
 "   \ "mode": "active",
 "   \ "passive_filetypes": ["c", "java"] }
@@ -145,7 +151,7 @@ set lazyredraw " avoid updating screen before commands are completed
 syntax on " highlighting yay
 
 " hide highlighting until next search after CTRL-L pressed
-nnoremap <C-L> :nohlsearch<CR><C-L>:<backspace>
+nnoremap <C-L> :nohlsearch<CR><C-L>
 
 " Nested style for :Explore
 let g:netrw_liststyle=3
@@ -172,7 +178,13 @@ set smartcase " only do case sensitive searching if there are capital letters in
 " Reassign leader key
 let mapleader="\<Space>"
 
+" Grepper
+nmap gs <plug>(GrepperOperator)
+xmap gs <plug>(GrepperOperator)
+
 " Leader mappings
+nnoremap <leader>gf :Grepper<CR>
+nnoremap <leader>gt <c-w>gf
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>l :set wrap! wrap?<CR>
@@ -216,10 +228,12 @@ set number " show the current line's line number
 set relativenumber " show other line numbers relative to the current line
 
 " theming
+let base16colorspace=256
 syntax enable
 colorscheme base16-eighties
 set background=dark
 let g:airline_theme='tomorrow'
+
 
 " Rotating lines screensaver
 " Press \r to start rotating lines and <C-c> (Control+c) to stop.
