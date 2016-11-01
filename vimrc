@@ -9,13 +9,16 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'justinmk/vim-sneak'
 Plug 'mhinz/vim-grepper'
-Plug 'sukima/xmledit'
+Plug 'alvan/vim-closetag'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-vinegar'
 Plug 'wellle/targets.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-session'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " Pretty things
 Plug 'Yggdroot/indentLine'
@@ -60,6 +63,9 @@ let g:startify_custom_header = [
 
 " Place cursor in correc spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
+
+let g:deoplete#enable_at_startup=1
+let g:deoplete#auto_complete_delay=1
 
 " Stop hiding double quotes
 let g:vim_json_syntax_conceal=0
@@ -158,6 +164,7 @@ let g:netrw_liststyle=3
 
 " File specific settings
 au BufNewFile,BufRead *.journal set filetype=journal
+au BufReadPost *.jshintrc set syntax=json
 
 " disable bell
 set noerrorbells
@@ -166,6 +173,9 @@ set t_vb=
 set tm=500
 
 set backspace=indent,eol,start " enable backspace over these characters
+
+" something about buffers
+set hidden
 
 " searching
 set incsearch " search as characters are entered
@@ -178,23 +188,39 @@ set smartcase " only do case sensitive searching if there are capital letters in
 " Reassign leader key
 let mapleader="\<Space>"
 
+" Match current input
+cnoremap <c-n> <down>
+cnoremap <c-p> <up>
+
+" Insert empty lines
+nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
+nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+
 " Grepper
 nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
 
 " Leader mappings
+nnoremap <leader>h <C-w>h
+nnoremap <leader>j <C-w>j
+nnoremap <leader>k <C-w>k
+nnoremap <leader>l <C-w>l
+nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <leader>gf :Grepper<CR>
 nnoremap <leader>gt <c-w>gf
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
-nnoremap <leader>l :set wrap! wrap?<CR>
-nnoremap <leader>c <c-^>
-nnoremap <leader>h :tabm -1<CR>
-nnoremap <leader>l :tabm +1<CR>
+nnoremap <leader>H :bnext<CR>
+nnoremap <leader>L :bprevious<CR>
+nnoremap <leader>bq :bp <BAR> bd #<CR>
+nnoremap <leader>bl :ls<CR>:b<Space>
+nnoremap <leader>bb <C-^>
+nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
 
 " fzf binds
 nnoremap <leader>ff :Files<CR>
-nnoremap <leader>fb :Buffers<CR>
+nnoremap <leader>fbb :Buffers<CR>
+nnoremap <leader>fbl :Lines<CR>
 nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>fc :Commands<CR>
 imap <c-x><c-l> <plug>(fzf-complete-line)
