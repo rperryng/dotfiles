@@ -5,12 +5,17 @@ call plug#begin('~/.vim/plugged')
 
 " Functionality
 Plug 'Raimondi/delimitMate'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
+Plug 'airblade/vim-gitgutter'
+Plug 'airblade/vim-rooter'
+Plug 'fholgado/minibufexpl.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'justinmk/vim-sneak'
-Plug 'maxboisvert/vim-simple-complete'
+Plug 'ntpeters/vim-better-whitespace'
 Plug 'scrooloose/nerdtree'
+Plug 'suan/vim-instant-markdown', { 'do': 'npm install -g instant-markdown-d' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
@@ -27,6 +32,19 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
+
+"""""""""""""""""""""
+" autocmd Settings "
+"""""""""""""""""""""
+
+augroup configgroup
+  autocmd!
+  autocmd vimenter * highlight clear signcolumn
+  autocmd FocusGained,BufEnter * :silent! !
+  autocmd FocusLost,WinLeave * :silent! wa
+  autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+  autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
+augroup end
 
 """"""""""""""""
 " Vim settings "
@@ -47,8 +65,9 @@ set display+=lastline
 set hidden
 set history=10000
 set nrformats-=octal
+set updatetime=250
 
-" spaces & tabs
+" Spaces & tabs
 filetype plugin indent on
 set autoindent
 set expandtab
@@ -57,7 +76,7 @@ set smartindent
 set softtabstop=2
 set tabstop=2
 
-" ui
+" UI
 set colorcolumn=80
 set cursorcolumn
 set cursorline
@@ -72,26 +91,17 @@ set textwidth=0
 set wildmenu
 set wildmode=list:longest
 
-" disable bell
+" Disable bell
 set noerrorbells
 set novisualbell
 set t_vb=
 set tm=500
 
-" searching
+" Searching
 set hlsearch
 set ignorecase
 set incsearch
 set smartcase
-
-"""""""""""""""""""""
-" autocmd Settings "
-"""""""""""""""""""""
-
-augroup configgroup
-  autocmd!
-  autocmd vimenter * highlight clear signcolumn
-augroup end
 
 """"""""""""""""
 " Custom Binds "
@@ -111,7 +121,7 @@ nnoremap <C-L> :nohlsearch<CR>
 " Best
 imap jk <esc>
 
-" up and down traverse into wrapped lines
+" Up and down traverse into wrapped lines
 nnoremap j gj
 nnoremap k gk
 vnoremap j gj
@@ -123,11 +133,7 @@ vnoremap <up> gk
 inoremap <down> <c-o>gj
 inoremap <up> <c-o>gk
 
-" Buffer navigation
-nnoremap <S-H> :bnext<cr>
-nnoremap <S-L> :bprevious<cr>
-
-" leader mappings
+" Leader mappings
 let mapleader="\<Space>"
 
 nnoremap <leader>h <C-w>h
@@ -143,6 +149,8 @@ nnoremap <leader>bb <c-^>
 nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
 
 " Plugin mappings
+nnoremap <S-L> :MBEbn<cr>
+nnoremap <S-H> :MBEbp<cr>
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
 nnoremap <leader>ff :Files<CR>
@@ -169,17 +177,27 @@ endif
 " Plugins Settings "
 """"""""""""""""""""
 
-" Place cursor in correc spot
+" Vim-rooter
+let g:rooter_patterns=['.vimroot', '.git/', '.git']
+
+" Vim instant markdown
+let g:instant_markdown_autostart=0
+
+" Minibufexpl
+let g:miniBufExplBuffersNeeded=1
+let g:miniBufExplBRSplit=0
+
+" Delimitmate
+" Place cursor in correct spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
 
-let g:vsc_tab_complete=1
-let g:vsc_completion_command = "\<C-P>"
-let g:vsc_reverse_completion_command = "\<C-N>"
+let g:vsc_completion_command="\<C-N>"
 
+" Session
 let g:session_autoload=0
 let g:session_autosave=0
 
-" airline
+" Airline
 let g:airline_theme='one'
 let g:airline_powerline_fonts=1
 
