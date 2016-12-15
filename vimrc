@@ -6,17 +6,22 @@ call plug#begin('~/.vim/plugged')
 " Functionality
 Plug 'Raimondi/delimitMate'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'airblade/vim-rooter'
 Plug 'fholgado/minibufexpl.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'junegunn/vim-easy-align'
+Plug 'junegunn/vim-slash'
 Plug 'justinmk/vim-sneak'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'scrooloose/nerdtree'
+Plug 'sjl/gundo.vim'
 Plug 'suan/vim-instant-markdown', { 'do': 'npm install -g instant-markdown-d' }
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
@@ -30,6 +35,7 @@ Plug 'romainl/Apprentice'
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'joshdick/onedark.vim'
 
 call plug#end()
 
@@ -39,7 +45,6 @@ call plug#end()
 
 augroup configgroup
   autocmd!
-  autocmd vimenter * highlight clear signcolumn
   autocmd FocusGained,BufEnter * :silent! !
   autocmd FocusLost,WinLeave * :silent! wa
   autocmd BufNewFile,BufReadPost *.md set filetype=markdown
@@ -53,7 +58,7 @@ augroup end
 " Colors
 syntax enable
 set background=dark
-colorscheme one
+colorscheme onedark
 
 " Misc
 set autoread
@@ -90,6 +95,7 @@ set splitright
 set textwidth=0
 set wildmenu
 set wildmode=list:longest
+set nowrap
 
 " Disable bell
 set noerrorbells
@@ -133,26 +139,33 @@ vnoremap <up> gk
 inoremap <down> <c-o>gj
 inoremap <up> <c-o>gk
 
+" Search for text under visual selection
+vnoremap // y/<C-R>"<CR>
+
 " Leader mappings
 let mapleader="\<Space>"
 
+nnoremap <leader>rs :vertical resize<Space>
 nnoremap <leader>h <C-w>h
 nnoremap <leader>j <C-w>j
 nnoremap <leader>k <C-w>k
 nnoremap <leader>l <C-w>l
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
-nnoremap <leader>s :SaveSession<CR>
 nnoremap <leader>bq :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
-nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
 
 " Plugin mappings
+nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <S-L> :MBEbn<cr>
 nnoremap <S-H> :MBEbp<cr>
+nnoremap <leader>s :SaveSession<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
 nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fbb :Buffers<CR>
 nnoremap <leader>fbl :Lines<CR>
@@ -184,21 +197,22 @@ let g:rooter_patterns=['.vimroot', '.git/', '.git']
 let g:instant_markdown_autostart=0
 
 " Minibufexpl
-let g:miniBufExplBuffersNeeded=1
 let g:miniBufExplBRSplit=0
 
 " Delimitmate
 " Place cursor in correct spot
 imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
 
-let g:vsc_completion_command="\<C-N>"
+" NERDTree
+let NERDTreeMapHelp='<f1>'
+let NERDTreeShowHidden=1
 
 " Session
 let g:session_autoload=0
 let g:session_autosave=0
 
 " Airline
-let g:airline_theme='one'
+let g:airline_theme='onedark'
 let g:airline_powerline_fonts=1
 
 if !exists('g:airline_symbols')
@@ -225,3 +239,6 @@ let g:airline_right_alt_sep=''
 let g:airline_symbols.branch=''
 let g:airline_symbols.readonly=''
 let g:airline_symbols.linenr=''
+
+" GitGutter
+let g:gitgutter_map_keys=0
