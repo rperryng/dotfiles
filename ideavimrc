@@ -4,8 +4,9 @@ source ~/.vimrc
 let mapleader = " "
 
 :map <leader>f :action ReformatCode<CR>
-:map <S-H> :action NextTab<CR>
-:map <S-L> :action PreviousTab<CR>
+:map <S-L> :action NextTab<CR>
+:map <S-H> :action PreviousTab<CR>
+:map <leader>go :action OverrideMethods<CR>
 :map <leader>o :action OptimizeImports<CR>
 :map <leader>rr :action Run<CR>
 :map <leader>rb :action RebuildGradleProject<CR>
