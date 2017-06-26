@@ -6,7 +6,13 @@ let mapleader = " "
 :map <leader>f :action ReformatCode<CR>
 :map <S-L> :action NextTab<CR>
 :map <S-H> :action PreviousTab<CR>
-:map <leader>go :action OverrideMethods<CR>
+:map <leader>mo :action OverrideMethods<CR>
+:map <leader>mi :action ImplementMethods<CR>
 :map <leader>o :action OptimizeImports<CR>
 :map <leader>rr :action Run<CR>
 :map <leader>rb :action RebuildGradleProject<CR>
+:map <leader>q :q><CR>
+:map <leader>gg :action GenerateGetter<CR>
+:map <leader>ga :action GenerateGetterAndSetter<CR>
+:map <leader>gs :action GenerateSetter<CR>
+:map <leader>w :action SaveAll<CR>

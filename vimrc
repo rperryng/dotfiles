@@ -5,7 +5,7 @@ call plug#begin('~/.vim/plugged')
 
 " Functionality
 Plug 'Raimondi/delimitMate'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'airblade/vim-rooter'
@@ -49,6 +49,7 @@ augroup configgroup
   autocmd FocusLost,WinLeave * :silent! wa
   autocmd BufNewFile,BufReadPost *.md set filetype=markdown
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
+  autocmd FileType python setl nosmartindent
 augroup end
 
 """"""""""""""""
@@ -152,7 +153,7 @@ nnoremap <leader>k <C-w>k
 nnoremap <leader>l <C-w>l
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
-nnoremap <leader>bq :bp <bar> bd #<CR>
+nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
 
@@ -190,6 +191,9 @@ endif
 " Plugins Settings "
 """"""""""""""""""""
 
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+
 " Vim-rooter
 let g:rooter_patterns=['.vimroot', '.git/', '.git']
 
@@ -199,9 +203,9 @@ let g:instant_markdown_autostart=0
 " Minibufexpl
 let g:miniBufExplBRSplit=0
 
-" Delimitmate
+" Delimitmate + Deoplete play nicely
 " Place cursor in correct spot
-imap <expr> <CR> pumvisible() ? "\<c-y>" : "<Plug>delimitMateCR"
+imap <silent><expr><CR> pumvisible() ? "<C-Y><Plug>delimitMateCR" : "<Plug>delimitMateCR"
 
 " NERDTree
 let NERDTreeMapHelp='<f1>'
