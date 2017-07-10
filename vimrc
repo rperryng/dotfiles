@@ -29,13 +29,13 @@ Plug 'xolox/vim-misc'
 Plug 'xolox/vim-session'
 
 " UI
+Plug 'joshdick/onedark.vim'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'romainl/Apprentice'
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'joshdick/onedark.vim'
 
 call plug#end()
 
@@ -208,7 +208,6 @@ let g:miniBufExplBRSplit=0
 imap <silent><expr><CR> pumvisible() ? "<C-Y><Plug>delimitMateCR" : "<Plug>delimitMateCR"
 
 " NERDTree
-let NERDTreeMapHelp='<f1>'
 let NERDTreeShowHidden=1
 
 " Session

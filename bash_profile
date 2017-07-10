@@ -19,20 +19,24 @@ export PS1="\n$WHITE($BLUE\h$WHITE) $GREEN\u$WHITE at $YELLOW\w$WHITE\$(__git_ps
 PATH=$PATH:~/Android/Sdk/platform-tools
 PATH=$PATH:~/Android/Sdk/tools
 PATH=$PATH:~/Devtools
-PATH=$PATH:~/.rbenv/bin
 PATH=$PATH:/opt/hadoop-2.7.2/bin
 PATH=$PATH:/opt/scala-2.11.6/bin
 PATH=$PATH:/opt/spark-2.1.0-bin-hadoop2.7/bin
+PATH=$PATH:/opt/zookeeper-3.4.10/bin
+PATH=$PATH:/opt/markdown_1.0.1
 
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 alias py="python3"
+alias gco="git checkout"
 
 # Show all matching entries, and cycle through them
 bind "TAB:menu-complete"
 bind "set menu-complete-display-prefix on"
 bind "set show-all-if-ambiguous on"
 
+# Ensure that rbenv is the first item in the path
+export PATH=~/.rbenv/bin:$PATH
 eval "$(rbenv init -)"
 
 [ -s "/home/ryan/.scm_breeze/scm_breeze.sh" ] && source "/home/ryan/.scm_breeze/scm_breeze.sh"
