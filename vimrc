@@ -6,27 +6,23 @@ call plug#begin('~/.vim/plugged')
 " Functionality
 Plug 'Raimondi/delimitMate'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'airblade/vim-gitgutter'
 Plug 'airblade/vim-rooter'
+Plug 'alvan/vim-closetag'
 Plug 'fholgado/minibufexpl.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-slash'
 Plug 'justinmk/vim-sneak'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'scrooloose/nerdtree'
 Plug 'sjl/gundo.vim'
-Plug 'suan/vim-instant-markdown', { 'do': 'npm install -g instant-markdown-d' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
 
 " UI
 Plug 'joshdick/onedark.vim'
@@ -62,7 +58,6 @@ set background=dark
 colorscheme onedark
 
 " Misc
-set autoread
 set autoread
 set backspace=indent,eol,start
 set complete-=i
@@ -109,6 +104,11 @@ set hlsearch
 set ignorecase
 set incsearch
 set smartcase
+
+" Mouse support?
+set mouse=a
+
+set clipboard=unnamed
 
 """"""""""""""""
 " Custom Binds "
@@ -187,18 +187,19 @@ if (empty($TMUX))
   endif
 endif
 
-""""""""""""""""""""
-" Plugins Settings "
-""""""""""""""""""""
+"""""""""""""""""""
+" Plugin Settings "
+"""""""""""""""""""
+
+" Gutentags
+let g:gutentags_project_root=['.tags-root']
+let g:gutentags_ctags_tagfile='guten.tags'
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 
 " Vim-rooter
 let g:rooter_patterns=['.vimroot', '.git/', '.git']
-
-" Vim instant markdown
-let g:instant_markdown_autostart=0
 
 " Minibufexpl
 let g:miniBufExplBRSplit=0
