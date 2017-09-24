@@ -8,24 +8,32 @@ Plug 'Raimondi/delimitMate'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'airblade/vim-rooter'
 Plug 'alvan/vim-closetag'
-Plug 'fholgado/minibufexpl.vim'
+Plug 'ap/vim-buftabline'
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'jceb/vim-orgmode'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
+Plug 'junegunn/vim-slash'
 Plug 'justinmk/vim-sneak'
+Plug 'kana/vim-textobj-user'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'ntpeters/vim-better-whitespace'
+Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'scrooloose/nerdtree'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'wellle/targets.vim'
+Plug 'wesQ3/vim-windowswap'
 
 " UI
+Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'
+Plug 'junegunn/seoul256.vim'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'romainl/Apprentice'
@@ -39,13 +47,26 @@ call plug#end()
 " autocmd Settings "
 """""""""""""""""""""
 
-augroup configgroup
+augroup focusgroup
   autocmd!
+  autocmd VimEnter * NERDTree
+  autocmd BufWinEnter * NERDTreeMirror
   autocmd FocusGained,BufEnter * :silent! !
   autocmd FocusLost,WinLeave * :silent! wa
+  autocmd VimResized * :wincmd =
+augroup end
+
+augroup filetypes
+  autocmd!
   autocmd BufNewFile,BufReadPost *.md set filetype=markdown
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
+  autocmd BufNewFile,BufReadPost *.org set filetype=org
+  autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setl nosmartindent
+augroup end
+
+augroup numbertoggle
+  autocmd!
 augroup end
 
 """"""""""""""""
@@ -53,9 +74,10 @@ augroup end
 """"""""""""""""
 
 " Colors
+let base16colorspace=256
 syntax enable
 set background=dark
-colorscheme onedark
+colorscheme base16-eighties
 
 " Misc
 set autoread
@@ -108,8 +130,6 @@ set smartcase
 " Mouse support?
 set mouse=a
 
-set clipboard=unnamed
-
 """"""""""""""""
 " Custom Binds "
 """"""""""""""""
@@ -122,11 +142,12 @@ nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
 
-" Hide search highlighting
-nnoremap <C-L> :nohlsearch<CR>
-
 " Best
 imap jk <esc>
+
+" Zoom a vim pane
+nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
+nnoremap <leader>= :wincmd =<cr>
 
 " Up and down traverse into wrapped lines
 nnoremap j gj
@@ -145,27 +166,26 @@ vnoremap // y/<C-R>"<CR>
 
 " Leader mappings
 let mapleader="\<Space>"
+let maplocalleader="\\"
 
+nnoremap <leader>l :nohlsearch<CR>
 nnoremap <leader>rs :vertical resize<Space>
-nnoremap <leader>h <C-w>h
-nnoremap <leader>j <C-w>j
-nnoremap <leader>k <C-w>k
-nnoremap <leader>l <C-w>l
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
+nnoremap <C-N> :bnext<CR>
+nnoremap <C-P> :bprev<CR>
 
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
-nnoremap <S-L> :MBEbn<cr>
-nnoremap <S-H> :MBEbp<cr>
 nnoremap <leader>s :SaveSession<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
+nnoremap <leader>u :UndotreeToggle<CR>
 
 nnoremap <leader>ff :Files<CR>
 nnoremap <leader>fbb :Buffers<CR>
@@ -191,6 +211,10 @@ endif
 " Plugin Settings "
 """""""""""""""""""
 
+" vim-buftabline
+let g:buftabline_numbers=1
+let g:buftabline_separators=1
+
 " Gutentags
 let g:gutentags_project_root=['.tags-root']
 let g:gutentags_ctags_tagfile='guten.tags'
@@ -200,9 +224,6 @@ let g:deoplete#enable_at_startup = 1
 
 " Vim-rooter
 let g:rooter_patterns=['.vimroot', '.git/', '.git']
-
-" Minibufexpl
-let g:miniBufExplBRSplit=0
 
 " Delimitmate + Deoplete play nicely
 " Place cursor in correct spot
