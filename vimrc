@@ -49,8 +49,6 @@ call plug#end()
 
 augroup focusgroup
   autocmd!
-  autocmd VimEnter * NERDTree
-  autocmd BufWinEnter * NERDTreeMirror
   autocmd FocusGained,BufEnter * :silent! !
   autocmd FocusLost,WinLeave * :silent! wa
   autocmd VimResized * :wincmd =
