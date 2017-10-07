@@ -8,3 +8,4 @@ git config --global core.excludesfile ~/.gitignore
 # https://github.com/scmbreeze/scm_breeze
 # https://github.com/tmux-plugins/tpm
 # https://github.com/zsh-users/zsh-syntax-highlighting
+# https://github.com/zsh-users/zsh-autosuggestions
