@@ -4,13 +4,13 @@
 call plug#begin('~/.vim/plugged')
 
 " Functionality
-Plug 'Raimondi/delimitMate'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'airblade/vim-rooter'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-buftabline'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'jceb/vim-orgmode'
+Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
@@ -27,6 +27,7 @@ Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
+Plug 'vim-ruby/vim-ruby'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
 
@@ -59,12 +60,9 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.md set filetype=markdown
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
   autocmd BufNewFile,BufReadPost *.org set filetype=org
+  autocmd BufNewFile,BufReadPost *.rb set colorcolumn=100
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setl nosmartindent
-augroup end
-
-augroup numbertoggle
-  autocmd!
 augroup end
 
 """"""""""""""""
@@ -143,10 +141,6 @@ cnoremap <c-p> <up>
 " Best
 imap jk <esc>
 
-" Zoom a vim pane
-nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
-nnoremap <leader>= :wincmd =<cr>
-
 " Up and down traverse into wrapped lines
 nnoremap j gj
 nnoremap k gk
@@ -166,8 +160,17 @@ vnoremap // y/<C-R>"<CR>
 let mapleader="\<Space>"
 let maplocalleader="\\"
 
+" Zoom a vim pane
+nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
+nnoremap <leader>= :wincmd =<cr>
+
+" Help aligning ruby params
+nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
+
+nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+
+nnoremap <leader>y :%y+<CR>
 nnoremap <leader>l :nohlsearch<CR>
-nnoremap <leader>rs :vertical resize<Space>
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
@@ -178,18 +181,15 @@ nnoremap <C-P> :bprev<CR>
 
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
-nnoremap <leader>s :SaveSession<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
-nnoremap <leader>v :set nonumber<CR>:set norelativenumber<CR>:vertical resize 32<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-nnoremap <leader>u :UndotreeToggle<CR>
 
 nnoremap <leader>ff :Files<CR>
-nnoremap <leader>fbb :Buffers<CR>
-nnoremap <leader>fbl :Lines<CR>
+nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>fc :Commands<CR>
+nnoremap <leader>ft :Tags<CR>
 
 " True color support
 if (empty($TMUX))
@@ -223,10 +223,6 @@ let g:deoplete#enable_at_startup = 1
 " Vim-rooter
 let g:rooter_patterns=['.vimroot', '.git/', '.git']
 
-" Delimitmate + Deoplete play nicely
-" Place cursor in correct spot
-imap <silent><expr><CR> pumvisible() ? "<C-Y><Plug>delimitMateCR" : "<Plug>delimitMateCR"
-
 " NERDTree
 let NERDTreeShowHidden=1
 
@@ -235,7 +231,7 @@ let g:session_autoload=0
 let g:session_autosave=0
 
 " Airline
-let g:airline_theme='onedark'
+let g:airline_theme='base16'
 let g:airline_powerline_fonts=1
 
 if !exists('g:airline_symbols')
