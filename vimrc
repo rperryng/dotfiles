@@ -70,27 +70,6 @@ augroup filetypes
   autocmd FileType python setl nosmartindent
 augroup end
 
-if has('nvim')
-  augroup tmappings
-    autocmd!
-    " https://gist.github.com/nelstrom/d08d342501d59abdac95b9d28fdb4cfc
-    " Readline cheatsheet:
-    " ctrl-a - jump to start of line
-    " ctrl-e - jump to end of line
-    " ctrl-k - kill forwards to the end of line
-    " ctrl-u - kill backwards to the start of line
-    autocmd TermOpen * nnoremap <buffer> I I<C-a>
-    autocmd TermOpen * nnoremap <buffer> A A<C-e>
-    autocmd TermOpen * nnoremap <buffer> C A<C-k>
-    autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
-    autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
-    autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
-    autocmd TermOpen * nnoremap <leader>bd :bp <bar> bd! #<CR>
-
-    autocmd TermOpen * setlocal scrollback=30000
-  augroup end
-endif
-
 """"""""""""""""
 " Vim settings "
 """"""""""""""""
@@ -137,10 +116,6 @@ set wildmenu
 set wildmode=list:longest
 set nowrap
 
-if has('nvim')
-  hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
-end
-
 " Disable bell
 set noerrorbells
 set novisualbell
@@ -166,15 +141,6 @@ set mouse=a
 """"""""""""""""
 " Custom Binds "
 """"""""""""""""
-
-" Terminal mode binds
-if has('nvim')
-  tnoremap jk <C-\><C-N>
-  tnoremap <C-n> <down>
-  tnoremap <C-p> <up>
-  tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
-endif
-
 " Insert empty lines
 nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<CR>'[
 nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<CR>
@@ -182,6 +148,7 @@ nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<CR>
 " Match current input
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
+
 
 " Best
 imap jk <esc>
@@ -223,8 +190,10 @@ nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
 
 nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 
+nnoremap <leader>ll <C-^>
+nnoremap <leader>ls :nohlsearch<CR>
+
 nnoremap <leader>y :%y+<CR>
-nnoremap <leader>l :nohlsearch<CR>
 nnoremap <leader>w :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
@@ -243,17 +212,6 @@ nmap ga <Plug>(EasyAlign)
 nmap <leader>j <Plug>(ale_previous_wrap)
 nmap <leader>k <Plug>(ale_next_wrap)
 nmap <leader>p :PlugInstall<CR>
-
-" Neoterm / Vim-Test
-nnoremap <leader>tn :TestNearest<CR>
-nnoremap <leader>tf :TestFile<CR>
-nnoremap <leader>ts :TestSuite<CR>
-nnoremap <leader>tl :TestLast<CR>
-nnoremap <leader>tg :TestVisit<CR>
-nnoremap <leader>tt :Tnew<CR>
-nnoremap <leader>tfile :TREPLSendFile<CR>
-nnoremap <leader>tline :TREPLSendLine<CR>
-vnoremap <leader>tsel :TREPLSendSelection<CR>
 
 " FZF mappings
 nnoremap <leader>fb :Buffers<CR>
@@ -284,10 +242,6 @@ set notermguicolors
 """""""""""""""""""
 " Plugin Settings "
 """""""""""""""""""
-
-" neoterm
-let g:neoterm_autoinsert=1
-let g:neoterm_autoscroll=1
 
 " vim-buftabline
 let g:buftabline_numbers=1
@@ -345,3 +299,44 @@ let g:airline_symbols.linenr=''
 
 " GitGutter
 let g:gitgutter_map_keys=0
+
+"""""""""""""""""""
+" Neovim Settings "
+"""""""""""""""""""
+
+if has('nvim')
+  augroup tmappings
+    autocmd!
+    " https://gist.github.com/nelstrom/d08d342501d59abdac95b9d28fdb4cfc
+    " Readline cheatsheet:
+    " ctrl-a - jump to start of line
+    " ctrl-e - jump to end of line
+    " ctrl-k - kill forwards to the end of line
+    " ctrl-u - kill backwards to the start of line
+    autocmd TermOpen * nnoremap <buffer> I I<C-a>
+    autocmd TermOpen * nnoremap <buffer> A A<C-e>
+    autocmd TermOpen * nnoremap <buffer> C A<C-k>
+    autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
+    autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
+    autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
+    autocmd TermOpen * nnoremap <leader>bd :bp <bar> bd! #<CR>
+
+    autocmd TermOpen * setlocal scrollback=30000
+  augroup end
+
+  " UI
+  hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
+
+" Terminal mode binds
+  tnoremap jk <C-\><C-N>
+  tnoremap <C-n> <down>
+  tnoremap <C-p> <up>
+  tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
+
+  nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR>
+  nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR>
+
+  " neoterm settings
+  let g:neoterm_autoinsert=1
+  let g:neoterm_autoscroll=1
+endif
