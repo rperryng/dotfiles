@@ -333,6 +333,13 @@ if has('nvim')
   tnoremap <C-p> <up>
   tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
 
+  " Allow tmux navigator to work in :terminal
+  tnoremap <silent> <c-h> <c-\><c-n>:TmuxNavigateLeft<cr>
+  tnoremap <silent> <c-j> <c-\><c-n>:TmuxNavigateDown<cr>
+  tnoremap <silent> <c-k> <c-\><c-n>:TmuxNavigateUp<cr>
+  tnoremap <silent> <c-l> <c-\><c-n>:TmuxNavigateRight<cr>
+  tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
+
   nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR>
   nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR>
 
