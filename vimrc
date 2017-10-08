@@ -28,6 +28,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'vim-ruby/vim-ruby'
+Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
 
@@ -35,6 +36,7 @@ Plug 'wesQ3/vim-windowswap'
 Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'romainl/Apprentice'
@@ -122,9 +124,16 @@ set hlsearch
 set ignorecase
 set incsearch
 set smartcase
+set inccommand=split
 
 " Mouse support?
 set mouse=a
+
+"""""""""""""""""""
+" Custom Commands "
+"""""""""""""""""""
+
+" :command StripWhitespace :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 
 """"""""""""""""
 " Custom Binds "
@@ -160,6 +169,9 @@ vnoremap // y/<C-R>"<CR>
 let mapleader="\<Space>"
 let maplocalleader="\\"
 
+" Reload vimrc
+nnoremap <leader>r :source $MYVIMRC<CR>
+
 " Zoom a vim pane
 nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
 nnoremap <leader>= :wincmd =<cr>
@@ -179,17 +191,38 @@ nnoremap <leader>bb <c-^>
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 
+nnoremap <leader>t :set filetype=
+
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
+nmap <leader>j <Plug>(ale_previous_wrap)
+nmap <leader>k <Plug>(ale_next_wrap)
+nmap <leader>p :PlugInstall<CR>
 
-nnoremap <leader>ff :Files<CR>
+" FZF mappings
 nnoremap <leader>fb :Buffers<CR>
-nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>fc :Commands<CR>
+nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fh :Helptags<CR>
+nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>ft :Tags<CR>
+nnoremap <leader>fm :Marks<CR>
+nnoremap <leader>fg :GFiles?<CR>
+nnoremap <leader>fw :Windows<CR>
+
+nnoremap <leader>FB :Buffers!<CR>
+nnoremap <leader>FC :Commands!<CR>
+nnoremap <leader>FF :Files!<CR>
+nnoremap <leader>FH :Helptags!<CR>
+nnoremap <leader>FL :BLines!<CR>
+nnoremap <leader>FT :Tags!<CR>
+nnoremap <leader>FM :Marks!<CR>
+nnoremap <leader>FG :GFiles?!<CR>
+nnoremap <leader>FW :Windows!<CR>
+
 
 " True color support
 if (empty($TMUX))
@@ -209,13 +242,20 @@ endif
 " Plugin Settings "
 """""""""""""""""""
 
+" tmux-navigator
+let g:tmux_navigator_disable_when_zoomed=1
+
 " vim-buftabline
 let g:buftabline_numbers=1
 let g:buftabline_separators=1
+hi default link BufTabLineActive TabLine
 
 " Gutentags
 let g:gutentags_project_root=['.tags-root']
 let g:gutentags_ctags_tagfile='guten.tags'
+
+" Ale
+let g:ale_sign_column_always = 1
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
