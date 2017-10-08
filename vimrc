@@ -137,6 +137,7 @@ set mouse=a
 """""""""""""""""""
 
 " :command StripWhitespace :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+command! -nargs=+ Z execute "cd " . system("path/to/execz.sh ")
 
 """"""""""""""""
 " Custom Binds "
@@ -188,7 +189,7 @@ nnoremap <leader>= :wincmd =<cr>
 " Help aligning ruby params
 nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
 
-nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 nnoremap <leader>ll <C-^>
 nnoremap <leader>ls :nohlsearch<CR>
