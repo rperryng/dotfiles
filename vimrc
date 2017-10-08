@@ -1,4 +1,4 @@
-"""""""""""
+""""""""""
 " Plugins "
 """""""""""
 call plug#begin('~/.vim/plugged')
@@ -9,6 +9,7 @@ Plug 'airblade/vim-rooter'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-buftabline'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'janko-m/vim-test'
 Plug 'jceb/vim-orgmode'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -17,6 +18,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-slash'
 Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-textobj-user'
+Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
@@ -83,6 +85,7 @@ if has('nvim')
     autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
     autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
     autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
+    autocmd TermOpen * nnoremap <leader>bd :bp <bar> bd! #<CR>
 
     autocmd TermOpen * setlocal scrollback=30000
   augroup end
@@ -173,8 +176,8 @@ if has('nvim')
 endif
 
 " Insert empty lines
-nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
-nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
+nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<CR>'[
+nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<CR>
 
 " Match current input
 cnoremap <c-n> <down>
@@ -202,6 +205,12 @@ vnoremap // y/<C-R>"<CR>
 let mapleader="\<Space>"
 let maplocalleader="\\"
 
+" Layout mappings
+nnoremap <S-Up> :resize +5<CR>
+nnoremap <S-Down> :resize -5<CR>
+nnoremap <S-Right> :vertical resize +5<CR>
+nnoremap <S-Left> :vertical resize -5<CR>
+
 " Reload vimrc
 nnoremap <leader>r :source $MYVIMRC<CR>
 
@@ -224,7 +233,7 @@ nnoremap <leader>bb <c-^>
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprev<CR>
 
-nnoremap <leader>t :set filetype=
+nnoremap <leader>file :set filetype=
 
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
@@ -234,6 +243,17 @@ nmap ga <Plug>(EasyAlign)
 nmap <leader>j <Plug>(ale_previous_wrap)
 nmap <leader>k <Plug>(ale_next_wrap)
 nmap <leader>p :PlugInstall<CR>
+
+" Neoterm / Vim-Test
+nnoremap <leader>tn :TestNearest<CR>
+nnoremap <leader>tf :TestFile<CR>
+nnoremap <leader>ts :TestSuite<CR>
+nnoremap <leader>tl :TestLast<CR>
+nnoremap <leader>tg :TestVisit<CR>
+nnoremap <leader>tt :Tnew<CR>
+nnoremap <leader>tfile :TREPLSendFile<CR>
+nnoremap <leader>tline :TREPLSendLine<CR>
+vnoremap <leader>tsel :TREPLSendSelection<CR>
 
 " FZF mappings
 nnoremap <leader>fb :Buffers<CR>
@@ -258,9 +278,16 @@ nnoremap <leader>FW :Windows!<CR>
 
 set notermguicolors
 
+" Search highlight comes back after reloading vimrc.  Hide it
+:nohlsearch
+
 """""""""""""""""""
 " Plugin Settings "
 """""""""""""""""""
+
+" neoterm
+let g:neoterm_autoinsert=1
+let g:neoterm_autoscroll=1
 
 " vim-buftabline
 let g:buftabline_numbers=1
