@@ -18,6 +18,7 @@ Plug 'junegunn/vim-slash'
 Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-textobj-user'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'scrooloose/nerdtree'
 Plug 'sjl/gundo.vim'
@@ -67,6 +68,26 @@ augroup filetypes
   autocmd FileType python setl nosmartindent
 augroup end
 
+if has('nvim')
+  augroup tmappings
+    autocmd!
+    " https://gist.github.com/nelstrom/d08d342501d59abdac95b9d28fdb4cfc
+    " Readline cheatsheet:
+    " ctrl-a - jump to start of line
+    " ctrl-e - jump to end of line
+    " ctrl-k - kill forwards to the end of line
+    " ctrl-u - kill backwards to the start of line
+    autocmd TermOpen * nnoremap <buffer> I I<C-a>
+    autocmd TermOpen * nnoremap <buffer> A A<C-e>
+    autocmd TermOpen * nnoremap <buffer> C A<C-k>
+    autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
+    autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
+    autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
+
+    autocmd TermOpen * setlocal scrollback=30000
+  augroup end
+endif
+
 """"""""""""""""
 " Vim settings "
 """"""""""""""""
@@ -113,6 +134,10 @@ set wildmenu
 set wildmode=list:longest
 set nowrap
 
+if has('nvim')
+  hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
+end
+
 " Disable bell
 set noerrorbells
 set novisualbell
@@ -138,6 +163,14 @@ set mouse=a
 """"""""""""""""
 " Custom Binds "
 """"""""""""""""
+
+" Terminal mode binds
+if has('nvim')
+  tnoremap jk <C-\><C-N>
+  tnoremap <C-n> <down>
+  tnoremap <C-p> <up>
+  tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
+endif
 
 " Insert empty lines
 nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
@@ -188,8 +221,8 @@ nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
-nnoremap <C-N> :bnext<CR>
-nnoremap <C-P> :bprev<CR>
+nnoremap <C-n> :bnext<CR>
+nnoremap <C-p> :bprev<CR>
 
 nnoremap <leader>t :set filetype=
 
@@ -205,7 +238,7 @@ nmap <leader>p :PlugInstall<CR>
 " FZF mappings
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
-nnoremap <leader>ff :Files<CR>
+nnoremap <leader>fi :Files<CR>
 nnoremap <leader>fh :Helptags<CR>
 nnoremap <leader>fl :BLines<CR>
 nnoremap <leader>ft :Tags<CR>
@@ -215,7 +248,7 @@ nnoremap <leader>fw :Windows<CR>
 
 nnoremap <leader>FB :Buffers!<CR>
 nnoremap <leader>FC :Commands!<CR>
-nnoremap <leader>FF :Files!<CR>
+nnoremap <leader>FI :Files!<CR>
 nnoremap <leader>FH :Helptags!<CR>
 nnoremap <leader>FL :BLines!<CR>
 nnoremap <leader>FT :Tags!<CR>
@@ -223,27 +256,11 @@ nnoremap <leader>FM :Marks!<CR>
 nnoremap <leader>FG :GFiles?!<CR>
 nnoremap <leader>FW :Windows!<CR>
 
-
-" True color support
-if (empty($TMUX))
-  if (has("nvim"))
-    "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-  endif
-  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-  if (has("termguicolors"))
-    set termguicolors
-  endif
-endif
+set notermguicolors
 
 """""""""""""""""""
 " Plugin Settings "
 """""""""""""""""""
-
-" tmux-navigator
-let g:tmux_navigator_disable_when_zoomed=1
 
 " vim-buftabline
 let g:buftabline_numbers=1
