@@ -1,0 +1,31 @@
+" UI
+set smoothscroll
+let searchlimit=5
+let scrollduration=250
+set showtabindices
+let hintcharacters="asdgqwertzxcvb"
+set smartcase
+
+" Functionality
+set noautofocus
+set cncpcompletion
+let searchengine reddit = "https://www.reddit.com/r/%s"
+let searchengine youtube = "https://www.youtube.com/results?search_query=%s"
+let searchalias r = "reddit"
+let searchalias y = "youtube"
+let completionengines=["google", "reddit", "youtube"]
+let qmark r = "https://www.reddit.com"
+let qmark y = "https://www.youtube.com"
+
+set cncpcompletion
+set noregexp
+
+" Mappings
+let mapleader="<Space>"
+map <leader>e createEditHint
+unmap a
+map ar reloadAllTabs
+map gb :buffer<Space>
+map gm :mutetab<CR>
+map yt :duplicate<CR>
+map yf yankUrl
