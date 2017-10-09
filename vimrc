@@ -200,6 +200,8 @@ nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
+nnoremap <C-S-n> :tabn<CR>
+nnoremap <C-S-p> :tab<CR>
 nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprev<CR>
 
@@ -219,21 +221,26 @@ nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
 nnoremap <leader>fi :Files<CR>
 nnoremap <leader>fh :Helptags<CR>
-nnoremap <leader>fl :BLines<CR>
+nnoremap <leader>flb :BLines<CR>
+nnoremap <leader>fll :Lines<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>fg :GFiles?<CR>
 nnoremap <leader>fw :Windows<CR>
+nnoremap <leader>fa :Ag<CR>
 
-nnoremap <leader>FB :Buffers!<CR>
-nnoremap <leader>FC :Commands!<CR>
-nnoremap <leader>FI :Files!<CR>
-nnoremap <leader>FH :Helptags!<CR>
-nnoremap <leader>FL :BLines!<CR>
-nnoremap <leader>FT :Tags!<CR>
-nnoremap <leader>FM :Marks!<CR>
-nnoremap <leader>FG :GFiles?!<CR>
-nnoremap <leader>FW :Windows!<CR>
+let test#strategy = 'neoterm'
+nnoremap <leader>fB :Buffers!<CR>
+nnoremap <leader>fC :Commands!<CR>
+nnoremap <leader>fI :Files!<CR>
+nnoremap <leader>fH :Helptags!<CR>
+nnoremap <leader>flB :BLines!<CR>
+nnoremap <leader>flL :Lines!<CR>
+nnoremap <leader>fT :Tags!<CR>
+nnoremap <leader>fM :Marks!<CR>
+nnoremap <leader>fG :GFiles?!<CR>
+nnoremap <leader>fW :Windows!<CR>
+nnoremap <leader>fA :Ag!<CR>
 
 set notermguicolors
 
@@ -340,6 +347,17 @@ if has('nvim')
   tnoremap <silent> <c-k> <c-\><c-n>:TmuxNavigateUp<cr>
   tnoremap <silent> <c-l> <c-\><c-n>:TmuxNavigateRight<cr>
   tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
+
+  " Neoterm / Vim-Test
+  nnoremap <leader>tn :TestNearest<CR>
+  nnoremap <leader>tf :TestFile<CR>
+  nnoremap <leader>ts :TestSuite<CR>
+  nnoremap <leader>tl :TestLast<CR>
+  nnoremap <leader>tg :TestVisit<CR>
+  nnoremap <leader>tt :Tnew<CR>
+  nnoremap <leader>tfile :TREPLSendFile<CR>
+  vnoremap <leader>tsel :TREPLSendSelection<CR>
+  nnoremap <leader>tline :TREPLSendLine<CR>
 
   nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR>
   nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR>
