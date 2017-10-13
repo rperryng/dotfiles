@@ -137,7 +137,7 @@ set mouse=a
 """""""""""""""""""
 
 " :command StripWhitespace :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
-command! -nargs=+ Z execute "cd " . system("path/to/execz.sh ")
+" command! -nargs=+ Z execute "cd " . system("path/to/execz.sh ")
 
 """"""""""""""""
 " Custom Binds "
@@ -149,7 +149,6 @@ nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<CR>
 " Match current input
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
-
 
 " Best
 imap jk <esc>
@@ -169,18 +168,22 @@ inoremap <up> <c-o>gk
 " Search for text under visual selection
 vnoremap // y/<C-R>"<CR>
 
-" Leader mappings
 let mapleader="\<Space>"
 let maplocalleader="\\"
 
 " Layout mappings
-nnoremap <S-Up> :resize +5<CR>
-nnoremap <S-Down> :resize -5<CR>
-nnoremap <S-Right> :vertical resize +5<CR>
-nnoremap <S-Left> :vertical resize -5<CR>
+nnoremap <leader>wK :resize +5<CR>
+nnoremap <leader>wJ :resize -5<CR>
+nnoremap <leader>wL :vertical resize +5<CR>
+nnoremap <leader>wH :vertical resize -5<CR>
+nnoremap <leader>wk :resize +1<CR>
+nnoremap <leader>wj :resize -1<CR>
+nnoremap <leader>wl :vertical resize +1<CR>
+nnoremap <leader>wh :vertical resize -1<CR>
+nnoremap <leader>ww :<up><CR>
 
 " Reload vimrc
-nnoremap <leader>r :source $MYVIMRC<CR>
+nnoremap <leader>R :source $MYVIMRC<CR>
 
 " Zoom a vim pane
 nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
@@ -195,7 +198,7 @@ nnoremap <leader>ll <C-^>
 nnoremap <leader>ls :nohlsearch<CR>
 
 nnoremap <leader>y :%y+<CR>
-nnoremap <leader>w :wa<CR>
+nnoremap <leader>wa :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
@@ -212,9 +215,9 @@ nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-nmap <leader>j <Plug>(ale_previous_wrap)
-nmap <leader>k <Plug>(ale_next_wrap)
-nmap <leader>p :PlugInstall<CR>
+nnoremap <silent> <leader>an :ALENextWrap<CR>
+nnoremap <silent> <leader>ap :ALEPreviousWrap<CR>
+nnoremap <leader>p :PlugInstall<CR>
 
 " FZF mappings
 nnoremap <leader>fb :Buffers<CR>
@@ -262,6 +265,8 @@ let g:gutentags_ctags_tagfile='guten.tags'
 
 " Ale
 let g:ale_sign_column_always = 1
+let g:ale_lint_on_enter=1
+let g:ale_lint_on_text_changed='never'
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -355,6 +360,7 @@ if has('nvim')
   nnoremap <leader>tl :TestLast<CR>
   nnoremap <leader>tg :TestVisit<CR>
   nnoremap <leader>tt :Tnew<CR>
+  nnoremap <leader>tq :T quit<CR>
   nnoremap <leader>tfile :TREPLSendFile<CR>
   vnoremap <leader>tsel :TREPLSendSelection<CR>
   nnoremap <leader>tline :TREPLSendLine<CR>
