@@ -9,13 +9,13 @@ Plug 'airblade/vim-rooter'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-buftabline'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'haya14busa/incsearch.vim'
 Plug 'janko-m/vim-test'
 Plug 'jceb/vim-orgmode'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-slash'
 Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
@@ -24,13 +24,16 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'scrooloose/nerdtree'
 Plug 'sjl/gundo.vim'
+Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rake'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
-Plug 'vim-ruby/vim-ruby'
 Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
@@ -39,6 +42,7 @@ Plug 'wesQ3/vim-windowswap'
 Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
@@ -66,6 +70,7 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
   autocmd BufNewFile,BufReadPost *.org set filetype=org
   autocmd BufNewFile,BufReadPost *.rb set colorcolumn=100
+  autocmd FileType yaml setlocal commentstring=#\ %s
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setl nosmartindent
 augroup end
@@ -105,7 +110,7 @@ set colorcolumn=80
 set cursorcolumn
 set cursorline
 set number
-set relativenumber
+set norelativenumber
 set scrolloff=999
 set showcmd
 set showmatch
@@ -137,7 +142,7 @@ set mouse=a
 """""""""""""""""""
 
 " :command StripWhitespace :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
-" command! -nargs=+ Z execute "cd " . system("path/to/execz.sh ")
+" command! -nargs=+ Z execute "cd " . system("execz.sh")
 
 """"""""""""""""
 " Custom Binds "
@@ -197,7 +202,7 @@ nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 nnoremap <leader>ll <C-^>
 nnoremap <leader>ls :nohlsearch<CR>
 
-nnoremap <leader>y :%y+<CR>
+nnoremap <leader>y "+y
 nnoremap <leader>wa :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
@@ -209,6 +214,7 @@ nnoremap <C-n> :bnext<CR>
 nnoremap <C-p> :bprev<CR>
 
 nnoremap <leader>file :set filetype=
+nnoremap <leader>z :cd ~/code/ws/
 
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
@@ -245,6 +251,9 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
+nnoremap <leader>j <Plug>(ale_previous_wrap)
+nnoremap <leader>k <Plug>(ale_next_wrap)
+
 set notermguicolors
 
 " Search highlight comes back after reloading vimrc.  Hide it
@@ -254,6 +263,12 @@ set notermguicolors
 " Plugin Settings "
 """""""""""""""""""
 
+" #TODO: Remove once neovim merges the new incsearch patch from vim
+" vim-incsearch
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
 " vim-buftabline
 let g:buftabline_numbers=1
 let g:buftabline_separators=1
@@ -261,12 +276,16 @@ hi default link BufTabLineActive TabLine
 
 " Gutentags
 let g:gutentags_project_root=['.tags-root']
-let g:gutentags_ctags_tagfile='guten.tags'
 
 " Ale
 let g:ale_sign_column_always = 1
 let g:ale_lint_on_enter=1
-let g:ale_lint_on_text_changed='never'
+let g:ale_lint_on_text_changed='always'
+let g:ale_lint_delay=1000
+let g:ale_linters = {
+\  'html': ['proselint', 'tidy', 'write-good'],
+\  'javascript': ['eslint'],
+\}
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -276,6 +295,7 @@ let g:rooter_patterns=['.vimroot', '.git/', '.git']
 
 " NERDTree
 let NERDTreeShowHidden=1
+let g:NERDTreeMapHelp = '<F1>'
 
 " Session
 let g:session_autoload=0
@@ -284,6 +304,7 @@ let g:session_autosave=0
 " Airline
 let g:airline_theme='base16'
 let g:airline_powerline_fonts=1
+let g:airline#extensions#ale#enabled = 1
 
 if !exists('g:airline_symbols')
   let g:airline_symbols={}
@@ -344,6 +365,9 @@ if has('nvim')
   tnoremap jk <C-\><C-N>
   tnoremap <C-n> <down>
   tnoremap <C-p> <up>
+
+  " Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
+  " in a normal buffer (i.e. next key pastes from that buffer)
   tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
 
   " Allow tmux navigator to work in :terminal
@@ -353,20 +377,26 @@ if has('nvim')
   tnoremap <silent> <c-l> <c-\><c-n>:TmuxNavigateRight<cr>
   tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
 
+  nnoremap <leader>term :file<Space>term-
+
   " Neoterm / Vim-Test
+  nnoremap <leader>td :call neoterm#do("\<C-d>")<CR>
+  nnoremap <leader>tq :call neoterm#kill()<CR>
+  nnoremap <leader>tQ :call neoterm#kill()<CR>:call neoterm#kill()<CR>
   nnoremap <leader>tn :TestNearest<CR>
   nnoremap <leader>tf :TestFile<CR>
   nnoremap <leader>ts :TestSuite<CR>
   nnoremap <leader>tl :TestLast<CR>
+  nnoremap <leader>tL :call neoterm#kill()<CR>:call neoterm#kill()<CR>:TestLast<CR>
   nnoremap <leader>tg :TestVisit<CR>
   nnoremap <leader>tt :Tnew<CR>
-  nnoremap <leader>tq :T quit<CR>
   nnoremap <leader>tfile :TREPLSendFile<CR>
   vnoremap <leader>tsel :TREPLSendSelection<CR>
   nnoremap <leader>tline :TREPLSendLine<CR>
+  nnoremap <leader>neo :Ttoggle<CR>
 
-  nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR>
-  nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR>
+  nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR><C-\><C-n>:file neoterm<CR>
+  nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR><C-\><C-n>:file neoterm<CR>
 
   " neoterm settings
   let g:neoterm_autoinsert=1
