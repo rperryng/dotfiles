@@ -5,18 +5,15 @@ call plug#begin('~/.vim/plugged')
 
 " Functionality
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'airblade/vim-rooter'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-buftabline'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'haya14busa/incsearch.vim'
 Plug 'janko-m/vim-test'
 Plug 'jceb/vim-orgmode'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
@@ -41,12 +38,10 @@ Plug 'wesQ3/vim-windowswap'
 " UI
 Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'
-Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
-Plug 'romainl/Apprentice'
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -59,15 +54,20 @@ call plug#end()
 
 augroup focusgroup
   autocmd!
-  autocmd FocusGained,BufEnter * :silent! !
-  autocmd FocusLost,WinLeave * :silent! wa
-  autocmd VimResized * :wincmd =
+  
+  " Preserve cursor location when switching buffers
+  au BufLeave * let b:winview = winsaveview()
+  au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+  " autocmd FocusGained,BufEnter * :silent! !
+  " autocmd FocusLost,WinLeave * :silent! wa
+  " autocmd VimResized * :wincmd =
 augroup end
 
 augroup filetypes
   autocmd!
   autocmd BufNewFile,BufReadPost *.md set filetype=markdown
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
+  autocmd BufNewFile,BufReadPost *.zshrc set filetype=zsh
   autocmd BufNewFile,BufReadPost *.org set filetype=org
   autocmd BufNewFile,BufReadPost *.rb set colorcolumn=100
   autocmd FileType yaml setlocal commentstring=#\ %s
@@ -120,6 +120,7 @@ set textwidth=0
 set wildmenu
 set wildmode=list:longest
 set nowrap
+set noequalalways
 
 " Disable bell
 set noerrorbells
@@ -187,6 +188,9 @@ nnoremap <leader>wl :vertical resize +1<CR>
 nnoremap <leader>wh :vertical resize -1<CR>
 nnoremap <leader>ww :<up><CR>
 
+nnoremap sf :echo @%<CR>
+nnoremap sn% :NERDTreeFind<CR>
+
 " Reload vimrc
 nnoremap <leader>R :source $MYVIMRC<CR>
 
@@ -221,11 +225,13 @@ nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-nnoremap <silent> <leader>an :ALENextWrap<CR>
-nnoremap <silent> <leader>ap :ALEPreviousWrap<CR>
+nnoremap <silent> sn :ALENextWrap<CR>
+nnoremap <silent> sp :ALEPreviousWrap<CR>
 nnoremap <leader>p :PlugInstall<CR>
 
 " FZF mappings
+nnoremap <C-f> :GFiles<CR>
+
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
 nnoremap <leader>fi :Files<CR>
@@ -238,7 +244,6 @@ nnoremap <leader>fg :GFiles?<CR>
 nnoremap <leader>fw :Windows<CR>
 nnoremap <leader>fa :Ag<CR>
 
-let test#strategy = 'neoterm'
 nnoremap <leader>fB :Buffers!<CR>
 nnoremap <leader>fC :Commands!<CR>
 nnoremap <leader>fI :Files!<CR>
@@ -251,8 +256,6 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
-nnoremap <leader>j <Plug>(ale_previous_wrap)
-nnoremap <leader>k <Plug>(ale_next_wrap)
 
 set notermguicolors
 
@@ -262,12 +265,6 @@ set notermguicolors
 """""""""""""""""""
 " Plugin Settings "
 """""""""""""""""""
-
-" #TODO: Remove once neovim merges the new incsearch patch from vim
-" vim-incsearch
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
 
 " vim-buftabline
 let g:buftabline_numbers=1
@@ -280,10 +277,9 @@ let g:gutentags_project_root=['.tags-root']
 " Ale
 let g:ale_sign_column_always = 1
 let g:ale_lint_on_enter=1
-let g:ale_lint_on_text_changed='always'
-let g:ale_lint_delay=1000
+let g:ale_lint_on_text_changed='never'
 let g:ale_linters = {
-\  'html': ['proselint', 'tidy', 'write-good'],
+\  'html': [],
 \  'javascript': ['eslint'],
 \}
 
@@ -296,10 +292,6 @@ let g:rooter_patterns=['.vimroot', '.git/', '.git']
 " NERDTree
 let NERDTreeShowHidden=1
 let g:NERDTreeMapHelp = '<F1>'
-
-" Session
-let g:session_autoload=0
-let g:session_autosave=0
 
 " Airline
 let g:airline_theme='base16'
@@ -360,6 +352,8 @@ if has('nvim')
 
   " UI
   hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
+
+  let test#strategy = 'neoterm'
 
 " Terminal mode binds
   tnoremap jk <C-\><C-N>
