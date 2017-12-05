@@ -31,6 +31,7 @@ Plug 'tpope/vim-rake'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
+Plug 'vim-scripts/ZoomWin'
 Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
@@ -40,6 +41,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
+Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
@@ -84,6 +86,8 @@ let base16colorspace=256
 syntax enable
 set background=dark
 colorscheme base16-eighties
+" colorscheme base16-black-metal-bathory
+
 
 " Misc
 set autoread
@@ -206,16 +210,17 @@ nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 nnoremap <leader>ll <C-^>
 nnoremap <leader>ls :nohlsearch<CR>
 
+nnoremap ss "+
 nnoremap <leader>y "+y
 nnoremap <leader>wa :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
-nnoremap <C-S-n> :tabn<CR>
-nnoremap <C-S-p> :tab<CR>
-nnoremap <C-n> :bnext<CR>
-nnoremap <C-p> :bprev<CR>
+nnoremap <C-n> :tabnext<CR>
+nnoremap <C-p> :tabprevious<CR>
+nnoremap <C-S-n> :bnext<CR>
+nnoremap <C-S-p> :bprevious<CR>
 
 nnoremap <leader>file :set filetype=
 nnoremap <leader>z :cd ~/code/ws/
@@ -227,10 +232,11 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 nnoremap <silent> sn :ALENextWrap<CR>
 nnoremap <silent> sp :ALEPreviousWrap<CR>
+nnoremap sl :ALELint<CR>
 nnoremap <leader>p :PlugInstall<CR>
 
 " FZF mappings
-nnoremap <C-f> :GFiles<CR>
+nnoremap <C-f> :GFiles!<CR>
 
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
@@ -256,7 +262,6 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
-
 set notermguicolors
 
 " Search highlight comes back after reloading vimrc.  Hide it
@@ -265,6 +270,9 @@ set notermguicolors
 """""""""""""""""""
 " Plugin Settings "
 """""""""""""""""""
+
+" vim-test
+let test#ruby#rspec#executable = 'bundle exec rspec'
 
 " vim-buftabline
 let g:buftabline_numbers=1
@@ -281,6 +289,7 @@ let g:ale_lint_on_text_changed='never'
 let g:ale_linters = {
 \  'html': [],
 \  'javascript': ['eslint'],
+\  'ruby': ['ruby', 'rubocop'],
 \}
 
 " Deoplete
@@ -292,6 +301,16 @@ let g:rooter_patterns=['.vimroot', '.git/', '.git']
 " NERDTree
 let NERDTreeShowHidden=1
 let g:NERDTreeMapHelp = '<F1>'
+
+" FZF
+command! -bang -nargs=? -complete=dir Ag
+  \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+command! -bang -nargs=? -complete=dir GFiles
+  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
 " Airline
 let g:airline_theme='base16'
@@ -353,6 +372,7 @@ if has('nvim')
   " UI
   hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
 
+  " Vim-test
   let test#strategy = 'neoterm'
 
 " Terminal mode binds
@@ -388,6 +408,9 @@ if has('nvim')
   vnoremap <leader>tsel :TREPLSendSelection<CR>
   nnoremap <leader>tline :TREPLSendLine<CR>
   nnoremap <leader>neo :Ttoggle<CR>
+
+  " Haaaaddeeeeees
+  nnoremap <leader>tpls :call neoterm#do("\<Up>")<CR>
 
   nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR><C-\><C-n>:file neoterm<CR>
   nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR><C-\><C-n>:file neoterm<CR>
