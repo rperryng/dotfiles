@@ -6,6 +6,7 @@ git config --global core.excludesfile ~/.gitignore
 # https://github.com/denysdovhan/spaceship-zsh-theme
 # https://github.com/ggreer/the_silver_searcher
 # https://github.com/rbenv/rbenv
+# https://github.com/romainl/ctags-patterns-for-javascript
 # https://github.com/rupa/z
 # https://github.com/scmbreeze/scm_breeze
 # https://github.com/tmux-plugins/tpm
@@ -20,7 +21,7 @@ git config --global core.excludesfile ~/.gitignore
 # Base16
 BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
-base16_eighties
+base16_gruvbox-dark-pale
 
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
