@@ -56,13 +56,10 @@ call plug#end()
 
 augroup focusgroup
   autocmd!
-  
   " Preserve cursor location when switching buffers
   au BufLeave * let b:winview = winsaveview()
   au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
-  " autocmd FocusGained,BufEnter * :silent! !
-  " autocmd FocusLost,WinLeave * :silent! wa
-  " autocmd VimResized * :wincmd =
+  au FocusGained,BufEnter * :silent! checkt
 augroup end
 
 augroup filetypes
@@ -191,8 +188,9 @@ nnoremap <leader>wj :resize -1<CR>
 nnoremap <leader>wl :vertical resize +1<CR>
 nnoremap <leader>wh :vertical resize -1<CR>
 nnoremap <leader>ww :<up><CR>
+nnoremap <leader>s ml:tabedit %<CR>'l
 
-nnoremap sf :echo @%<CR>
+nnoremap s% :echo @%<CR>
 nnoremap sn% :NERDTreeFind<CR>
 
 " Reload vimrc
@@ -212,7 +210,7 @@ nnoremap <leader>ls :nohlsearch<CR>
 
 nnoremap ss "+
 nnoremap <leader>y "+y
-nnoremap <leader>wa :wa<CR>
+nnoremap <leader>wa :silent! :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
@@ -299,10 +297,15 @@ let g:deoplete#enable_at_startup = 1
 let g:rooter_patterns=['.vimroot', '.git/', '.git']
 
 " NERDTree
+let NERDTreeAutoDeleteBuffer=1
+let NERDTreeDirArrows = 1
+let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden=1
 let g:NERDTreeMapHelp = '<F1>'
 
 " FZF
+let $FZF_DEFAULT_OPTS .= ' --no-height'
+
 command! -bang -nargs=? -complete=dir Ag
   \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)
 
