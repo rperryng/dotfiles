@@ -12,5 +12,3 @@ ln -s $DOTFILES_SOURCE/tmux.conf.osx ~/.tmux.conf.osx
 ln -s $DOTFILES_SOURCE/vimrc ~/.vimrc
 mkdir -p ~/.config/nvim
 ln -s $DOTFILES_SOURCE/vimrc ~/.config/nvim/init.vim
-
-

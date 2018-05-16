@@ -1,4 +1,4 @@
-""""""""""
+"""""""""""
 " Plugins "
 """""""""""
 call plug#begin('~/.vim/plugged')
@@ -45,8 +45,8 @@ Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
 
@@ -78,6 +78,9 @@ augroup end
 " Vim settings "
 """"""""""""""""
 
+let mapleader="\<Space>"
+let maplocalleader="\\"
+
 " Colors
 let base16colorspace=256
 syntax enable
@@ -85,6 +88,11 @@ set background=dark
 colorscheme base16-eighties
 " colorscheme base16-black-metal-bathory
 
+" Start and End tags are same color
+hi Tag        ctermfg=04
+hi xmlTag     ctermfg=04
+hi xmlTagName ctermfg=04
+hi xmlEndTag  ctermfg=04
 
 " Misc
 set autoread
@@ -174,9 +182,6 @@ inoremap <up> <c-o>gk
 
 " Search for text under visual selection
 vnoremap // y/<C-R>"<CR>
-
-let mapleader="\<Space>"
-let maplocalleader="\\"
 
 " Layout mappings
 nnoremap <leader>wK :resize +5<CR>
@@ -277,7 +282,12 @@ let g:buftabline_numbers=1
 let g:buftabline_separators=1
 hi default link BufTabLineActive TabLine
 
-" Gutentags
+" vim-closetag
+let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.js'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
+let g:closetag_shortcut = '<c-b>'
+
+  " Gutentags
 let g:gutentags_project_root=['.tags-root']
 
 " Ale
