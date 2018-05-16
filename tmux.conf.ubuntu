@@ -1,1 +1,1 @@
-bind -T edit-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -sel clip -i"
+bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -sel clip -i"
