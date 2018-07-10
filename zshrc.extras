@@ -18,10 +18,12 @@ git config --global core.excludesfile ~/.gitignore
 # Z - jump around
 . $HOME/code/tools/z/z.sh
 
+alias rm-swap="rm ~/.local/share/nvim/swap/*"
+
 # Base16
-BASE16_SHELL=$HOME/.config/base16-shell/
-[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
-base16_onedark
+# BASE16_SHELL=$HOME/.config/base16-shell/
+# [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+# base16_onedark
 
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
@@ -40,34 +42,18 @@ export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 # When enter starts inputting ^M...
 alias pls="stty sane"
 
-# Aliases
-alias g="git"
-alias gaa="git add -A"
-alias gap="git add -p"
-alias gb="git branch"
-alias gbD="git branch -D"
-alias gbd="git branch -d"
-alias gc="git commit"
-alias gcam="git commit --amend -m"
-alias gcane="git commit --amend --no-edit"
-alias gcb="git checkout -b"
-alias gcl="git clean"
-alias gcm="git commit -m"
-alias gco="git checkout"
-alias gd="git diff"
-alias gdc="git diff --cached"
-alias gf="git fetch"
+# Git aliases
 alias glo="git log --oneline"
-alias gl="git log"
-alias gm="git merge"
-alias gpl="git pull"
-alias gps="git push"
-alias gpsf="git push -f"
-alias gpsup="git push -u"
-alias grb="git rebase"
-alias grbi="git rebase -i"
-alias grm="git rm"
-alias grs="git reset"
-alias grsh="git reset --hard"
-alias gsh="git stash -u"
-alias gcoh="git checkout HEAD -- "
+alias gcmsg="git commit -m"
+
+# Enable vim keybinds and rebind some classic insert-mode emacs shortcuts
+# Remove `bindkey \ec fzf-cd-widget` to stop interfering with normal mode `c`
+set -o vi
+
+# Rebind some classic insert-mode emacs shortcuts
+bindkey "^P" up-line-or-search
+bindkey "^N" down-line-or-search
+bindkey "^A" beginning-of-line
+bindkey "^E" end-of-line
+
+bindkey "^Y" fzf-cd-widget
