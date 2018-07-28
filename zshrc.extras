@@ -15,6 +15,9 @@ git config --global core.excludesfile ~/.gitignore
 # https://github.com/zsh-users/zsh-autosuggestions
 # https://github.com/zsh-users/zsh-syntax-highlighting
 
+# Enable esc+ to treat option keys as alt
+# https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
+
 # Z - jump around
 . $HOME/code/tools/z/z.sh
 
@@ -45,6 +48,8 @@ alias pls="stty sane"
 # Git aliases
 alias glo="git log --oneline"
 alias gcmsg="git commit -m"
+alias gcane="git commit --amend --no-edit"
+alias gcam="git commit --amend -m"
 
 # Enable vim keybinds and rebind some classic insert-mode emacs shortcuts
 # Remove `bindkey \ec fzf-cd-widget` to stop interfering with normal mode `c`
@@ -55,5 +60,6 @@ bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
 bindkey "^A" beginning-of-line
 bindkey "^E" end-of-line
+bindkey "^U" backward-kill-line
 
 bindkey "^Y" fzf-cd-widget

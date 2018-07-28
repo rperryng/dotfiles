@@ -31,13 +31,15 @@ Plug 'tpope/vim-rake'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/ZoomWin'
 Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
 
 " UI
-Plug 'chriskempson/base16-vim'
+Plug 'drewtempelmeyer/palenight.vim'
+Plug 'itchyny/lightline.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
@@ -45,10 +47,16 @@ Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
+
+" Plug 'chriskempson/base16-vim'
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
+
+" Python
+let g:python_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim2/bin/python'
+let g:python3_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim3/bin/python'
 
 """""""""""""""""""""
 " autocmd Settings "
@@ -85,8 +93,7 @@ let maplocalleader="\\"
 let base16colorspace=256
 syntax enable
 set background=dark
-colorscheme base16-eighties
-" colorscheme base16-black-metal-bathory
+colorscheme palenight
 
 " Start and End tags are same color
 hi Tag        ctermfg=04
@@ -121,6 +128,7 @@ set cursorline
 set number
 set norelativenumber
 set scrolloff=999
+set sidescrolloff=15
 set showcmd
 set showmatch
 set splitbelow
@@ -151,8 +159,8 @@ set mouse=a
 " Custom Commands "
 """""""""""""""""""
 
-" :command StripWhitespace :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
-" command! -nargs=+ Z execute "cd " . system("execz.sh")
+command! StripWhitespace %s/\s\+$//e
+command! -nargs=+ Z execute "cd " . system("~/code/dotfiles/execz.sh")
 
 """"""""""""""""
 " Custom Binds "
@@ -184,16 +192,9 @@ inoremap <up> <c-o>gk
 vnoremap // y/<C-R>"<CR>
 
 " Layout mappings
-nnoremap <leader>wK :resize +5<CR>
-nnoremap <leader>wJ :resize -5<CR>
-nnoremap <leader>wL :vertical resize +5<CR>
-nnoremap <leader>wH :vertical resize -5<CR>
-nnoremap <leader>wk :resize +1<CR>
-nnoremap <leader>wj :resize -1<CR>
-nnoremap <leader>wl :vertical resize +1<CR>
-nnoremap <leader>wh :vertical resize -1<CR>
-nnoremap <leader>ww :<up><CR>
-nnoremap <leader>s ml:tabedit %<CR>'l
+nnoremap st ml:tabedit %<CR>'l
+nnoremap <leader>w= :set lazyredraw<CR><C-w>=<C-w>j:res 20<CR><C-w>k:set lazyredraw<CR>
+nnoremap <leader>wl :set lazyredraw<CR><C-w>=<C-w>j:res 15<CR><C-w>k:set lazyredraw<CR>
 
 nnoremap s% :echo @%<CR>
 nnoremap sn% :NERDTreeFind<CR>
@@ -246,7 +247,7 @@ nnoremap <leader>fc :Commands<CR>
 nnoremap <leader>fi :Files<CR>
 nnoremap <leader>fh :Helptags<CR>
 nnoremap <leader>flb :BLines<CR>
-nnoremap <leader>fll :Lines<CR>
+nnoremap <leader>fla :Lines<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>fg :GFiles?<CR>
@@ -265,7 +266,18 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
-set notermguicolors
+
+if (has("nvim"))
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
+
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+if (has("termguicolors"))
+  set termguicolors
+endif
 
 " Search highlight comes back after reloading vimrc.  Hide it
 :nohlsearch
@@ -291,14 +303,15 @@ let g:closetag_shortcut = '<c-b>'
 let g:gutentags_project_root=['.tags-root']
 
 " Ale
-let g:ale_sign_column_always = 1
-let g:ale_lint_on_enter=1
-let g:ale_lint_on_text_changed='never'
-let g:ale_linters = {
-\  'html': [],
-\  'javascript': ['eslint'],
-\  'ruby': ['ruby', 'rubocop'],
-\}
+" let g:ale_sign_column_always = 1
+" let g:ale_lint_on_enter=1
+" let g:ale_lint_on_text_changed='never'
+" let g:ale_linters = {
+" \  'html': [],
+" \  'javascript': ['eslint'],
+" \  'ruby': ['ruby', 'rubocop'],
+" \}
+let g:ale_enabled=0
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -324,6 +337,12 @@ command! -bang -nargs=? -complete=dir Files
 
 command! -bang -nargs=? -complete=dir GFiles
   \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+" lightline
+" let g:lightline.colorscheme = 'palenight'
+let g:lightline = {
+      \ 'colorscheme': 'palenight'
+      \ }
 
 " Airline
 let g:airline_theme='base16'
@@ -383,15 +402,15 @@ if has('nvim')
   augroup end
 
   " UI
-  hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
+  " hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
+  hi! TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=14 guibg=#93a1a1 cterm=NONE gui=NONE
 
   " Vim-test
   let test#strategy = 'neoterm'
 
 " Terminal mode binds
-  tnoremap jk <C-\><C-N>
-  tnoremap <C-n> <down>
-  tnoremap <C-p> <up>
+  " tnoremap jk <C-\><C-N>
+  tnoremap \\ <C-\><C-N>
 
   " Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
   " in a normal buffer (i.e. next key pastes from that buffer)
@@ -407,14 +426,14 @@ if has('nvim')
   nnoremap <leader>term :file<Space>term-
 
   " Neoterm / Vim-Test
-  nnoremap <leader>td :call neoterm#do("\<C-d>")<CR>
-  nnoremap <leader>tq :call neoterm#kill()<CR>
-  nnoremap <leader>tQ :call neoterm#kill()<CR>:call neoterm#kill()<CR>
-  nnoremap <leader>tn :TestNearest<CR>
-  nnoremap <leader>tf :TestFile<CR>
-  nnoremap <leader>ts :TestSuite<CR>
-  nnoremap <leader>tl :TestLast<CR>
-  nnoremap <leader>tL :call neoterm#kill()<CR>:call neoterm#kill()<CR>:TestLast<CR>
+  nnoremap <leader>td :T <C-d>
+  nnoremap <leader>tq :Tkill<CR>
+  nnoremap <leader>tQ :Tkill<CR>:Tkill<CR>
+  nnoremap <leader>tn :silent! :wa<CR>:TestNearest<CR>
+  nnoremap <leader>tf :silent! :wa<CR>:TestFile<CR>
+  nnoremap <leader>ts :silent! :wa<CR>:TestSuite<CR>
+  nnoremap <leader>tl :silent! :wa<CR>:TestLast<CR>
+  nnoremap <leader>tL :silent! :wa<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
   nnoremap <leader>tg :TestVisit<CR>
   nnoremap <leader>tt :Tnew<CR>
   nnoremap <leader>tfile :TREPLSendFile<CR>
