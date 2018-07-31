@@ -9,7 +9,6 @@ Plug 'alvan/vim-closetag'
 Plug 'ap/vim-buftabline'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'janko-m/vim-test'
-Plug 'jceb/vim-orgmode'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -39,7 +38,6 @@ Plug 'wesQ3/vim-windowswap'
 
 " UI
 Plug 'drewtempelmeyer/palenight.vim'
-Plug 'itchyny/lightline.vim'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
@@ -48,6 +46,7 @@ Plug 'mhinz/vim-startify'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
 
+" Plug 'itchyny/lightline.vim'
 " Plug 'chriskempson/base16-vim'
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
@@ -90,7 +89,7 @@ let mapleader="\<Space>"
 let maplocalleader="\\"
 
 " Colors
-let base16colorspace=256
+" let base16colorspace=256
 syntax enable
 set background=dark
 colorscheme palenight
@@ -122,10 +121,12 @@ set softtabstop=2
 set tabstop=2
 
 " UI
+set lazyredraw
 set colorcolumn=80
-set cursorcolumn
-set cursorline
-set number
+set synmaxcol=128
+" set cursorcolumn
+" set cursorline
+set nonumber
 set norelativenumber
 set scrolloff=999
 set sidescrolloff=15
@@ -174,7 +175,8 @@ cnoremap <c-n> <down>
 cnoremap <c-p> <up>
 
 " Best
-imap jk <esc>
+inoremap jk <Esc>
+inoremap <C-l> <Esc>
 
 " Up and down traverse into wrapped lines
 nnoremap j gj
@@ -211,11 +213,14 @@ nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
 
 nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
-nnoremap <leader>ll <C-^>
-nnoremap <leader>ls :nohlsearch<CR>
+nnoremap <leader>l <C-^>
+nnoremap <leader>nl :nohlsearch<CR>
 
-nnoremap ss "+
+nnoremap <leader>' "+
 nnoremap <leader>y "+y
+nnoremap <leader>p "+p
+vnoremap <leader>y "+y
+vnoremap <leader>p "+p
 nnoremap <leader>wa :silent! :wa<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>bd :bp <bar> bd #<CR>
@@ -229,6 +234,8 @@ nnoremap <C-S-p> :bprevious<CR>
 nnoremap <leader>file :set filetype=
 nnoremap <leader>z :cd ~/code/ws/
 
+nnoremap <leader>nu :set number!<CR>
+
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
@@ -237,7 +244,6 @@ nmap ga <Plug>(EasyAlign)
 nnoremap <silent> sn :ALENextWrap<CR>
 nnoremap <silent> sp :ALEPreviousWrap<CR>
 nnoremap sl :ALELint<CR>
-nnoremap <leader>p :PlugInstall<CR>
 
 " FZF mappings
 nnoremap <C-f> :GFiles!<CR>
@@ -266,18 +272,10 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
-
-if (has("nvim"))
-  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
-
-"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-if (has("termguicolors"))
-  set termguicolors
-endif
+" Fugitive settings
+nnoremap <leader>gst :Gstatus<CR>
+nnoremap <leader>gsp :Gstatus
+nnoremap <leader>gvs :Gvsplit
 
 " Search highlight comes back after reloading vimrc.  Hide it
 :nohlsearch
@@ -338,11 +336,11 @@ command! -bang -nargs=? -complete=dir Files
 command! -bang -nargs=? -complete=dir GFiles
   \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 
-" lightline
-" let g:lightline.colorscheme = 'palenight'
-let g:lightline = {
-      \ 'colorscheme': 'palenight'
-      \ }
+" " lightline
+" " let g:lightline.colorscheme = 'palenight'
+" let g:lightline = {
+"       \ 'colorscheme': 'palenight',
+"       \ }
 
 " Airline
 let g:airline_theme='base16'
@@ -381,7 +379,21 @@ let g:gitgutter_map_keys=0
 " Neovim Settings "
 """""""""""""""""""
 
+
+if (has("nvim"))
+endif
+
+""For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+""Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+"" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+"if (has("termguicolors"))
+"  set termguicolors
+"endif
+
 if has('nvim')
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+
   augroup tmappings
     autocmd!
     " https://gist.github.com/nelstrom/d08d342501d59abdac95b9d28fdb4cfc
@@ -390,13 +402,13 @@ if has('nvim')
     " ctrl-e - jump to end of line
     " ctrl-k - kill forwards to the end of line
     " ctrl-u - kill backwards to the start of line
-    autocmd TermOpen * nnoremap <buffer> I I<C-a>
-    autocmd TermOpen * nnoremap <buffer> A A<C-e>
-    autocmd TermOpen * nnoremap <buffer> C A<C-k>
-    autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
-    autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
-    autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
-    autocmd TermOpen * nnoremap <leader>bd :bp <bar> bd! #<CR>
+    " autocmd TermOpen * nnoremap <buffer> I I<C-a>
+    " autocmd TermOpen * nnoremap <buffer> A A<C-e>
+    " autocmd TermOpen * nnoremap <buffer> C A<C-k>
+    " autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
+    " autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
+    " autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
+    " autocmd TermOpen * nnoremap <leader>bd :bp <bar> bd! #<CR>
 
     autocmd TermOpen * setlocal scrollback=30000
   augroup end
@@ -405,12 +417,15 @@ if has('nvim')
   " hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
   hi! TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=14 guibg=#93a1a1 cterm=NONE gui=NONE
 
+  nnoremap <leader>T :bot sp +term<CR><C-\><C-N>:file term-
+
   " Vim-test
   let test#strategy = 'neoterm'
 
-" Terminal mode binds
+  " Terminal mode binds
   " tnoremap jk <C-\><C-N>
-  tnoremap \\ <C-\><C-N>
+  tnoremap ;; <C-\><C-N>
+  tnoremap <C-l> <C-\><C-N>
 
   " Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
   " in a normal buffer (i.e. next key pastes from that buffer)
