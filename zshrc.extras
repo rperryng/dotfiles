@@ -30,7 +30,7 @@ alias rm-swap="rm ~/.local/share/nvim/swap/*"
 
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
-  export VISUAL="nvr -cc split --remote-wait +'setlocal bufhidden=wipe'"
+  export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
   alias nv="nvr"
 else
   export VISUAL=nvim
@@ -51,15 +51,18 @@ alias gcmsg="git commit -m"
 alias gcane="git commit --amend --no-edit"
 alias gcam="git commit --amend -m"
 
-# Enable vim keybinds and rebind some classic insert-mode emacs shortcuts
-# Remove `bindkey \ec fzf-cd-widget` to stop interfering with normal mode `c`
-set -o vi
+# shhh
+bindkey -e
 
-# Rebind some classic insert-mode emacs shortcuts
-bindkey "^P" up-line-or-search
-bindkey "^N" down-line-or-search
+# Shouldn't be necessary...
 bindkey "^A" beginning-of-line
 bindkey "^E" end-of-line
 bindkey "^U" backward-kill-line
+bindkey "^B" backward-char
+bindkey "^F" forward-char
 
-bindkey "^Y" fzf-cd-widget
+# Vim conventions
+bindkey "^P" up-line-or-search
+bindkey "^N" down-line-or-search
+
+# bindkey "^Y" fzf-cd-widget
