@@ -94,6 +94,11 @@ syntax enable
 set background=dark
 colorscheme palenight
 
+hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
+hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+hi VertSplit    ctermfg=15  guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+set fillchars+=vert:\ " intentional whitespace after forward slash
+
 " Start and End tags are same color
 hi Tag        ctermfg=04
 hi xmlTag     ctermfg=04
@@ -110,6 +115,7 @@ set hidden
 set history=10000
 set nrformats-=octal
 set updatetime=250
+runtime macros/matchit.vim
 
 " Spaces & tabs
 filetype plugin indent on
@@ -123,7 +129,7 @@ set tabstop=2
 " UI
 set lazyredraw
 set colorcolumn=80
-set synmaxcol=128
+set synmaxcol=400
 " set cursorcolumn
 " set cursorline
 set nonumber
@@ -131,7 +137,7 @@ set norelativenumber
 set scrolloff=999
 set sidescrolloff=15
 set showcmd
-set showmatch
+set noshowmatch
 set splitbelow
 set splitright
 set textwidth=0
@@ -156,6 +162,7 @@ set inccommand=split
 " Mouse support?
 set mouse=a
 
+
 """""""""""""""""""
 " Custom Commands "
 """""""""""""""""""
@@ -166,17 +173,14 @@ command! -nargs=+ Z execute "cd " . system("~/code/dotfiles/execz.sh")
 """"""""""""""""
 " Custom Binds "
 """"""""""""""""
-" Insert empty lines
-nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<CR>'[
-nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<CR>
+
+" Best
+inoremap jk <Esc>
+inoremap <C-y> <Esc>
 
 " Match current input
 cnoremap <c-n> <down>
 cnoremap <c-p> <up>
-
-" Best
-inoremap jk <Esc>
-inoremap <C-l> <Esc>
 
 " Up and down traverse into wrapped lines
 nnoremap j gj
@@ -195,18 +199,14 @@ vnoremap // y/<C-R>"<CR>
 
 " Layout mappings
 nnoremap st ml:tabedit %<CR>'l
-nnoremap <leader>w= :set lazyredraw<CR><C-w>=<C-w>j:res 20<CR><C-w>k:set lazyredraw<CR>
-nnoremap <leader>wl :set lazyredraw<CR><C-w>=<C-w>j:res 15<CR><C-w>k:set lazyredraw<CR>
+nnoremap <leader>w= <C-w>=<C-w>j:res 20<CR><C-w>k
+nnoremap <leader>wl <C-w>=<C-w>j:res 15<CR><C-w>k
+nnoremap <leader>w<space> :res +1<CR>:res -1<CR>
 
-nnoremap s% :echo @%<CR>
-nnoremap sn% :NERDTreeFind<CR>
+nnoremap s% :NERDTreeFind<CR>
 
 " Reload vimrc
 nnoremap <leader>R :source $MYVIMRC<CR>
-
-" Zoom a vim pane
-nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
-nnoremap <leader>= :wincmd =<cr>
 
 " Help aligning ruby params
 nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
@@ -214,7 +214,7 @@ nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
 nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 nnoremap <leader>l <C-^>
-nnoremap <leader>nl :nohlsearch<CR>
+nnoremap <leader>sl :nohlsearch<CR>
 
 nnoremap <leader>' "+
 nnoremap <leader>y "+y
@@ -223,27 +223,25 @@ vnoremap <leader>y "+y
 vnoremap <leader>p "+p
 nnoremap <leader>wa :silent! :wa<CR>
 nnoremap <leader>q :q<CR>
-nnoremap <leader>bd :bp <bar> bd #<CR>
+nnoremap <leader>bd :bp <bar> bd! #<CR>
 nnoremap <leader>bl :ls<CR>:b<space>
 nnoremap <leader>bb <c-^>
 nnoremap <C-n> :tabnext<CR>
 nnoremap <C-p> :tabprevious<CR>
 nnoremap <C-S-n> :bnext<CR>
 nnoremap <C-S-p> :bprevious<CR>
+nnoremap sn :tabnext<CR>
+nnoremap sp :tabprevious<CR>
+nnoremap sln :set
 
 nnoremap <leader>file :set filetype=
 nnoremap <leader>z :cd ~/code/ws/
-
-nnoremap <leader>nu :set number!<CR>
 
 " Plugin mappings
 nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
-nnoremap <silent> sn :ALENextWrap<CR>
-nnoremap <silent> sp :ALEPreviousWrap<CR>
-nnoremap sl :ALELint<CR>
 
 " FZF mappings
 nnoremap <C-f> :GFiles!<CR>
@@ -379,37 +377,19 @@ let g:gitgutter_map_keys=0
 " Neovim Settings "
 """""""""""""""""""
 
-
-if (has("nvim"))
-endif
-
-""For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-""Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-"" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-"if (has("termguicolors"))
-"  set termguicolors
-"endif
-
 if has('nvim')
-  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+
+  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+  if (has("termguicolors"))
+    set termguicolors
+  endif
 
   augroup tmappings
     autocmd!
-    " https://gist.github.com/nelstrom/d08d342501d59abdac95b9d28fdb4cfc
-    " Readline cheatsheet:
-    " ctrl-a - jump to start of line
-    " ctrl-e - jump to end of line
-    " ctrl-k - kill forwards to the end of line
-    " ctrl-u - kill backwards to the start of line
-    " autocmd TermOpen * nnoremap <buffer> I I<C-a>
-    " autocmd TermOpen * nnoremap <buffer> A A<C-e>
-    " autocmd TermOpen * nnoremap <buffer> C A<C-k>
-    " autocmd TermOpen * nnoremap <buffer> D A<C-k><C-\><C-n>
-    " autocmd TermOpen * nnoremap <buffer> cc A<C-e><C-u>
-    " autocmd TermOpen * nnoremap <buffer> dd A<C-e><C-u><C-\><C-n>
-    " autocmd TermOpen * nnoremap <leader>bd :bp <bar> bd! #<CR>
-
     autocmd TermOpen * setlocal scrollback=30000
   augroup end
 
@@ -425,11 +405,17 @@ if has('nvim')
   " Terminal mode binds
   " tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
-  tnoremap <C-l> <C-\><C-N>
+  tnoremap <C-y> <C-\><C-N>
 
   " Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
   " in a normal buffer (i.e. next key pastes from that buffer)
   tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
+
+  " For some reason these break when in an ssh session?
+  tnoremap <C-p> <up>
+  tnoremap <C-n> <down>
+  tnoremap <C-f> <right>
+  tnoremap <C-b> <left>
 
   " Allow tmux navigator to work in :terminal
   tnoremap <silent> <c-h> <c-\><c-n>:TmuxNavigateLeft<cr>
@@ -454,15 +440,7 @@ if has('nvim')
   nnoremap <leader>tfile :TREPLSendFile<CR>
   vnoremap <leader>tsel :TREPLSendSelection<CR>
   nnoremap <leader>tline :TREPLSendLine<CR>
-  nnoremap <leader>neo :Ttoggle<CR>
-
-  " Haaaaddeeeeees
-  nnoremap <leader>tpls :call neoterm#do("\<Up>")<CR>
-
-  nnoremap <leader>tv :let g:neoterm_position='vertical'<CR>:Tnew<CR><C-\><C-n>:file neoterm<CR>
-  nnoremap <leader>ts :let g:neoterm_position='horizontal'<CR>:Tnew<CR><C-\><C-n>:file neoterm<CR>
 
   " neoterm settings
-  let g:neoterm_autoinsert=1
   let g:neoterm_autoscroll=1
 endif
