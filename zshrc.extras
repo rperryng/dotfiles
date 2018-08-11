@@ -30,7 +30,7 @@ alias rm-swap="rm ~/.local/share/nvim/swap/*"
 
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
-  export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
+  export VISUAL="nvr -cc split --remote-wait +'setlocal bufhidden=wipe'"
   alias nv="nvr"
 else
   export VISUAL=nvim
