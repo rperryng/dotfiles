@@ -38,11 +38,13 @@ Plug 'wesQ3/vim-windowswap'
 
 " UI
 Plug 'drewtempelmeyer/palenight.vim'
+Plug 'fenetikm/falcon'
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
 Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'mhinz/vim-startify'
+Plug 'morhetz/gruvbox'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
 
@@ -86,18 +88,17 @@ augroup end
 """"""""""""""""
 
 let mapleader="\<Space>"
-let maplocalleader="\\"
 
 " Colors
 " let base16colorspace=256
 syntax enable
 set background=dark
-colorscheme palenight
+colorscheme gruvbox
 
-hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
-hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
-hi VertSplit    ctermfg=15  guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
-set fillchars+=vert:\ " intentional whitespace after forward slash
+" hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
+" hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+" hi VertSplit    ctermfg=15  guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
+" set fillchars+=vert:\ " intentional whitespace after forward slash
 
 " Start and End tags are same color
 hi Tag        ctermfg=04
@@ -209,7 +210,7 @@ nnoremap s% :NERDTreeFind<CR>
 nnoremap <leader>R :source $MYVIMRC<CR>
 
 " Help aligning ruby params
-nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
+" nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
 
 nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
@@ -221,11 +222,12 @@ nnoremap <leader>y "+y
 nnoremap <leader>p "+p
 vnoremap <leader>y "+y
 vnoremap <leader>p "+p
-nnoremap <leader>wa :silent! :wa<CR>
+nnoremap <leader>wa :silent! :wall<CR>
 nnoremap <leader>q :q<CR>
-nnoremap <leader>bd :bp <bar> bd! #<CR>
-nnoremap <leader>bl :ls<CR>:b<space>
+nnoremap <leader>bd :bprevious <bar> bdelete! #<CR>
+nnoremap <leader>bl :buffers<CR>:buffer<space>
 nnoremap <leader>bb <c-^>
+nnoremap <leader>, :tjump<CR>
 nnoremap <C-n> :tabnext<CR>
 nnoremap <C-p> :tabprevious<CR>
 nnoremap <C-S-n> :bnext<CR>
@@ -270,13 +272,10 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
-" Fugitive settings
+" Fugitive binds
 nnoremap <leader>gst :Gstatus<CR>
 nnoremap <leader>gsp :Gstatus
 nnoremap <leader>gvs :Gvsplit
-
-" Search highlight comes back after reloading vimrc.  Hide it
-:nohlsearch
 
 """""""""""""""""""
 " Plugin Settings "
@@ -322,10 +321,23 @@ let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden=1
 let g:NERDTreeMapHelp = '<F1>'
 
+" Unimpaired
+" Unbind these...
+vunmap <x
+vunmap <u
+vunmap <y
+vunmap >x
+vunmap >u
+vunmap >y
+
 " FZF
 let $FZF_DEFAULT_OPTS .= ' --no-height'
 
-command! -bang -nargs=? -complete=dir Ag
+" Only search file content, i.e. do not match directories
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+
+command! -bang -nargs=* AG
   \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)
 
 command! -bang -nargs=? -complete=dir Files
@@ -333,45 +345,6 @@ command! -bang -nargs=? -complete=dir Files
 
 command! -bang -nargs=? -complete=dir GFiles
   \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
-
-" " lightline
-" " let g:lightline.colorscheme = 'palenight'
-" let g:lightline = {
-"       \ 'colorscheme': 'palenight',
-"       \ }
-
-" Airline
-let g:airline_theme='base16'
-let g:airline_powerline_fonts=1
-let g:airline#extensions#ale#enabled = 1
-
-if !exists('g:airline_symbols')
-  let g:airline_symbols={}
-endif
-
-let g:airline_left_sep='»'
-let g:airline_left_sep='▶'
-let g:airline_right_sep='«'
-let g:airline_right_sep='◀'
-let g:airline_symbols.linenr='␊'
-let g:airline_symbols.linenr='␤'
-let g:airline_symbols.linenr='¶'
-let g:airline_symbols.branch='⎇'
-let g:airline_symbols.paste='ρ'
-let g:airline_symbols.paste='Þ'
-let g:airline_symbols.paste='∥'
-let g:airline_symbols.whitespace='Ξ'
-
-let g:airline_left_sep=''
-let g:airline_left_alt_sep=''
-let g:airline_right_sep=''
-let g:airline_right_alt_sep=''
-let g:airline_symbols.branch=''
-let g:airline_symbols.readonly=''
-let g:airline_symbols.linenr=''
-
-" GitGutter
-let g:gitgutter_map_keys=0
 
 """""""""""""""""""
 " Neovim Settings "
@@ -397,10 +370,11 @@ if has('nvim')
   " hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
   hi! TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=14 guibg=#93a1a1 cterm=NONE gui=NONE
 
-  nnoremap <leader>T :bot sp +term<CR><C-\><C-N>:file term-
-
   " Vim-test
   let test#strategy = 'neoterm'
+
+  nnoremap <leader>T :bot sp<CR>:enew<CR>:Tnew<CR>:file neoterm<CR>
+  nnoremap <leader>term :term<CR>:file term-
 
   " Terminal mode binds
   " tnoremap jk <C-\><C-N>
@@ -424,8 +398,6 @@ if has('nvim')
   tnoremap <silent> <c-l> <c-\><c-n>:TmuxNavigateRight<cr>
   tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
 
-  nnoremap <leader>term :file<Space>term-
-
   " Neoterm / Vim-Test
   nnoremap <leader>td :T <C-d>
   nnoremap <leader>tq :Tkill<CR>
@@ -444,3 +416,6 @@ if has('nvim')
   " neoterm settings
   let g:neoterm_autoscroll=1
 endif
+
+" Search highlight comes back after reloading vimrc.  Hide it
+:nohlsearch
