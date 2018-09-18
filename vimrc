@@ -4,10 +4,14 @@
 call plug#begin('~/.vim/plugged')
 
 " Functionality
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Yilin-Yang/vim-markbar'
 Plug 'alvan/vim-closetag'
 Plug 'ap/vim-buftabline'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'dbakker/vim-projectroot'
+Plug 'gcmt/taboo.vim'
 Plug 'janko-m/vim-test'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -18,6 +22,7 @@ Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'prakashdanish/vim-githubinator'
 Plug 'scrooloose/nerdtree'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-bundler'
@@ -27,23 +32,25 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rake'
+Plug 'tpope/vim-rbenv'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/ZoomWin'
 Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
 
-" UI
+" " UI
+Plug 'Yggdroot/indentLine'
 Plug 'drewtempelmeyer/palenight.vim'
-Plug 'fenetikm/falcon'
 Plug 'joshdick/onedark.vim'
+Plug 'junegunn/vim-journal'
 Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
 Plug 'metalelf0/base16-black-metal-scheme'
-Plug 'mhinz/vim-startify'
 Plug 'morhetz/gruvbox'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
@@ -59,6 +66,9 @@ call plug#end()
 let g:python_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim2/bin/python'
 let g:python3_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim3/bin/python'
 
+" Ruby
+let g:ruby_host_prog='/Users/rperrynguyen/.rbenv/versions/2.5.1/bin/ruby'
+
 """""""""""""""""""""
 " autocmd Settings "
 """""""""""""""""""""
@@ -66,9 +76,15 @@ let g:python3_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim3/bin/python'
 augroup focusgroup
   autocmd!
   " Preserve cursor location when switching buffers
-  au BufLeave * let b:winview = winsaveview()
-  au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
-  au FocusGained,BufEnter * :silent! checkt
+  autocmd BufLeave * let b:winview = winsaveview()
+  autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+  autocmd FocusGained,BufEnter * :silent! checkt
+augroup end
+
+augroup dir
+  autocmd!
+  autocmd DirChanged :silent NERDTree-CD<CR>
+  autocmd DirChanged :echo 'changed directory'
 augroup end
 
 augroup filetypes
@@ -77,7 +93,8 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
   autocmd BufNewFile,BufReadPost *.zshrc set filetype=zsh
   autocmd BufNewFile,BufReadPost *.org set filetype=org
-  autocmd BufNewFile,BufReadPost *.rb set colorcolumn=100
+  autocmd BufNewFile,BufReadPost *.rb set colorcolumn=101
+  autocmd BufNewFile,BufReadPost *.rb set textwidth=100
   autocmd FileType yaml setlocal commentstring=#\ %s
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setl nosmartindent
@@ -90,7 +107,14 @@ augroup end
 let mapleader="\<Space>"
 
 " Colors
-" let base16colorspace=256
+if has('nvim')
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
+
+if (has("termguicolors"))
+  set termguicolors
+endif
+
 syntax enable
 set background=dark
 colorscheme gruvbox
@@ -163,21 +187,55 @@ set inccommand=split
 " Mouse support?
 set mouse=a
 
-
 """""""""""""""""""
 " Custom Commands "
 """""""""""""""""""
 
 command! StripWhitespace %s/\s\+$//e
-command! -nargs=+ Z execute "cd " . system("~/code/dotfiles/execz.sh")
+
+function! ZLookup(z_arg)
+  let z_command = 'cd ' . system('. ~/code/tools/z/z.sh && _z -e ' . a:z_arg)
+  " Strip empty newline so that command line doesn't grow when echoing
+  let z_command = substitute(z_command, "\n", "", "")
+  execute z_command
+  echo z_command
+endfunction
+
+" Change working directory using z.sh
+command! -nargs=+ Z call ZLookup(<q-args>)
 
 """"""""""""""""
 " Custom Binds "
 """"""""""""""""
 
-" Best
+" Insert mode maps
 inoremap jk <Esc>
 inoremap <C-y> <Esc>
+
+" Swap jump to column of mark and jump to beginning of line of mark commands
+nnoremap ' `
+nnoremap ` '
+
+" Use verymagic searching
+nnoremap / /\v
+vnoremap / /\v
+
+" Make list selection for tags the default
+nnoremap <c-]> g<c-]>
+vnoremap <c-]> g<c-]>
+nnoremap g<c-]> <c-]>
+vnoremap g<c-]> <c-]>
+
+" Use 
+
+" Ruby methods can commonly contain word boundary characters like ! or ?
+nnoremap <leader><c-]> viwlg<c-]>
+
+" granular window resizing
+nnoremap + <C-w>+
+nnoremap - <C-w>-
+nnoremap ) <C-w>>
+nnoremap ( <C-w><
 
 " Match current input
 cnoremap <c-n> <down>
@@ -188,18 +246,13 @@ nnoremap j gj
 nnoremap k gk
 vnoremap j gj
 vnoremap k gk
-nnoremap <down> gj
-nnoremap <up> gk
-vnoremap <down> gj
-vnoremap <up> gk
-inoremap <down> <c-o>gj
-inoremap <up> <c-o>gk
 
 " Search for text under visual selection
 vnoremap // y/<C-R>"<CR>
 
 " Layout mappings
 nnoremap st ml:tabedit %<CR>'l
+nnoremap <leader>wr <C-w>j<C-w>j:b neoterm<CR><C-w>:res 20<CR><C-w>k
 nnoremap <leader>w= <C-w>=<C-w>j:res 20<CR><C-w>k
 nnoremap <leader>wl <C-w>=<C-w>j:res 15<CR><C-w>k
 nnoremap <leader>w<space> :res +1<CR>:res -1<CR>
@@ -208,6 +261,7 @@ nnoremap s% :NERDTreeFind<CR>
 
 " Reload vimrc
 nnoremap <leader>R :source $MYVIMRC<CR>
+nnoremap <leader>C :colorscheme gruvbox<CR>
 
 " Help aligning ruby params
 " nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
@@ -245,6 +299,8 @@ nnoremap <leader>n :NERDTreeToggle<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
+map <leader>m <Plug>ToggleMarkbar
+
 " FZF mappings
 nnoremap <C-f> :GFiles!<CR>
 
@@ -272,6 +328,8 @@ nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
 
+nnoremap <leader>cd :ProjectRootCD<CR>
+
 " Fugitive binds
 nnoremap <leader>gst :Gstatus<CR>
 nnoremap <leader>gsp :Gstatus
@@ -294,8 +352,16 @@ let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.js'
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
 let g:closetag_shortcut = '<c-b>'
 
-  " Gutentags
-let g:gutentags_project_root=['.tags-root']
+" Gutentags
+" let g:gutentags_project_root=['.tags-root']
+
+" vim-markbar
+let g:markbar_open_position='botright'
+let g:markbar_open_vertical=v:false
+let g:markbar_height=10
+
+" vim-indentline
+let g:indentLine_bufTypeExclude=['help', 'terminal']
 
 " Ale
 " let g:ale_sign_column_always = 1
@@ -319,26 +385,22 @@ let NERDTreeAutoDeleteBuffer=1
 let NERDTreeDirArrows = 1
 let NERDTreeMinimalUI = 1
 let NERDTreeShowHidden=1
-let g:NERDTreeMapHelp = '<F1>'
+let g:NERDTreeMapHelp = '\'
 
-" Unimpaired
-" Unbind these...
-vunmap <x
-vunmap <u
-vunmap <y
-vunmap >x
-vunmap >u
-vunmap >y
 
 " FZF
 let $FZF_DEFAULT_OPTS .= ' --no-height'
 
-" Only search file content, i.e. do not match directories
+" :Ag Only search file content, i.e. do not match directories
 command! -bang -nargs=* Ag
   \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
+" :AG Match directories as well (useful to filter out specs)
 command! -bang -nargs=* AG
   \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+" :Tags 
+command! -bang -nargs=* Tags call fzf#vim#tags(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
@@ -351,16 +413,6 @@ command! -bang -nargs=? -complete=dir GFiles
 """""""""""""""""""
 
 if has('nvim')
-
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-
-  "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
-  "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
-  " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-  if (has("termguicolors"))
-    set termguicolors
-  endif
-
   augroup tmappings
     autocmd!
     autocmd TermOpen * setlocal scrollback=30000
@@ -391,6 +443,9 @@ if has('nvim')
   tnoremap <C-f> <right>
   tnoremap <C-b> <left>
 
+  " Convenience
+  tnoremap ;nn ;nil<CR>
+
   " Allow tmux navigator to work in :terminal
   tnoremap <silent> <c-h> <c-\><c-n>:TmuxNavigateLeft<cr>
   tnoremap <silent> <c-j> <c-\><c-n>:TmuxNavigateDown<cr>
@@ -402,11 +457,11 @@ if has('nvim')
   nnoremap <leader>td :T <C-d>
   nnoremap <leader>tq :Tkill<CR>
   nnoremap <leader>tQ :Tkill<CR>:Tkill<CR>
-  nnoremap <leader>tn :silent! :wa<CR>:TestNearest<CR>
-  nnoremap <leader>tf :silent! :wa<CR>:TestFile<CR>
-  nnoremap <leader>ts :silent! :wa<CR>:TestSuite<CR>
-  nnoremap <leader>tl :silent! :wa<CR>:TestLast<CR>
-  nnoremap <leader>tL :silent! :wa<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
+  nnoremap <leader>tn :silent! :wall<CR>:TestNearest<CR>
+  nnoremap <leader>tf :silent! :wall<CR>:TestFile<CR>
+  nnoremap <leader>ts :silent! :wall<CR>:TestSuite<CR>
+  nnoremap <leader>tl :silent! :wall<CR>:TestLast<CR>
+  nnoremap <leader>tL :silent! :wall<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
   nnoremap <leader>tg :TestVisit<CR>
   nnoremap <leader>tt :Tnew<CR>
   nnoremap <leader>tfile :TREPLSendFile<CR>

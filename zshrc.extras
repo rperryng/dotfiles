@@ -65,4 +65,11 @@ bindkey "^F" forward-char
 bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
 
+#
+case `uname` in
+  Darwin)
+    alias ls="ls -G"
+  ;;
+esac
+
 # bindkey "^Y" fzf-cd-widget
