@@ -23,7 +23,17 @@ git config --global core.excludesfile ~/.gitignore
 
 alias rm-swap="rm ~/.local/share/nvim/swap/*"
 
-# Base16
+HISTSIZE=5000               # How many lines of history to keep in memory
+HISTFILE=~/.zsh_history     # Where to save history to disk
+SAVEHIST=5000               # Number of history entries to save to disk
+HISTDUP=erase               # Erase duplicates in the history file
+# Immediately append to the history file, not just when a term is killed# Base16
+setopt    sharehistory      
+# Share history across terminals
+setopt    appendhistory     
+# Append history to the history file (no overwriting)
+setopt    incappendhistory  
+
 # BASE16_SHELL=$HOME/.config/base16-shell/
 # [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
 # base16_onedark
@@ -72,4 +82,6 @@ case `uname` in
   ;;
 esac
 
-# bindkey "^Y" fzf-cd-widget
+bindkey "^Y" fzf-cd-widget
+bindkey "^R" fzf-history-widget
+bindkey "^T" fzf-file-widget

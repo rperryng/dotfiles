@@ -1,7 +1,13 @@
 """""""""""
 " Plugins "
 """""""""""
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.local/share/nvim/plugged')
+
+" LSP
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
@@ -21,6 +27,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'mileszs/ack.vim'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'scrooloose/nerdtree'
@@ -43,7 +50,7 @@ Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
 Plug 'wesQ3/vim-windowswap'
 
-" " UI
+" UI
 Plug 'Yggdroot/indentLine'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'joshdick/onedark.vim'
@@ -83,8 +90,9 @@ augroup end
 
 augroup dir
   autocmd!
-  autocmd DirChanged :silent NERDTree-CD<CR>
-  autocmd DirChanged :echo 'changed directory'
+  " NERDTree always matches vim's working directory
+  " autocmd DirChanged * :silent NERDTreeCWD
+  " autocmd DirChanged * :silent NERDTreeCWD
 augroup end
 
 augroup filetypes
@@ -93,8 +101,9 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.jshintrc set filetype=javascript
   autocmd BufNewFile,BufReadPost *.zshrc set filetype=zsh
   autocmd BufNewFile,BufReadPost *.org set filetype=org
-  autocmd BufNewFile,BufReadPost *.rb set colorcolumn=101
-  autocmd BufNewFile,BufReadPost *.rb set textwidth=100
+  autocmd FileType ruby setlocal colorcolumn=101
+  autocmd FileType ruby setlocal textwidth=100
+  autocmd FileType ruby setlocal omnifunc=LanguageClient#complete
   autocmd FileType yaml setlocal commentstring=#\ %s
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setl nosmartindent
@@ -187,12 +196,26 @@ set inccommand=split
 " Mouse support?
 set mouse=a
 
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep --no-heading --smart-case'
+else
+  echom 'no ripgrep found'
+endif
+
 """""""""""""""""""
 " Custom Commands "
 """""""""""""""""""
 
+" Strip Whitespace
+""""""""""""""""""
 command! StripWhitespace %s/\s\+$//e
 
+" Change working directory using z.sh
+"""""""""""""""""""""""""""""""""""""
 function! ZLookup(z_arg)
   let z_command = 'cd ' . system('. ~/code/tools/z/z.sh && _z -e ' . a:z_arg)
   " Strip empty newline so that command line doesn't grow when echoing
@@ -201,12 +224,80 @@ function! ZLookup(z_arg)
   echo z_command
 endfunction
 
-" Change working directory using z.sh
 command! -nargs=+ Z call ZLookup(<q-args>)
+
+" Format JSON
+"""""""""""""
+function! FormatJson()
+  execute '%!python -m json.tool'
+  execute 'normal! gg=G'
+endfunction
+command! FormatJson call FormatJson()
+
+" Start Ruby LSP for project of current file
+""""""""""""""""""""""""""""""""""""""""""""
+function! Solargraph()
+  execute 'ProjectRootCD'
+  let solargraph_buffer_name = 'term-solargraph-' . fnamemodify(getcwd(), ':t')
+
+  if bufexists(solargraph_buffer_name)
+    echom solargraph_buffer_name . ' already running!'
+    execute 'buffer ' . solargraph_buffer_name
+    return
+  endif
+
+  botright split
+  terminal solargraph socket
+  let rename_buffer_command = 'file ' . solargraph_buffer_name
+  execute rename_buffer_command
+endfunction
+
+command! Solargraph :call Solargraph()
+
+" Clear Terminal Scrollback history
+"""""""""""""""""""""""""""""""""""
+function! ClearScrollback()
+  let current_scrollback=&scrollback
+  setlocal scrollback=1
+  let &l:scrollback=current_scrollback
+endfunction
+command! ClearScrollback :call ClearScrollback()
+
+""""""""""""""""""""
+" Custom Functions "
+""""""""""""""""""""
+
+" Move visual selections up and down.
+" So bad, but so good.
+" https://github.com/wincent/wincent/blob/fe798113/roles/dotfiles/files/.vim/autoload/wincent/mappings/visual.vim
+function! s:Visual()
+  return visualmode() == 'V'
+endfunction
+
+function! s:Move(address, at_limit)
+  if s:Visual() && !a:at_limit
+    execute "'<,'>move " . a:address
+  endif
+  call feedkeys('gv', 'n')
+endfunction
+
+function! Move_up() abort range
+  let l:at_top=a:firstline == 1
+  call s:Move("'<-2", l:at_top)
+endfunction
+
+function! Move_down() abort range
+  let l:at_bottom=a:lastline == line('$')
+  call s:Move("'>+1", l:at_bottom) call feedkeys('gv=', 'n')
+endfunction
 
 """"""""""""""""
 " Custom Binds "
 """"""""""""""""
+
+" Move VISUAL LINE selection within buffer.
+xnoremap <silent> K :call Move_up()<CR>
+xnoremap <silent> J :call Move_down()<CR>
 
 " Insert mode maps
 inoremap jk <Esc>
@@ -226,10 +317,11 @@ vnoremap <c-]> g<c-]>
 nnoremap g<c-]> <c-]>
 vnoremap g<c-]> <c-]>
 
-" Use 
-
 " Ruby methods can commonly contain word boundary characters like ! or ?
+" Add helpers for motions that operate on the word under the cursor to include
+" these tokens
 nnoremap <leader><c-]> viwlg<c-]>
+nnoremap <leader>* viwl*
 
 " granular window resizing
 nnoremap + <C-w>+
@@ -257,14 +349,12 @@ nnoremap <leader>w= <C-w>=<C-w>j:res 20<CR><C-w>k
 nnoremap <leader>wl <C-w>=<C-w>j:res 15<CR><C-w>k
 nnoremap <leader>w<space> :res +1<CR>:res -1<CR>
 
+" Plugin commands
 nnoremap s% :NERDTreeFind<CR>
+nnoremap <Leader>ag :Ack!<Space>''<left>
 
 " Reload vimrc
 nnoremap <leader>R :source $MYVIMRC<CR>
-nnoremap <leader>C :colorscheme gruvbox<CR>
-
-" Help aligning ruby params
-" nnoremap <leader>, /,<CR>cgn,<CR><ESC>n
 
 nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
@@ -335,9 +425,22 @@ nnoremap <leader>gst :Gstatus<CR>
 nnoremap <leader>gsp :Gstatus
 nnoremap <leader>gvs :Gvsplit
 
+" LanguageClient
+nnoremap <leader>h :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <leader>gd :call LanguageClient#textDocument_definition()<CR>
+
+nnoremap <leader>rename <F2> :call LanguageClient#textDocument_rename()<CR>
+
 """""""""""""""""""
 " Plugin Settings "
 """""""""""""""""""
+
+" LanguageClient
+let g:LanguageClient_autoStop = 0
+let g:LanguageClient_serverCommands = {
+    \ 'ruby': ['tcp://localhost:7658']
+    \ }
 
 " vim-test
 let test#ruby#rspec#executable = 'bundle exec rspec'
@@ -345,6 +448,7 @@ let test#ruby#rspec#executable = 'bundle exec rspec'
 " vim-buftabline
 let g:buftabline_numbers=1
 let g:buftabline_separators=1
+let g:buftabline_plug_max=0
 hi default link BufTabLineActive TabLine
 
 " vim-closetag
@@ -425,8 +529,8 @@ if has('nvim')
   " Vim-test
   let test#strategy = 'neoterm'
 
-  nnoremap <leader>T :bot sp<CR>:enew<CR>:Tnew<CR>:file neoterm<CR>
-  nnoremap <leader>term :term<CR>:file term-
+  nnoremap <leader>T :botright split<CR>:enew<CR>:Tnew<CR>:file neoterm<CR>
+  nnoremap <leader>term :terminal<CR>:file term-
 
   " Terminal mode binds
   " tnoremap jk <C-\><C-N>
