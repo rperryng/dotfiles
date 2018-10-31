@@ -60,6 +60,25 @@ alias glo="git log --oneline"
 alias gcmsg="git commit -m"
 alias gcane="git commit --amend --no-edit"
 alias gcam="git commit --amend -m"
+alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
+alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
+alias g_branch="git symbolic-ref --short -q HEAD"
+
+alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
+
+# replay all commits, starting at feature_branch exclusive, through
+# dependent_feature inclusive onto master
+function rebase_dependent() {
+  # $1 = feature_branch
+  # $2 = dependent branch
+  git rebase --onto master $1 $(g_branch)
+}
+
+case `uname` in
+  Darwin)
+    alias ls="gls -G"
+  ;;
+esac
 
 # shhh
 bindkey -e
@@ -74,13 +93,6 @@ bindkey "^F" forward-char
 # Vim conventions
 bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
-
-#
-case `uname` in
-  Darwin)
-    alias ls="ls -G"
-  ;;
-esac
 
 bindkey "^Y" fzf-cd-widget
 bindkey "^R" fzf-history-widget
