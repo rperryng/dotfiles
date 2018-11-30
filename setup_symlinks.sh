@@ -14,3 +14,11 @@ mkdir -p ~/.config/nvim
 ln -s $DOTFILES_SOURCE/vimrc ~/.config/nvim/init.vim
 
 ln -s $DOTFILES_SOURCE/ideavimrc ~/.ideavimrc
+
+if command -v rbenv 2>/dev/null; then
+  echo "symlinking rbenv default-gems"
+  ln -s $DOTFILES_SOURCE/default-gems $(rbenv root)/default-gems
+else
+  echo "rbenv not installed"
+  echo "Don't forget to symlink default-gems file later!"
+fi
