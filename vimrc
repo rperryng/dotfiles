@@ -1,38 +1,43 @@
+" vim: set foldmethod=marker:
+
 "{{{ Plugins
+
+" :CocInstall coc-solargraph
 
 call plug#begin('~/.local/share/nvim/plugged')
 
-" LSP
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'bash install.sh',
+"     \ }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Yilin-Yang/vim-markbar'
 Plug 'alvan/vim-closetag'
-Plug 'ap/vim-buftabline'
-Plug 'christoomey/vim-tmux-navigator'
+" Plug 'ap/vim-buftabline'
 Plug 'dbakker/vim-projectroot'
-Plug 'gcmt/taboo.vim'
+Plug 'haya14busa/incsearch-fuzzy.vim'
+Plug 'haya14busa/incsearch.vim'
 Plug 'janko-m/vim-test'
+Plug 'jesseleite/vim-agriculture'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/vim-peekaboo'
 Plug 'junegunn/vim-easy-align'
+Plug 'junegunn/vim-peekaboo'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'michaeljsmith/vim-indent-object'
-Plug 'mileszs/ack.vim'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
 Plug 'scrooloose/nerdtree'
+Plug 'simeji/winresizer'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
@@ -47,10 +52,7 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/ZoomWin'
-Plug 'w0rp/ale'
 Plug 'wellle/targets.vim'
-Plug 'wesQ3/vim-windowswap'
 
 " UI
 Plug 'Yggdroot/indentLine'
@@ -64,21 +66,28 @@ Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'morhetz/gruvbox'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
+Plug 'ryanoasis/vim-devicons'
+
+" 'Maybe' pile
 " Plug 'itchyny/lightline.vim'
 " Plug 'chriskempson/base16-vim'
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
+" Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 " }}}
 
-" Python
+" {{{ Host programs
+" ===========
 let g:python_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim2/bin/python'
 let g:python3_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim3/bin/python'
 
 " Ruby
 let g:ruby_host_prog='/Users/rperrynguyen/.rbenv/versions/2.5.1/bin/ruby'
+" }}}
 
 " {{{ Autocmd settings
 
@@ -90,8 +99,8 @@ augroup focusgroup
   autocmd FocusGained,BufEnter * :silent! checkt
 
   " Preserve folds between vim sessions
-  " autocmd BufWinLeave * silent! mkview
-  " autocmd BufWinEnter * silent! loadview
+  autocmd BufWinLeave * silent! mkview
+  autocmd BufWinEnter * silent! loadview
 augroup end
 
 augroup dir
@@ -108,14 +117,14 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.zshrc set filetype=zsh
   autocmd BufNewFile,BufReadPost *.org set filetype=org
   autocmd BufNewFile,BufReadPost *.journal set filetype=journal
-  autocmd BufNewFile,BufReadPost standup.md setlocal foldmethod=marker
 
-  autocmd FileType vim setlocal conceallevel=0
-  autocmd FileType vim setlocal foldmethod=marker
+  autocmd FileType nerdtree setlocal nocursorline
+  autocmd FileType vim,markdown setlocal conceallevel=0
   autocmd FileType ruby setlocal colorcolumn=101
   autocmd FileType ruby setlocal textwidth=100
   autocmd FileType ruby setlocal omnifunc=LanguageClient#complete
   autocmd FileType yaml setlocal commentstring=#\ %s
+  autocmd FileType org setlocal shiftwidth=1
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setlocal nosmartindent
 augroup end
@@ -168,6 +177,7 @@ set history=10000
 set nrformats-=octal
 set updatetime=250
 set conceallevel=0
+set noswapfile " Taboo
 runtime macros/matchit.vim
 
 " Spaces & tabs
@@ -187,6 +197,7 @@ set synmaxcol=400
 " set cursorline
 set nonumber
 set norelativenumber
+set signcolumn=yes
 set scrolloff=999
 set sidescrolloff=15
 set showcmd
@@ -217,6 +228,9 @@ set mouse=a
 " }}}
 
 " {{{ Functions and Commands
+
+" Get terminal output
+tnoremap <C-Enter> <C-\><C-n>mza<CR>
 
 " Strip Whitespace
 """"""""""""""""""
@@ -274,34 +288,65 @@ command! ClearScrollback :call ClearScrollback()
 " Insert todays date
 """"""""""""""""""""
 function! Today()
+  execute "normal! i> {{{\<CR>}}}"
   put! =strftime('%A // %B %d %Y')
-  normal yyP
-  normal I> {{{
-  normal VYpVr-o*
-  startinsert
+  normal! VYppVr-o
+  execute "normal! 4kJ3ji*\<Space>"
+  startinsert!
 endfunction
 command! Today :call Today()
+
+function! GetVisualSelection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
 " }}}
 
 " {{{ Mappings
+
+" :)
+nnoremap s <Nop>
 
 " Insert mode maps
 inoremap jk <Esc>
 inoremap ;; <Esc>
 inoremap <C-y> <Esc>
 
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+inoremap <C-h> <Esc><C-w>h
+inoremap <C-j> <Esc><C-w>j
+inoremap <C-k> <Esc><C-w>k
+inoremap <C-l> <Esc><C-w>l
+" inoremap <C-h> <Esc><C-w>h
+
+
+" Default swaps
+"""""""""""""""
 
 " Swap jump to column of mark and jump to beginning of line of mark commands
 nnoremap ' `
 nnoremap ` '
 
 " Use verymagic searching
-nnoremap / /\v
-vnoremap / /\v
-cnoremap %s/ %smagic/
-cnoremap \>s/ \>smagic/
-nnoremap :g/ :g/\v
-nnoremap :g// :g//
+" nnoremap / /\v
+" vnoremap / /\v
+" cnoremap %s/ %smagic/
+" cnoremap \>s/ \>smagic/
+" nnoremap :g/ :g/\v
+" nnoremap :g// :g//
 
 xnoremap y y`]
 
@@ -310,6 +355,8 @@ nnoremap <c-]> g<c-]>
 vnoremap <c-]> g<c-]>
 nnoremap g<c-]> <c-]>
 vnoremap g<c-]> <c-]>
+
+nnoremap Y yg_
 
 " Ruby methods can commonly contain word boundary characters like ! or ?
 " Add helpers for motions that operate on the word under the cursor to include
@@ -336,16 +383,20 @@ vnoremap k gk
 " Search for text under visual selection
 vnoremap // y/<C-R>"<CR>
 
+" Go to end of pattern match
+nnoremap <leader>e //e<CR>
+
 " Layout mappings
 nnoremap st ml:tabedit %<CR>'l
 nnoremap <leader>wr <C-w>j<C-w>j:b neoterm<CR><C-w>:res 20<CR><C-w>k
 nnoremap <leader>w= <C-w>=<C-w>j:res 20<CR><C-w>k
 nnoremap <leader>wl <C-w>=<C-w>j:res 15<CR><C-w>k
+
+
 nnoremap <leader>w<space> :res +1<CR>:res -1<CR>
 
 " Plugin commands
 nnoremap s% :NERDTreeFind<CR>
-nnoremap <Leader>ag :Ack!<Space>''<left>
 
 " Reload vimrc
 nnoremap <leader>R :source $MYVIMRC<CR>
@@ -354,6 +405,8 @@ nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 nnoremap <leader>l <C-^>
 nnoremap <leader>sl :nohlsearch<CR>
+nnoremap <leader>sL :set hlsearch<CR>
+nnoremap set :buffer term-<C-d>
 
 nnoremap <leader>' "+
 nnoremap <leader>y "+y
@@ -373,21 +426,28 @@ nnoremap <C-S-n> :bnext<CR>
 nnoremap <C-S-p> :bprevious<CR>
 nnoremap sn :tabnext<CR>
 nnoremap sp :tabprevious<CR>
-nnoremap sln :set
 
 nnoremap <leader>gn :%s///gn<CR>
 nnoremap <leader>file :set filetype=
 
-" Plugin mappings
+" }}}
+
+" {{{ Plugin Mappings
 nnoremap <leader>gu :GundoToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
+nnoremap <leader>N :NERDTreeCWD<CR>
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 map <leader>m <Plug>ToggleMarkbar
 
+" Coc
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
 " FZF mappings
-nnoremap <C-f> :GFiles!<CR>
+nnoremap <C-f> :GFiles<CR>
+nnoremap <leader><C-f> :GFiles!<CR>
 
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
@@ -400,6 +460,7 @@ nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>fg :GFiles?<CR>
 nnoremap <leader>fw :Windows<CR>
 nnoremap <leader>fa :Ag<CR>
+nnoremap <leader>fr :Rg<CR>
 
 nnoremap <leader>fB :Buffers!<CR>
 nnoremap <leader>fC :Commands!<CR>
@@ -412,21 +473,44 @@ nnoremap <leader>fM :Marks!<CR>
 nnoremap <leader>fG :GFiles?!<CR>
 nnoremap <leader>fW :Windows!<CR>
 nnoremap <leader>fA :Ag!<CR>
+nnoremap <leader>fR :Rg!<CR>
 
-nnoremap <leader>cd :ProjectRootCD<CR>
+function! RgVisualSelection()
+  execute ':RgRaw ' . GetVisualSelection()
+endfunction
+
+""" vim-agriculture
+" Setup query
+nnoremap <leader>f; :RgRaw<Space>
+
+" Perform :RgRaw search with word under cursor
+nnoremap <leader>f* :execute ':RgRaw' expand('<cword>')<CR>
+
+" Perform :RgRaw with current visual selection
+xnoremap <leader>f; :call RgVisualSelection()<CR>
+
+" fuzzy incsearch
+map s/ <Plug>(incsearch-fuzzy-/)
+map s? <Plug>(incsearch-fuzzy-?)
+map sg/ <Plug>(incsearch-fuzzy-stay)
+
+"winresizer
+nnoremap <leader>ww :WinResizerStartResize<CR>
 
 " Fugitive binds
-nnoremap <leader>gst :Gstatus<CR>
+nnoremap <leader>gst :Gstatus
 nnoremap <leader>gsp :Gstatus
 nnoremap <leader>gvs :Gvsplit
 nnoremap <leader>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 
+" Change current working directory to project root of current buffer
+nnoremap <leader>cd :ProjectRootCD<CR>
+
 " LanguageClient
 nnoremap <leader>h :call LanguageClient_contextMenu()<CR>
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent>K :call LanguageClient#textDocument_hover()<CR>
 nnoremap <leader>gd :call LanguageClient#textDocument_definition()<CR>
 nnoremap <leader>rename <F2> :call LanguageClient#textDocument_rename()<CR>
-
 " }}}
 
 " {{{ Plugin Settings
@@ -458,11 +542,16 @@ let g:closetag_shortcut = '<c-b>'
 let g:markbar_open_position='botright'
 let g:markbar_open_vertical=v:false
 let g:markbar_height=10
+let g:markbar_peekaboo_apostrophe_mapping="`"
+let g:markbar_peekaboo_backtick_mapping="'"
 
 " vim-indentline
 let g:indentLine_bufTypeExclude=['help', 'terminal']
 let g:indentLine_fileTypeExclude=['markdown']
 let g:indentLine_bufTypeExclude=['help', 'terminal']
+
+" vim-autopairs
+let g:AutoPairsMapCh=0
 
 " Ale
 " let g:ale_sign_column_always = 1
@@ -478,37 +567,39 @@ let g:ale_enabled=0
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 
-" Vim-rooter
-let g:rooter_patterns=['.vimroot', '.git/', '.git']
-
-" Vim-ag
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
-
-if executable('rg')
-  let g:ackprg = 'rg --vimgrep --no-heading --smart-case'
-else
-  echom 'no ripgrep found'
-endif
-
 " NERDTree
 let NERDTreeAutoDeleteBuffer=1
-let NERDTreeDirArrows = 1
-let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows=1
+let NERDTreeMinimalUI=1
 let NERDTreeShowHidden=1
-let g:NERDTreeMapHelp = '\'
+let NERDTreeHighlightCursorline=0
+let g:NERDTreeMapHelp='\'
+let g:NERDTreeSyntaxDisableDefaultExtensions=1
+let g:NERDTreeDisableExactMatchHighlight=1
+let g:NERDTreeDisablePatternMatchHighlight=1
+let g:NERDTreeSyntaxEnabledExtensions=['c', 'h', 'c++', 'php', 'rb', 'js', 'jsx', 'html', 'css', 'yml'] " example
+
+" incsearch
+let g:incsearch#auto_nohlsearch=0
 
 " FZF
+if executable('rg')
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+  set grepprg=rg\ --vimgrep
+  command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+endif
+
+imap <c-x><c-f> <plug>(fzf-complete-path)
+
 let $FZF_DEFAULT_OPTS .= ' --no-height'
 
-" :Ag Only search file content, i.e. do not match directories
-command! -bang -nargs=* Ag
+" :AG Only search file content, i.e. do not match directories
+command! -bang -nargs=* AG
   \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
-" :AG Match directories as well (useful to filter out specs)
-command! -bang -nargs=* AG
-  \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)
+" " :Ag Match directories as well (useful to filter out specs)
+" command! -bang -nargs=* Ag
+"   \ call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)
 
 " :Tags
 command! -bang -nargs=* Tags call fzf#vim#tags(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -520,12 +611,15 @@ command! -bang -nargs=? -complete=dir GFiles
   \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 " }}}
 
-" {{{ Neovim Settings
+" {{{ :terminal settings
 
 if has('nvim')
   augroup tmappings
     autocmd!
     autocmd TermOpen * setlocal scrollback=50000
+
+    " Dumb hack because something something scrolloff in terminal windows?
+    " autocmd InsertEnter * if &l:buftype ==# 'terminal' | res +1 | res -1 | endif
   augroup end
 
   " UI
@@ -545,12 +639,12 @@ if has('nvim')
     enew
     execute 'Tnew'
     resize 20
+    sleep 200m
     file neoterm
   endfunction
   nnoremap <leader>term :terminal<CR>:file term-
 
-  " Terminal mode binds
-  " tnoremap jk <C-\><C-N>
+  " Terminal mode binds tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
   tnoremap <C-y> <C-\><C-N>
   tnoremap granch $(g_branch)
@@ -559,21 +653,23 @@ if has('nvim')
   " in a normal buffer (i.e. next key pastes from that buffer)
   tnoremap <expr> <C-\><C-r> '<C-\><C-n>"'.nr2char(getchar()).'pi'
 
+  " Don't insert ^\ when using the above binding from muscle memory in the
+  " wrong buffer type
+  inoremap <C-\><C-r> <C-r>
+  cnoremap <C-\><C-r> <C-r>
+
   " For some reason these break when in an ssh session?
   tnoremap <C-p> <up>
   tnoremap <C-n> <down>
   tnoremap <C-f> <right>
   tnoremap <C-b> <left>
 
-  " Convenience
-  tnoremap ;nn ;nil<CR>
-
   " Allow tmux navigator to work in :terminal
-  tnoremap <silent> <c-h> <c-\><c-n>:TmuxNavigateLeft<cr>
-  tnoremap <silent> <c-j> <c-\><c-n>:TmuxNavigateDown<cr>
-  tnoremap <silent> <c-k> <c-\><c-n>:TmuxNavigateUp<cr>
-  tnoremap <silent> <c-l> <c-\><c-n>:TmuxNavigateRight<cr>
-  tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
+  " tnoremap <silent> <c-h> <c-\><c-n>:TmuxNavigateLeft<cr>
+  " tnoremap <silent> <c-j> <c-\><c-n>:TmuxNavigateDown<cr>
+  " tnoremap <silent> <c-k> <c-\><c-n>:TmuxNavigateUp<cr>
+  " tnoremap <silent> <c-l> <c-\><c-n>:TmuxNavigateRight<cr>
+  " tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
 
   " Neoterm / Vim-Test
   nnoremap <leader>td :T <C-d>
@@ -592,8 +688,9 @@ if has('nvim')
   " neoterm settings
   let g:neoterm_autoscroll=1
 endif
+" }}}
 
-" Private
+" {{{ Misc
 source ~/.vimrc.private
 
 " Search highlight comes back after reloading vimrc.  Hide it
