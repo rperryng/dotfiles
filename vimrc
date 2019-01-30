@@ -6,19 +6,11 @@
 
 call plug#begin('~/.local/share/nvim/plugged')
 
-" Plug 'autozimu/LanguageClient-neovim', {
-"     \ 'branch': 'next',
-"     \ 'do': 'bash install.sh',
-"     \ }
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'Yilin-Yang/vim-markbar'
 Plug 'alvan/vim-closetag'
-" Plug 'ap/vim-buftabline'
 Plug 'dbakker/vim-projectroot'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
@@ -28,20 +20,20 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-peekaboo'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
-Plug 'scrooloose/nerdtree'
 Plug 'simeji/winresizer'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-rails'
@@ -56,7 +48,10 @@ Plug 'wellle/targets.vim'
 
 " UI
 Plug 'Yggdroot/indentLine'
+Plug 'arzg/seoul8'
 Plug 'drewtempelmeyer/palenight.vim'
+Plug 'gcmt/taboo.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' }
 Plug 'joshdick/onedark.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
@@ -64,13 +59,19 @@ Plug 'junegunn/vim-slash'
 Plug 'machakann/vim-highlightedyank'
 Plug 'metalelf0/base16-black-metal-scheme'
 Plug 'morhetz/gruvbox'
+Plug 'patstockwell/vim-monokai-tasty'
 Plug 'rakr/vim-one'
 Plug 'sheerun/vim-polyglot'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
-Plug 'ryanoasis/vim-devicons'
+" Plug 'scrooloose/nerdtree'
+" Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+
+" Load last, as required in the README
+" Plug 'ryanoasis/vim-devicons'
 
 " 'Maybe' pile
+" Plug 'TaDaa/vimade'
+" Plug 'romainl/vim-cool'
 " Plug 'itchyny/lightline.vim'
 " Plug 'chriskempson/base16-vim'
 " Plug 'vim-airline/vim-airline'
@@ -94,20 +95,17 @@ let g:ruby_host_prog='/Users/rperrynguyen/.rbenv/versions/2.5.1/bin/ruby'
 augroup focusgroup
   autocmd!
   " Preserve cursor location when switching buffers
-  autocmd BufLeave * let b:winview = winsaveview()
-  autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+  " autocmd BufLeave * let b:winview = winsaveview()
+  " autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
   autocmd FocusGained,BufEnter * :silent! checkt
 
   " Preserve folds between vim sessions
-  autocmd BufWinLeave * silent! mkview
-  autocmd BufWinEnter * silent! loadview
+  " autocmd BufWinLeave * silent! mkview
+  " autocmd BufWinEnter * silent! loadview
 augroup end
 
 augroup dir
   autocmd!
-  " NERDTree always matches vim's working directory
-  " autocmd DirChanged * :silent NERDTreeCWD
-  " autocmd DirChanged * :silent NERDTreeCWD
 augroup end
 
 augroup filetypes
@@ -118,15 +116,17 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.org set filetype=org
   autocmd BufNewFile,BufReadPost *.journal set filetype=journal
 
-  autocmd FileType nerdtree setlocal nocursorline
   autocmd FileType vim,markdown setlocal conceallevel=0
   autocmd FileType ruby setlocal colorcolumn=101
   autocmd FileType ruby setlocal textwidth=100
-  autocmd FileType ruby setlocal omnifunc=LanguageClient#complete
   autocmd FileType yaml setlocal commentstring=#\ %s
   autocmd FileType org setlocal shiftwidth=1
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setlocal nosmartindent
+
+  " hacky-fix for coc-vim leaving the popup menu window open when creating a ruby
+  " block
+  autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
 " }}}
 
@@ -144,10 +144,12 @@ if (has("termguicolors"))
 endif
 
 syntax enable
-set background=dark
-" let g:seoul256_background=234
 let g:gruvbox_contrast_dark="hard"
 colorscheme gruvbox
+" colorscheme vim-monokai-tasty
+" let g:seoul256_background = 235
+" colorscheme seoul256
+set background=dark
 
 " hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
 " hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
@@ -159,6 +161,8 @@ highlight Tag        ctermfg=04
 highlight xmlTag     ctermfg=04
 highlight xmlTagName ctermfg=04
 highlight xmlEndTag  ctermfg=04
+
+hi normal guibg=NONE ctermbg=NONE
 " }}}
 
 " {{{ Options
@@ -239,14 +243,29 @@ command! StripWhitespace %s/\s\+$//e
 " Change working directory using z.sh
 """""""""""""""""""""""""""""""""""""
 function! ZLookup(z_arg)
-  let z_command = 'cd ' . system('. ~/code/tools/z/z.sh && _z -e ' . a:z_arg)
+  let currwin=winnr()
+  let z_command = 'windo cd ' . system('. ~/code/tools/z/z.sh && _z -e ' . a:z_arg)
   " Strip empty newline so that command line doesn't grow when echoing
   let z_command = substitute(z_command, "\n", "", "")
   execute z_command
+
+  execute currwin . 'wincmd w'
   echo z_command
 endfunction
 
-command! -nargs=+ Z call ZLookup(<q-args>)
+command! -nargs=1 Z call ZLookup(<q-args>)
+
+" Change working directory using ProjectRootCD
+""""""""""""""""""""""""""""""""""""""""""""""
+function! ProjectRootCDAll()
+  let currwin=winnr()
+  let cd_command = 'windo cd ' . ProjectRootGuess()
+  execute cd_command
+  execute currwin . 'wincmd w'
+  echo cd_command
+endfunction
+
+command! -nargs=0 ProjectRootCDAll call ProjectRootCDAll()
 
 " Format JSON
 """""""""""""
@@ -256,25 +275,39 @@ function! FormatJson()
 endfunction
 command! FormatJson call FormatJson()
 
+" Profile Vim
+function! ProfileStart()
+  profile start profile.log
+  profile func *
+  profile file *
+endfunction
+command! ProfileStart call ProfileStart()
+
+function! ProfileEnd()
+  profile pause
+  noautocmd qall!
+endfunction
+command! ProfileEnd call ProfileEnd()
+
 " Start Ruby LSP for project of current file
 """"""""""""""""""""""""""""""""""""""""""""
-function! Solargraph()
-  execute 'ProjectRootCD'
-  let solargraph_buffer_name = 'term-solargraph-' . fnamemodify(getcwd(), ':t')
+" function! Solargraph()
+"   execute 'ProjectRootCD'
+"   let solargraph_buffer_name = 'term-solargraph-' . fnamemodify(getcwd(), ':t')
 
-  if bufexists(solargraph_buffer_name)
-    echom solargraph_buffer_name . ' already running!'
-    execute 'buffer ' . solargraph_buffer_name
-    return
-  endif
+"   if bufexists(solargraph_buffer_name)
+"     echom solargraph_buffer_name . ' already running!'
+"     execute 'buffer ' . solargraph_buffer_name
+"     return
+"   endif
 
-  botright split
-  terminal solargraph socket
-  let rename_buffer_command = 'file ' . solargraph_buffer_name
-  execute rename_buffer_command
-endfunction
+"   botright split
+"   terminal solargraph socket
+"   let rename_buffer_command = 'file ' . solargraph_buffer_name
+"   execute rename_buffer_command
+" endfunction
 
-command! Solargraph :call Solargraph()
+" command! Solargraph :call Solargraph()
 
 " Clear Terminal Scrollback history
 """""""""""""""""""""""""""""""""""
@@ -332,7 +365,6 @@ inoremap <C-k> <Esc><C-w>k
 inoremap <C-l> <Esc><C-w>l
 " inoremap <C-h> <Esc><C-w>h
 
-
 " Default swaps
 """""""""""""""
 
@@ -348,7 +380,7 @@ nnoremap ` '
 " nnoremap :g/ :g/\v
 " nnoremap :g// :g//
 
-xnoremap y y`]
+" xnoremap y y`]
 
 " Make list selection for tags the default
 nnoremap <c-]> g<c-]>
@@ -391,12 +423,7 @@ nnoremap st ml:tabedit %<CR>'l
 nnoremap <leader>wr <C-w>j<C-w>j:b neoterm<CR><C-w>:res 20<CR><C-w>k
 nnoremap <leader>w= <C-w>=<C-w>j:res 20<CR><C-w>k
 nnoremap <leader>wl <C-w>=<C-w>j:res 15<CR><C-w>k
-
-
 nnoremap <leader>w<space> :res +1<CR>:res -1<CR>
-
-" Plugin commands
-nnoremap s% :NERDTreeFind<CR>
 
 " Reload vimrc
 nnoremap <leader>R :source $MYVIMRC<CR>
@@ -429,25 +456,38 @@ nnoremap sp :tabprevious<CR>
 
 nnoremap <leader>gn :%s///gn<CR>
 nnoremap <leader>file :set filetype=
-
 " }}}
 
 " {{{ Plugin Mappings
+
+" nnn
+nnoremap <leader>N :NnnPicker '%:p:h'<CR>
+let g:nnn#action = {
+      \ '<c-t><c-t>': 'tab split',
+      \ '<c-s><c-s>': 'split',
+      \ '<c-v>': 'vsplit' }
+
+" Gundo
 nnoremap <leader>gu :GundoToggle<CR>
-nnoremap <leader>n :NERDTreeToggle<CR>
-nnoremap <leader>N :NERDTreeCWD<CR>
+
+" NERDTree
+" nnoremap <leader>n :NERDTreeToggle<CR>
+" nnoremap <leader>N :NERDTreeCWD<CR>
+
+" vim-easy-align "
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 map <leader>m <Plug>ToggleMarkbar
 
-" Coc
+" Coc-vim
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
 " FZF mappings
 nnoremap <C-f> :GFiles<CR>
 nnoremap <leader><C-f> :GFiles!<CR>
+
 
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
@@ -487,7 +527,7 @@ nnoremap <leader>f; :RgRaw<Space>
 nnoremap <leader>f* :execute ':RgRaw' expand('<cword>')<CR>
 
 " Perform :RgRaw with current visual selection
-xnoremap <leader>f; :call RgVisualSelection()<CR>
+xnoremap <leader>f* :call RgVisualSelection()<CR>
 
 " fuzzy incsearch
 map s/ <Plug>(incsearch-fuzzy-/)
@@ -504,22 +544,20 @@ nnoremap <leader>gvs :Gvsplit
 nnoremap <leader>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 
 " Change current working directory to project root of current buffer
-nnoremap <leader>cd :ProjectRootCD<CR>
+nnoremap <leader>cd :ProjectRootCDAll<CR>
 
 " LanguageClient
-nnoremap <leader>h :call LanguageClient_contextMenu()<CR>
-nnoremap <silent>K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <leader>gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <leader>rename <F2> :call LanguageClient#textDocument_rename()<CR>
+nmap slgd <Plug>(coc-definition)
+nmap slgd <Plug>(coc-definition)
+nmap slrn <Plug>(coc-rename)
+nmap slre <Plug>(coc-references)
 " }}}
 
 " {{{ Plugin Settings
 
-" LanguageClient
-let g:LanguageClient_autoStop = 0
-let g:LanguageClient_serverCommands = {
-    \ 'ruby': ['tcp://localhost:7658']
-    \ }
+" vim-markdown
+let g:mkdp_echo_preview_url=0
+let g:mkdp_auto_close=0
 
 " vim-test
 let test#ruby#rspec#executable = 'bundle exec rspec'
@@ -535,23 +573,27 @@ let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.js'
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
 let g:closetag_shortcut = '<c-b>'
 
+" vim-devicons
+" let g:webdevicons_conceal_nerdtree_brackets = 1
+let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
+let g:WebDevIconsNerdTreeGitPluginForceVAlign = 0
+
 " Gutentags
 " let g:gutentags_project_root=['.tags-root']
 
 " vim-markbar
-let g:markbar_open_position='botright'
-let g:markbar_open_vertical=v:false
-let g:markbar_height=10
-let g:markbar_peekaboo_apostrophe_mapping="`"
-let g:markbar_peekaboo_backtick_mapping="'"
+" let g:markbar_open_position='botright'
+" let g:markbar_open_vertical=v:false
+" let g:markbar_height=10
+" let g:markbar_peekaboo_apostrophe_mapping="`"
+" let g:markbar_peekaboo_backtick_mapping="'"
 
 " vim-indentline
-let g:indentLine_bufTypeExclude=['help', 'terminal']
+" let g:indentLine_color_term = 239
+let g:indentLine_color_gui = '#5b5b5b'
+" let g:indentLine_bgcolor_term = 230
 let g:indentLine_fileTypeExclude=['markdown']
 let g:indentLine_bufTypeExclude=['help', 'terminal']
-
-" vim-autopairs
-let g:AutoPairsMapCh=0
 
 " Ale
 " let g:ale_sign_column_always = 1
@@ -578,6 +620,9 @@ let g:NERDTreeSyntaxDisableDefaultExtensions=1
 let g:NERDTreeDisableExactMatchHighlight=1
 let g:NERDTreeDisablePatternMatchHighlight=1
 let g:NERDTreeSyntaxEnabledExtensions=['c', 'h', 'c++', 'php', 'rb', 'js', 'jsx', 'html', 'css', 'yml'] " example
+
+" vim-winresizer
+let g:winresizer_start_key='<C-q>'
 
 " incsearch
 let g:incsearch#auto_nohlsearch=0
@@ -620,6 +665,7 @@ if has('nvim')
 
     " Dumb hack because something something scrolloff in terminal windows?
     " autocmd InsertEnter * if &l:buftype ==# 'terminal' | res +1 | res -1 | endif
+    autocmd InsertEnter * if &l:buftype ==# 'terminal' | res +1 | res -1 | endif
   augroup end
 
   " UI
@@ -685,12 +731,18 @@ if has('nvim')
   vnoremap <leader>tsel :TREPLSendSelection<CR>
   nnoremap <leader>tline :TREPLSendLine<CR>
 
+  nmap gx <Plug>(neoterm-repl-send)
+  xmap gx <Plug>(neoterm-repl-send)
+  nmap gX <Plug>(neoterm-repl-send-line)
+  xmap gX <Plug>(neoterm-repl-send-line)
+
   " neoterm settings
   let g:neoterm_autoscroll=1
 endif
 " }}}
 
 " {{{ Misc
+" things I don't want to commit to repo
 source ~/.vimrc.private
 
 " Search highlight comes back after reloading vimrc.  Hide it
