@@ -3,6 +3,13 @@ source ~/.vimrc
 " For some reason must be declared with this syntax
 let mapleader = " "
 
+map / /
+map ? ?
+map * *
+map n n
+map N N
+map sl :nohlsearch<CR>
+
 :map <leader>f :action ReformatCode<CR>
 :map <S-L> :action NextTab<CR>
 :map <S-H> :action PreviousTab<CR>
