@@ -3,13 +3,10 @@ git config --global core.excludesfile ~/.gitignore
 
 # http://www.rushiagr.com/blog/2016/06/16/everything-you-need-to-know-about-tmux-copy-pasting-ubuntu/
 # https://github.com/BurntSushi/ripgrep
-# https://github.com/denysdovhan/spaceship-zsh-theme
-# https://github.com/ggreer/the_silver_searcher
 # https://github.com/jarun/nnn
 # https://github.com/rbenv/rbenv
 # https://github.com/rupa/z
 # https://github.com/scmbreeze/scm_breeze
-# https://github.com/tmux-plugins/tpm
 # https://github.com/tpope/gem-ctags
 # https://github.com/tpope/rbenv-ctags
 # https://github.com/zsh-users/zsh-autosuggestions
@@ -18,6 +15,9 @@ git config --global core.excludesfile ~/.gitignore
 
 # Enable esc+ to treat option keys as alt
 # https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
+
+# Bat theme
+export BAT_THEME='gruvbox-dark-medium'
 
 # Z - jump around
 . $HOME/code/tools/z/z.sh
@@ -48,7 +48,10 @@ else
   alias nv="nvim"
 fi
 export EDITOR="$VISUAL"
-alias nvv="nv +terminal"
+
+export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'
+export NNN_COPIER="~/.copier.sh"
+export NNN_NO_AUTOSELECT=1
 
 # Neovim true color support
 export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
@@ -64,8 +67,13 @@ alias gcam="git commit --amend -m"
 alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
 alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
 alias g_branch="git symbolic-ref --short -q HEAD"
+alias open-pr="open \"https://github.com/wealthsimple/${PWD##*/}/compare/$(git symbolic-ref --short -q HEAD)?expand=1\""
 
 alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
+
+# Rubocop all git-tracked files (excluding files in the db/ folder)
+alias cop="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop"
+alias coppa="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop -a"
 
 # replay all commits, starting at feature_branch exclusive, through
 # dependent_feature inclusive onto master
@@ -81,8 +89,14 @@ case `uname` in
   ;;
 esac
 
-# shhh
+# emacs insert-mode binds ;)
 bindkey -e
+
+# Enable Ctrl-x-e to edit command line
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
 
 # Shouldn't be necessary...
 bindkey "^A" beginning-of-line
@@ -95,6 +109,7 @@ bindkey "^F" forward-char
 bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
 
+# FZF binds
 bindkey "^Y" fzf-cd-widget
 bindkey "^R" fzf-history-widget
 bindkey "^T" fzf-file-widget
