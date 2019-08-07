@@ -1,4 +1,5 @@
-" vim: set foldmethod=marker:
+" Avoid code execution vulnerability
+set nomodeline
 
 " TODO
 " 1. Make nnn filetype binding for <Esc><C-L> to remove weird delay after
@@ -831,3 +832,8 @@ source ~/.vimrc.private
 " Search highlight comes back after reloading vimrc.  Hide it
 nohlsearch
 " }}}
+
+" Avoid code execution vulnerability
+" Set again at the end to ensure no other upstream config mistakenly turned it
+" back on
+set nomodeline
