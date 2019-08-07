@@ -1,7 +1,10 @@
 source ~/.vimrc
 
+set scrolloff=5
+
 " For some reason must be declared with this syntax
 let mapleader = " "
+map <leader>R :source ~/.ideavimrc<CR>
 
 map / /
 map ? ?
@@ -10,16 +13,37 @@ map n n
 map N N
 map sl :nohlsearch<CR>
 
-:map <leader>f :action ReformatCode<CR>
-:map <S-L> :action NextTab<CR>
-:map <S-H> :action PreviousTab<CR>
-:map <leader>mo :action OverrideMethods<CR>
-:map <leader>mi :action ImplementMethods<CR>
-:map <leader>o :action OptimizeImports<CR>
-:map <leader>rr :action Run<CR>
-:map <leader>rb :action RebuildGradleProject<CR>
-:map <leader>q :q><CR>
-:map <leader>gg :action GenerateGetter<CR>
-:map <leader>ga :action GenerateGetterAndSetter<CR>
-:map <leader>gs :action GenerateSetter<CR>
-:map <leader>w :action SaveAll<CR>
+nmap <C-l> <C-w>l
+nmap <C-k> <C-w>k
+nmap <C-j> <C-w>j
+nmap <C-h> <C-w>h
+nmap <leader>E :action ActiveProjectToolWindow<CR>:action ActiveProjectToolWindow<CR>
+
+map L $
+map H 0w
+
+map <c-]> :action GotoDeclaration<CR>
+map <leader>y "+y
+map <leader>p "+p
+
+map ; ;
+map <leader>f :action ReformatCode<CR>
+map <leader>mv :action Move<CR>
+map <leader>rn :action RenameElement<CR>
+map <leader>te :action EvaluateExpression<CR>
+map <leader>tE :action QuickEvaluateExpression<CR>
+map sn :action NextTab<CR>
+map sp :action PreviousTab<CR>
+map <leader>mo :action OverrideMethods<CR>
+map <leader>mi :action ImplementMethods<CR>
+map <leader>o :action OptimizeImports<CR>
+map <leader>rr :action Run<CR>
+map <leader>rb :action RebuildGradleProject<CR>
+map <leader>q :q><CR>
+map <leader>gg :action GenerateGetter<CR>
+map <leader>ga :action GenerateGetterAndSetter<CR>
+map <leader>gs :action GenerateSetter<CR>
+" :map <leader>w :action SaveAll<CR>
+map <leader>wa :action SaveAll<CR>
+
+set surround
