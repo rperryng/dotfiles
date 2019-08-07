@@ -2,6 +2,7 @@
 git config --global core.excludesfile ~/.gitignore
 
 # http://www.rushiagr.com/blog/2016/06/16/everything-you-need-to-know-about-tmux-copy-pasting-ubuntu/
+# https://github.com/dmarcotte/easy-move-resize
 # https://github.com/BurntSushi/ripgrep
 # https://github.com/jarun/nnn
 # https://github.com/rbenv/rbenv
@@ -29,11 +30,11 @@ HISTFILE=~/.zsh_history     # Where to save history to disk
 SAVEHIST=5000               # Number of history entries to save to disk
 HISTDUP=erase               # Erase duplicates in the history file
 # Immediately append to the history file, not just when a term is killed# Base16
-setopt    sharehistory      
+setopt    sharehistory
 # Share history across terminals
-setopt    appendhistory     
+setopt    appendhistory
 # Append history to the history file (no overwriting)
-setopt    incappendhistory  
+setopt    incappendhistory
 
 # BASE16_SHELL=$HOME/.config/base16-shell/
 # [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
@@ -42,10 +43,12 @@ setopt    incappendhistory
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
   export VISUAL="nvr -cc split --remote-wait +'setlocal bufhidden=wipe'"
-  alias nv="nvr"
+  alias nvim="nvr"
+  alias n="nvr"
 else
   export VISUAL=nvim
   alias nv="nvim"
+  alias n="nvim"
 fi
 export EDITOR="$VISUAL"
 
@@ -65,15 +68,25 @@ alias gcmsg="git commit -m"
 alias gcane="git commit --amend --no-edit"
 alias gcam="git commit --amend -m"
 alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
-alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
 alias g_branch="git symbolic-ref --short -q HEAD"
-alias open-pr="open \"https://github.com/wealthsimple/${PWD##*/}/compare/$(git symbolic-ref --short -q HEAD)?expand=1\""
+alias gcne="git commit --no-edit"
+
+# Push new local branch to remote under the same name
+alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
+
+# Open the PR page for the current branch.
+alias open-pr="open \"https://github.com/wealthsimple/\$(basename \$(git remote get-url origin) .git)/compare/\$(git symbolic-ref --short -q HEAD)?expand=1\""
 
 alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
+
+alias migrate="bundle exec rake db:migrate && RACK_ENV=test bundle exec rake db:migrate"
+alias rollback="bundle exec rake db:rollback && RACK_ENV=test bundle exec rake db:rollback"
+alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:drop db:create db:schema:load db:migrate && RACK_ENV=test bundle exec rake db:migrate"
 
 # Rubocop all git-tracked files (excluding files in the db/ folder)
 alias cop="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop"
 alias coppa="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop -a"
+alias coppa="bundle exec rubocop -a"
 
 # replay all commits, starting at feature_branch exclusive, through
 # dependent_feature inclusive onto master
