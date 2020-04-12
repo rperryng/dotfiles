@@ -25,10 +25,12 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
+" Plug 'junegunn/vim-peekaboo'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'KKPMW/vim-sendtowindow'
 Plug 'SirVer/ultisnips'
 Plug 'alvan/vim-closetag'
+Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dbakker/vim-projectroot'
 Plug 'gcmt/taboo.vim'
@@ -45,6 +47,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'm00qek/nvim-contabs'
 Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
@@ -88,10 +91,13 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
 Plug 'patstockwell/vim-monokai-tasty'
+Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'udalov/kotlin-vim'
+Plug 'udalov/kotlin-vim'
 Plug 'webdevel/tabulous'
+Plug 'wlangstroth/vim-racket'
 
 " Plug 'andymass/vim-matchup'
 " Load last, as required in the README
@@ -143,12 +149,14 @@ augroup filetypes
   autocmd BufNewFile,BufReadPost *.journal set filetype=journal
 
   autocmd FileType vim,markdown,json setlocal conceallevel=0
+
   autocmd FileType ruby setlocal colorcolumn=101
   autocmd FileType ruby setlocal textwidth=100
   autocmd FileType yaml setlocal commentstring=#\ %s
   autocmd FileType org setlocal shiftwidth=1
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setlocal nosmartindent
+  autocmd FileType netrw setlocal nosmartindent
 
   " hacky-fix for coc-vim leaving the popup menu window open when creating a ruby
   " block
@@ -206,7 +214,7 @@ set lazyredraw
 set colorcolumn=80
 set synmaxcol=200
 set signcolumn=yes
-set scrolloff=15
+set scrolloff=0
 set sidescrolloff=15
 set showcmd
 set splitbelow
@@ -466,7 +474,7 @@ function! Today()
   let l:date_formatted = strftime('= %A - %B %d %Y =')
 
   if search(l:date_formatted) == 0
-    execute "normal! Gzo{{}"
+    execute "normal! G{{}zo"
     put! =strftime('= %A - %B %d %Y =')
     execute "normal! o*\<Space>"
     startinsert!
@@ -479,6 +487,11 @@ function! Today()
   endif
 endfunction
 command! Today :call Today()
+
+function! PToday()
+  put! =strftime('= %A - %B %d %Y =')
+endfunction
+command! PToday :call PToday()
 
 function! Scratch()
   split ~/vimwiki/ruby_scratchpad.rb
@@ -512,6 +525,14 @@ function! GetVisualSelection()
     let lines[0] = lines[0][column_start - 1:]
     return join(lines, "\n")
 endfunction
+
+function! DeleteCwdBuffers()
+  call feedkeys(":bdelete " . getcwd() . "\<C-\>\<C-a>\<CR>")
+  " execute "bd " . getcwd() . ""
+endfunction
+
+command! DeleteCwdBuffers call DeleteCwdBuffers()
+nnoremap <leader>BD :DeleteCwdBuffers<CR>
 
 " Shameleslly stolen from
 " https://github.com/arithran/vim-delete-hidden-buffers/blob/master/plugin/delete-hidden-buffers.vim
@@ -559,13 +580,18 @@ cnoremap <C-s> <Esc>
 " inoremap <C-h> <Esc><C-w>h
 
 " Line text-objects
-onoremap <silent> <expr> al v:count==0 ? ":<c-u>normal! 0V$h<cr>" : ":<c-u>normal! V" . (v:count) . "jk<cr>"
-vnoremap <silent> <expr> al v:count==0 ? ":<c-u>normal! 0V$h<cr>" : ":<c-u>normal! V" . (v:count) . "jk<cr>"
-onoremap <silent> <expr> il v:count==0 ? ":<c-u>normal! ^vg_<cr>" : ":<c-u>normal! ^v" . (v:count) . "jkg_<cr>"
-vnoremap <silent> <expr> il v:count==0 ? ":<c-u>normal! ^vg_<cr>" : ":<c-u>normal! ^v" . (v:count)
+" onoremap <silent> <expr> al v:count==0 ? ":<c-u>normal! 0V$h<cr>" : ":<c-u>normal! V" . (v:count) . "jk<cr>"
+" vnoremap <silent> <expr> al v:count==0 ? ":<c-u>normal! 0V$h<cr>" : ":<c-u>normal! V" . (v:count) . "jk<cr>"
+" onoremap <silent> <expr> il v:count==0 ? ":<c-u>normal! ^vg_<cr>" : ":<c-u>normal! ^v" . (v:count) . "jkg_<cr>"
+" vnoremap <silent> <expr> il v:count==0 ? ":<c-u>normal! ^vg_<cr>" : ":<c-u>normal! ^v" . (v:count)
 
-" Close all folds except the current one
-nnoremap <leader>z zMzv
+xnoremap il g_o^
+onoremap il :normal vil<CR>
+xnoremap al $o0
+xnoremap il g_o^
+
+" Close all folds except the current one, set cursor to middle of screen
+nnoremap <leader>z zMzvzz
 
 " Default swaps
 """""""""""""""
@@ -722,7 +748,7 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " }}}
 " {{{ FZF
-let $FZF_DEFAULT_OPTS .= ' --no-height'
+let $FZF_DEFAULT_OPTS .= ' --color=bg:#1d2021 --border --no-height --layout=reverse'
 
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
@@ -734,6 +760,51 @@ if executable('rg')
     \   <bang>0
     \ )
 endif
+
+" floating fzf window with borders
+function! CreateCenteredFloatingWindow()
+    let width = min([&columns - 4, max([80, &columns - 20])])
+    let height = min([&lines - 4, max([20, &lines - 10])])
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+    au BufWipeout <buffer> exe 'bw '.s:buf
+endfunction
+
+let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
+
+" if has('nvim-0.4.0')
+"   function! FloatingFZF()
+"     let width = float2nr(&columns * 0.9)
+"     let height = float2nr(&lines * 0.6)
+"     let opts = { 'relative': 'editor',
+"           \ 'row': (&lines - height) / 2,
+"           \ 'col': (&columns - width) / 2,
+"           \ 'width': width,
+"           \ 'height': height,
+"           \ 'style': 'minimal'
+"           \}
+
+"     let win = nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+"     call setwinvar(win, '&winhighlight', 'NormalFloat:TabLine')
+"   endfunction
+
+"   let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+" endif
 
 " :like Ag but only search file content, i.e. do not match directories
 command! -bang -nargs=* AG
@@ -782,7 +853,7 @@ command! -bang -nargs=* RgNoSpec
   \ )
 
 nnoremap <C-f> :GFiles<CR>
-nnoremap <leader><C-f> :GFiles!<CR>
+nnoremap <leader><C-f> :GFiles<CR>
 
 nnoremap <leader>fb :Buffers<CR>
 nnoremap <leader>fc :Commands<CR>
@@ -821,6 +892,7 @@ endfunction
 
 " Setup query
 nnoremap <leader>f; :RgRaw<Space>
+nnoremap <leader>/ :RgRaw<Space>
 
 " Perform :RgRaw search with word under cursor
 nnoremap <leader>f* :execute ':RgRaw' expand('<cword>')<CR>
@@ -835,6 +907,7 @@ map sg/ <Plug>(incsearch-fuzzy-stay)
 " }}}
 " {{{ win-reszier
 nnoremap <leader>WR :WinResizerStartResize<CR>
+let g:winresizer_start_key = '<C-Q>'
 " }}}
 " {{{ vim-fugitive
 nnoremap <leader>gst :Gstatus
@@ -843,8 +916,19 @@ nnoremap <leader>gvs :Gvsplit
 nnoremap <leader>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
 " {{{ project-root-cd
-" Change current working directory to project root of current buffer
-nnoremap <leader>cd :ProjectRootCDAll<CR>
+" Change current working directory of all windows in tab to project root of current buffer
+function! TcdProjectRoot()
+  let l:project_root = ProjectRootGet()
+
+  if l:project_root == ''
+    let l:project_root = "~/"
+  endif
+
+  execute 'tcd ' . l:project_root
+  echo 'switched to "' . l:project_root . '"'
+endfunction
+nnoremap <leader>cd :call TcdProjectRoot()<CR>
+" nnoremap <leader>cd :execute 'tcd ' . ProjectRootGet()<CR>
 " }}}
 " {{{ coc-nvim
 nmap slR :CocRestart<CR>
@@ -852,16 +936,15 @@ nmap slgd <Plug>(coc-definition)
 nmap slgd <Plug>(coc-definition)
 nmap slrn <Plug>(coc-rename)
 nmap slre <Plug>(coc-references)
-
-" nmap <silent> [c <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]c <Plug>(coc-diagnostic-next)
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
 " }}}
 " {{{ vimwiki
 let wiki = {}
 let wiki.path = '~/vimwiki/'
 let wiki.nested_syntax = {'ruby': 'ruby'}
 let g:vimwiki_list = [wiki]
-let g:vimwiki_folding='expr'
+let g:vimwiki_folding=''
 
 function! VimwikiLinkHandler(link)
   " Use Vim to open external files with the 'vfile:' scheme.  E.g.:
@@ -878,7 +961,7 @@ function! VimwikiLinkHandler(link)
     echomsg 'Vimwiki Error: Unable to resolve link!'
     return 0
   else
-    exe 'edit ' . fnameescape(link_infos.filename)
+    execute 'edit ' . fnameescape(link_infos.filename)
     return 1
   endif
 endfunction
@@ -971,6 +1054,28 @@ xmap ic <plug>(signify-motion-inner-visual)
 omap ac <plug>(signify-motion-outer-pending)
 xmap ac <plug>(signify-motion-outer-visual)
 let g:signify_update_on_focusgained = 1
+" }}}
+" {{{ nvim-contabs
+" let g:contabs#project#locations = [
+"   \ { 'path': '~/code', 'depth': 3, 'git_only': v:true },
+"   \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
+"   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
+"   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
+"   \]
+source ~/.nvim-contabs.vimrc
+
+nnoremap <silent> <leader>Z :call contabs#project#select()<CR>
+" }}}
+" {{{ vim-smoothie
+let g:smoothie_no_default_mappings = 1
+
+" nnoremap <silent> <Plug>(SmoothieDownwards) :<C-U>call smoothie#downwards() <CR>
+" nnoremap <silent> <Plug>(SmoothieUpwards)   :<C-U>call smoothie#upwards()   <CR>
+nnoremap <silent> <Plug>(SmoothieUpwards)   :<C-U>call smoothie#upwards()   <CR>
+nnoremap <silent> <Plug>(SmoothieDownwards) :<C-D>call smoothie#downwards() <CR>
+silent! nmap <unique> <C-U> <Plug>(SmoothieUpwards)
+silent! nmap <unique> <C-D> <Plug>(SmoothieForwards)
+
 " }}}
 
 " }}}
