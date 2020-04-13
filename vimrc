@@ -11,7 +11,7 @@ let mapleader="\<Space>"
 "{{{ Plugins
 
 " {{{ Automatic vim-plug install
-if empty(glob('~/.vim/autoload/plug.vim'))
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
       \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
@@ -43,16 +43,17 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/gv.vim'
+Plug 'junegunn/vader.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
-Plug 'm00qek/nvim-contabs'
 Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
+Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
 Plug 'sjl/gundo.vim'
@@ -74,7 +75,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
-Plug 'junegunn/vader.vim'
 
 " UI
 Plug 'Yggdroot/indentLine'
@@ -91,9 +91,10 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
 Plug 'patstockwell/vim-monokai-tasty'
-Plug 'psliwka/vim-smoothie'
+" Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
+Plug 'rust-lang/rust.vim'
 Plug 'udalov/kotlin-vim'
 Plug 'udalov/kotlin-vim'
 Plug 'webdevel/tabulous'
@@ -115,11 +116,15 @@ call plug#end()
 " }}}
 " {{{ Host programs
 " ===========
-let g:python_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog='/Users/rperrynguyen/.pyenv/versions/neovim3/bin/python'
+" https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
+let g:python_host_prog='$HOME/.pyenv/versions/neovim2/bin/python'
+let g:python3_host_prog='$HOME/.pyenv/versions/neovim3/bin/python'
 
 " Ruby
-let g:ruby_host_prog='/Users/rperrynguyen/.rbenv/versions/2.5.1/bin/ruby'
+let g:ruby_host_prog='$HOME/.rbenv/versions/2.7.1/bin/ruby'
+
+" Node
+let g:node_host_prog='/$HOME/.nodenv/versions/13.11.0/bin/node'
 " }}}
 " {{{ Autocmd
 
@@ -175,7 +180,7 @@ if (has("termguicolors"))
 endif
 
 " syntax enable
-" let g:gruvbox_contrast_dark="hard"
+let g:gruvbox_contrast_dark="hard"
 " let g:gruvbox_hls_cursor="orange"
 colorscheme gruvbox
 set background=dark
@@ -737,7 +742,6 @@ endfunction
 command! -nargs=0 TabRename call TabRename(<f-args>)
 
 nnoremap <leader>tr :TabooRename<space>
-nnoremap <leader>TR :TabRename<space>
 " nnoremap <leader>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
 " }}}
 " {{{ gundo
@@ -1062,7 +1066,42 @@ let g:signify_update_on_focusgained = 1
 "   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
 "   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
 "   \]
-source ~/.nvim-contabs.vimrc
+
+if empty(glob('~/.nvim-contabs.vimrc'))
+  echom "Missing '~/.nvim-contabs.vimrc' config"
+else
+  source ~/.nvim-contabs.vimrc
+endif
+
+function! ContabsNewTab(cmd, context)
+  let [ l:location, l:directory ] = a:context
+  let l:project_name = fnamemodify(l:directory, ':t')
+
+  tabedit
+  echom 'switched to "' . l:directory . '"'
+  execute 'TabooRename ' . l:project_name
+  execute 'tcd' . l:directory
+
+  split
+  terminal
+
+  let l:buf_name = 'term-misc-' . l:project_name
+  if (bufexists(l:buf_name))
+    edit l:buf_name
+  else
+    execute 'file ' . l:buf_name
+  endif
+
+  wincmd t
+endfunction
+
+nnoremap <silent> <leader>f\ :call contabs#window#open(
+      \ 'projects',
+      \ contabs#project#paths(),
+      \ funcref('ContabsNewTab'),
+      \ [ 'edit', { 'ctrl-t': 'tabedit', 'ctrl-e': 'edit' } ],
+      \ )
+      \ <CR>
 
 nnoremap <silent> <leader>Z :call contabs#project#select()<CR>
 " }}}
@@ -1071,10 +1110,10 @@ let g:smoothie_no_default_mappings = 1
 
 " nnoremap <silent> <Plug>(SmoothieDownwards) :<C-U>call smoothie#downwards() <CR>
 " nnoremap <silent> <Plug>(SmoothieUpwards)   :<C-U>call smoothie#upwards()   <CR>
-nnoremap <silent> <Plug>(SmoothieUpwards)   :<C-U>call smoothie#upwards()   <CR>
-nnoremap <silent> <Plug>(SmoothieDownwards) :<C-D>call smoothie#downwards() <CR>
-silent! nmap <unique> <C-U> <Plug>(SmoothieUpwards)
-silent! nmap <unique> <C-D> <Plug>(SmoothieForwards)
+" nnoremap <silent> <Plug>(SmoothieUpwards)   :<C-U>call smoothie#upwards()   <CR>
+" nnoremap <silent> <Plug>(SmoothieDownwards) :<C-D>call smoothie#downwards() <CR>
+" silent! nmap <unique> <C-U> <Plug>(SmoothieUpwards)
+" silent! nmap <unique> <C-D> <Plug>(SmoothieForwards)
 
 " }}}
 
