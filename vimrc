@@ -2,9 +2,7 @@
 set nomodeline
 
 " TODO
-" 1. Make nnn filetype binding for <Esc><C-L> to remove weird delay after
-" closing prompt
-" 2. Install Vim plug if not found
+" 2. Fix 'Coc*Float' highlight group for symbol backgrounds
 
 let mapleader="\<Space>"
 
@@ -22,6 +20,7 @@ endif
 call plug#begin('~/.local/share/nvim/plugged')
 
 " :CocInstall coc-snippets
+" :CocInstall coc-rust-analyzer
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
@@ -75,9 +74,11 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
+Plug 'honza/vim-snippets'
 
 " UI
-Plug 'Yggdroot/indentLine'
+Plug 'nathanaelkane/vim-indent-guides'
+" Plug 'Yggdroot/indentLine'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
@@ -91,7 +92,6 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
 Plug 'patstockwell/vim-monokai-tasty'
-" Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
@@ -124,7 +124,8 @@ let g:python3_host_prog='$HOME/.pyenv/versions/neovim3/bin/python'
 let g:ruby_host_prog='$HOME/.rbenv/versions/2.7.1/bin/ruby'
 
 " Node
-let g:node_host_prog='/$HOME/.nodenv/versions/13.11.0/bin/node'
+let g:node_host_prog='$HOME/.nodenv/versions/12.16.3/bin/node'
+
 " }}}
 " {{{ Autocmd
 
@@ -158,10 +159,12 @@ augroup filetypes
   autocmd FileType ruby setlocal colorcolumn=101
   autocmd FileType ruby setlocal textwidth=100
   autocmd FileType yaml setlocal commentstring=#\ %s
-  autocmd FileType org setlocal shiftwidth=1
   autocmd FileType org setlocal shiftwidth=1 tabstop=1
   autocmd FileType python setlocal nosmartindent
   autocmd FileType netrw setlocal nosmartindent
+
+  autocmd FileType org setlocal shiftwidth=4 tabstop=4 softtabstop=4
+  autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
   " hacky-fix for coc-vim leaving the popup menu window open when creating a ruby
   " block
@@ -183,7 +186,9 @@ endif
 let g:gruvbox_contrast_dark="hard"
 " let g:gruvbox_hls_cursor="orange"
 colorscheme gruvbox
+" colorscheme gruvbox
 set background=dark
+
 
 " Start and End tags are same color
 " highlight Tag        ctermfg=04
@@ -229,7 +234,7 @@ set nowrap
 set noequalalways
 
 set list
-set listchars=tab:>-,trail:+
+set listchars=tab:>-,trail:~
 
 " Show trailing whitespace with error highlighting group
 highlight! link Whitespace Error
@@ -558,10 +563,10 @@ command! DeleteHiddenBuffers call DeleteHiddenBuffers()
 cnoremap <c-\><c-f> <c-f>
 cnoremap <c-\><c-a> <c-a>
 
-nnoremap H ^
-xnoremap H ^
-nnoremap L g_
-xnoremap L g_
+nnoremap gh ^
+xnoremap gh ^
+nnoremap gl g_
+xnoremap gl g_
 
 " :)
 nnoremap s <Nop>
@@ -702,7 +707,7 @@ nnoremap sF :file<space>
 " {{{ Plugin Config
 
 " {{{ NNN
-let g:nnn#command = 'nnn -l'
+let g:nnn#command = 'nnn'
 let g:nnn#action = {
       \ '<c-t><c-t>': 'tab split',
       \ '<c-s><c-s>': 'split',
@@ -742,6 +747,7 @@ endfunction
 command! -nargs=0 TabRename call TabRename(<f-args>)
 
 nnoremap <leader>tr :TabooRename<space>
+nnoremap <silent> <leader>tR :execute 'TabooRename ' . expand('%')<CR>
 " nnoremap <leader>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
 " }}}
 " {{{ gundo
@@ -936,12 +942,80 @@ nnoremap <leader>cd :call TcdProjectRoot()<CR>
 " }}}
 " {{{ coc-nvim
 nmap slR :CocRestart<CR>
-nmap slgd <Plug>(coc-definition)
-nmap slgd <Plug>(coc-definition)
-nmap slrn <Plug>(coc-rename)
-nmap slre <Plug>(coc-references)
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gn <Plug>(coc-diagnostic-next)
+nmap <silent> gp <Plug>(coc-diagnostic-prev)
+nmap <silent> <leader>re <Plug>(coc-refactor)
+nmap <silent> <leader>rn <Plug>(coc-rename)
+nmap <silent> <leader>rn <Plug>(coc-list)
+inoremap <silent><expr> <c-space> coc#refresh()
+
+nnoremap K :call CocAction('doHover')<CR>
+imap <silent><expr> <c-k> <Plug>(coc-float-jump)
+nmap <silent> gF <Plug>(coc-float-jump)
+nmap <silent> gH <Plug>(coc-float-hide)
+nmap <silent> <esc> <Plug>(coc-float-hide)
+
+imap <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
+
+
+
+inoremap <silent><expr> <tab>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+let g:coc_snippet_next = '<tab>'
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+if exists('*complete_info')
+  inoremap <expr> <c-t> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+function! FloatScroll(forward) abort
+  let float = coc#util#get_float()
+  if !float | return '' | endif
+  let buf = nvim_win_get_buf(float)
+  let buf_height = nvim_buf_line_count(buf)
+  let win_height = nvim_win_get_height(float)
+  if buf_height < win_height | return '' | endif
+  let pos = nvim_win_get_cursor(float)
+  if a:forward
+    if pos[0] == 1
+      let pos[0] += 3 * win_height / 4
+    elseif pos[0] + win_height / 2 + 1 < buf_height
+      let pos[0] += win_height / 2 + 1
+    else
+      let pos[0] = buf_height
+    endif
+  else
+    if pos[0] == buf_height
+      let pos[0] -= 3 * win_height / 4
+    elseif pos[0] - win_height / 2 + 1  > 1
+      let pos[0] -= win_height / 2 + 1
+    else
+      let pos[0] = 1
+    endif
+  endif
+  call nvim_win_set_cursor(float, pos)
+  return ''
+endfunction
+
+inoremap <silent><expr> <down> coc#util#has_float() ? FloatScroll(1) : "\<down>"
+inoremap <silent><expr> <up> coc#util#has_float() ? FloatScroll(0) :  "\<up>"
+
 " }}}
 " {{{ vimwiki
 let wiki = {}
@@ -986,7 +1060,7 @@ hi default link BufTabLineActive TabLine
 " {{{ closetag
 let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.js'
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
-let g:closetag_shortcut = '<c-b>'
+let g:closetag_shortcut = '>'
 " }}}
 " {{{ vim-indentline
 let g:indentLine_color_gui = '#5b5b5b'
@@ -996,16 +1070,14 @@ let g:indentLine_bufTypeExclude=['help', 'terminal']
 " {{{ ultisnips
 let g:UltiSnipsEditSplit="horizontal"
 " let g:UltiSnipsExpandTrigger="<tab>"
-" let g:UltiSnipsJumpForwardTrigger="<c-n>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-p>"
-let g:UltiSnipsSnippetsDir="~/code/dotfiles/ultisnips"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsSnippetDirectories=[$HOME.'/code/dotfiles/ultisnips', "UltiSnips"]
 " }}}
 " {{{ vim-searchhi
 let g:searchhi_clear_all_autocmds = 'InsertEnter'
-let g:searchhi_clear_all_asap=1
+" let g:searchhi_clear_all_asap=1
 " let g:searchhi_user_autocmds_enabled=1
-
 nmap / <Plug>(searchhi-/)
 nmap ? <Plug>(searchhi-?)
 nmap n <Plug>(searchhi-n)
@@ -1095,7 +1167,7 @@ function! ContabsNewTab(cmd, context)
   wincmd t
 endfunction
 
-nnoremap <silent> <leader>f\ :call contabs#window#open(
+nnoremap <silent> <leader>fp :call contabs#window#open(
       \ 'projects',
       \ contabs#project#paths(),
       \ funcref('ContabsNewTab'),
@@ -1115,6 +1187,15 @@ let g:smoothie_no_default_mappings = 1
 " silent! nmap <unique> <C-U> <Plug>(SmoothieUpwards)
 " silent! nmap <unique> <C-D> <Plug>(SmoothieForwards)
 
+" }}}
+" {{{ vim-indent-guides
+let g:indent_guides_on_vim_startup=1
+let g:indent_guides_start_level=2
+let g:indent_guides_guide_size=1
+
+" }}}
+" {{{ split-join
+nmap <leader>oi gSjvi}:sort<CR>va}JxF{lxj
 " }}}
 
 " }}}
