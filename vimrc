@@ -76,6 +76,8 @@ Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
 Plug 'honza/vim-snippets'
 
+Plug 'psliwka/vim-smoothie'
+
 " UI
 Plug 'nathanaelkane/vim-indent-guides'
 " Plug 'Yggdroot/indentLine'
@@ -693,6 +695,8 @@ nnoremap <leader>l <C-^>
 " nnoremap <leader>sL :set hlsearch<CR>
 nnoremap set :buffer term-<C-d>
 
+nnoremap <leader>= vip:sort<CR>
+
 nnoremap <leader>1 1gt
 nnoremap <leader>2 2gt
 nnoremap <leader>3 3gt
@@ -703,7 +707,6 @@ nnoremap <leader>7 7gt
 nnoremap <leader>8 8gt
 nnoremap <leader>9 9gt
 
-nnoremap <leader>= "+
 nnoremap <leader>y "+y
 nnoremap <leader>p "+p
 vnoremap <leader>y "+y
@@ -878,7 +881,6 @@ command! -bang -nargs=* RgNoSpec
   \   <bang>0
   \ )
 
-nnoremap <C-f> :GFiles<CR>
 nnoremap <leader><C-f> :GFiles<CR>
 
 nnoremap <leader>fb :Buffers<CR>
@@ -936,9 +938,9 @@ nnoremap <leader>WR :WinResizerStartResize<CR>
 let g:winresizer_start_key = '<C-Q>'
 " }}}
 " {{{ vim-fugitive
-nnoremap <leader>gst :Gstatus
-nnoremap <leader>gsp :Gstatus
-nnoremap <leader>gvs :Gvsplit
+nnoremap <leader>gst :Gstatus<CR>
+nnoremap <leader>gsp :Gstatus<CR>
+nnoremap <leader>gvs :Gvsplit<CR>
 nnoremap <leader>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
 " {{{ project-root-cd
@@ -976,8 +978,6 @@ nmap <silent> gH <Plug>(coc-float-hide)
 nmap <silent> <esc> <Plug>(coc-float-hide)
 
 imap <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
-
-
 
 inoremap <silent><expr> <tab>
       \ pumvisible() ? coc#_select_confirm() :
@@ -1194,7 +1194,7 @@ nnoremap <silent> <leader>fp :call contabs#window#open(
 nnoremap <silent> <leader>Z :call contabs#project#select()<CR>
 " }}}
 " {{{ vim-smoothie
-let g:smoothie_no_default_mappings = 1
+" let g:smoothie_no_default_mappings = 1
 
 " nnoremap <silent> <Plug>(SmoothieDownwards) :<C-U>call smoothie#downwards() <CR>
 " nnoremap <silent> <Plug>(SmoothieUpwards)   :<C-U>call smoothie#upwards()   <CR>
