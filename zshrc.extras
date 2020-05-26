@@ -1,5 +1,15 @@
+# Autoload -Uz compinit
+# compinit
+
 # global gitignore
 git config --global core.excludesfile ~/.gitignore
+
+# brew install
+# ripgrep
+# nnn
+# rbenv
+# nodenv
+# pyenv
 
 # http://www.rushiagr.com/blog/2016/06/16/everything-you-need-to-know-about-tmux-copy-pasting-ubuntu/
 # https://github.com/dmarcotte/easy-move-resize
@@ -19,9 +29,6 @@ git config --global core.excludesfile ~/.gitignore
 
 # Bat theme
 export BAT_THEME='gruvbox-dark-medium'
-
-# Z - jump around
-. $HOME/code/tools/z/z.sh
 
 alias rm-swap="rm ~/.local/share/nvim/swap/*"
 
@@ -57,7 +64,7 @@ export NNN_COPIER="~/.copier.sh"
 export NNN_NO_AUTOSELECT=1
 
 # Neovim true color support
-export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+# export NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 # When enter starts inputting ^M...
 alias pls="stty sane"
@@ -96,11 +103,11 @@ function rebase_dependent() {
   git rebase --onto master $1 $(g_branch)
 }
 
-case `uname` in
-  Darwin)
-    alias ls="gls -G"
-  ;;
-esac
+# case `uname` in
+#   Darwin)
+#     alias ls="gls -G"
+#   ;;
+# esac
 
 # emacs insert-mode binds ;)
 bindkey -e
