@@ -57,6 +57,9 @@ else
   alias nv="nvim"
   alias n="nvim"
 fi
+
+alias nstart="nvim +'terminal' +'file term-misc' +'TabooRename misc'"
+
 export EDITOR="$VISUAL"
 
 export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'

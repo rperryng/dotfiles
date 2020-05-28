@@ -36,7 +36,9 @@ Plug 'gcmt/taboo.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'honza/vim-snippets'
+Plug 'honza/vim-snippets'
 Plug 'janko-m/vim-test'
+Plug 'jeetsukumaran/vim-indentwise'
 Plug 'jesseleite/vim-agriculture'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -49,9 +51,9 @@ Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'prakashdanish/vim-githubinator'
-Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
@@ -74,13 +76,8 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
-Plug 'honza/vim-snippets'
-
-Plug 'psliwka/vim-smoothie'
 
 " UI
-Plug 'nathanaelkane/vim-indent-guides'
-" Plug 'Yggdroot/indentLine'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
@@ -93,7 +90,9 @@ Plug 'junegunn/vim-journal'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'patstockwell/vim-monokai-tasty'
+Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
@@ -145,7 +144,6 @@ endif
 " }}}
 " {{{ Autocmd
 
-
 augroup focusgroup
 autocmd!
 " Preserve cursor location when switching buffers
@@ -181,6 +179,11 @@ augroup filetypes
 
   autocmd FileType org setlocal shiftwidth=4 tabstop=4 softtabstop=4
   autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
+  autocmd FileType rust setlocal shiftwidth=4 tabstop=4 softtabstop=4
+
+  " Help prevent accidentally modifying external source code resolved via
+  " ctags or LSP functionality.
+  autocmd BufReadPost */.cargo/*,*/.rustup/* setlocal readonly
 
   " hacky-fix for coc-vim leaving the popup menu window open when creating a ruby
   " block
@@ -583,8 +586,8 @@ cnoremap <c-\><c-a> <c-a>
 
 nnoremap gh ^
 xnoremap gh ^
-nnoremap gl g_
-xnoremap gl g_
+nnoremap gl $
+xnoremap gl $
 
 " :)
 nnoremap s <Nop>
@@ -714,7 +717,7 @@ vnoremap <leader>p "+p
 
 nnoremap <leader>tq :tabclose<CR>
 nnoremap <leader>q :q<CR>
-nnoremap <leader>bd :bprevious <bar> bdelete! #<CR>
+" nnoremap <leader>bd :bprevious <bar> bdelete! #<CR>
 nnoremap <C-n> :tabnext<CR>
 nnoremap <C-p> :tabprevious<CR>
 nnoremap sn :tabnext<CR>
@@ -1212,6 +1215,16 @@ let g:indent_guides_guide_size=1
 " }}}
 " {{{ split-join
 nmap <leader>oi gSjvi}:sort<CR>va}JxF{lxj
+" }}}
+" {{{ vim-bbye
+nnoremap <leader>bd :Bdelete<CR>
+nnoremap <leader>bw :Bwipeout<CR>
+" }}}
+" {{{ vim-githubinator
+nunmap gho
+nunmap ghc
+nmap <leader>gho <Plug>(githubinator-open)
+nmap <leader>ghc <Plug>(githubinator-open)
 " }}}
 
 " }}}
