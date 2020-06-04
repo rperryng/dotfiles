@@ -24,15 +24,15 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
-" Plug 'junegunn/vim-peekaboo'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'KKPMW/vim-sendtowindow'
-Plug 'SirVer/ultisnips'
+" Plug 'SirVer/ultisnips'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dbakker/vim-projectroot'
 Plug 'gcmt/taboo.vim'
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'honza/vim-snippets'
@@ -251,9 +251,25 @@ set splitright
 set wildmode=list:longest
 set nowrap
 set noequalalways
+set showtabline=2
 
 set list
 set listchars=tab:>-,trail:~
+
+" Statusline
+" set statusline=
+" set statusline+=%#PmenuSel#
+" set statusline+=%#LineNr#
+" set statusline+=\ %f
+" set statusline+=%m\
+" set statusline+=%=
+" set statusline+=%#CursorColumn#
+" set statusline+=\ %y
+" set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+" set statusline+=\[%{&fileformat}\]
+" set statusline+=\ %p%%
+" set statusline+=\ %l:%c
+" set statusline+=\ 
 
 " Show trailing whitespace with error highlighting group
 highlight! link Whitespace Error
@@ -269,67 +285,67 @@ function! EqualWindowHorizontally()
 endfunction
 
 function! OnlyWindow()
-let currwin=winnr()
+  let currwin=winnr()
 endfunction
 
 " Preferred Layout When starting a new session
 function! Layout()
-edit ~/vimwiki/index.wiki
-vsplit
-edit ~/vimwiki/Standup.wiki
-vsplit
-edit ~/vimwiki/misc_TODO.wiki
-TabooRename Today
-tabedit ~/.vimrc
-vertical help
-TabooRename Vim
-tabedit
-split
+  edit ~/vimwiki/index.wiki
+  vsplit
+  edit ~/vimwiki/Standup.wiki
+  vsplit
+  edit ~/vimwiki/misc_TODO.wiki
+  TabooRename Today
+  tabedit ~/.vimrc
+  vertical help
+  TabooRename Vim
+  tabedit
+  split
 
-if bufexists('term-misc')
-  buffer term-misc
-else
-  terminal
-  file term-misc
-endif
+  if bufexists('term-misc')
+    buffer term-misc
+  else
+    terminal
+    file term-misc
+  endif
 
-wincmd k
-execute 'TabooRename ' . fnamemodify(getcwd(), ':t')
+  wincmd k
+  execute 'TabooRename ' . fnamemodify(getcwd(), ':t')
 endfunction
 
 command! -nargs=0 Layout call Layout()
 
 " Easily insert new vimwiki TODO items
 function! Todo(...)
-edit ~/vimwiki/misc_TODO.wiki
-execute 'normal G'
+  edit ~/vimwiki/misc_TODO.wiki
+  execute 'normal G'
 
-if a:0 > 0
-  execute 'normal o' . join(a:000)
-endif
+  if a:0 > 0
+    execute 'normal o' . join(a:000)
+  endif
 endfunction
 
 command! -nargs=* Todo call Todo(<f-args>)
 
 function! Tabe(name)
-tabedit
-split
-terminal
-execute 'TabooRename ' . a:name
-execute 'TZ ' . a:name
-execute 'file term-misc-' . a:name
-call feedkeys('az ' . a:name . "\<CR>")
+  tabedit
+  split
+  terminal
+  execute 'TabooRename ' . a:name
+  execute 'TZ ' . a:name
+  execute 'file term-misc-' . a:name
+  call feedkeys('az ' . a:name . "\<CR>")
 endfunction
 
 command! -nargs=1 TE call Tabe(<q-args>)
 
 function! CursorSaveAndTabulous()
-let t:active_windownr = winnr()
-execute winnr('$') . 'wincmd w'
+  let t:active_windownr = winnr()
+  execute winnr('$') . 'wincmd w'
 endfunction
 
 function! CursorRestore()
-execute t:active_windownr . 'wincmd w'
+  execute t:active_windownr . 'wincmd w'
 endfunction
 
 " Get terminal output
@@ -338,13 +354,13 @@ tnoremap <C-Enter> <C-\><C-n>mza<CR>
 " Join lines and remove whitespace
 " Like gJ, but always remove spaces
 function! JoinSpaceless()
-execute 'normal gJ'
+  execute 'normal gJ'
 
-" Character under cursor is whitespace?
-if matchstr(getline('.'), '\%' . col('.') . 'c.') =~ '\s'
-  " When remove it!
-  execute 'normal dw'
-endif
+  " Character under cursor is whitespace?
+  if matchstr(getline('.'), '\%' . col('.') . 'c.') =~ '\s'
+    " When remove it!
+    execute 'normal dw'
+  endif
 endfun
 
 command! -nargs=0 JoinSpaceless call JoinSpaceless()
@@ -355,27 +371,27 @@ xnoremap <leader>gJ :call JoinSpaceless()<CR>
 """"""""""""
 " Paste 10 lines to the window below
 function! SlowPaste()
-HighlightedyankOff
-normal qp
-silent .,+9yank
-normal 10j
-wincmd j
-put 0
-wincmd k
-normal q
-HighlightedyankOn
+  HighlightedyankOff
+  normal qp
+  silent .,+9yank
+  normal 10j
+  wincmd j
+  put 0
+  wincmd k
+  normal q
+  HighlightedyankOn
 endfunction
 
 command! SlowPaste call SlowPaste()
 
 function! SlowPasteRange() range
-echo split(GetVisualSelection(), "\n")
-" for i in split(GetVisualSelection(), "\n")
+  echo split(GetVisualSelection(), "\n")
+  " for i in split(GetVisualSelection(), "\n")
 
-" endfor
-" echo "firstline ".a:firstline." lastline ".a:lastline
-" echo "firstline contents" . getline(a:firstline)
-" echo "lastline contents" . getline(a:lastline)
+  " endfor
+  " echo "firstline ".a:firstline." lastline ".a:lastline
+  " echo "firstline contents" . getline(a:firstline)
+  " echo "lastline contents" . getline(a:lastline)
 endfunction
 
 command! -range SlowPasteRange <line1>,<line2>call SlowPasteRange()
@@ -388,18 +404,18 @@ command! StripWhitespace %s/\s\+$//e
 " Change working directory using z.sh
 """""""""""""""""""""""""""""""""""""
 function! ZLookup(z_arg, scope)
-let z_resolved_directory = system('. ~/code/tools/z/z.sh && _z -e ' . a:z_arg)
-if a:scope == 2
-  execute 'lcd ' . z_resolved_directory
-elseif a:scope == 1
-  execute 'tcd ' . z_resolved_directory
-else
-  execute 'cd ' . z_resolved_directory
-endif
+  let z_resolved_directory = system('. ~/code/tools/z/z.sh && _z -e ' . a:z_arg)
+  if a:scope == 2
+    execute 'lcd ' . z_resolved_directory
+  elseif a:scope == 1
+    execute 'tcd ' . z_resolved_directory
+  else
+    execute 'cd ' . z_resolved_directory
+  endif
 
-" Strip empty newline so that command line doesn't grow when echoing
-let z_resolved_directory = substitute(z_resolved_directory, "\n", "", "")
-echo z_resolved_directory
+  " Strip empty newline so that command line doesn't grow when echoing
+  let z_resolved_directory = substitute(z_resolved_directory, "\n", "", "")
+  echo z_resolved_directory
 endfunction
 
 command! -nargs=1 Z call ZLookup(<q-args>, 0)
@@ -423,11 +439,11 @@ nnoremap <leader>w= :silent call TerminalResize()<CR>
 " Change working directory using ProjectRootCD
 """"""""""""""""""""""""""""""""""""""""""""""
 function! ProjectRootCDAll()
-let currwin=winnr()
-let root=ProjectRootGuess()
-let cd_command = 'tcd ' . root
-execute cd_command
-echo root
+  let currwin=winnr()
+  let root=ProjectRootGuess()
+  let cd_command = 'tcd ' . root
+  execute cd_command
+  echo root
 
 endfunction
 
@@ -435,7 +451,7 @@ command! -nargs=0 ProjectRootCDAll call ProjectRootCDAll()
 
 " Remove all buffers from other projects
 function! ClearOtherBuffers()
-bdelete bdelete ~/code/<C-a>
+  bdelete bdelete ~/code/<C-a>
 endfunction
 
 command! -nargs=0 ClearOtherBuffers call ClearOtherBuffers()
@@ -443,8 +459,8 @@ command! -nargs=0 ClearOtherBuffers call ClearOtherBuffers()
 " Format JSON
 """""""""""""
 function! FormatJson()
-execute '%!python -m json.tool'
-execute 'normal! gg=G'
+  execute '%!python -m json.tool'
+  execute 'normal! gg=G'
 endfunction
 command! FormatJson call FormatJson()
 
@@ -458,8 +474,8 @@ endfunction
 command! ProfileStart call ProfileStart()
 
 function! ProfileEnd()
-profile pause
-noautocmd qall!
+  profile pause
+  noautocmd qall!
 endfunction
 command! ProfileEnd call ProfileEnd()
 
@@ -500,48 +516,48 @@ command! ClearScrollback :call ClearScrollback()
 " * asdf
 
 function! Today()
-split ~/vimwiki/Standup.wiki
-execute "normal! gg"
-let l:date_formatted = strftime('= %A - %B %d %Y =')
+  split ~/vimwiki/Standup.wiki
+  execute "normal! gg"
+  let l:date_formatted = strftime('= %A - %B %d %Y =')
 
-if search(l:date_formatted) == 0
-  execute "normal! G{{}zo"
-  put! =strftime('= %A - %B %d %Y =')
-  execute "normal! o*\<Space>"
-  startinsert!
-elseif search(l:date_formatted . '\n\%(\*.*\)\{1,}\n$', 'e') != 0
-  execute "normal! Gzo{{}O*\<Space>"
-  startinsert!
-else
-  execute "normal! zvj$"
-  startinsert!
-endif
+  if search(l:date_formatted) == 0
+    execute "normal! G{{}zo"
+    put! =strftime('= %A - %B %d %Y =')
+    execute "normal! o*\<Space>"
+    startinsert!
+  elseif search(l:date_formatted . '\n\%(\*.*\)\{1,}\n$', 'e') != 0
+    execute "normal! Gzo{{}O*\<Space>"
+    startinsert!
+  else
+    execute "normal! zvj$"
+    startinsert!
+  endif
 endfunction
 command! Today :call Today()
 
 function! PToday()
-put! =strftime('= %A - %B %d %Y =')
+  put! =strftime('= %A - %B %d %Y =')
 endfunction
 command! PToday :call PToday()
 
 function! Scratch()
-split ~/vimwiki/ruby_scratchpad.rb
-execute "normal! gg"
-let l:date_formatted = strftime('= %A - %B %d %Y =')
+  split ~/vimwiki/ruby_scratchpad.rb
+  execute "normal! gg"
+  let l:date_formatted = strftime('= %A - %B %d %Y =')
 
-if search(l:date_formatted) == 0
-  execute "normal! Gzo{{}"
-  put! =strftime('= %A - %B %d %Y =')
-  execute "normal! o*\<Space>"
-  startinsert!
-elseif search(l:date_formatted . '\n\%(\*.*\)\{1,}\n$', 'e') != 0
-  execute "normal! Gzo{{}O*\<Space>"
-  startinsert!
-else
-  execute "normal! zvj$"
-  startinsert!
-endif
-endfunction
+  if search(l:date_formatted) == 0
+    execute "normal! Gzo{{}"
+    put! =strftime('= %A - %B %d %Y =')
+    execute "normal! o*\<Space>"
+    startinsert!
+  elseif search(l:date_formatted . '\n\%(\*.*\)\{1,}\n$', 'e') != 0
+    execute "normal! Gzo{{}O*\<Space>"
+    startinsert!
+  else
+    execute "normal! zvj$"
+    startinsert!
+  endif
+  endfunction
 command! Scratch :call Scratch()
 
 function! GetVisualSelection()
@@ -558,8 +574,8 @@ function! GetVisualSelection()
 endfunction
 
 function! DeleteCwdBuffers()
-call feedkeys(":bdelete " . getcwd() . "\<C-\>\<C-a>\<CR>")
-" execute "bd " . getcwd() . ""
+  call feedkeys(":bdelete " . getcwd() . "\<C-\>\<C-a>\<CR>")
+  " execute "bd " . getcwd() . ""
 endfunction
 
 command! DeleteCwdBuffers call DeleteCwdBuffers()
@@ -568,16 +584,25 @@ nnoremap <leader>BD :DeleteCwdBuffers<CR>
 " Shameleslly stolen from
 " https://github.com/arithran/vim-delete-hidden-buffers/blob/master/plugin/delete-hidden-buffers.vim
 if !exists("*DeleteHiddenBuffers") " Clear all hidden buffers when running
-function DeleteHiddenBuffers() " Vim with the 'hidden' option
-  let tpbl=[]
-  call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
-  for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
-    silent execute 'bwipeout' buf
-  endfor
-endfunction
-endif
+  function DeleteHiddenBuffers() " Vim with the 'hidden' option
+    let tpbl=[]
+    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
+    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
+      silent execute 'bwipeout' buf
+    endfor
+  endfunction
+  endif
 command! DeleteHiddenBuffers call DeleteHiddenBuffers()
 
+function NNStart()
+  edit ~/.vimrc
+  cd ~/code/dotfiles
+  split
+  terminal
+  file term-misc-dotfiles
+  call TerminalResize()
+  TabooRename dotfiles
+endfunction
 " }}}
 " {{{ Mappings
 
@@ -587,7 +612,7 @@ cnoremap <c-\><c-a> <c-a>
 nnoremap gh ^
 xnoremap gh ^
 nnoremap gl $
-xnoremap gl $
+xnoremap gl $h
 
 " :)
 nnoremap s <Nop>
@@ -670,10 +695,9 @@ vnoremap // y/<C-R>"<CR>
 " Go to end of pattern match
 nnoremap <leader>e //e<CR>
 
-" Replace
-nnoremap <leader>/ :%s/<C-r>=expand('<cword>')<CR>//g<left><left>
-" onoremap <leader>/ :s/<C-r>=expand('<cword>')<CR>//g<left><left>
-xnoremap <leader>/ :s/
+" file-Replace
+nnoremap <leader>g/ :%s/<C-r>=expand('<cword>')<CR>//g<left><left>
+xnoremap <leader>g/ y:%s/<C-r>0//g<left><left>
 
 " Open buffer in new tab and go to current position
 nnoremap st ml:tabedit %<CR>`l
@@ -685,9 +709,10 @@ nnoremap st ml:tabedit %<CR>`l
 " Weird hack.  Sometimes the scrolloff option breaks for a terminal buffer
 " if the terminal buffer was present in another window with different
 " dimensions.
-nnoremap <leader>w<space> :res +1<CR>:res -1<CR>
+nnoremap <leader>w<space> :resize +1<CR>:resize -1<CR>
 
 " Reload vimrc
+nnoremap <leader>E :edit $MYVIMRC<CR>
 nnoremap <leader>R :source $MYVIMRC<CR>
 
 " Toggle scrolloff
@@ -972,6 +997,7 @@ nmap <silent> gp <Plug>(coc-diagnostic-prev)
 nmap <silent> <leader>re <Plug>(coc-refactor)
 nmap <silent> <leader>rn <Plug>(coc-rename)
 nmap <silent> <leader>rn <Plug>(coc-list)
+nnoremap <silent> <leader>gl :CocList diagnostics<CR>
 inoremap <silent><expr> <c-space> coc#refresh()
 
 nnoremap K :call CocAction('doHover')<CR>
@@ -980,7 +1006,7 @@ nmap <silent> gF <Plug>(coc-float-jump)
 nmap <silent> gH <Plug>(coc-float-hide)
 nmap <silent> <esc> <Plug>(coc-float-hide)
 
-imap <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
+imap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
 
 inoremap <silent><expr> <tab>
       \ pumvisible() ? coc#_select_confirm() :
@@ -1070,12 +1096,6 @@ let g:mkdp_auto_close=0
 " {{{ vim-test
 let test#ruby#rspec#executable = 'bundle exec rspec'
 " }}}
-" {{{ buftabline
-let g:buftabline_numbers=1
-let g:buftabline_separators=1
-let g:buftabline_plug_max=0
-hi default link BufTabLineActive TabLine
-" }}}
 " {{{ closetag
 let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.js'
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
@@ -1089,8 +1109,8 @@ let g:indentLine_bufTypeExclude=['help', 'terminal']
 " {{{ ultisnips
 let g:UltiSnipsEditSplit="horizontal"
 " let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+" let g:UltiSnipsJumpForwardTrigger="<c-j>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsSnippetDirectories=[$HOME.'/code/dotfiles/ultisnips', "UltiSnips"]
 " }}}
 " {{{ vim-searchhi
@@ -1175,6 +1195,7 @@ function! ContabsNewTab(cmd, context)
 
   split
   terminal
+  call TerminalResize()
 
   let l:buf_name = 'term-misc-' . l:project_name
   if (bufexists(l:buf_name))
@@ -1214,17 +1235,49 @@ let g:indent_guides_guide_size=1
 
 " }}}
 " {{{ split-join
-nmap <leader>oi gSjvi}:sort<CR>va}JxF{lxj
+
+" Sort inline rust multi-use statements
+" e.g.:
+" use anyhow::{Context, Result, bail, anyhow};
+" becomes
+" use anyhow::{Context, Result, anyhow, bail};
+" nmap <silent> <leader>oi ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
+nmap <silent> <Plug>SortInline ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
+  \:call repeat#set("\<Plug>SortInline")<CR>
+nmap <leader>oi <Plug>SortInline
+
 " }}}
 " {{{ vim-bbye
-nnoremap <leader>bd :Bdelete<CR>
-nnoremap <leader>bw :Bwipeout<CR>
+nnoremap <leader>bd :Bdelete!<CR>
+nnoremap <leader>bw :Bwipeout!<CR>
 " }}}
 " {{{ vim-githubinator
-nunmap gho
-nunmap ghc
+let g:githubinator_no_default_mapping=1
 nmap <leader>gho <Plug>(githubinator-open)
-nmap <leader>ghc <Plug>(githubinator-open)
+nmap <leader>ghc <Plug>(githubinator-copy)
+" }}}
+" {{{ firenvim
+let g:firenvim_config = {
+    \ 'globalSettings': {
+        \ 'alt': 'all',
+    \  },
+    \ 'localSettings': {
+        \ '.*': {
+            \ 'cmdline': 'neovim',
+            \ 'priority': 0,
+            \ 'selector': 'textarea:not([readonly]), div[role="textbox"]',
+            \ 'takeover': 'never',
+        \ },
+    \ }
+\ }
+
+if exists('g:started_by_nvim')
+  augroup firenvim
+    autocmd!
+
+    autocmd BufEnter github.com_*.txt set filetype=markdown
+  augroup end
+endif
 " }}}
 
 " }}}
