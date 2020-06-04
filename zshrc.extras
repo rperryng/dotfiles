@@ -52,13 +52,14 @@ if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
   export VISUAL="nvr -cc split --remote-wait +'setlocal bufhidden=wipe'"
   alias nvim="nvr"
   alias n="nvr"
+  alias nnstart="echo 'Already in a neovim session'"
 else
   export VISUAL=nvim
   alias nv="nvim"
   alias n="nvim"
+  alias nnstart="nvim +'call NNStart()'"
 fi
 
-alias nstart="nvim +'terminal' +'file term-misc' +'TabooRename misc'"
 
 export EDITOR="$VISUAL"
 
