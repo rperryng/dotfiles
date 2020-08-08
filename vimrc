@@ -24,9 +24,10 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'KKPMW/vim-sendtowindow'
 " Plug 'SirVer/ultisnips'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'Julian/vim-textobj-variable-segment'
+Plug 'KKPMW/vim-sendtowindow'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
@@ -46,6 +47,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/gv.vim'
 Plug 'junegunn/vader.vim'
 Plug 'junegunn/vim-easy-align'
+Plug 'junegunn/vim-peekaboo'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
@@ -124,13 +126,14 @@ if executable('pyenv')
   let g:python_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
   let g:python3_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim3/bin/python"
 else
+  echom "missing pyenv.  No python host set."
 endif
 
 " Ruby
 if executable('rbenv')
   let g:ruby_host_prog=trim(system('rbenv which ruby'))
 else
-  echom "Missing rbenv.  No ruby host set"
+  echom "Missing rbenv.  No ruby host set."
 endif
 
 " Node
@@ -138,7 +141,7 @@ if executable('nodenv')
   let g:node_host_prog=trim(system('nodenv which node'))
   let g:coc_node_path=g:node_host_prog
 else
-  echom "Missing nodenv.  No ruby host set"
+  echom "Missing nodenv.  No ruby host set."
 endif
 
 " }}}
@@ -863,20 +866,20 @@ let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
 "   let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 " endif
 
-" :like Ag but only search file content, i.e. do not match directories
-command! -bang -nargs=* AG
-  \ call fzf#vim#ag(
-  \   <q-args>,
+" :like :Rg but only search file content, i.e. do not match directories
+command! -bang -nargs=* RG
+  \ call fzf#vim#grep(
+  \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
+  \   1,
   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
-  \   <bang>0
-  \ )
+  \   <bang>0)
 
 " :Tags
 command! -nargs=* Tags
   \ call fzf#vim#tags(
-  \   <q-args>,
-  \   {'options': '--delimiter : --nth 4..'},
-  \   <bang>0
+  \    <q-args>,
+  \    {'options': '--delimiter : --nth 4..'},
+  \    <bang>0
   \ )
 
 command! -nargs=? -complete=dir Files
@@ -909,6 +912,13 @@ command! -bang -nargs=* RgNoSpec
   \   <bang>0
   \ )
 
+command! -bang -nargs=* RG
+  \ call fzf#vim#grep(
+  \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
+  \   1,
+  \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
+  \   <bang>0)
+
 nnoremap <leader><C-f> :GFiles<CR>
 
 nnoremap <leader>fb :Buffers<CR>
@@ -921,12 +931,10 @@ nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>fg :GFiles?<CR>
 nnoremap <leader>fw :Windows<CR>
 nnoremap <leader>fa :Rg<CR>
+nnoremap <leader>fA :RG<CR>
 nnoremap <leader>fr :Rg<CR>
 nnoremap <leader>ft :TerminalBuffers<CR>
-nnoremap <leader>ag :Ag<CR>
-nnoremap <leader>fA :Ag!<CR>
-nnoremap <leader>AG :AG<CR>
-nnoremap <leader><leader> :RgNoSpec<CR>
+nnoremap <leader>fsa :RgNoSpec<CR>
 
 nnoremap <leader>fB :Buffers!<CR>
 nnoremap <leader>fC :Commands!<CR>
@@ -1069,6 +1077,8 @@ let wiki.nested_syntax = {'ruby': 'ruby'}
 let g:vimwiki_list = [wiki]
 let g:vimwiki_folding=''
 
+" let g:vimwiki_key_mappings = { }
+
 function! VimwikiLinkHandler(link)
   " Use Vim to open external files with the 'vfile:' scheme.  E.g.:
   "   1) [[vfile:~/Code/PythonProject/abc123.py]]
@@ -1178,12 +1188,6 @@ let g:contabs#project#locations = [
   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
   \]
 
-if empty(glob('~/.nvim-contabs.vimrc'))
-  echom "Missing '~/.nvim-contabs.vimrc' config"
-else
-  source ~/.nvim-contabs.vimrc
-endif
-
 function! ContabsNewTab(cmd, context)
   let [ l:location, l:directory ] = a:context
   let l:project_name = fnamemodify(l:directory, ':t')
@@ -1278,6 +1282,10 @@ if exists('g:started_by_nvim')
     autocmd BufEnter github.com_*.txt set filetype=markdown
   augroup end
 endif
+" }}}
+" {{{ vim-peekaboo
+let g:peekaboo_prefix = '<leader>'
+let g:peekaboo_ins_prefix = '<c-x>'
 " }}}
 
 " }}}
