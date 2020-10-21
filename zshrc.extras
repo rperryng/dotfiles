@@ -90,9 +90,10 @@ alias open-pr="open \"https://github.com/wealthsimple/\$(basename \$(git remote 
 
 alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
 
+alias be="bundle exec"
 alias migrate="bundle exec rake db:migrate && RACK_ENV=test bundle exec rake db:migrate"
 alias rollback="bundle exec rake db:rollback && RACK_ENV=test bundle exec rake db:rollback"
-alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:drop db:create db:schema:load db:migrate && RACK_ENV=test bundle exec rake db:migrate"
+alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:drop db:create db:migrate && RACK_ENV=test bundle exec rake db:migrate"
 
 # Rubocop all git-tracked files (excluding files in the db/ folder)
 alias cop="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop"

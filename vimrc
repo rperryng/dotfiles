@@ -1,4 +1,4 @@
-" Avoid code execution vulnerability
+" A void code execution vulnerability
 set nomodeline
 
 " TODO
@@ -21,13 +21,15 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 " :CocInstall coc-snippets
 " :CocInstall coc-rust-analyzer
+" :CocInstall coc-tsserver
+" :CocInstall coc-solargraph
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
-" Plug 'SirVer/ultisnips'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
+Plug 'SirVer/ultisnips'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'

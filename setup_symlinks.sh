@@ -17,6 +17,8 @@ ln -s $DOTFILES_SOURCE/ideavimrc ~/.ideavimrc
 
 if command -v rbenv 2>/dev/null; then
   echo "symlinking rbenv default-gems"
+  # install rbenv-default-gems
+  git clone https://github.com/rbenv/rbenv-default-gems.git $(rbenv root)/plugins/rbenv-default-gems
   ln -s $DOTFILES_SOURCE/default-gems $(rbenv root)/default-gems
 else
   echo "rbenv not installed"

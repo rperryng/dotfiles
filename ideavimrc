@@ -40,6 +40,8 @@ map <leader>o :action OptimizeImports<CR>
 map <leader>rr :action Run<CR>
 map <leader>rd :action Debug<CR>
 map <leader>rb :action RebuildGradleProject<CR>
+map <leader>io :action Run<CR>
+map <leader>ip :action Debug<CR>
 map <leader>q :q><CR>
 map <leader>gg :action GenerateGetter<CR>
 map <leader>ga :action GenerateGetterAndSetter<CR>
