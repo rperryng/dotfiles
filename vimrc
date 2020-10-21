@@ -34,18 +34,20 @@ Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dbakker/vim-projectroot'
+Plug 'editorconfig/editorconfig-vim'
 Plug 'gcmt/taboo.vim'
+Plug 'gisphm/vim-gitignore'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
-Plug 'honza/vim-snippets'
 Plug 'honza/vim-snippets'
 Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'jesseleite/vim-agriculture'
 Plug 'jiangmiao/auto-pairs'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/goyo.vim'
 Plug 'junegunn/gv.vim'
 Plug 'junegunn/vader.vim'
 Plug 'junegunn/vim-easy-align'
@@ -58,6 +60,7 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'prakashdanish/vim-githubinator'
+Plug 'prettier/vim-prettier'
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
@@ -96,11 +99,11 @@ Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'patstockwell/vim-monokai-tasty'
+Plug 'peitalin/vim-jsx-typescript'
 Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
-Plug 'udalov/kotlin-vim'
 Plug 'udalov/kotlin-vim'
 Plug 'webdevel/tabulous'
 Plug 'wlangstroth/vim-racket'
@@ -179,6 +182,7 @@ augroup filetypes
   autocmd FileType ruby setlocal colorcolumn=101
   autocmd FileType ruby setlocal textwidth=100
   autocmd FileType yaml setlocal commentstring=#\ %s
+  autocmd FileType tsx setlocal commentstring=//\ %s
   autocmd FileType python setlocal nosmartindent
   autocmd FileType netrw setlocal nosmartindent
 
@@ -521,17 +525,21 @@ command! ClearScrollback :call ClearScrollback()
 " * asdf
 
 function! Today()
-  split ~/vimwiki/Standup.wiki
+  if expand('%:t') != 'Standup.wiki'
+    split ~/vimwiki/Standup.wiki
+  endif
+
   execute "normal! gg"
   let l:date_formatted = strftime('= %A - %B %d %Y =')
 
   if search(l:date_formatted) == 0
-    execute "normal! G{{}zo"
+    execute "normal! G{{}"
+    put! "\r"
     put! =strftime('= %A - %B %d %Y =')
-    execute "normal! o*\<Space>"
+    " execute "normal! o*\<Space>"
     startinsert!
   elseif search(l:date_formatted . '\n\%(\*.*\)\{1,}\n$', 'e') != 0
-    execute "normal! Gzo{{}O*\<Space>"
+    execute "normal! G{{}O*\<Space>"
     startinsert!
   else
     execute "normal! zvj$"
@@ -759,7 +767,7 @@ nnoremap sF :file<space>
 " {{{ Plugin Config
 
 " {{{ NNN
-let g:nnn#command = 'nnn'
+let g:nnn#command = 'nnn -H'
 let g:nnn#action = {
       \ '<c-t><c-t>': 'tab split',
       \ '<c-s><c-s>': 'split',
@@ -876,6 +884,27 @@ command! -bang -nargs=* RG
   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
   \   <bang>0)
 
+command! -bang -nargs=* RI
+  \ call fzf#vim#grep(
+  \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
+  \   1,
+  \   <bang>0
+  \ )
+" mnemonic: fzf all
+nnoremap <leader>fA :RI<CR>
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --no-ignore --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+" mnemonic: straight up ripgrep with no fzf syntax support accross all files
+nnoremap <leader>rg :RG<CR>
+
 " :Tags
 command! -nargs=* Tags
   \ call fzf#vim#tags(
@@ -885,6 +914,13 @@ command! -nargs=* Tags
   \ )
 
 command! -nargs=? -complete=dir Files
+  \ call fzf#vim#files(
+  \   <q-args>,
+  \   fzf#vim#with_preview(),
+  \   <bang>0
+  \ )
+
+command! -nargs=? -complete=dir AllFiles
   \ call fzf#vim#files(
   \   <q-args>,
   \   fzf#vim#with_preview(),
@@ -914,12 +950,12 @@ command! -bang -nargs=* RgNoSpec
   \   <bang>0
   \ )
 
-command! -bang -nargs=* RG
-  \ call fzf#vim#grep(
-  \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
-  \   1,
-  \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
-  \   <bang>0)
+" command! -bang -nargs=* RG
+"   \ call fzf#vim#grep(
+"   \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
+"   \   1,
+"   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
+"   \   <bang>0)
 
 nnoremap <leader><C-f> :GFiles<CR>
 
@@ -1120,7 +1156,7 @@ let g:indentLine_bufTypeExclude=['help', 'terminal']
 " }}}
 " {{{ ultisnips
 let g:UltiSnipsEditSplit="horizontal"
-" let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsExpandTrigger="<c-t>"
 " let g:UltiSnipsJumpForwardTrigger="<c-j>"
 " let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsSnippetDirectories=[$HOME.'/code/dotfiles/ultisnips', "UltiSnips"]
@@ -1288,6 +1324,34 @@ endif
 " {{{ vim-peekaboo
 let g:peekaboo_prefix = '<leader>'
 let g:peekaboo_ins_prefix = '<c-x>'
+
+function! CreateCenteredFloatingWindow()
+    let width = float2nr(&columns * 0.6)
+    let height = float2nr(&lines * 0.6)
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+    au BufWipeout <buffer> exe 'bw '.s:buf
+endfunction
+
+let g:peekaboo_window="call CreateCenteredFloatingWindow()"
+" }}}
+" {{{ vim-gutentags
+let g:gutentags_enabled=0
 " }}}
 
 " }}}
@@ -1346,10 +1410,10 @@ if has('nvim')
   cnoremap <C-\><C-r> <C-r>
 
   " For some reason these break when in an ssh session?
-  tnoremap <C-p> <up>
-  tnoremap <C-n> <down>
-  tnoremap <C-f> <right>
-  tnoremap <C-b> <left>
+  " tnoremap <C-p> <up>
+  " tnoremap <C-n> <down>
+  " tnoremap <C-f> <right>
+  " tnoremap <C-b> <left>
 
   " Allow tmux navigator to work in :terminal
   " tnoremap <silent> <c-h> <c-\><c-n>:TmuxNavigateLeft<cr>
