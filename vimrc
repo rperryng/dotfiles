@@ -773,7 +773,7 @@ let g:nnn#action = {
       \ '<c-s><c-s>': 'split',
       \ '<c-v>': 'vsplit' }
 
-nnoremap <leader>N :NnnPicker '%:p:h'<CR>
+nnoremap <leader>N :NnnPicker %:p:h<CR>
 " }}}
 " {{{ send-to-window
 let g:sendtowindow_use_defaults=0
