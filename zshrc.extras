@@ -57,7 +57,7 @@ else
   export VISUAL=nvim
   alias nv="nvim"
   alias n="nvim"
-  alias nnstart="nvim +'call NNStart()'"
+  alias nnstart="clear; nvim +'call NNStart()'"
 fi
 
 
