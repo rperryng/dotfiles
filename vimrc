@@ -376,8 +376,8 @@ function! JoinSpaceless()
 endfun
 
 command! -nargs=0 JoinSpaceless call JoinSpaceless()
-nnoremap <leader>gJ :call JoinSpaceless()<CR>
-xnoremap <leader>gJ :call JoinSpaceless()<CR>
+nnoremap <space>gJ :call JoinSpaceless()<CR>
+xnoremap <space>gJ :call JoinSpaceless()<CR>
 
 " Sjlow Paste
 """"""""""""
@@ -446,7 +446,7 @@ function! TerminalResize()
   execute currwin . 'wincmd w'
 endfunction
 
-nnoremap <leader>w= :silent call TerminalResize()<CR>
+nnoremap <space>w= :silent call TerminalResize()<CR>
 
 " Change working directory using ProjectRootCD
 """"""""""""""""""""""""""""""""""""""""""""""
@@ -595,7 +595,7 @@ function! DeleteCwdBuffers()
 endfunction
 
 command! DeleteCwdBuffers call DeleteCwdBuffers()
-nnoremap <leader>BD :DeleteCwdBuffers<CR>
+nnoremap <space>BD :DeleteCwdBuffers<CR>
 
 " Shameleslly stolen from
 " https://github.com/arithran/vim-delete-hidden-buffers/blob/master/plugin/delete-hidden-buffers.vim
@@ -663,7 +663,7 @@ xnoremap al $o0
 xnoremap il g_o^
 
 " Close all folds except the current one, set cursor to middle of screen
-nnoremap <leader>z zMzvzz
+nnoremap <space>z zMzvzz
 
 " Default swaps
 """""""""""""""
@@ -688,8 +688,8 @@ nnorema K a<Enter><Esc>
 "Ruby:t Ruby methods can commonly contain word boundary characters like ! or ?
 " Add helpers for motions that operate on the word under the cursor to include
 " these tokens
-nnoremap <leader><c-]> viwlg<c-]>
-nnoremap <leader>* viwl*
+nnoremap <space><c-]> viwlg<c-]>
+nnoremap <space>* viwl*
 
 " Match current input
 cnoremap <c-n> <down>
@@ -709,56 +709,56 @@ vnoremap k gk
 vnoremap // y/<C-R>"<CR>
 
 " Go to end of pattern match
-nnoremap <leader>e //e<CR>
+nnoremap <space>e //e<CR>
 
 " file-Replace
-nnoremap <leader>g/ :%s/<C-r>=expand('<cword>')<CR>//g<left><left>
-xnoremap <leader>g/ y:%s/<C-r>0//g<left><left>
+nnoremap <space>gr :%s/<C-r>=expand('<cword>')<CR>//g<left><left>
+xnoremap <space>gr y:%s/<C-r>0//g<left><left>
 
 " Open buffer in new tab and go to current position
 nnoremap st ml:tabedit %<CR>`l
 
 " Make windows equal but shrink the bottommost window to 20 lines (usually a
 " terminal buffer)
-" nnoremap <leader>w= <C-w>=<C-w>j:res 20<CR><C-w>k
+" nnoremap <space>w= <C-w>=<C-w>j:res 20<CR><C-w>k
 
 " Weird hack.  Sometimes the scrolloff option breaks for a terminal buffer
 " if the terminal buffer was present in another window with different
 " dimensions.
-nnoremap <leader>w<space> :resize +1<CR>:resize -1<CR>
+nnoremap <space>w<space> :resize +1<CR>:resize -1<CR>
 
 " Reload vimrc
-nnoremap <leader>E :edit $MYVIMRC<CR>
-nnoremap <leader>R :source $MYVIMRC<CR>
+nnoremap <space>E :edit $MYVIMRC<CR>
+nnoremap <space>R :source $MYVIMRC<CR>
 
 " Toggle scrolloff
-" nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
+" nnoremap <space>zz :let &scrolloff=999-&scrolloff<CR>
 
-nnoremap <leader>l <C-^>
-" nnoremap <leader>sl :nohlsearch<CR>
-" nnoremap <leader>sL :set hlsearch<CR>
+nnoremap <space>l <C-^>
+" nnoremap <space>sl :nohlsearch<CR>
+" nnoremap <space>sL :set hlsearch<CR>
 nnoremap set :buffer term-<C-d>
 
-nnoremap <leader>= vip:sort<CR>
+nnoremap <space>= vip:sort<CR>
 
-nnoremap <leader>1 1gt
-nnoremap <leader>2 2gt
-nnoremap <leader>3 3gt
-nnoremap <leader>4 4gt
-nnoremap <leader>5 5gt
-nnoremap <leader>6 6gt
-nnoremap <leader>7 7gt
-nnoremap <leader>8 8gt
-nnoremap <leader>9 9gt
+nnoremap <space>1 1gt
+nnoremap <space>2 2gt
+nnoremap <space>3 3gt
+nnoremap <space>4 4gt
+nnoremap <space>5 5gt
+nnoremap <space>6 6gt
+nnoremap <space>7 7gt
+nnoremap <space>8 8gt
+nnoremap <space>9 9gt
 
-nnoremap <leader>y "+y
-nnoremap <leader>p "+p
-vnoremap <leader>y "+y
-vnoremap <leader>p "+p
+nnoremap <space>y "+y
+nnoremap <space>p "+p
+vnoremap <space>y "+y
+vnoremap <space>p "+p
 
-nnoremap <leader>tq :tabclose<CR>
-nnoremap <leader>q :q<CR>
-" nnoremap <leader>bd :bprevious <bar> bdelete! #<CR>
+nnoremap <space>tq :tabclose<CR>
+nnoremap <space>q :q<CR>
+" nnoremap <space>bd :bprevious <bar> bdelete! #<CR>
 nnoremap <C-n> :tabnext<CR>
 nnoremap <C-p> :tabprevious<CR>
 nnoremap sn :tabnext<CR>
@@ -776,18 +776,19 @@ let g:nnn#action = {
       \ '<c-s><c-s>': 'split',
       \ '<c-v>': 'vsplit' }
 
-nnoremap <leader>N :NnnPicker %:p:h<CR>
+nnoremap <leader>n :NnnPicker<CR>
+nnoremap <space>N :NnnPicker %:p:h<CR>
 " }}}
 " {{{ send-to-window
 let g:sendtowindow_use_defaults=0
-nmap <leader>wl <Plug>SendRight
-xmap <leader>wl <Plug>SendRightV
-nmap <leader>wh <Plug>SendLeft
-xmap <leader>wh <Plug>SendLeftV
-nmap <leader>wk <Plug>SendUp
-xmap <leader>wk <Plug>SendUpV
-nmap <leader>wj <Plug>SendDown
-xmap <leader>wj <Plug>SendDownV
+nmap <space>wl <Plug>SendRight
+xmap <space>wl <Plug>SendRightV
+nmap <space>wh <Plug>SendLeft
+xmap <space>wh <Plug>SendLeftV
+nmap <space>wk <Plug>SendUp
+xmap <space>wk <Plug>SendUpV
+nmap <space>wj <Plug>SendDown
+xmap <space>wj <Plug>SendDownV
 " }}}
 " {{{ Taboo
 let taboo_tab_format=' [%N-NoName]%m '
@@ -809,12 +810,12 @@ endfunction
 
 command! -nargs=0 TabRename call TabRename(<f-args>)
 
-nnoremap <leader>tr :TabooRename<space>
-nnoremap <silent> <leader>tR :execute 'TabooRename ' . expand('%')<CR>
-" nnoremap <leader>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
+nnoremap <space>tr :TabooRename<space>
+nnoremap <silent> <space>tR :execute 'TabooRename ' . expand('%')<CR>
+" nnoremap <space>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
 " }}}
 " {{{ gundo
-nnoremap <leader>gu :GundoToggle<CR>
+nnoremap <space>gu :GundoToggle<CR>
 " }}}
 " {{{ vim-easy-align
 xmap ga <Plug>(EasyAlign)
@@ -893,8 +894,9 @@ command! -bang -nargs=* RI
   \   1,
   \   <bang>0
   \ )
+
 " mnemonic: fzf all
-nnoremap <leader>fA :RI<CR>
+nnoremap <space>fA :RI<CR>
 
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --no-ignore --column --line-number --no-heading --color=always --smart-case -- %s || true'
@@ -906,7 +908,7 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " mnemonic: straight up ripgrep with no fzf syntax support accross all files
-nnoremap <leader>rg :RG<CR>
+nnoremap <space>rg :RG<CR>
 
 " :Tags
 command! -nargs=* Tags
@@ -960,33 +962,33 @@ command! -bang -nargs=* RgNoSpec
 "   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
 "   \   <bang>0)
 
-nnoremap <leader><C-f> :GFiles<CR>
+nnoremap <space><C-f> :GFiles<CR>
 
-nnoremap <leader>fb :Buffers<CR>
-nnoremap <leader>fc :Commands<CR>
-nnoremap <leader>fi :Files<CR>
-nnoremap <leader>fh :Helptags<CR>
-nnoremap <leader>flb :BLines<CR>
-nnoremap <leader>fla :Lines<CR>
-nnoremap <leader>fm :Marks<CR>
-nnoremap <leader>fg :GFiles?<CR>
-nnoremap <leader>fw :Windows<CR>
-nnoremap <leader>fa :Rg<CR>
-nnoremap <leader>fA :RG<CR>
-nnoremap <leader>fr :Rg<CR>
-nnoremap <leader>ft :TerminalBuffers<CR>
-nnoremap <leader>fsa :RgNoSpec<CR>
+nnoremap <space>fb :Buffers<CR>
+nnoremap <space>fc :Commands<CR>
+nnoremap <space>fi :Files<CR>
+nnoremap <space>fh :Helptags<CR>
+nnoremap <space>flb :BLines<CR>
+nnoremap <space>fla :Lines<CR>
+nnoremap <space>fm :Marks<CR>
+nnoremap <space>fg :GFiles?<CR>
+nnoremap <space>fw :Windows<CR>
+nnoremap <space>fa :Rg<CR>
+nnoremap <space>fA :RG<CR>
+nnoremap <space>fr :Rg<CR>
+nnoremap <space>ft :TerminalBuffers<CR>
+nnoremap <space>fsa :RgNoSpec<CR>
 
-nnoremap <leader>fB :Buffers!<CR>
-nnoremap <leader>fC :Commands!<CR>
-nnoremap <leader>fI :Files!<CR>
-nnoremap <leader>flB :BLines!<CR>
-nnoremap <leader>flL :Lines!<CR>
-nnoremap <leader>fT :TerminalBuffers!<CR>
-nnoremap <leader>fM :Marks!<CR>
-nnoremap <leader>fG :GFiles?!<CR>
-nnoremap <leader>fW :Windows!<CR>
-nnoremap <leader>fR :Rg!<CR>
+nnoremap <space>fB :Buffers!<CR>
+nnoremap <space>fC :Commands!<CR>
+nnoremap <space>fI :Files!<CR>
+nnoremap <space>flB :BLines!<CR>
+nnoremap <space>flL :Lines!<CR>
+nnoremap <space>fT :TerminalBuffers!<CR>
+nnoremap <space>fM :Marks!<CR>
+nnoremap <space>fG :GFiles?!<CR>
+nnoremap <space>fW :Windows!<CR>
+nnoremap <space>fR :Rg!<CR>
 
 imap <c-x><c-f> <plug>(fzf-complete-path)
 " }}}
@@ -996,14 +998,14 @@ function! RgVisualSelection()
 endfunction
 
 " Setup query
-nnoremap <leader>f; :RgRaw<Space>
-nnoremap <leader>/ :RgRaw<Space>
+nnoremap <space>f; :RgRaw<Space>
+nnoremap <space>/ :RgRaw<Space>
 
 " Perform :RgRaw search with word under cursor
-nnoremap <leader>f* :execute ':RgRaw' expand('<cword>')<CR>
+nnoremap <space>f* :execute ':RgRaw' expand('<cword>')<CR>
 
 " Perform :RgRaw with current visual selection
-xnoremap <leader>f* :call RgVisualSelection()<CR>
+xnoremap <space>f* :call RgVisualSelection()<CR>
 "}}}
 " {{{ fuzzy incsearch
 map s/ <Plug>(incsearch-fuzzy-/)
@@ -1011,14 +1013,14 @@ map s? <Plug>(incsearch-fuzzy-?)
 map sg/ <Plug>(incsearch-fuzzy-stay)
 " }}}
 " {{{ win-reszier
-nnoremap <leader>WR :WinResizerStartResize<CR>
+nnoremap <space>WR :WinResizerStartResize<CR>
 let g:winresizer_start_key = '<C-Q>'
 " }}}
 " {{{ vim-fugitive
-nnoremap <leader>gst :Gstatus<CR>
-nnoremap <leader>gsp :Gstatus<CR>
-nnoremap <leader>gvs :Gvsplit<CR>
-nnoremap <leader>blame :tabedit %<CR>:Gblame<CR><C-w>lV
+nnoremap <space>gst :Gstatus<CR>
+nnoremap <space>gsp :Gstatus<CR>
+nnoremap <space>gvs :Gvsplit<CR>
+nnoremap <space>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
 " {{{ project-root-cd
 " Change current working directory of all windows in tab to project root of current buffer
@@ -1032,8 +1034,8 @@ function! TcdProjectRoot()
   execute 'tcd ' . l:project_root
   echo 'switched to "' . l:project_root . '"'
 endfunction
-nnoremap <leader>cd :call TcdProjectRoot()<CR>
-" nnoremap <leader>cd :execute 'tcd ' . ProjectRootGet()<CR>
+nnoremap <space>cd :call TcdProjectRoot()<CR>
+" nnoremap <space>cd :execute 'tcd ' . ProjectRootGet()<CR>
 " }}}
 " {{{ coc-nvim
 nmap slR :CocRestart<CR>
@@ -1043,13 +1045,16 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gn <Plug>(coc-diagnostic-next)
 nmap <silent> gp <Plug>(coc-diagnostic-prev)
-nmap <silent> <leader>re <Plug>(coc-refactor)
-nmap <silent> <leader>rn <Plug>(coc-rename)
-nmap <silent> <leader>rn <Plug>(coc-list)
-nnoremap <silent> <leader>gl :CocList diagnostics<CR>
+nmap <silent> <space>re <Plug>(coc-refactor)
+nmap <silent> <space>rn <Plug>(coc-rename)
+nmap <silent> <space>rn <Plug>(coc-list)
+nnoremap <silent> <space>gl :CocList diagnostics<CR>
 inoremap <silent><expr> <c-space> coc#refresh()
 
 nnoremap K :call CocAction('doHover')<CR>
+" vmap <silent> re <Plug>(coc-refactor)
+vmap <silent> <space>ac :CocAction<CR>
+
 imap <silent><expr> <c-k> <Plug>(coc-float-jump)
 nmap <silent> gF <Plug>(coc-float-jump)
 nmap <silent> gH <Plug>(coc-float-hide)
@@ -1172,13 +1177,13 @@ nmap / <Plug>(searchhi-/)
 nmap ? <Plug>(searchhi-?)
 nmap n <Plug>(searchhi-n)
 nmap N <Plug>(searchhi-N)
-nmap <silent> <leader>sl <Plug>(searchhi-clear-all)
+nmap <silent> <space>sl <Plug>(searchhi-clear-all)
 
 vmap / <Plug>(searchhi-v-/)
 vmap ? <Plug>(searchhi-v-?)
 vmap n <Plug>(searchhi-v-n)
 vmap N <Plug>(searchhi-v-N)
-vmap <silent> <leader>sl <Plug>(searchhi-v-clear-all)
+vmap <silent> <space>sl <Plug>(searchhi-v-clear-all)
 
 " vim-searchhi / vim-asterisk
 nmap * <Plug>(asterisk-z*)<Plug>(searchhi-update)
@@ -1208,8 +1213,8 @@ vmap zg* <Plug>(asterisk-zg*)<Plug>(searchhi-update-stay-backward)
 vmap zg# <Plug>(asterisk-zg#)<Plug>(searchhi-update-stay-backward)
 
 " Write all buffers and turn off search highlights
-" nmap <silent> <leader>wa :silent! :wall<CR>:set nohlsearch<CR>
-nnoremap <silent> <leader>wa :silent! :wall<CR>:execute "normal \<Plug>(searchhi-clear-all)"<CR>
+" nmap <silent> <space>wa :silent! :wall<CR>:set nohlsearch<CR>
+nnoremap <silent> <space>wa :silent! :wall<CR>:execute "normal \<Plug>(searchhi-clear-all)"<CR>
 " }}}
 " {{{ Tmux Navigator
 let g:tmux_navigator_disable_when_zoomed=1
@@ -1252,7 +1257,7 @@ function! ContabsNewTab(cmd, context)
   wincmd t
 endfunction
 
-nnoremap <silent> <leader>fp :call contabs#window#open(
+nnoremap <silent> <space>fp :call contabs#window#open(
       \ 'projects',
       \ contabs#project#paths(),
       \ funcref('ContabsNewTab'),
@@ -1260,7 +1265,7 @@ nnoremap <silent> <leader>fp :call contabs#window#open(
       \ )
       \ <CR>
 
-nnoremap <silent> <leader>Z :call contabs#project#select()<CR>
+nnoremap <silent> <space>Z :call contabs#project#select()<CR>
 " }}}
 " {{{ vim-smoothie
 " let g:smoothie_no_default_mappings = 1
@@ -1286,20 +1291,20 @@ let g:indent_guides_guide_size=1
 " use anyhow::{Context, Result, bail, anyhow};
 " becomes
 " use anyhow::{Context, Result, anyhow, bail};
-" nmap <silent> <leader>oi ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
+" nmap <silent> <space>oi ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
 nmap <silent> <Plug>SortInline ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
   \:call repeat#set("\<Plug>SortInline")<CR>
-nmap <leader>oi <Plug>SortInline
+nmap <space>oi <Plug>SortInline
 
 " }}}
 " {{{ vim-bbye
-nnoremap <leader>bd :Bdelete!<CR>
-nnoremap <leader>bw :Bwipeout!<CR>
+nnoremap <space>bd :Bdelete!<CR>
+nnoremap <space>bw :Bwipeout!<CR>
 " }}}
 " {{{ vim-githubinator
 let g:githubinator_no_default_mapping=1
-nmap <leader>gho <Plug>(githubinator-open)
-nmap <leader>ghc <Plug>(githubinator-copy)
+nmap <space>gho <Plug>(githubinator-open)
+nmap <space>ghc <Plug>(githubinator-copy)
 " }}}
 " {{{ firenvim
 let g:firenvim_config = {
@@ -1325,7 +1330,7 @@ if exists('g:started_by_nvim')
 endif
 " }}}
 " {{{ vim-peekaboo
-let g:peekaboo_prefix = '<leader>'
+let g:peekaboo_prefix = '<space>'
 let g:peekaboo_ins_prefix = '<c-x>'
 
 function! CreateCenteredFloatingWindow()
@@ -1354,7 +1359,7 @@ endfunction
 let g:peekaboo_window="call CreateCenteredFloatingWindow()"
 " }}}
 " {{{ vim-gutentags
-let g:gutentags_enabled=0
+let g:gutentags_enabled=1
 " }}}
 
 " }}}
@@ -1390,9 +1395,9 @@ if has('nvim')
     sleep 200m
     file neoterm
   endfunction
-  nnoremap <leader>T :call OpenNeoterm()<CR>
+  nnoremap <space>T :call OpenNeoterm()<CR>
 
-  nnoremap <leader>term :terminal<CR>:file term-
+  nnoremap <space>term :terminal<CR>:file term-
 
   " Terminal mode binds tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
@@ -1426,16 +1431,16 @@ if has('nvim')
   " tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
 
   " Neoterm / Vim-Test
-  nnoremap <leader>td :T <C-d>
-  nnoremap <leader>tn :silent! :wall<CR>:TestNearest<CR>
-  nnoremap <leader>tf :silent! :wall<CR>:TestFile<CR>
-  nnoremap <leader>ts :silent! :wall<CR>:TestSuite<CR>
-  nnoremap <leader>tl :silent! :wall<CR>:TestLast<CR>
-  nnoremap <leader>tL :silent! :wall<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
-  nnoremap <leader>tg :TestVisit<CR>
-  nnoremap <leader>tfile :TREPLSendFile<CR>
-  vnoremap <leader>tsel :TREPLSendSelection<CR>
-  nnoremap <leader>tline :TREPLSendLine<CR>
+  nnoremap <space>td :T <C-d>
+  nnoremap <space>tn :silent! :wall<CR>:TestNearest<CR>
+  nnoremap <space>tf :silent! :wall<CR>:TestFile<CR>
+  nnoremap <space>ts :silent! :wall<CR>:TestSuite<CR>
+  nnoremap <space>tl :silent! :wall<CR>:TestLast<CR>
+  nnoremap <space>tL :silent! :wall<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
+  nnoremap <space>tg :TestVisit<CR>
+  nnoremap <space>tfile :TREPLSendFile<CR>
+  vnoremap <space>tsel :TREPLSendSelection<CR>
+  nnoremap <space>tline :TREPLSendLine<CR>
 
   nmap gx <Plug>(neoterm-repl-send)
   xmap gx <Plug>(neoterm-repl-send)
