@@ -190,6 +190,9 @@ augroup filetypes
   autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
   autocmd FileType rust setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
+  autocmd FileType rust nnoremap <buffer> <space>fo :RustFmt<CR>
+  autocmd FileType typescript nnoremap <buffer> <space>fo :PrettierAsync<CR>
+
   " Help prevent accidentally modifying external source code resolved via
   " ctags or LSP functionality.
   autocmd BufReadPost */.cargo/*,*/.rustup/* setlocal readonly
