@@ -1,3 +1,4 @@
+" open terminal for tab
 " A void code execution vulnerability
 set nomodeline
 
@@ -41,6 +42,7 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'honza/vim-snippets'
+Plug 'iamcco/vim-language-server'
 Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'jesseleite/vim-agriculture'
@@ -456,10 +458,35 @@ function! ProjectRootCDAll()
   let cd_command = 'tcd ' . root
   execute cd_command
   echo root
-
 endfunction
 
 command! -nargs=0 ProjectRootCDAll call ProjectRootCDAll()
+
+function! ToggleProjectTerminal()
+  let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:current_buf_name = bufname()
+  let l:terminal_buf_name = 'term-misc-' . l:project_name
+
+  wincmd b
+  if l:current_buf_name !~ "term-"
+    botright split
+    call TerminalResize()
+  endif
+
+  if bufexists(l:terminal_buf_name)
+    if l:current_buf_name =~ l:terminal_buf_name
+      quit
+      return 1
+    endif
+
+    execute 'edit ' . l:terminal_buf_name
+  else
+    terminal
+    execute 'file ' . l:terminal_buf_name
+  endif
+endfunction
+
+command! -nargs=0 ToggleProjectTerminal call ToggleProjectTerminal()
 
 " Remove all buffers from other projects
 function! ClearOtherBuffers()
