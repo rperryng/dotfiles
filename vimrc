@@ -462,31 +462,66 @@ endfunction
 
 command! -nargs=0 ProjectRootCDAll call ProjectRootCDAll()
 
+function! OpenAndSendCmdToProjectTerminal(cmd)
+  let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:current_buf_name = bufname()
+  let l:terminal_buf_name = 'term-misc-' . l:project_name
+  let l:channel_id = -1
+  let l:current_win = nvim_get_current_win()
+
+  wincmd b
+  if bufname() !~ "term-"
+    botright split
+    call TerminalResize()
+  endif
+
+  if !bufexists(l:terminal_buf_name)
+    terminal
+    execute 'file ' . l:terminal_buf_name
+    call TerminalResize()
+  elseif l:current_buf_name !~ l:terminal_buf_name
+    execute 'edit ' . l:terminal_buf_name
+  endif
+
+  call chansend(b:terminal_job_id, a:cmd . "\<cr>")
+  normal G
+  wincmd p
+endfunction
+
 function! ToggleProjectTerminal()
   let l:project_name = fnamemodify(getcwd(), ':t')
   let l:current_buf_name = bufname()
   let l:terminal_buf_name = 'term-misc-' . l:project_name
 
   wincmd b
-  if l:current_buf_name !~ "term-"
+  if bufname() !~ "term-"
     botright split
     call TerminalResize()
   endif
 
-  if bufexists(l:terminal_buf_name)
-    if l:current_buf_name =~ l:terminal_buf_name
-      quit
-      return 1
-    endif
-
-    execute 'edit ' . l:terminal_buf_name
-  else
+  if !bufexists(l:terminal_buf_name)
     terminal
     execute 'file ' . l:terminal_buf_name
+  elseif l:current_buf_name !~ l:terminal_buf_name
+    execute 'edit ' . l:terminal_buf_name
+  else
+    quit
   endif
 endfunction
 
 command! -nargs=0 ToggleProjectTerminal call ToggleProjectTerminal()
+
+" function! SendCommandToProjectTerminal(cmd)
+"   let l:project_name = fnamemodify(getcwd(), ':t')
+"   let l:current_buf_name = bufname()
+"   let l:terminal_buf_name = 'term-misc-' . l:project_name
+
+"   execute 'edit ' . l:terminal_buf_name
+"   let l:channel_id = b:terminal_job_id
+"   execute 'edit ' . l:current_buf_name
+
+"   chansend(l:channel_id, cmd)
+" endfunction
 
 " Remove all buffers from other projects
 function! ClearOtherBuffers()
@@ -1407,22 +1442,11 @@ if has('nvim')
   hi! TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=14 guibg=#93a1a1 cterm=NONE gui=NONE
 
   " Vim-test
-  let test#strategy = 'neoterm'
+  " let test#strategy = 'neoterm'
+  let g:test#custom_strategies = {'project_terminal': function('OpenAndSendCmdToProjectTerminal')}
+  let g:test#strategy = 'project_terminal'
 
-  function! OpenNeoterm()
-    if bufexists('neoterm')
-      buffer neoterm
-      return
-    endif
-
-    botright split
-    enew
-    execute 'Tnew'
-    resize 20
-    sleep 200m
-    file neoterm
-  endfunction
-  nnoremap <space>T :call OpenNeoterm()<CR>
+  nnoremap <space>T :call ToggleProjectTerminal()<CR>
 
   nnoremap <space>term :terminal<CR>:file term-
 
@@ -1458,16 +1482,25 @@ if has('nvim')
   " tnoremap <silent> <c-\> <c-\><c-n>:TmuxNavigatePrevious<cr>
 
   " Neoterm / Vim-Test
-  nnoremap <space>td :T <C-d>
+  nnoremap \t :call ToggleProjectTerminal()<CR>
+  nnoremap <space>tl :call OpenAndSendCmdToProjectTerminal("\<C-p>")<CR>
+
   nnoremap <space>tn :silent! :wall<CR>:TestNearest<CR>
   nnoremap <space>tf :silent! :wall<CR>:TestFile<CR>
   nnoremap <space>ts :silent! :wall<CR>:TestSuite<CR>
-  nnoremap <space>tl :silent! :wall<CR>:TestLast<CR>
+  " nnoremap <space>tl :silent! :wall<CR>:TestLast<CR>
+
   nnoremap <space>tL :silent! :wall<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
   nnoremap <space>tg :TestVisit<CR>
   nnoremap <space>tfile :TREPLSendFile<CR>
   vnoremap <space>tsel :TREPLSendSelection<CR>
-  nnoremap <space>tline :TREPLSendLine<CR>
+  " nnoremap <space>tline :TREPLSendLine<CR>
+
+  nnoremap <space>tL :call OpenAndSendCmdToProjectTerminal("\<c-c>\<c-c>\<c-p>\<cr>")
+  nnoremap <space>tg :TestVisit<CR>
+  nnoremap <space>tfile :TREPLSendFile<CR>
+  vnoremap <space>tsel :TREPLSendSelection<CR>
+  " nnoremap <space>tline :TREPLSendLine<CR>
 
   nmap gx <Plug>(neoterm-repl-send)
   xmap gx <Plug>(neoterm-repl-send)
