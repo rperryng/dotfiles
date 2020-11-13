@@ -462,7 +462,9 @@ endfunction
 
 command! -nargs=0 ProjectRootCDAll call ProjectRootCDAll()
 
-function! OpenAndSendCmdToProjectTerminal(cmd)
+function! OpenAndSendCmdToProjectTerminal(cmd, ...)
+  let l:append_enter = a:0 >= 1 ? a:1 : 1
+
   let l:project_name = fnamemodify(getcwd(), ':t')
   let l:current_buf_name = bufname()
   let l:terminal_buf_name = 'term-misc-' . l:project_name
@@ -479,11 +481,12 @@ function! OpenAndSendCmdToProjectTerminal(cmd)
     terminal
     execute 'file ' . l:terminal_buf_name
     call TerminalResize()
-  elseif l:current_buf_name !~ l:terminal_buf_name
+  elseif bufname() !~ l:terminal_buf_name
     execute 'edit ' . l:terminal_buf_name
   endif
 
-  call chansend(b:terminal_job_id, a:cmd . "\<cr>")
+  let l:cmd = l:append_enter ? a:cmd . "\<cr>" : a:cmd
+  call chansend(b:terminal_job_id, l:cmd)
   normal G
   wincmd p
 endfunction
@@ -502,7 +505,7 @@ function! ToggleProjectTerminal()
   if !bufexists(l:terminal_buf_name)
     terminal
     execute 'file ' . l:terminal_buf_name
-  elseif l:current_buf_name !~ l:terminal_buf_name
+  elseif bufname() !~ l:terminal_buf_name
     execute 'edit ' . l:terminal_buf_name
   else
     quit
@@ -1483,7 +1486,13 @@ if has('nvim')
 
   " Neoterm / Vim-Test
   nnoremap \t :call ToggleProjectTerminal()<CR>
-  nnoremap <space>tl :call OpenAndSendCmdToProjectTerminal("\<C-p>")<CR>
+
+  " ?? For some reason, after a while the binding stops working...
+  " Wrapping it in another function seems ok.
+  function! RunLastCommandInProjectTerminal()
+    call OpenAndSendCmdToProjectTerminal("\<C-p>")
+  endfunction
+  nnoremap <space>tl :call RunLastCommandInProjectTerminal()<CR>
 
   nnoremap <space>tn :silent! :wall<CR>:TestNearest<CR>
   nnoremap <space>tf :silent! :wall<CR>:TestFile<CR>
@@ -1496,7 +1505,14 @@ if has('nvim')
   vnoremap <space>tsel :TREPLSendSelection<CR>
   " nnoremap <space>tline :TREPLSendLine<CR>
 
-  nnoremap <space>tL :call OpenAndSendCmdToProjectTerminal("\<c-c>\<c-c>\<c-p>\<cr>")
+  function! KillAndRunLastCommandInProjectTerminal()
+    call OpenAndSendCmdToProjectTerminal("\<c-c>", 0)
+    call OpenAndSendCmdToProjectTerminal("\<c-c>", 0)
+    call OpenAndSendCmdToProjectTerminal("\<c-p>", 1)
+  endfunction
+
+  " nnoremap <space>tL :call OpenAndSendCmdToProjectTerminal("\<c-c>\<c-c>\<c-p>")
+  nnoremap <space>tL :call KillAndRunLastCommandInProjectTerminal()<CR>
   nnoremap <space>tg :TestVisit<CR>
   nnoremap <space>tfile :TREPLSendFile<CR>
   vnoremap <space>tsel :TREPLSendSelection<CR>
