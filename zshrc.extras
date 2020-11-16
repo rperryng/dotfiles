@@ -28,7 +28,7 @@ git config --global core.excludesfile ~/.gitignore
 # https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
 
 # Bat theme
-export BAT_THEME='gruvbox-dark-medium'
+export BAT_THEME='gruvbox-dark-hard'
 
 alias rm-swap="rm ~/.local/share/nvim/swap/*"
 

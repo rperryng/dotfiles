@@ -155,20 +155,18 @@ endif
 " {{{ Autocmd
 
 augroup focusgroup
-autocmd!
-" Preserve cursor location when switching buffers
-" autocmd BufLeave * let b:winview = winsaveview()
-" autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
-autocmd FocusGained,BufEnter * :silent! checkt
-" autocmd FocusGained,BufEnter index.wiki :silent execute 'normal zR'
+  autocmd!
+  " Preserve cursor location when switching buffers
+  " autocmd BufLeave * let b:winview = winsaveview()
+  " autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+  autocmd FocusGained,BufEnter * :silent! checkt
+  " autocmd FocusGained,BufEnter index.wiki :silent execute 'normal zR'
 
-" Preserve folds between vim sessions
-" autocmd BufWinLeave * silent! mkview
-" autocmd BufWinEnter * silent! loadview
-augroup end
+  " Preserve folds between vim sessions
+  " autocmd BufWinLeave * silent! mkview
+  " autocmd BufWinEnter * silent! loadview
 
-augroup dir
-autocmd!
+  autocmd BufEnter * :execute 'setlocal ' . (index(['terminal', 'help'], &buftype) == -1 ? 'number' : 'nonumber')
 augroup end
 
 augroup filetypes
@@ -924,7 +922,9 @@ function! CreateCenteredFloatingWindow()
     au BufWipeout <buffer> exe 'bw '.s:buf
 endfunction
 
-let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
+" let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
+" let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 
 " if has('nvim-0.4.0')
 "   function! FloatingFZF()
