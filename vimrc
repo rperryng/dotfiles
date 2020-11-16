@@ -28,6 +28,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
 Plug 'SirVer/ultisnips'
@@ -1087,7 +1088,20 @@ nnoremap <space>gsp :Gstatus<CR>
 nnoremap <space>gvs :Gvsplit<CR>
 nnoremap <space>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
-" {{{ project-root-cd
+" {{{ vim-projectroot
+let g:rootmarkers = [
+      \  'Gemfile',
+      \  '.projectroot',
+      \  '.git',
+      \  '.hg',
+      \  '.svn',
+      \  '.bzr',
+      \  '_darcs',
+      \  'build.xml',
+      \  'MIT-LICENSE',
+      \  'README.md'
+      \ ]
+
 " Change current working directory of all windows in tab to project root of current buffer
 function! TcdProjectRoot()
   let l:project_root = ProjectRootGet()
@@ -1455,10 +1469,8 @@ if has('nvim')
 
   " Terminal mode binds tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
-  tnoremap <C-x><C-x> <C-\><C-N>
   tnoremap <C-s> <C-\><C-n>
   tnoremap <C-q> <C-\><C-n>
-  tnoremap <C-y> <C-\><C-N>
   tnoremap granch $(g_branch)
   tnoremap is0 iso8601
 
