@@ -1,4 +1,9 @@
-" open terminal for tab
+" TODO:
+" 1. Write a command tabedit the result of `bundle info <gem>`
+" 2. Write a command that deletes the 'project terminal', all buffers within
+" 3. Write a command that opens a TODO in a floating window
+" the cwd, and closes the tab
+
 " A void code execution vulnerability
 set nomodeline
 
@@ -86,6 +91,9 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
+
+" To show tree style views for coworkers not used to buffer based workflows
+Plug 'preservim/nerdtree'
 
 " UI
 Plug 'arzg/seoul8'
@@ -442,24 +450,12 @@ function! TerminalResize()
   wincmd=
   execute winnr("$") . 'wincmd w'
 
-  let new_size = min([14, &lines / 4])
+  let new_size = min([20, &lines / 3])
   execute "resize" . new_size
   execute currwin . 'wincmd w'
 endfunction
 
 nnoremap <space>w= :silent call TerminalResize()<CR>
-
-" Change working directory using ProjectRootCD
-""""""""""""""""""""""""""""""""""""""""""""""
-function! ProjectRootCDAll()
-  let currwin=winnr()
-  let root=ProjectRootGuess()
-  let cd_command = 'tcd ' . root
-  execute cd_command
-  echo root
-endfunction
-
-command! -nargs=0 ProjectRootCDAll call ProjectRootCDAll()
 
 function! OpenAndSendCmdToProjectTerminal(cmd, ...)
   let l:append_enter = a:0 >= 1 ? a:1 : 1
@@ -875,8 +871,8 @@ endfunction
 command! -nargs=0 TabRename call TabRename(<f-args>)
 
 nnoremap <space>tr :TabooRename<space>
-nnoremap <silent> <space>tR :execute 'TabooRename ' . expand('%')<CR>
-" nnoremap <space>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
+" nnoremap <silent> <space>tR :execute 'TabooRename ' . expand('%')<CR>
+nnoremap <space>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
 " }}}
 " {{{ gundo
 nnoremap <space>gu :GundoToggle<CR>
@@ -901,8 +897,8 @@ endif
 
 " floating fzf window with borders
 function! CreateCenteredFloatingWindow()
-    let width = min([&columns - 4, max([80, &columns - 20])])
-    let height = min([&lines - 4, max([20, &lines - 10])])
+    let width = min([&columns - 4, max([120, &columns - 20])])
+    let height = min([&lines - 4, max([40, &lines - 10])])
     let top = ((&lines - height) / 2) - 1
     let left = (&columns - width) / 2
     let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
@@ -1107,7 +1103,8 @@ function! TcdProjectRoot()
   let l:project_root = ProjectRootGet()
 
   if l:project_root == ''
-    let l:project_root = "~/"
+    echo "couldn't determine project root.  Current working directory remains at " . getcwd()
+    return
   endif
 
   execute 'tcd ' . l:project_root
@@ -1438,7 +1435,10 @@ endfunction
 let g:peekaboo_window="call CreateCenteredFloatingWindow()"
 " }}}
 " {{{ vim-gutentags
-let g:gutentags_enabled=1
+let g:gutentags_enabled=0
+" }}}
+" nerdtree {{{
+nnoremap <space><space> :NERDTreeFind<CR>
 " }}}
 
 " }}}
@@ -1451,7 +1451,6 @@ if has('nvim')
 
     " Dumb hack because something something scrolloff in terminal windows?
     " autocmd InsertEnter * if &l:buftype ==# 'terminal' | res +1 | res -1 | endif
-    autocmd InsertEnter * if &l:buftype ==# 'terminal' | res +1 | res -1 | endif
   augroup end
 
   " UI
@@ -1471,8 +1470,10 @@ if has('nvim')
   tnoremap ;; <C-\><C-N>
   tnoremap <C-s> <C-\><C-n>
   tnoremap <C-q> <C-\><C-n>
+  tnoremap <C-\><C-\> <C-n>
+  tnoremap <C-\><C-s> <C-n>
   tnoremap granch $(g_branch)
-  tnoremap is0 iso8601
+  " tnoremap is0 iso8601
 
   " Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
   " in a normal buffer (i.e. next key pastes from that buffer)
