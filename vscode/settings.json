@@ -1,0 +1,125 @@
+{
+    "editor.minimap.enabled": false,
+    "workbench.tree.indent": 15,
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["\\", "d", "c"],
+            "commands": ["workbench.action.debug.continue"],
+        },
+        {
+            "before": ["\\", "d", "r"],
+            "commands": ["workbench.action.debug.restart"],
+        },
+        {
+            "before": ["<c-w>", "\\"],
+            "commands": ["workbench.action.toggleEditorWidths"],
+        },
+        {
+            "before": ["<space>", "f", "o"],
+            "commands": ["editor.action.formatDocument"],
+            "when": ["editorHasDocumentFormattingProvider && editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"],
+        },
+        {
+            "before": ["<space>", "t", "f"],
+            "commands": ["extension.runJestFile"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<space>", "t", "n"],
+            "commands": ["extension.runJest"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<space>", "d", "n"],
+            "commands": ["extension.debugJest"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<space>", "d", "i", "b"],
+            "commands": ["editor.debug.action.toggleInlineBreakpoint"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<space>", "d", "b"],
+            "commands": ["editor.debug.action.toggleBreakpoint"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "["],
+            "commands": [":tabnext"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "]"],
+            "commands": [":tabprev"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "l"],
+            "after": ["$"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "h"],
+            "after": ["^"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "n"],
+            "commands": ["editor.action.marker.next"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "p"],
+            "commands": ["editor.action.marker.prev"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<space>", "s", "l"],
+            "commands": [":nohl"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<space>", "w", "a"],
+            "commands": [":wa"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["<c-h>"],
+            "after": ["<c-w>", "<c-h>"],
+        },
+        {
+            "before": ["<c-l>"],
+            "after": ["<c-w>", "<c-l>"],
+        },
+        {
+            "before": ["<c-j>"],
+            "after": ["<c-w>", "<c-j>"],
+        },
+        {
+            "before": ["<c-k>"],
+            "after": ["<c-w>", "<c-k>"],
+        },
+    ],
+    "vim.insertModeKeyBindingsNonRecursive": [
+        { 
+            "before": ["j", "k"],
+            "after": ["<esc>"]
+        },
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": ["g", "l"],
+            "after": ["$", "h"],
+            "when": ["editorFocus"],
+        },
+        {
+            "before": ["g", "h"],
+            "after": ["^"],
+            "when": ["editorFocus"],
+        },
+    ],
+    "vim.highlightedyank.enable": true,
+    "workbench.colorTheme": "Gruvbox Dark Hard",
+    "window.zoomLevel": 0
+}
