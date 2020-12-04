@@ -2,6 +2,8 @@
 " 1. Write a command tabedit the result of `bundle info <gem>`
 " 2. Write a command that deletes the 'project terminal', all buffers within
 " 3. Write a command that opens a TODO in a floating window
+" 4. Exiting from nnn session changes current working directory?
+" 5. Fix :Today
 " the cwd, and closes the tab
 
 " A void code execution vulnerability
@@ -112,7 +114,7 @@ Plug 'morhetz/gruvbox'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'psliwka/vim-smoothie'
+" Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
@@ -598,12 +600,10 @@ function! Today()
 
   if search(l:date_formatted) == 0
     execute "normal! G{{}"
-    put! "\r"
     put! =strftime('= %A - %B %d %Y =')
-    " execute "normal! o*\<Space>"
     startinsert!
   elseif search(l:date_formatted . '\n\%(\*.*\)\{1,}\n$', 'e') != 0
-    execute "normal! G{{}O*\<Space>"
+    execute 'normal! G{{}O*\<Space>'
     startinsert!
   else
     execute "normal! zvj$"
