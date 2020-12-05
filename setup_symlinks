@@ -20,6 +20,9 @@ mkdir -p ~/.config/karabiner/assets/complex_modifications
 ln -s "$DOTFILES_SOURCE"/karabiner/ctrl-up-down.json ~/.config/karabiner/assets/complex_modifications/ctrl-up-down.json
 ln -s "$DOTFILES_SOURCE"/karabiner/caps-lock-remapping.json ~/.config/karabiner/assets/complex_modifications/caps-lock-remapping.json
 
+mkdir -p ~/.config/doom
+ln -s "$DOTFILES_SOURCE"/doom.d ~/.config/doom
+
 if command -v rbenv 2>/dev/null; then
   echo "symlinking rbenv default-gems"
   # install rbenv-default-gems
