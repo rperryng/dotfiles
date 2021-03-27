@@ -1,9 +1,11 @@
 " TODO:
-" 1. Write a command tabedit the result of `bundle info <gem>`
-" 2. Write a command that deletes the 'project terminal', all buffers within
-" 3. Write a command that opens a TODO in a floating window
-" 4. Exiting from nnn session changes current working directory?
-" 5. Fix :Today
+" 1. fuzzy search buffers that belong to cwd
+" 2. Write a command tabedit the result of `bundle info <gem>`
+" 3. Write a command that deletes the 'project terminal', all buffers within
+" 4. Write a command that opens a TODO in a floating window
+" 5. Exiting from nnn session changes current working directory?
+" 6. Fix :Today
+" 7. GitHub always hide whitespace diffs
 " the cwd, and closes the tab
 
 " A void code execution vulnerability
@@ -35,8 +37,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'HerringtonDarkholme/yats.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
 Plug 'SirVer/ultisnips'
@@ -50,7 +50,7 @@ Plug 'gisphm/vim-gitignore'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
-Plug 'honza/vim-snippets'
+" Plug 'honza/vim-snippets'
 Plug 'iamcco/vim-language-server'
 Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
@@ -70,6 +70,7 @@ Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
 Plug 'rperryng/nvim-contabs'
@@ -95,10 +96,14 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
 
+" Neovim Nightly
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
 " To show tree style views for coworkers not used to buffer based workflows
 Plug 'preservim/nerdtree'
 
 " UI
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
@@ -114,7 +119,6 @@ Plug 'morhetz/gruvbox'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'peitalin/vim-jsx-typescript'
-" Plug 'psliwka/vim-smoothie'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
@@ -141,9 +145,9 @@ call plug#end()
 " https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
 " Ruby
 if executable('pyenv')
-  let g:python_host_prog=trim(system('pyenv '))"/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
-  let g:python_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
-  let g:python3_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim3/bin/python"
+  " let g:python_host_prog=trim(system('pyenv '))"/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
+  let g:python_host_prog="/Users/ryan/.pyenv/versions/neovim2/bin/python"
+  let g:python3_host_prog="/Users/ryan/.pyenv/versions/neovim3/bin/python"
 else
   echom "missing pyenv.  No python host set."
 endif
@@ -1041,6 +1045,7 @@ nnoremap <space>fA :RG<CR>
 nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fsa :RgNoSpec<CR>
+nnoremap <space>fz :FZFMru<CR>
 
 nnoremap <space>fB :Buffers!<CR>
 nnoremap <space>fC :Commands!<CR>
@@ -1305,7 +1310,6 @@ let g:signify_update_on_focusgained = 1
 " }}}
 " {{{ nvim-contabs
 let g:contabs#project#locations = [
-  \ { 'path': '~/code', 'depth': 3, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
@@ -1320,16 +1324,17 @@ function! ContabsNewTab(cmd, context)
   execute 'TabooRename ' . l:project_name
   execute 'tcd' . l:directory
 
-  split
-  terminal
-  call TerminalResize()
+  " Open termainal tab? nah
+  " split
+  " terminal
+  " call TerminalResize()
 
-  let l:buf_name = 'term-misc-' . l:project_name
-  if (bufexists(l:buf_name))
-    edit l:buf_name
-  else
-    execute 'file ' . l:buf_name
-  endif
+  " let l:buf_name = 'term-misc-' . l:project_name
+  " if (bufexists(l:buf_name))
+  "   edit l:buf_name
+  " else
+  "   execute 'file ' . l:buf_name
+  " endif
 
   wincmd t
 endfunction
@@ -1440,6 +1445,26 @@ let g:gutentags_enabled=0
 " }}}
 " nerdtree {{{
 nnoremap <space><space> :NERDTreeFind<CR>
+" }}}
+" ToggleHidden {{{
+let s:hidden_all = 0
+function! ToggleHiddenAll()
+  if s:hidden_all  == 0
+    let s:hidden_all = 1
+    set noshowmode
+    set noruler
+    set laststatus=0
+    set noshowcmd
+  else
+    let s:hidden_all = 0
+    set showmode
+    set ruler
+    set laststatus=2
+    set showcmd
+  endif
+endfunction
+
+nnoremap <space>H :call ToggleHiddenAll()<CR>
 " }}}
 
 " }}}

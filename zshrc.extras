@@ -60,6 +60,14 @@ else
   alias nnstart="clear; nvim +'call NNStart()'"
 fi
 
+if command -v gh &> /dev/null; then
+  clone() {
+    gh api /user/repos --paginate | \
+      jq -r '.[] | .clone_url' | \
+      fzf | \
+      xargs -I{} git -C "$HOME/code" clone {}
+  }
+fi
 
 export EDITOR="$VISUAL"
 
