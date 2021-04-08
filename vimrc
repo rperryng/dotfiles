@@ -270,7 +270,7 @@ set tabstop=2
 " UI
 set lazyredraw
 set colorcolumn=80
-set synmaxcol=200
+set synmaxcol=500
 set signcolumn=yes
 set scrolloff=0
 set sidescrolloff=15
