@@ -36,6 +36,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
+" Plug 'honza/vim-snippets'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
@@ -50,7 +51,6 @@ Plug 'gisphm/vim-gitignore'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
-" Plug 'honza/vim-snippets'
 Plug 'iamcco/vim-language-server'
 Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
@@ -73,6 +73,7 @@ Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
+Plug 'rizzatti/dash.vim'
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
@@ -146,8 +147,8 @@ call plug#end()
 " Ruby
 if executable('pyenv')
   " let g:python_host_prog=trim(system('pyenv '))"/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
-  let g:python_host_prog="/Users/ryan/.pyenv/versions/neovim2/bin/python"
-  let g:python3_host_prog="/Users/ryan/.pyenv/versions/neovim3/bin/python"
+  let g:python_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
+  let g:python3_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim3/bin/python"
 else
   echom "missing pyenv.  No python host set."
 endif
@@ -900,52 +901,7 @@ if executable('rg')
     \ )
 endif
 
-" floating fzf window with borders
-function! CreateCenteredFloatingWindow()
-    let width = min([&columns - 4, max([120, &columns - 20])])
-    let height = min([&lines - 4, max([40, &lines - 10])])
-    let top = ((&lines - height) / 2) - 1
-    let left = (&columns - width) / 2
-    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
-
-    let top = "╭" . repeat("─", width - 2) . "╮"
-    let mid = "│" . repeat(" ", width - 2) . "│"
-    let bot = "╰" . repeat("─", width - 2) . "╯"
-    let lines = [top] + repeat([mid], height - 2) + [bot]
-    let s:buf = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
-    call nvim_open_win(s:buf, v:true, opts)
-    set winhl=Normal:Floating
-    let opts.row += 1
-    let opts.height -= 2
-    let opts.col += 2
-    let opts.width -= 4
-    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-    au BufWipeout <buffer> exe 'bw '.s:buf
-endfunction
-
-" let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
-" let g:fzf_layout = { 'window': 'call CreateCenteredFloatingWindow()' }
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
-
-" if has('nvim-0.4.0')
-"   function! FloatingFZF()
-"     let width = float2nr(&columns * 0.9)
-"     let height = float2nr(&lines * 0.6)
-"     let opts = { 'relative': 'editor',
-"           \ 'row': (&lines - height) / 2,
-"           \ 'col': (&columns - width) / 2,
-"           \ 'width': width,
-"           \ 'height': height,
-"           \ 'style': 'minimal'
-"           \}
-
-"     let win = nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-"     call setwinvar(win, '&winhighlight', 'NormalFloat:TabLine')
-"   endfunction
-
-"   let g:fzf_layout = { 'window': 'call FloatingFZF()' }
-" endif
 
 " :like :Rg but only search file content, i.e. do not match directories
 command! -bang -nargs=* RG
@@ -976,6 +932,28 @@ endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " mnemonic: straight up ripgrep with no fzf syntax support accross all files
 nnoremap <space>rg :RG<CR>
+
+function! s:project_buffer_open(buffer)
+  execute ':buffer ' . bufnr(bufname(a:buffer))
+endfunction
+
+" :Project buffers
+function! ProjectBuffers()
+  let l:project_root = ProjectRootGet()
+  let l:buffers = filter(range(1, bufnr('$')), 'bufloaded(v:val)')
+  let l:project_buffers = filter(l:buffers, { _, val ->
+        \   stridx(fnamemodify(bufname(val), ':p'), l:project_root) > -1
+        \ })
+  let l:names = sort(map(copy(l:project_buffers), { _, val -> bufname(val) }))
+
+  call fzf#run(fzf#wrap(fzf#vim#with_preview({
+        \    'source': l:names,
+        \    'sink': function('s:project_buffer_open'),
+        \ })))
+endfunction
+
+command! -nargs=* ProjectBuffers call ProjectBuffers()
+nnoremap <space>fu :ProjectBuffers<CR>
 
 " :Tags
 command! -nargs=* Tags
@@ -1465,6 +1443,10 @@ function! ToggleHiddenAll()
 endfunction
 
 nnoremap <space>H :call ToggleHiddenAll()<CR>
+" }}}
+" {{{ vim-dash
+nmap <silent> <leader>d <Plug>DashSearch
+nmap <silent> <leader>D <Plug>DashSearchGlobal
 " }}}
 
 " }}}
