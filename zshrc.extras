@@ -122,6 +122,8 @@ function rebase_dependent() {
 #   ;;
 # esac
 
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow'
+
 # emacs insert-mode binds ;)
 bindkey -e
 

@@ -1,5 +1,5 @@
 " TODO:
-" 1. fuzzy search buffers that belong to cwd
+" 1. fuzzy search tabs
 " 2. Write a command tabedit the result of `bundle info <gem>`
 " 3. Write a command that deletes the 'project terminal', all buffers within
 " 4. Write a command that opens a TODO in a floating window
@@ -33,14 +33,14 @@ call plug#begin('~/.local/share/nvim/plugged')
 " :CocInstall coc-rust-analyzer
 " :CocInstall coc-tsserver
 " :CocInstall coc-solargraph
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
 " Plug 'honza/vim-snippets'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
-Plug 'SirVer/ultisnips'
+" Plug 'SirVer/ultisnips'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
@@ -216,7 +216,7 @@ augroup filetypes
 
   " hacky-fix for coc-vim leaving the popup menu window open when creating a ruby
   " block
-  autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
+  " autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
 " }}}
 " {{{ Colors
@@ -835,7 +835,7 @@ nnoremap sF :file<space>
 " }}}
 " {{{ Plugin Config
 
-" {{{ NNN
+" {{{ Nnn
 let g:nnn#command = 'nnn -H'
 let g:nnn#action = {
       \ '<c-t><c-t>': 'tab split',
@@ -891,7 +891,7 @@ nmap ga <Plug>(EasyAlign)
 let $FZF_DEFAULT_OPTS .= ' --color=bg:#1d2021 --border --no-height --layout=reverse'
 
 if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --no-ignore-vcs --hidden --follow --glob "!.git/*" --glob "!node_modules/*"'
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow'
   set grepprg=rg\ --vimgrep
   command! -bang -nargs=* Find
     \ call fzf#vim#grep(
@@ -1110,6 +1110,7 @@ nmap <silent> <space>rn <Plug>(coc-rename)
 nmap <silent> <space>rn <Plug>(coc-list)
 nnoremap <silent> <space>gl :CocList diagnostics<CR>
 inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
 
 nnoremap K :call CocAction('doHover')<CR>
 " vmap <silent> re <Plug>(coc-refactor)
@@ -1119,8 +1120,6 @@ imap <silent><expr> <c-k> <Plug>(coc-float-jump)
 nmap <silent> gF <Plug>(coc-float-jump)
 nmap <silent> gH <Plug>(coc-float-hide)
 nmap <silent> <esc> <Plug>(coc-float-hide)
-
-imap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
 
 inoremap <silent><expr> <tab>
       \ pumvisible() ? coc#_select_confirm() :
@@ -1449,6 +1448,15 @@ nmap <silent> <leader>d <Plug>DashSearch
 nmap <silent> <leader>D <Plug>DashSearchGlobal
 " }}}
 
+" }}}
+" {{{ lua
+lua <<EOF
+require'nvim-treesitter'
+require'lsp'
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained"
+}
+EOF
 " }}}
 " {{{ Terminal buffer configs
 
