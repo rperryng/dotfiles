@@ -96,6 +96,11 @@ alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
 # Open the PR page for the current branch.
 alias open-pr="open \"https://github.com/wealthsimple/\$(basename \$(git remote get-url origin) .git)/compare/\$(git symbolic-ref --short -q HEAD)?expand=1\""
 
+# gh cli aliases
+alias ghrw="gh run watch -i1"
+alias ghrvw="gh run view --web"
+alias ghprvw="gh pr view --web"
+
 alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
 
 alias be="bundle exec"
@@ -122,7 +127,8 @@ function rebase_dependent() {
 #   ;;
 # esac
 
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow'
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
 
 # emacs insert-mode binds ;)
 bindkey -e

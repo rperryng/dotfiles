@@ -33,14 +33,12 @@ call plug#begin('~/.local/share/nvim/plugged')
 " :CocInstall coc-rust-analyzer
 " :CocInstall coc-tsserver
 " :CocInstall coc-solargraph
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
-" Plug 'honza/vim-snippets'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
-" Plug 'SirVer/ultisnips'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
@@ -52,6 +50,8 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'iamcco/vim-language-server'
+Plug 'inkarkat/vim-AdvancedSorters'
+Plug 'inkarkat/vim-ingo-library'
 Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'jesseleite/vim-agriculture'
@@ -104,7 +104,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'preservim/nerdtree'
 
 " UI
-Plug 'HerringtonDarkholme/yats.vim'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
@@ -119,7 +118,6 @@ Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'patstockwell/vim-monokai-tasty'
-Plug 'peitalin/vim-jsx-typescript'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
@@ -204,7 +202,8 @@ augroup filetypes
   autocmd FileType netrw setlocal nosmartindent
 
   autocmd FileType org setlocal shiftwidth=4 tabstop=4 softtabstop=4
-  autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
+  " autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
+  autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=2
   autocmd FileType rust setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
   autocmd FileType rust nnoremap <buffer> <space>fo :RustFmt<CR>
@@ -310,6 +309,12 @@ set inccommand=split
 " }}}
 " {{{ Functions/Commands
 
+function MatchStrAll(str, pat)
+    let l:res = []
+    call substitute(a:str, a:pat, '\=add(l:res, submatch(0))', 'g')
+    return l:res
+endfunction
+
 function! EqualWindowHorizontally()
 endfunction
 
@@ -396,7 +401,7 @@ command! -nargs=0 JoinSpaceless call JoinSpaceless()
 nnoremap <space>gJ :call JoinSpaceless()<CR>
 xnoremap <space>gJ :call JoinSpaceless()<CR>
 
-" Sjlow Paste
+" Slow Paste
 """"""""""""
 " Paste 10 lines to the window below
 function! SlowPaste()
@@ -795,7 +800,7 @@ nnoremap <space>w<space> :resize +1<CR>:resize -1<CR>
 
 " Reload vimrc
 nnoremap <space>E :edit $MYVIMRC<CR>
-nnoremap <space>R :source $MYVIMRC<CR>
+nnoremap <space>rl :source $MYVIMRC<CR>
 
 " Toggle scrolloff
 " nnoremap <space>zz :let &scrolloff=999-&scrolloff<CR>
@@ -891,7 +896,7 @@ nmap ga <Plug>(EasyAlign)
 let $FZF_DEFAULT_OPTS .= ' --color=bg:#1d2021 --border --no-height --layout=reverse'
 
 if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow'
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
   set grepprg=rg\ --vimgrep
   command! -bang -nargs=* Find
     \ call fzf#vim#grep(
@@ -1111,6 +1116,7 @@ nmap <silent> <space>rn <Plug>(coc-list)
 nnoremap <silent> <space>gl :CocList diagnostics<CR>
 inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
+nmap <silent> <space>R :CocAction<CR>
 
 nnoremap K :call CocAction('doHover')<CR>
 " vmap <silent> re <Plug>(coc-refactor)
@@ -1452,9 +1458,21 @@ nmap <silent> <leader>D <Plug>DashSearchGlobal
 " {{{ lua
 lua <<EOF
 require'nvim-treesitter'
-require'lsp'
+-- require'lsp'
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained"
+  ensure_installed = "maintained",
+  highlight = {
+    enable = true,
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
+    },
+  },
 }
 EOF
 " }}}
