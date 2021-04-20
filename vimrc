@@ -1,11 +1,9 @@
 " TODO:
-" 1. fuzzy search tabs
-" 2. Write a command tabedit the result of `bundle info <gem>`
-" 3. Write a command that deletes the 'project terminal', all buffers within
-" 4. Write a command that opens a TODO in a floating window
-" 5. Exiting from nnn session changes current working directory?
-" 6. Fix :Today
-" 7. GitHub always hide whitespace diffs
+" 1. Write a command tabedit the result of `bundle info <gem>`
+" 2. Write a command that deletes the 'project terminal', all buffers within
+" 3. Write a command that opens a TODO in a floating window
+" 4. Exiting from nnn session changes current working directory?
+" 5. Add Brewfile
 " the cwd, and closes the tab
 
 " A void code execution vulnerability
@@ -728,11 +726,6 @@ cnoremap <C-s> <Esc>
 " onoremap <silent> <expr> il v:count==0 ? ":<c-u>normal! ^vg_<cr>" : ":<c-u>normal! ^v" . (v:count) . "jkg_<cr>"
 " vnoremap <silent> <expr> il v:count==0 ? ":<c-u>normal! ^vg_<cr>" : ":<c-u>normal! ^v" . (v:count)
 
-xnoremap il g_o^
-onoremap il :normal vil<CR>
-xnoremap al $o0
-xnoremap il g_o^
-
 " Close all folds except the current one, set cursor to middle of screen
 nnoremap <space>z zMzvzz
 
@@ -956,6 +949,20 @@ function! ProjectBuffers()
         \    'sink': function('s:project_buffer_open'),
         \ })))
 endfunction
+
+function! s:fuzzy_tab_open_handler(tab_name)
+  echom "handler called"
+  let l:tabnr = matchstr(a:tab_name, '[0-9]\+')
+  execute 'normal ' . l:tabnr . 'gt'
+endfunction
+function! FuzzyTabs()
+  let l:tabs = sort(copy(MatchStrAll(TabooTabline(), '\[[0-9]\+-[^]]\+\]')))
+  call fzf#run(fzf#wrap({
+        \    'source': l:tabs,
+        \    'sink': function('s:fuzzy_tab_open_handler'),
+        \ }))
+endfunction
+nnoremap <space>fq :call FuzzyTabs()<CR>
 
 command! -nargs=* ProjectBuffers call ProjectBuffers()
 nnoremap <space>fu :ProjectBuffers<CR>
