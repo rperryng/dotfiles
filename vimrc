@@ -949,6 +949,8 @@ function! ProjectBuffers()
         \    'sink': function('s:project_buffer_open'),
         \ })))
 endfunction
+command! -nargs=* ProjectBuffers call ProjectBuffers()
+nnoremap <space>fu :ProjectBuffers<CR>
 
 function! s:fuzzy_tab_open_handler(tab_name)
   echom "handler called"
@@ -964,8 +966,84 @@ function! FuzzyTabs()
 endfunction
 nnoremap <space>fq :call FuzzyTabs()<CR>
 
-command! -nargs=* ProjectBuffers call ProjectBuffers()
-nnoremap <space>fu :ProjectBuffers<CR>
+function! s:fuzzy_buffer_delete_handler(projects)
+  let l:project_roots = map(copy(a:projects), { _, project_path -> fnamemodify(project_path, ':p') })
+  let l:buffers = filter(range(1, bufnr('$')), 'bufloaded(v:val)')
+  call map(l:buffers, { _, buf -> fnamemodify(bufname(buf), ':p')})
+
+  " Filter buffers which belong to a selected project
+  let l:buffers_to_delete = filter(
+        \ copy(l:buffers),
+        \ { _, buf -> len(filter(
+        \         copy(l:project_roots),
+        \         { _, project_root -> match(buf, project_root) > -1 }
+        \ )) > 0 },
+        \ )
+
+  " Filter terminal buffers which match a selected project
+  let l:terminal_buffer_names = map(
+        \ copy(a:projects),
+        \ { _, project -> 'term-misc-' . fnamemodify(project, ':t') }
+        \ )
+
+  call extend(l:buffers_to_delete, l:terminal_buffer_names)
+
+  echom "deleting buffers: " . join(l:buffers_to_delete, "\n")
+  for b in buffers_to_delete
+    execute 'Bdelete! ' . b
+  endfor
+
+  " Close tabs for selected projects
+  for project in a:projects
+    let l:tabs = sort(copy(MatchStrAll(TabooTabline(), '\[[0-9]\+-[^]]\+\]')))
+    let l:index = index(l:tabs, project)
+    if l:index >= 0
+      echom "closing tab: " . l:tabs[l:index]
+
+      let l:index += 1
+      execute l:index . 'tabclose'
+    endif
+  endfor
+
+  " Remove NoName tabs
+  let l:tabs = sort(copy(MatchStrAll(TabooTabline(), '\[[0-9]\+-[^]]\+\]')))
+  for x in range(1, len(l:tabs))
+    let l:index = index(l:tabs, 'NoName')
+    if l:index >= 0
+      echom "closing tab: " . l:tabs[l:index]
+
+      let l:index += 1
+      execute l:index . 'tabclose'
+    endif
+  endfor
+endfunction
+
+function! FuzzyBufferDelete()
+  let l:buffers = filter(range(1, bufnr('$')), 'bufloaded(v:val)')
+  call map(l:buffers, { _, buf -> fnamemodify(bufname(buf), ':p')})
+
+  let l:project_roots = map(copy(l:buffers), { _, bufpath -> projectroot#get(bufpath) })
+  call filter(l:project_roots, { _, path ->
+        \ path != '' &&
+        \ path != '.' &&
+        \ path !~ '^/usr' &&
+        \ path !~ '/.local/'
+        \ })
+  call uniq(l:project_roots)
+
+  let dict = {}
+  for l in l:project_roots
+    let dict[l] = ''
+  endfor
+  let unique_project_roots = map(keys(dict), { _, path -> fnamemodify(path, ':~') })
+
+  call fzf#run(fzf#wrap({
+        \    'source': l:unique_project_roots,
+        \    'sink*': function('s:fuzzy_buffer_delete_handler'),
+        \    'options': '--multi',
+        \ }))
+endfunction
+nnoremap <space>fd :call FuzzyBufferDelete()<CR>
 
 " :Tags
 command! -nargs=* Tags
