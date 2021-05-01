@@ -71,7 +71,7 @@ Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
-Plug 'rizzatti/dash.vim'
+Plug 'puremourning/vimspector'
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
@@ -306,6 +306,9 @@ set smartcase
 set inccommand=split
 " }}}
 " {{{ Functions/Commands
+
+" Redirect vim command into register
+command! -nargs=+ -complete=command Redir let s:reg = @@ | redir @"> | silent execute <q-args> | redir END | new | pu | 1,2d_ | let @@ = s:reg
 
 function MatchStrAll(str, pat)
     let l:res = []
@@ -687,6 +690,40 @@ function NNStart()
   file term-misc-dotfiles
   call TerminalResize()
   TabooRename dotfiles
+endfunction
+
+function VimTestVimspectorStrategy(cmd)
+  if !(filereadable(".vimspector.json"))
+    echo "No '.vimspector.json' found, starting with vscode-node sample"
+    system('cp ~/.vimspector.json.sample ./.vimspector.json')
+  endif
+
+  let l:vimspector_config = json_decode(join(readfile('.vimspector.json')))
+
+  " Assign program
+  let l:program = split(a:cmd, ' ')[0]
+  let l:vimspector_config['configurations']['run']['configuration']['program'] =
+        \ '${workspaceFolder}/' . l:program
+
+  " Assign program_args
+  " Remove the program from the string
+  let l:program_args = join(split(a:cmd, " ")[1:], " ")
+
+  " split by spaces unless within quotes.  No good way to do this with vimscript
+  " TODO: is this escaping enough?
+  let l:split_cmd = 'printf "%s" "' . escape(l:program_args, '"') . '" | xargs -n 1 printf "%s\n"'
+  let l:print_output = system(l:split_cmd)
+  let l:program_args = split(l:print_output, "\n")
+
+  " Re-quote strings with spaces in them
+  call map(l:program_args, { _, arg -> match(arg, ' ') >= 0 ? "'" . arg . "'" : arg })
+
+  let l:vimspector_config['configurations']['run']['configuration']['args'] = l:program_args
+
+  call writefile(split(json_encode(l:vimspector_config), "\n"), glob('.vimspector.json'), 'b')
+
+  " Start the debugger
+  call vimspector#Continue()
 endfunction
 " }}}
 " {{{ Mappings
@@ -1201,7 +1238,7 @@ nmap <silent> <space>rn <Plug>(coc-list)
 nnoremap <silent> <space>gl :CocList diagnostics<CR>
 inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
-nmap <silent> <space>R :CocAction<CR>
+nmap <silent> <space>A :CocAction<CR>
 
 nnoremap K :call CocAction('doHover')<CR>
 " vmap <silent> re <Plug>(coc-refactor)
@@ -1301,6 +1338,12 @@ let g:mkdp_auto_close=0
 " }}}
 " {{{ vim-test
 let test#ruby#rspec#executable = 'bundle exec rspec'
+
+let g:test#custom_strategies = {
+      \ 'project_terminal': function('OpenAndSendCmdToProjectTerminal'),
+      \ 'vimspector': function('VimTestVimspectorStrategy'),
+      \ }
+let g:test#strategy = 'project_terminal'
 " }}}
 " {{{ closetag
 let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.js'
@@ -1375,6 +1418,8 @@ xmap ic <plug>(signify-motion-inner-visual)
 omap ac <plug>(signify-motion-outer-pending)
 xmap ac <plug>(signify-motion-outer-visual)
 let g:signify_update_on_focusgained = 1
+nnoremap <space>gg :SignifyToggle<CR>
+
 " }}}
 " {{{ nvim-contabs
 let g:contabs#project#locations = [
@@ -1534,9 +1579,21 @@ endfunction
 
 nnoremap <space>H :call ToggleHiddenAll()<CR>
 " }}}
-" {{{ vim-dash
-nmap <silent> <leader>d <Plug>DashSearch
-nmap <silent> <leader>D <Plug>DashSearchGlobal
+" {{{ vimspector
+let g:vimspector_install_gadgets = ['vscode-node-debug-2']
+
+nmap <space>dc <Plug>VimspectorContinue :silent! call repeat#set("\<Plug>VimspectorContinue", v:count)<CR>
+nmap <space>ds <Plug>VimspectorStop
+nmap <space>drs <Plug>VimspectorRestart
+nmap <space>db <Plug>VimspectorToggleBreakpoint :silent! call repeat#set("\<Plug>VimspectorToggleBreakpoint", v:count)<CR>
+nmap <space>dh <Plug>VimspectorRunToCursor
+nmap <space>dsov <Plug>VimspectorStepOver :silent! call repeat#set("\<Plug>VimspectorStepOver", v:count)<CR>
+nmap <space>dsin <Plug>VimspectorStepInto
+nmap <space>dsou <Plug>VimspectorStepOut
+nmap <space>dse <Plug>VimspectorBalloonEval :silent! call repeat#set("\<Plug>VimspectorBalloonEval", v:count)<CR>
+nnoremap <space>dsD :VimspectorReset<CR>
+
+" See: VimTestVimspectorStrategy
 " }}}
 
 " }}}
@@ -1575,11 +1632,6 @@ if has('nvim')
   " UI
   " hi! TermCursorNC ctermfg=1 ctermbg=2 cterm=NONE gui=NONE
   hi! TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=14 guibg=#93a1a1 cterm=NONE gui=NONE
-
-  " Vim-test
-  " let test#strategy = 'neoterm'
-  let g:test#custom_strategies = {'project_terminal': function('OpenAndSendCmdToProjectTerminal')}
-  let g:test#strategy = 'project_terminal'
 
   nnoremap <space>T :call ToggleProjectTerminal()<CR>
 
@@ -1629,10 +1681,21 @@ if has('nvim')
   nnoremap <space>tn :silent! :wall<CR>:TestNearest<CR>
   nnoremap <space>tf :silent! :wall<CR>:TestFile<CR>
   nnoremap <space>ts :silent! :wall<CR>:TestSuite<CR>
-  " nnoremap <space>tl :silent! :wall<CR>:TestLast<CR>
+  nnoremap <space>to :TestVisit<CR>
+
+  nnoremap <space>dn :silent! :wall<CR>:TestNearest -strategy=vimspector<CR>
+  nnoremap <space>df :silent! :wall<CR>:TestFile -strategy=vimspector<CR>
+  nnoremap <space>ds :silent! :wall<CR>:TestSuite -strategy=vimspector<CR>
+
+  nnoremap <space>dn :TestNearest -strategy=vimspector<CR>
+  nnoremap <space>df :TestFile -strategy=vimspector<CR>
+  nnoremap <space>ds :TestSuite -strategy=vimspector<CR>
+
+  nnoremap <space>Dn :TestNearest -strategy=vimspector*<CR>
+  nnoremap <space>Df :TestFile -strategy=vimspector*<CR>
+  nnoremap <space>Ds :TestSuite -strategy=vimspector*<CR>
 
   nnoremap <space>tL :silent! :wall<CR>:Tkill<CR>:Tkill<CR>:TestLast<CR>
-  nnoremap <space>tg :TestVisit<CR>
   nnoremap <space>tfile :TREPLSendFile<CR>
   vnoremap <space>tsel :TREPLSendSelection<CR>
   " nnoremap <space>tline :TREPLSendLine<CR>
