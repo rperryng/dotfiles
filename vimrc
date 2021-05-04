@@ -4,6 +4,7 @@
 " 3. Write a command that opens a TODO in a floating window
 " 4. Exiting from nnn session changes current working directory?
 " 5. Add Brewfile
+" 6. vimspector config for ruby tests
 " the cwd, and closes the tab
 
 " A void code execution vulnerability
@@ -116,7 +117,6 @@ Plug 'junegunn/vim-journal'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
-Plug 'morhetz/gruvbox'
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
@@ -126,6 +126,13 @@ Plug 'webdevel/tabulous'
 Plug 'wlangstroth/vim-racket'
 Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+
+Plug 'morhetz/gruvbox'
+
+" Requires lush
+" Need to figure out terminal green color messed up
+" Plug 'rktjmp/lush.nvim'
+" Plug 'npxbr/gruvbox.nvim'
 
 " Plug 'andymass/vim-matchup'
 " Load last, as required in the README
@@ -266,9 +273,12 @@ function! ApplyColorSchemeTweaks()
     " highlight DiffChange  gui=none guifg=none    guibg=#516c5b
     " highlight DiffText    gui=none guifg=none    guibg=#a7722c
 
-    " hi DiffAdd guibg=#282828 ctermbg=235 guifg=#8ec07c ctermfg=142 cterm=NONE gui=NONE
-    " hi DiffChange guibg=#282828 ctermbg=235 guifg=#fdba48 ctermfg=108 cterm=NONE gui=NONE
-    " hi DiffDelete guibg=#282828 ctermbg=235 guifg=#fb4934 ctermfg=167 cterm=NONE gui=NONE
+    highlight DiffAdd guibg=#282828 ctermbg=235 guifg=#8ec07c ctermfg=142 cterm=NONE gui=NONE
+    highlight DiffChange guibg=#282828 ctermbg=235 guifg=#fdba48 ctermfg=108 cterm=NONE gui=NONE
+    highlight DiffDelete guibg=#282828 ctermbg=235 guifg=#fb4934 ctermfg=167 cterm=NONE gui=NONE
+
+    highlight DiffAdd  guifg = none guibg=#4b5632
+    highlight DiffText gui   = none guifg=none    guibg=#47330b
   endif
 endfunction
 
@@ -1725,6 +1735,9 @@ let g:projectionist_ignore_term = 1
 
 nnoremap <space>a :A
 
+" }}}
+" {{{ DiffView
+nnoremap <space>gdo :DiffviewOpen HEAD..
 " }}}
 
 " }}}
