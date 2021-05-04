@@ -1,9 +1,7 @@
 # Autoload -Uz compinit
 # compinit
 
-# global gitignore
-git config --global core.excludesfile ~/.gitignore
-
+# {{{ One time installs
 # brew install
 # ripgrep
 # nnn
@@ -26,16 +24,8 @@ git config --global core.excludesfile ~/.gitignore
 
 # Enable esc+ to treat option keys as alt
 # https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
-
-# Bat theme
-export BAT_THEME='gruvbox-dark-hard'
-
-alias rm-swap="rm ~/.local/share/nvim/swap/*"
-
-HISTSIZE=5000               # How many lines of history to keep in memory
-HISTFILE=~/.zsh_history     # Where to save history to disk
-SAVEHIST=5000               # Number of history entries to save to disk
-HISTDUP=erase               # Erase duplicates in the history file
+# }}}
+# {{{ History
 # Immediately append to the history file, not just when a term is killed# Base16
 setopt    sharehistory
 # Share history across terminals
@@ -43,10 +33,15 @@ setopt    appendhistory
 # Append history to the history file (no overwriting)
 setopt    incappendhistory
 
-# BASE16_SHELL=$HOME/.config/base16-shell/
-# [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
-# base16_onedark
-
+HISTSIZE=5000               # How many lines of history to keep in memory
+HISTFILE=~/.zsh_history     # Where to save history to disk
+SAVEHIST=5000               # Number of history entries to save to disk
+HISTDUP=erase               # Erase duplicates in the history file
+# }}}
+# {{{ Colours
+export BAT_THEME='gruvbox-dark-hard'
+# }}}
+# {{{ $EDITOR
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
   export VISUAL="nvr -cc split --remote-wait +'setlocal bufhidden=wipe'"
@@ -60,20 +55,20 @@ else
   alias nnstart="clear; nvim +'call NNStart()'"
 fi
 
+export EDITOR="$VISUAL"
+# }}}
+# {{{ Git
+# global gitignore
+git config --global core.excludesfile ~/.gitignore
+
 if command -v gh &> /dev/null; then
   clone() {
     gh api /user/repos --paginate | \
-      jq -r '.[] | .clone_url' | \
-      fzf | \
+      jq -r '.[] | .ssh_url' | \
+      fzf --multi | \
       xargs -I{} git -C "$HOME/code" clone {}
   }
 fi
-
-export EDITOR="$VISUAL"
-
-export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'
-export NNN_COPIER="~/.copier.sh"
-export NNN_NO_AUTOSELECT=1
 
 # When enter starts inputting ^M...
 alias pls="stty sane"
@@ -111,17 +106,14 @@ alias ghrw="gh run watch -i1"
 alias ghrvw="gh run view --web"
 alias ghprvw="gh pr view --web"
 
+# }}}
+# {{{ Aliases, Functions
+alias rm-swap="rm ~/.local/share/nvim/swap/*"
 alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
-
 alias be="bundle exec"
 alias migrate="bundle exec rake db:migrate && RACK_ENV=test bundle exec rake db:migrate"
 alias rollback="bundle exec rake db:rollback && RACK_ENV=test bundle exec rake db:rollback"
 alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:drop db:create db:migrate && RACK_ENV=test bundle exec rake db:migrate"
-
-# Rubocop all git-tracked files (excluding files in the db/ folder)
-alias cop="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop"
-alias coppa="git ls-files | xargs ls -1 2>/dev/null | grep '\.rb$' | grep -v '^db\/' | xargs bundle exec rubocop -a"
-alias coppa="bundle exec rubocop -a"
 
 # Jump to repository root
 alias cdp='cd $(git rev-parse --show-toplevel)'
@@ -139,24 +131,56 @@ function git_set_remote_ssh() {
   git remote set-url origin "git@github.com:${remote_url}.git"
   git remote set-url --push origin "git@github.com:${remote_url}.git"
 }
-
-# case `uname` in
-#   Darwin)
-#     alias ls="gls -G"
-#   ;;
-# esac
-
+# }}}
+# {{{ FZF
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
-
+# }}}
+# {{{ NNN
+export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'
+export NNN_COPIER="~/.copier.sh"
+export NNN_NO_AUTOSELECT=1
+# }}}
+# {{{ Secrets
 # security add-generic-password \
 #   -a "$USER"\
 #   -s 'github_token' \
 #   -w 'TOKEN_VALUE'
 # security delete-generic-password -a "$USER" -s 'github_token'
 export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s 'github_token' -w)
+# }}}
+# {{{ Environment
+export DOTFILES_SOURCE="${HOME}/code/dotfiles"
 
+function update_languages() {
+  brew update
+  brew upgrade ruby-build
+  brew upgrade node-build
+  # brew upgrade python-build
 
+  function install_latest() {
+    build_tool=$1
+    language_name=$2
+
+    echo "updating ${build_tool}"
+
+    latest_version=$(eval "${build_tool} versions | tail -n1 | rg -o '\d+.\d+.\d+'")
+    eval "${build_tool} install --skip-existing ${latest_version}"
+    eval "${build_tool} global ${latest_version}"
+    echo "${latest_version}" >| "${DOTFILES_SOURCE}/.${language_name}-version"
+    echo "Using ${language_name} ${latest_version}"
+  }
+
+  install_latest 'rbenv' 'ruby'
+  install_latest 'nodenv' 'node'
+  # install_latest 'pyenv' 'python'
+}
+
+# cat .ruby-version | xargs -I {} rbenv install --skip-existing {}
+# cat .node-version | xargs -I {} nodenv install --skip-existing {}
+# cat .pyenv-version | xargs -I {} pyenv install --skip-existing {}
+# }}}
+# {{{ bindkey
 # emacs insert-mode binds ;)
 bindkey -e
 
@@ -181,3 +205,4 @@ bindkey "^N" down-line-or-search
 bindkey "^Y" fzf-cd-widget
 bindkey "^R" fzf-history-widget
 bindkey "^T" fzf-file-widget
+# }}}
