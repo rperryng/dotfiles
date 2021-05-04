@@ -244,14 +244,18 @@ augroup fzf_maps
 augroup end
 
 " always open help in a vertical split
+
+function! s:bufreadpost_help_buftype()
+  if &buftype == 'help'
+    wincmd L
+    setlocal nonumber
+  endif
+endfunction
+
 augroup vimrc_help
   autocmd!
 
-  autocmd BufReadPost *.txt
-        \ if &buftype == 'help' |
-        \   wincmd L |
-        \   setlocal nonumber |
-        \ endif
+  autocmd BufReadPost *.txt s:bufreadpost_help_buftype
 augroup end
 
 " }}}
@@ -938,6 +942,8 @@ nnoremap sp :tabprevious<CR>
 
 nnoremap sf :set filetype=
 nnoremap sF :file<space>
+
+vnoremap <space>o :<C-U> call system('open ' . GetVisualSelection())<CR>
 " }}}
 " {{{ Plugin Config
 
@@ -1182,6 +1188,15 @@ command! -nargs=? -complete=dir GFiles
   \   <bang>0
   \ )
 
+function! s:fuzzy_git_diff_files_handler()
+
+endfunction
+
+command! -nargs=0 GDiffFiles
+      \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
+      \    'source': split(trim(system('git diff --name-only')), "\n"),
+      \ })))
+
 command! TerminalBuffers
   \ call fzf#vim#buffers(
   \  '.',
@@ -1214,7 +1229,8 @@ nnoremap <space>fh :Helptags<CR>
 nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
 nnoremap <space>fm :Marks<CR>
-nnoremap <space>fg :GFiles?<CR>
+nnoremap <space>fgl :GFiles?<CR>
+nnoremap <space>fgd :GDiffFiles<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
 nnoremap <space>fA :RG<CR>
@@ -1733,7 +1749,7 @@ let g:projectionist_heuristics = {
 " https://github.com/junegunn/fzf.vim/issues/392#issuecomment-440238233
 let g:projectionist_ignore_term = 1
 
-nnoremap <space>a :A
+nnoremap <space>a :A<CR>
 
 " }}}
 " {{{ DiffView

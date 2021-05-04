@@ -3,3 +3,5 @@ gem-browse
 gem-ctags
 solargraph
 yard
+ruby-debug-ide
+byebug
