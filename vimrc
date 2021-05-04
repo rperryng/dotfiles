@@ -64,6 +64,7 @@ Plug 'junegunn/vim-peekaboo'
 Plug 'kana/vim-textobj-user'
 Plug 'kassio/neoterm'
 Plug 'ludovicchabant/vim-gutentags'
+Plug 'machakann/vim-swap'
 Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
 Plug 'moll/vim-bbye'
@@ -215,6 +216,23 @@ augroup filetypes
   " block
   " autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
+
+function s:enable_fzf_maps()
+  tnoremap <buffer> <C-j> <down><down><down><down><down>
+  tnoremap <buffer> <C-k> <up><up><up><up><up>
+endfunction
+
+augroup fzf_maps
+  autocmd!
+
+  autocmd TermOpen *fzf/bin/fzf* call s:enable_fzf_maps()
+augroup END
+
+" always open help in a vertical split
+augroup vimrc_help
+  autocmd!
+  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+augroup END
 " }}}
 " {{{ Colors
 
@@ -717,6 +735,9 @@ function VimTestVimspectorStrategy(cmd)
 
   " Re-quote strings with spaces in them
   call map(l:program_args, { _, arg -> match(arg, ' ') >= 0 ? "'" . arg . "'" : arg })
+
+  " vimspector uses python template strings, escape '$' with '$$'
+  call map(l:program_args, { _, arg -> substitute(arg, '\$', '$$', 'g') })
 
   let l:vimspector_config['configurations']['run']['configuration']['args'] = l:program_args
 
@@ -1582,16 +1603,21 @@ nnoremap <space>H :call ToggleHiddenAll()<CR>
 " {{{ vimspector
 let g:vimspector_install_gadgets = ['vscode-node-debug-2']
 
-nmap <space>dc <Plug>VimspectorContinue :silent! call repeat#set("\<Plug>VimspectorContinue", v:count)<CR>
 nmap <space>ds <Plug>VimspectorStop
 nmap <space>drs <Plug>VimspectorRestart
-nmap <space>db <Plug>VimspectorToggleBreakpoint :silent! call repeat#set("\<Plug>VimspectorToggleBreakpoint", v:count)<CR>
 nmap <space>dh <Plug>VimspectorRunToCursor
-nmap <space>dsov <Plug>VimspectorStepOver :silent! call repeat#set("\<Plug>VimspectorStepOver", v:count)<CR>
 nmap <space>dsin <Plug>VimspectorStepInto
 nmap <space>dsou <Plug>VimspectorStepOut
-nmap <space>dse <Plug>VimspectorBalloonEval :silent! call repeat#set("\<Plug>VimspectorBalloonEval", v:count)<CR>
 nnoremap <space>dsD :VimspectorReset<CR>
+
+nmap <silent><space>dc <Plug>VimspectorContinue
+      \ :silent call repeat#set("\<Plug>VimspectorContinue", v:count)<CR>
+nmap <silent><space>db <Plug>VimspectorToggleBreakpoint
+      \ :silent call repeat#set("\<Plug>VimspectorToggleBreakpoint", v:count)<CR>
+nmap <silent><space>dsov <Plug>VimspectorStepOver
+      \ :silent call repeat#set("\<Plug>VimspectorStepOver", v:count)<CR>
+nmap <silent><space>dse <Plug>VimspectorBalloonEval
+      \ :silent call repeat#set("\<Plug>VimspectorBalloonEval", v:count)<CR>
 
 " See: VimTestVimspectorStrategy
 " }}}
