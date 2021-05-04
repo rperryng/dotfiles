@@ -266,9 +266,9 @@ function! ApplyColorSchemeTweaks()
     " highlight DiffChange  gui=none guifg=none    guibg=#516c5b
     " highlight DiffText    gui=none guifg=none    guibg=#a7722c
 
-    hi DiffAdd guibg=#282828 ctermbg=235 guifg=#8ec07c ctermfg=142 cterm=NONE gui=NONE
-    hi DiffChange guibg=#282828 ctermbg=235 guifg=#fdba48 ctermfg=108 cterm=NONE gui=NONE
-    hi DiffDelete guibg=#282828 ctermbg=235 guifg=#fb4934 ctermfg=167 cterm=NONE gui=NONE
+    " hi DiffAdd guibg=#282828 ctermbg=235 guifg=#8ec07c ctermfg=142 cterm=NONE gui=NONE
+    " hi DiffChange guibg=#282828 ctermbg=235 guifg=#fdba48 ctermfg=108 cterm=NONE gui=NONE
+    " hi DiffDelete guibg=#282828 ctermbg=235 guifg=#fb4934 ctermfg=167 cterm=NONE gui=NONE
   endif
 endfunction
 
@@ -1492,7 +1492,9 @@ let g:signify_update_on_focusgained = 1
 nnoremap <space>gg :SignifyToggle<CR>
 
 nmap ]c <Plug>(signify-next-hunk)
+      \ :silent call repeat#set("\<Plug>(signify-next-hunk)", -1)<CR>
 nmap [c <Plug>(signify-prev-hunk)
+      \ :silent call repeat#set("\<Plug>(signify-prev-hunk)", -1)<CR>
 nmap <space>gdh :SignifyHunkDiff<CR>
 nmap <space>gdu :SignifyHunkUndo<CR>
 
