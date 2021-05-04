@@ -146,23 +146,22 @@ call plug#end()
 " https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
 " Ruby
 if executable('pyenv')
-  " let g:python_host_prog=trim(system('pyenv '))"/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
-  let g:python_host_prog="/Users/ryan/.pyenv/versions/neovim2/bin/python"
-  let g:python3_host_prog="/Users/ryan/.pyenv/versions/neovim3/bin/python3"
+  let g:python_host_prog=trim(system('PYENV_VERSION=neovim2 pyenv which python'))
+  let g:python3_host_prog=trim(system('PYENV_VERSION=neovim3 pyenv which python'))
 else
   echom "missing pyenv.  No python host set."
 endif
 
 " Ruby
 if executable('rbenv')
-  let g:ruby_host_prog=system('RBENV_VERSION=$(cat $DOTFILES_SOURCE/.ruby-version) rbenv which ruby')
+  let g:ruby_host_prog=trim(system('RBENV_VERSION=$(cat $DOTFILES_SOURCE/.ruby-version) rbenv which ruby'))
 else
   echom "Missing rbenv.  No ruby host set."
 endif
 
 " Node
 if executable('nodenv')
-  let g:node_host_prog=system('NODENV_VERSION=$(cat $DOTFILES_SOURCE/.node-version) nodenv which node')
+  let g:node_host_prog=trim(system('NODENV_VERSION=$(cat $DOTFILES_SOURCE/.node-version) nodenv which node'))
   let g:coc_node_path=g:node_host_prog
 else
   echom "Missing nodenv.  No ruby host set."
@@ -177,24 +176,6 @@ augroup focusgroup
   " autocmd BufLeave * let b:winview = winsaveview()
   " autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
   autocmd FocusGained,BufEnter * :silent! checkt
-  " autocmd FocusGained,BufEnter index.wiki :silent execute 'normal zR'
-
-  " Preserve folds between vim sessions
-  " autocmd BufWinLeave * silent! mkview
-  " autocmd BufWinEnter * silent! loadview
-
-  autocmd BufWinEnter * :execute 'setlocal ' . (index(['terminal', 'help'], &buftype) == -1 ? 'number' : 'nonumber')
-  " autocmd BufWinEnter * :execute 'setlocal ' . (index(['terminal', 'help'], &buftype) == -1 ? 'number' : 'nonumber')
-
-  function! s:set_line_num()
-    if index(['terminal', 'help'], &buftype) >= 0
-      set nonumber
-    else
-      set number
-    endif
-  endfunction
-
-  autocmd BufWinEnter * call s:set_line_num()
 
   autocmd BufReadPost *.txt
         \ if &buftype == 'help' |
@@ -236,6 +217,14 @@ augroup filetypes
   " autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
 
+augroup neovim_terminal()
+  autocmd!
+
+  autocmd TermOpen * setlocal scrollback=50000
+  autocmd TermOpen * setlocal nonumber
+augroup end
+
+
 function! s:enable_fzf_maps()
   tnoremap <buffer> <C-j> <down><down><down><down><down>
   tnoremap <buffer> <C-k> <up><up><up><up><up>
@@ -245,16 +234,18 @@ augroup fzf_maps
   autocmd!
 
   autocmd TermOpen *fzf/bin/fzf* call s:enable_fzf_maps()
-augroup END
+augroup end
 
 " always open help in a vertical split
 augroup vimrc_help
   autocmd!
+
   autocmd BufReadPost *.txt
         \ if &buftype == 'help' |
         \   wincmd L |
+        \   setlocal nonumber |
         \ endif
-augroup END
+augroup end
 
 " }}}
 " {{{ Colors
@@ -1792,7 +1783,6 @@ EOF
 if has('nvim')
   augroup tmappings
     autocmd!
-    autocmd TermOpen * setlocal scrollback=50000
   augroup end
 
   " UI
