@@ -76,6 +76,7 @@ Plug 'puremourning/vimspector'
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
+Plug 'sindrets/diffview.nvim'
 Plug 'sjl/gundo.vim'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
@@ -112,10 +113,10 @@ Plug 'joshdick/onedark.vim'
 Plug 'jparise/vim-graphql'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
+Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'morhetz/gruvbox'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
@@ -123,6 +124,8 @@ Plug 'rust-lang/rust.vim'
 Plug 'udalov/kotlin-vim'
 Plug 'webdevel/tabulous'
 Plug 'wlangstroth/vim-racket'
+Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 " Plug 'andymass/vim-matchup'
 " Load last, as required in the README
@@ -180,7 +183,23 @@ augroup focusgroup
   " autocmd BufWinLeave * silent! mkview
   " autocmd BufWinEnter * silent! loadview
 
-  autocmd BufEnter * :execute 'setlocal ' . (index(['terminal', 'help'], &buftype) == -1 ? 'number' : 'nonumber')
+  autocmd BufWinEnter * :execute 'setlocal ' . (index(['terminal', 'help'], &buftype) == -1 ? 'number' : 'nonumber')
+  " autocmd BufWinEnter * :execute 'setlocal ' . (index(['terminal', 'help'], &buftype) == -1 ? 'number' : 'nonumber')
+
+  function! s:set_line_num()
+    if index(['terminal', 'help'], &buftype) >= 0
+      set nonumber
+    else
+      set number
+    endif
+  endfunction
+
+  autocmd BufWinEnter * call s:set_line_num()
+
+  autocmd BufReadPost *.txt
+        \ if &buftype == 'help' |
+        \   wincmd L |
+        \ endif
 augroup end
 
 augroup filetypes
@@ -217,7 +236,7 @@ augroup filetypes
   " autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
 
-function s:enable_fzf_maps()
+function! s:enable_fzf_maps()
   tnoremap <buffer> <C-j> <down><down><down><down><down>
   tnoremap <buffer> <C-k> <up><up><up><up><up>
 endfunction
@@ -231,8 +250,12 @@ augroup END
 " always open help in a vertical split
 augroup vimrc_help
   autocmd!
-  autocmd BufEnter *.txt if &buftype == 'help' | wincmd L | endif
+  autocmd BufReadPost *.txt
+        \ if &buftype == 'help' |
+        \   wincmd L |
+        \ endif
 augroup END
+
 " }}}
 " {{{ Colors
 
@@ -245,23 +268,36 @@ if (has("termguicolors"))
   set termguicolors
 endif
 
-" syntax enable
-let g:gruvbox_contrast_dark="hard"
-" let g:gruvbox_hls_cursor="orange"
-colorscheme gruvbox
-" colorscheme gruvbox
+function! ApplyColorSchemeTweaks()
+  if g:colorscheme ==# 'gruvbox'
+    " highlight DiffAdd     gui=none guifg=none    guibg=#15420e
+    " highlight DiffDelete  gui=none guifg=#4b0000 guibg=#4b0000
+    " highlight DiffChange  gui=none guifg=none    guibg=#516c5b
+    " highlight DiffText    gui=none guifg=none    guibg=#a7722c
+
+    hi DiffAdd guibg=#282828 ctermbg=235 guifg=#8ec07c ctermfg=142 cterm=NONE gui=NONE
+    hi DiffChange guibg=#282828 ctermbg=235 guifg=#fdba48 ctermfg=108 cterm=NONE gui=NONE
+    hi DiffDelete guibg=#282828 ctermbg=235 guifg=#fb4934 ctermfg=167 cterm=NONE gui=NONE
+  endif
+endfunction
+
+nnoremap <space>hi :echo 
+      \ "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+      \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+      \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+augroup init_colors
+    autocmd!
+    autocmd ColorScheme * call ApplyColorSchemeTweaks()
+augroup END
+
+let g:gruvbox_contrast_dark='hard'
+let g:tokyonight_style = 'storm'
+
+let g:colorscheme = 'gruvbox'
+
+execute("colorscheme " . g:colorscheme)
 set background=dark
-
-
-" Start and End tags are same color
-" highlight Tag        ctermfg=04
-" highlight xmlTag     ctermfg=04
-" highlight xmlTagName ctermfg=04
-" highlight xmlEndTag  ctermfg=04
-
-" hi StatusLine   ctermfg=15  guifg=#ffffff ctermbg=239 guibg=#4e4e4e cterm=bold gui=bold
-" hi StatusLineNC ctermfg=249 guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
-" hi VertSplit    ctermfg=15  guifg=#b2b2b2 ctermbg=237 guibg=#3a3a3a cterm=none gui=none
 
 " hi normal guibg=NONE ctermbg=NONE
 """ }}}
@@ -298,7 +334,7 @@ set noequalalways
 set showtabline=2
 
 set list
-set listchars=tab:>-,trail:~
+" set listchars=tab:>-,trail:~
 
 " Statusline
 " set statusline=
@@ -316,7 +352,7 @@ set listchars=tab:>-,trail:~
 " set statusline+=\ 
 
 " Show trailing whitespace with error highlighting group
-highlight! link Whitespace Error
+" highlight! link Whitespace Error
 
 " Searching
 set ignorecase
@@ -328,7 +364,7 @@ set inccommand=split
 " Redirect vim command into register
 command! -nargs=+ -complete=command Redir let s:reg = @@ | redir @"> | silent execute <q-args> | redir END | new | pu | 1,2d_ | let @@ = s:reg
 
-function MatchStrAll(str, pat)
+function! MatchStrAll(str, pat)
     let l:res = []
     call substitute(a:str, a:pat, '\=add(l:res, submatch(0))', 'g')
     return l:res
@@ -367,6 +403,9 @@ function! Layout()
 endfunction
 
 command! -nargs=0 Layout call Layout()
+
+" Eval vimscript contents
+xnoremap <space>: y:@"<CR>
 
 " Easily insert new vimwiki TODO items
 function! Todo(...)
@@ -687,20 +726,7 @@ endfunction
 command! DeleteCwdBuffers call DeleteCwdBuffers()
 nnoremap <space>BD :DeleteCwdBuffers<CR>
 
-" Shameleslly stolen from
-" https://github.com/arithran/vim-delete-hidden-buffers/blob/master/plugin/delete-hidden-buffers.vim
-if !exists("*DeleteHiddenBuffers") " Clear all hidden buffers when running
-  function DeleteHiddenBuffers() " Vim with the 'hidden' option
-    let tpbl=[]
-    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
-    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
-      silent execute 'bwipeout' buf
-    endfor
-  endfunction
-  endif
-command! DeleteHiddenBuffers call DeleteHiddenBuffers()
-
-function NNStart()
+function! NNStart()
   edit ~/.vimrc
   cd ~/code/dotfiles
   split
@@ -713,7 +739,7 @@ endfunction
 function VimTestVimspectorStrategy(cmd)
   if !(filereadable(".vimspector.json"))
     echo "No '.vimspector.json' found, starting with vscode-node sample"
-    system('cp ~/.vimspector.json.sample ./.vimspector.json')
+    call system('cp ~/.vimspector.json.sample ./.vimspector.json')
   endif
 
   let l:vimspector_config = json_decode(join(readfile('.vimspector.json')))
@@ -1211,8 +1237,6 @@ nnoremap <space>WR :WinResizerStartResize<CR>
 let g:winresizer_start_key = '<C-Q>'
 " }}}
 " {{{ vim-fugitive
-nnoremap <space>gst :Gstatus<CR>
-nnoremap <space>gsp :Gstatus<CR>
 nnoremap <space>gvs :Gvsplit<CR>
 nnoremap <space>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
@@ -1372,9 +1396,21 @@ let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
 let g:closetag_shortcut = '>'
 " }}}
 " {{{ vim-indentline
-let g:indentLine_color_gui = '#5b5b5b'
-let g:indentLine_fileTypeExclude=['markdown', 'json']
-let g:indentLine_bufTypeExclude=['help', 'terminal']
+" let g:indentLine_color_gui = '#5b5b5b'
+" let g:indentLine_fileTypeExclude=['markdown']
+" let g:indentLine_bufTypeExclude=['help', 'terminal']
+
+let g:indent_blankline_buftype_exclude=['help', 'terminal']
+" let g:indent_blankline_char = '┊'
+let g:indent_blankline_char = '▏'
+" ¦
+" ┆
+" │
+" ▏
+"
+" ⎸
+
+" let g:indentLine_char = '┊'
 " }}}
 " {{{ ultisnips
 let g:UltiSnipsEditSplit="horizontal"
@@ -1621,6 +1657,54 @@ nmap <silent><space>dse <Plug>VimspectorBalloonEval
 
 " See: VimTestVimspectorStrategy
 " }}}
+" {{{ vim-projectionist
+let g:projectionist_heuristics = {
+      \ 'Gemfile.lock|*.gemspec': {
+      \   '*.rb': {
+      \     'type': 'source',
+      \     'alternate': 'spec/{}_spec.rb',
+      \   },
+      \   'spec/*_spec.rb': {
+      \     'alternate': '{}.rb',
+      \     'type': 'test',
+      \   },
+      \ },
+      \ 'package.json': {
+      \   'package.json': {
+      \     'type': 'package',
+      \     'alternate': ['yarn.lock', 'package-lock.json'],
+      \   },
+      \   'package-lock.json': {
+      \     'alternate': 'package.json',
+      \   },
+      \   'yarn.lock': {
+      \     'alternate': 'package.json',
+      \   },
+      \   'src/*.ts': {
+      \     'type': 'source',
+      \     'alternate': [
+      \       'src/{}.test.ts',
+      \       'src/{}.spec.ts',
+      \     ],
+      \   },
+      \   'src/*.test.ts': {
+      \     'type': 'test',
+      \     'alternate': 'src/{}.ts'
+      \   },
+      \   'src/*.spec.ts': {
+      \     'type': 'test',
+      \     'alternate': 'src/{}.ts'
+      \   },
+      \ }}
+
+" Undocumented feature
+" FZF is really slow with projectionist for some reason.
+" https://github.com/junegunn/fzf.vim/issues/392#issuecomment-440238233
+let g:projectionist_ignore_term = 1
+
+nnoremap <space>a :A
+
+" }}}
 
 " }}}
 " {{{ lua
@@ -1642,6 +1726,37 @@ require'nvim-treesitter.configs'.setup {
     },
   },
 }
+
+-- Diffview
+local cb = require'diffview.config'.diffview_callback
+require'diffview'.setup {
+  diff_binaries = false,    -- Show diffs for binaries
+  file_panel = {
+    width = 35,
+    use_icons = false        -- Requires nvim-web-devicons
+  },
+  key_bindings = {
+    -- The `view` bindings are active in the diff buffers, only when the current
+    -- tabpage is a Diffview.
+    view = {
+      ["<tab>"]    = cb("select_next_entry"),  -- Open the diff for the next file
+      ["<s-tab>"]  = cb("select_prev_entry"),  -- Open the diff for the previous file
+      ["<space>"]  = cb("focus_files"),        -- Bring focus to the files panel
+      ["<space>b"] = cb("toggle_files"),       -- Toggle the files panel.
+    },
+    file_panel = {
+      ["j"]        = cb("next_entry"),         -- Bring the cursor to the next file entry
+      ["k"]        = cb("prev_entry"),         -- Bring the cursor to the previous file entry.
+      ["<cr>"]     = cb("select_entry"),       -- Open the diff for the selected entry.
+      ["o"]        = cb("select_entry"),
+      ["R"]        = cb("refresh_files"),      -- Update stats and entries in the file list.
+      ["<tab>"]    = cb("select_next_entry"),
+      ["<s-tab>"]  = cb("select_prev_entry"),
+      ["<space>e"] = cb("focus_files"),
+      ["<space>b"] = cb("toggle_files"),
+    }
+  }
+}
 EOF
 " }}}
 " {{{ Terminal buffer configs
@@ -1650,9 +1765,6 @@ if has('nvim')
   augroup tmappings
     autocmd!
     autocmd TermOpen * setlocal scrollback=50000
-
-    " Dumb hack because something something scrolloff in terminal windows?
-    " autocmd InsertEnter * if &l:buftype ==# 'terminal' | res +1 | res -1 | endif
   augroup end
 
   " UI
