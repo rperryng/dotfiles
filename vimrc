@@ -147,22 +147,22 @@ call plug#end()
 " Ruby
 if executable('pyenv')
   " let g:python_host_prog=trim(system('pyenv '))"/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
-  let g:python_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim2/bin/python"
-  let g:python3_host_prog="/Users/ryanperry-nguyen/.pyenv/versions/neovim3/bin/python"
+  let g:python_host_prog="/Users/ryan/.pyenv/versions/neovim2/bin/python"
+  let g:python3_host_prog="/Users/ryan/.pyenv/versions/neovim3/bin/python3"
 else
   echom "missing pyenv.  No python host set."
 endif
 
 " Ruby
 if executable('rbenv')
-  let g:ruby_host_prog=trim(system('rbenv which ruby'))
+  let g:ruby_host_prog=system('RBENV_VERSION=$(cat $DOTFILES_SOURCE/.ruby-version) rbenv which ruby')
 else
   echom "Missing rbenv.  No ruby host set."
 endif
 
 " Node
 if executable('nodenv')
-  let g:node_host_prog=trim(system('nodenv which node'))
+  let g:node_host_prog=system('NODENV_VERSION=$(cat $DOTFILES_SOURCE/.node-version) nodenv which node')
   let g:coc_node_path=g:node_host_prog
 else
   echom "Missing nodenv.  No ruby host set."
@@ -736,8 +736,31 @@ function! NNStart()
   TabooRename dotfiles
 endfunction
 
-function VimTestVimspectorStrategy(cmd)
-  if !(filereadable(".vimspector.json"))
+" function VimTestVimspectorStrategyTest(executable, args)
+"   if !(filereadable(".vimspector.json"))
+"     echo "No '.vimspector.json' found, starting with vscode-node sample"
+"     system('cp ~/.vimspector.json.sample ./.vimspector.json')
+"   endif
+
+"   let l:vimspector_config = json_decode(join(readfile('.vimspector.json')))
+
+"   " Assign program
+"   let l:vimspector_config['configurations']['run']['configuration']['program'] =
+"         \ '${workspaceFolder}/' . a:executable
+
+"   " Assign args
+"   let l:vimspector_config['configurations']['run']['configuration']['args'] =
+"         \ a:args
+"         " \ map(copy(a:args), { _, val -> substitute(val, '\$', '\\$', '') })
+
+"   call writefile(split(json_encode(l:vimspector_config), "\n"), glob('.vimspector.json'), 'b')
+
+"   " Start the debugger
+"   call vimspector#Continue()
+" endfunction
+
+function! VimTestVimspectorStrategy(cmd)
+  if !filereadable(".vimspector.json")
     echo "No '.vimspector.json' found, starting with vscode-node sample"
     call system('cp ~/.vimspector.json.sample ./.vimspector.json')
   endif
@@ -924,7 +947,7 @@ let g:nnn#action = {
       \ '<c-s><c-s>': 'split',
       \ '<c-v>': 'vsplit' }
 
-nnoremap <leader>n :NnnPicker<CR>
+nnoremap <space>n :NnnPicker<CR>
 nnoremap <space>N :NnnPicker %:p:h<CR>
 " }}}
 " {{{ send-to-window
@@ -1476,6 +1499,11 @@ omap ac <plug>(signify-motion-outer-pending)
 xmap ac <plug>(signify-motion-outer-visual)
 let g:signify_update_on_focusgained = 1
 nnoremap <space>gg :SignifyToggle<CR>
+
+nmap ]c <Plug>(signify-next-hunk)
+nmap [c <Plug>(signify-prev-hunk)
+nmap <space>gdh :SignifyHunkDiff<CR>
+nmap <space>gdu :SignifyHunkUndo<CR>
 
 " }}}
 " {{{ nvim-contabs
