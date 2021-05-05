@@ -183,11 +183,6 @@ augroup focusgroup
   " autocmd BufLeave * let b:winview = winsaveview()
   " autocmd BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
   autocmd FocusGained,BufEnter * :silent! checkt
-
-  autocmd BufReadPost *.txt
-        \ if &buftype == 'help' |
-        \   wincmd L |
-        \ endif
 augroup end
 
 augroup filetypes
@@ -380,6 +375,13 @@ endfunction
 
 function! OnlyWindow()
   let currwin=winnr()
+endfunction
+
+function! s:warn(message)
+  echohl WarningMsg
+  echom a:message
+  echohl None
+  return 0
 endfunction
 
 " Preferred Layout When starting a new session
@@ -1188,9 +1190,63 @@ command! -nargs=? -complete=dir GFiles
   \   <bang>0
   \ )
 
-function! s:fuzzy_git_diff_files_handler()
+command! -nargs=0 FzfGDiffView
+      \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
+      \    'source': 'git log --oneline --graph --color=always ' . fzf#shellescape('--format=%C(auto)%h%d %s %C(green)%cr'),
+      \ })))
 
+function! s:get_git_root()
+  let root = split(system('git rev-parse --show-toplevel'), '\n')[0]
+  return v:shell_error ? '' : root
 endfunction
+
+function! s:fzf_commits_diffview_sink()
+  echo 'sink called'
+  echo a:0
+endfunction
+
+function! FzfCommitsDiffview(buffer_local)
+  let root = s:get_git_root()
+  if empty(root)
+    return s:warn('Not in git repo')
+  endif
+
+  let source = 'git log --oneline --color=always '
+       \ . fzf#shellescape('--format=%C(auto)%h%d %s %C(green)%cr')
+  let current = expand('%')
+  let managed = 0
+  if !empty(current)
+    call system('git show '.fzf#shellescape(current).' 2> '.(s:is_win ? 'nul' : '/dev/null'))
+    let managed = !v:shell_error
+  endif
+
+  if a:buffer_local
+    if !managed
+      return s:warn('The current buffer is not in the working tree')
+    endif
+    let source .= ' --follow '.fzf#shellescape(current)
+  else
+    let source .= ' --graph'
+  endif
+
+  let options = {
+        \ 'source': source,
+        \ 'sink*': function('s:fzf_commits_diffview_sink'),
+        \ 'options': ['--ansi', '--multi', '--tiebreak=index'],
+        \ }
+
+  if &columns > s:wide
+    let suffix = executable('delta') ? '| delta' : '--color=always'
+    call extend(options.options,
+          \ ['--preview', 'echo {} | grep -o "[a-f0-9]\{7,\}" | head -1 | xargs git show --format=format: ' . suffix])
+  endif
+
+  " if buffer_local:
+
+  call fzf#run(fzf#wrap(options))
+endfunction
+nnoremap <space>gdv :call FzfCommitsDiffview(0)<CR>
+nnoremap <space>gdbv :call FzfCommitsDiffview(1)<CR>
 
 command! -nargs=0 GDiffFiles
       \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
