@@ -250,7 +250,7 @@ endfunction
 augroup vimrc_help
   autocmd!
 
-  autocmd BufReadPost *.txt s:bufreadpost_help_buftype
+  autocmd BufReadPost *.txt call s:bufreadpost_help_buftype()
 augroup end
 
 " }}}
@@ -1750,13 +1750,13 @@ nmap <space>dsou <Plug>VimspectorStepOut
 nnoremap <space>dsD :VimspectorReset<CR>
 
 nmap <silent><space>dc <Plug>VimspectorContinue
-      \ :silent call repeat#set("\<Plug>VimspectorContinue", v:count)<CR>
+      \ :silent call repeat#set("\<Plug>VimspectorContinue", -1)<CR>
 nmap <silent><space>db <Plug>VimspectorToggleBreakpoint
-      \ :silent call repeat#set("\<Plug>VimspectorToggleBreakpoint", v:count)<CR>
+      \ :silent call repeat#set("\<Plug>VimspectorToggleBreakpoint", -1)<CR>
 nmap <silent><space>dsov <Plug>VimspectorStepOver
-      \ :silent call repeat#set("\<Plug>VimspectorStepOver", v:count)<CR>
+      \ :silent call repeat#set("\<Plug>VimspectorStepOver", -1)<CR>
 nmap <silent><space>dse <Plug>VimspectorBalloonEval
-      \ :silent call repeat#set("\<Plug>VimspectorBalloonEval", v:count)<CR>
+      \ :silent call repeat#set("\<Plug>VimspectorBalloonEval", -1)<CR>
 
 " See: VimTestVimspectorStrategy
 " }}}
@@ -1809,7 +1809,7 @@ nnoremap <space>a :A<CR>
 
 " }}}
 " {{{ DiffView
-nnoremap <space>gdo :DiffviewOpen HEAD..
+nnoremap <space>gdo :DiffviewOpen ..HEAD<left><left><left><left><left><left>
 " }}}
 
 " }}}
