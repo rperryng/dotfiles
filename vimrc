@@ -91,6 +91,7 @@ Plug 'tpope/vim-rake'
 Plug 'tpope/vim-rbenv'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rsi'
+Plug 'tpope/vim-scriptease'
 Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
@@ -1200,9 +1201,35 @@ function! s:get_git_root()
   return v:shell_error ? '' : root
 endfunction
 
-function! s:fzf_commits_diffview_sink()
-  echo 'sink called'
-  echo a:0
+function! s:fzf_commits_diffview_sink(commits) abort
+  echom 'sink called'
+  echom a:commits
+
+  let pat = '[0-9a-f]\{7,9}'
+  let hashes = filter(map(copy(a:commits), 'matchstr(v:val, pat)'), 'len(v:val)')
+  echom 'hashes'
+  echom hashies
+
+  if len(hashes) == 1
+    let cmd = 'DiffviewOpen '.hashes[0].'..HEAD'
+    echom 'executing cmd: '.cmd
+    execute cmd
+  elseif len(hashes) == 2
+    let hash1 = hashes[0]
+    let hash2 = hashes[1]
+    let cmd = "git log".hash1." ".hash2." --format='%h' --author-date-order | rg '".hash1."|".hash2"'"
+    echom "executing: ".cmd
+    let sorted_hashes = split(trim(system(cmd), "\n"))
+    call assert_true(len(sorted_hashes) == 1, "failed to sorted hashes using cmd: '".cmd."'")
+
+    let newer = sorted_hashes[0]
+    let older = sorted_hashes[1]
+    echom 'older:'.older
+    echom 'newer:'.newer
+    execute 'DiffviewOpen '.older.'..'.newer
+  else
+    call s:warn('[s:fzf_commits_diffview_sink] didn''t know what to do for selection: '.a:commits)
+  endif
 endfunction
 
 function! FzfCommitsDiffview(buffer_local)
@@ -1216,7 +1243,7 @@ function! FzfCommitsDiffview(buffer_local)
   let current = expand('%')
   let managed = 0
   if !empty(current)
-    call system('git show '.fzf#shellescape(current).' 2> '.(s:is_win ? 'nul' : '/dev/null'))
+    call system('git show '.fzf#shellescape(current).' 2> /dev/null')
     let managed = !v:shell_error
   endif
 
@@ -1235,13 +1262,8 @@ function! FzfCommitsDiffview(buffer_local)
         \ 'options': ['--ansi', '--multi', '--tiebreak=index'],
         \ }
 
-  if &columns > s:wide
-    let suffix = executable('delta') ? '| delta' : '--color=always'
-    call extend(options.options,
-          \ ['--preview', 'echo {} | grep -o "[a-f0-9]\{7,\}" | head -1 | xargs git show --format=format: ' . suffix])
-  endif
-
-  " if buffer_local:
+  call extend(options.options,
+        \ ['--preview', 'echo {} | grep -o "[a-f0-9]\{7,\}" | head -1 | xargs git show --format=format: --color=always'])
 
   call fzf#run(fzf#wrap(options))
 endfunction
