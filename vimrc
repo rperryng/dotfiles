@@ -46,6 +46,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'gcmt/taboo.vim'
 Plug 'gisphm/vim-gitignore'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+Plug 'habamax/vim-winlayout'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'iamcco/vim-language-server'
@@ -333,6 +334,7 @@ set wildmode=list:longest
 set nowrap
 set noequalalways
 set showtabline=2
+set number
 
 set list
 " set listchars=tab:>-,trail:~
@@ -947,6 +949,8 @@ nnoremap sf :set filetype=
 nnoremap sF :file<space>
 
 vnoremap <space>o :<C-U> call system('open ' . GetVisualSelection())<CR>
+nnoremap <space>S :mksession! ./Session.manual.vim
+nnoremap <space>R :source! ./Session.manual.vim
 " }}}
 " {{{ Plugin Config
 
@@ -1034,7 +1038,6 @@ command! -bang -nargs=* RI
   \ )
 
 " mnemonic: fzf all
-nnoremap <space>fA :RI<CR>
 
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --no-ignore --column --line-number --no-heading --color=always --smart-case -- %s || true'
@@ -1046,7 +1049,6 @@ endfunction
 
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 " mnemonic: straight up ripgrep with no fzf syntax support accross all files
-nnoremap <space>rg :RG<CR>
 
 function! s:project_buffer_open(buffer)
   execute ':buffer ' . bufnr(bufname(a:buffer))
@@ -1067,7 +1069,6 @@ function! ProjectBuffers()
         \ })))
 endfunction
 command! -nargs=* ProjectBuffers call ProjectBuffers()
-nnoremap <space>fu :ProjectBuffers<CR>
 
 function! s:fuzzy_tab_open_handler(tab_name)
   echom "handler called"
@@ -1081,7 +1082,6 @@ function! FuzzyTabs()
         \    'sink': function('s:fuzzy_tab_open_handler'),
         \ }))
 endfunction
-nnoremap <space>fq :call FuzzyTabs()<CR>
 
 function! s:fuzzy_buffer_delete_handler(projects)
   let l:project_roots = map(copy(a:projects), { _, project_path -> fnamemodify(project_path, ':p') })
@@ -1160,7 +1160,6 @@ function! FuzzyBufferDelete()
         \    'options': '--multi',
         \ }))
 endfunction
-nnoremap <space>fd :call FuzzyBufferDelete()<CR>
 
 " :Tags
 command! -nargs=* Tags
@@ -1262,12 +1261,15 @@ function! FzfCommitsDiffview(buffer_local)
 
   call fzf#run(fzf#wrap(options))
 endfunction
-nnoremap <space>gdv :call FzfCommitsDiffview(0)<CR>
-nnoremap <space>gdbv :call FzfCommitsDiffview(1)<CR>
 
 command! -nargs=0 GDiffFiles
       \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
       \    'source': split(trim(system('git diff --name-only')), "\n"),
+      \ })))
+
+command! -nargs=0 GDiffMainFiles
+      \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
+      \    'source': split(trim(system('git diff $(git_default_branch) --name-only')), "\n"),
       \ })))
 
 command! TerminalBuffers
@@ -1293,6 +1295,7 @@ command! -bang -nargs=* RgNoSpec
 "   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
 "   \   <bang>0)
 
+" FZF Binds
 nnoremap <space><C-f> :GFiles<CR>
 
 nnoremap <space>fb :Buffers<CR>
@@ -1303,7 +1306,6 @@ nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
 nnoremap <space>fm :Marks<CR>
 nnoremap <space>fgl :GFiles?<CR>
-nnoremap <space>fgd :GDiffFiles<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
 nnoremap <space>fA :RG<CR>
@@ -1322,6 +1324,16 @@ nnoremap <space>fM :Marks!<CR>
 nnoremap <space>fG :GFiles?!<CR>
 nnoremap <space>fW :Windows!<CR>
 nnoremap <space>fR :Rg!<CR>
+
+nnoremap <space>fgdv :call FzfCommitsDiffview(0)<CR>
+nnoremap <space>fgdbv :call FzfCommitsDiffview(1)<CR>
+nnoremap <space>fgdf :GDiffFiles<CR>
+nnoremap <space>gdmf :GDiffMainFiles<CR>
+nnoremap <space>fd :call FuzzyBufferDelete()<CR>
+nnoremap <space>fA :RI<CR>
+nnoremap <space>rg :RG<CR>
+nnoremap <space>fu :ProjectBuffers<CR>
+nnoremap <space>fq :call FuzzyTabs()<CR>
 
 imap <c-x><c-f> <plug>(fzf-complete-path)
 " }}}
@@ -1389,7 +1401,9 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gn <Plug>(coc-diagnostic-next)
+      \ :silent call repeat#set("\<Plug>(coc-diagnostic-next)", v:count)<CR>
 nmap <silent> gp <Plug>(coc-diagnostic-prev)
+      \ :silent call repeat#set("\<Plug>(coc-diagnostic-prev)", v:count)<CR>
 nmap <silent> <space>re <Plug>(coc-refactor)
 nmap <silent> <space>rn <Plug>(coc-rename)
 nmap <silent> <space>rn <Plug>(coc-list)
@@ -1501,6 +1515,7 @@ let g:test#custom_strategies = {
       \ 'project_terminal': function('OpenAndSendCmdToProjectTerminal'),
       \ 'vimspector': function('VimTestVimspectorStrategy'),
       \ }
+      " \ 'vimspector*': function('VimTestVimspectorStrategyTest'),
 let g:test#strategy = 'project_terminal'
 " }}}
 " {{{ closetag
@@ -1759,6 +1774,13 @@ nnoremap <space>H :call ToggleHiddenAll()<CR>
 " {{{ vimspector
 let g:vimspector_install_gadgets = ['vscode-node-debug-2']
 
+let g:vimspector_sign_priority = {
+      \    'vimspectorBP':         20,
+      \    'vimspectorBPCond':     19,
+      \    'vimspectorBPDisabled': 1,
+      \    'vimspectorPC':         999,
+      \ }
+
 nmap <space>ds <Plug>VimspectorStop
 nmap <space>drs <Plug>VimspectorRestart
 nmap <space>dh <Plug>VimspectorRunToCursor
@@ -1827,6 +1849,10 @@ nnoremap <space>a :A<CR>
 " }}}
 " {{{ DiffView
 nnoremap <space>gdo :DiffviewOpen ..HEAD<left><left><left><left><left><left>
+" }}}
+" {{{ vim-winlayout
+nmap <space>wu <Plug>(WinlayoutBackward)
+nmap <space>wr <Plug>(WinlayoutForward)
 " }}}
 
 " }}}
@@ -1936,15 +1962,18 @@ if has('nvim')
   function! RunLastCommandInProjectTerminal()
     call OpenAndSendCmdToProjectTerminal("\<C-p>")
   endfunction
-  nnoremap <space>tl :call RunLastCommandInProjectTerminal()<CR>
 
   nnoremap <space>tn :silent! :wall<CR>:TestNearest<CR>
   nnoremap <space>tf :silent! :wall<CR>:TestFile<CR>
   nnoremap <space>ts :silent! :wall<CR>:TestSuite<CR>
+  nnoremap <space>tl :silent! :wall<CR>:TestLast<CR>
   nnoremap <space>to :TestVisit<CR>
+
+  nnoremap <space>tp :call RunLastCommandInProjectTerminal()<CR>
 
   nnoremap <space>dn :silent! :wall<CR>:TestNearest -strategy=vimspector<CR>
   nnoremap <space>df :silent! :wall<CR>:TestFile -strategy=vimspector<CR>
+  nnoremap <space>dl :silent! :wall<CR>:TestLast -strategy=vimspector<CR>
   nnoremap <space>ds :silent! :wall<CR>:TestSuite -strategy=vimspector<CR>
 
   nnoremap <space>dn :TestNearest -strategy=vimspector<CR>
