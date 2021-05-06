@@ -119,16 +119,11 @@ function git_migrate_to_main() {
   git remote set-head origin -a
 }
 
-function gcom() {
-  if ! git checkout main 2>/dev/null; then
-    if ! git checkout master 2>/dev/null; then
-      echo "Failed to checkout both 'main' and 'master'.  Running 'git_migrate_to_main' and trying again"
-
-      git_migrate_to_main
-      git checkout main
-    fi
-  fi
-}
+alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | rg 'refs/remotes/origin/(.+)' -o -r '\$1'"
+alias gcom="git checkout ${git_default_branch}"
+alias gdm="git diff ${git_default_branch}"
+alias gdmno="git diff --relative --name-only ${git_default_branch}"
+alias gdnom="git diff --relative --name-only ${git_default_branch}"
 
 # replay all commits, starting at feature_branch exclusive, through
 # dependent_feature inclusive onto master
