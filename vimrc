@@ -1202,13 +1202,8 @@ function! s:get_git_root()
 endfunction
 
 function! s:fzf_commits_diffview_sink(commits) abort
-  echom 'sink called'
-  echom a:commits
-
   let pat = '[0-9a-f]\{7,9}'
   let hashes = filter(map(copy(a:commits), 'matchstr(v:val, pat)'), 'len(v:val)')
-  echom 'hashes'
-  echom hashies
 
   if len(hashes) == 1
     let cmd = 'DiffviewOpen '.hashes[0].'..HEAD'
@@ -1217,7 +1212,7 @@ function! s:fzf_commits_diffview_sink(commits) abort
   elseif len(hashes) == 2
     let hash1 = hashes[0]
     let hash2 = hashes[1]
-    let cmd = "git log".hash1." ".hash2." --format='%h' --author-date-order | rg '".hash1."|".hash2"'"
+    let cmd = "git log ".hash1." ".hash2." --format='%h' --author-date-order | rg '".hash1."|".hash2."'"
     echom "executing: ".cmd
     let sorted_hashes = split(trim(system(cmd), "\n"))
     call assert_true(len(sorted_hashes) == 1, "failed to sorted hashes using cmd: '".cmd."'")
