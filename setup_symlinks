@@ -16,6 +16,7 @@ mkdir -p ~/.config/nvim
 ln -s "$DOTFILES_SOURCE"/vimrc ~/.config/nvim/init.vim
 
 ln -s "$DOTFILES_SOURCE"/ideavimrc ~/.ideavimrc
+ln -s "$DOTFILES_SOURCE"/gitignore ~/.gitignore
 
 mkdir -p ~/.config/karabiner/assets/complex_modifications
 ln -s "$DOTFILES_SOURCE"/karabiner/ctrl-up-down.json ~/.config/karabiner/assets/complex_modifications/ctrl-up-down.json
