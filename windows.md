@@ -1,6 +1,8 @@
 # Windows Setup
 
-WSL 2 in Windows is finally performant enough to use without pulling my hair out
+WSL 2 in Windows is finally performant enough to use without pulling my hair
+out.
+
 Getting a nice development experience is still a lot of manual work though:
 
 1. [Install WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
@@ -27,7 +29,7 @@ DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0 dbus-laun
 ```
 
 #### Launch from TaskBar
-First, wrap it in a `.vbs` script:
+First, wrap the ^ invocation it in a `.vbs` script:
 
 ```vbs
 args = "-c" & " -l " & """DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0 dbus-launch gnome-terminal"""
@@ -35,8 +37,10 @@ WScript.CreateObject("Shell.Application").ShellExecute "bash", args, "", "open",
 ```
 
 VBS scripts can't be pinned to the taskbar (nor can their shortcuts), but
-`wscript.exe` can.  Make a shortcut that invokes the VBS script via `wscript`:
+`wscript.exe` can.  Make a shortcut that invokes the VBS script via `wscript`,
+and then pin _that_ shortcut to the taskbar:
 
 ```
+# "Target" for shortcut:
 C:\Windows\System32\wscript.exe "<PATH_TO_VBS_SCRIPT>"
 ```

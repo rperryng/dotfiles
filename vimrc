@@ -15,6 +15,14 @@ set nomodeline
 
 let mapleader="\<Space>"
 
+" {{{ misc startup
+function! s:warn(message)
+  echohl WarningMsg
+  echom a:message
+  echohl None
+  return 0
+endfunction
+" }}}
 "{{{ Plugins
 
 " {{{ Automatic vim-plug install
@@ -175,6 +183,33 @@ if executable('nodenv')
 else
   echom "Missing nodenv.  No ruby host set."
 endif
+
+" }}}
+" {{{ OS Specific Settings
+
+" {{{ WSL 2 (Windows 10)
+if system('cat /proc/version') =~ 'Microsoft'
+  inoremap <c-v> <c-r>+
+  tmap <c-v> <c-\><c-r>+
+
+  if len(trim(system('command -v win32yank.exe'))) == 0
+    call s:warn("Detected WSL environment but 'win32yank.exe' not on $PATH.  No clipboard support.")
+  else
+    let g:clipboard = {
+          \ 'name': 'wsl2-clipboard',
+          \   'copy': {
+          \      '+': 'win32yank.exe -i --crlf',
+          \      '*': 'win32yank.exe -i --crlf',
+          \    },
+          \   'paste': {
+          \      '+': 'win32yank.exe -o --lf',
+          \      '*': 'win32yank.exe -o --lf',
+          \   },
+          \   'cache_enabled': 0,
+          \ }
+  endif
+endif
+" }}}
 
 " }}}
 " {{{ Autocmd
@@ -378,13 +413,6 @@ endfunction
 
 function! OnlyWindow()
   let currwin=winnr()
-endfunction
-
-function! s:warn(message)
-  echohl WarningMsg
-  echom a:message
-  echohl None
-  return 0
 endfunction
 
 " Preferred Layout When starting a new session

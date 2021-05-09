@@ -154,7 +154,9 @@ export NNN_NO_AUTOSELECT=1
 #   -s 'github_token' \
 #   -w 'TOKEN_VALUE'
 # security delete-generic-password -a "$USER" -s 'github_token'
-export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s 'github_token' -w)
+if [ "$(uname)" = "Darwin" ]; then
+  export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s 'github_token' -w)
+fi
 # }}}
 # {{{ Environment
 export DOTFILES_SOURCE="${HOME}/code/dotfiles"
