@@ -4,7 +4,9 @@ set -euo pipefail
 DOTFILES_SOURCE=$(pwd)
 
 ln -nsf "$DOTFILES_SOURCE"/zshrc.extras ~/.zshrc.extras
-echo "source ~/.zshrc.extras" >> ~/.zshrc
+if ! grep '~/.zshrc.extras' "$HOME/.zshrc"; then
+  echo "source ~/.zshrc.extras" >> ~/.zshrc
+fi
 
 ln -nsf "$DOTFILES_SOURCE"/tmux.conf ~/.tmux.conf
 ln -nsf "$DOTFILES_SOURCE"/tmux.conf.ui ~/.tmux.conf.ui
@@ -17,6 +19,7 @@ ln -nsf "$DOTFILES_SOURCE"/vimrc ~/.config/nvim/init.vim
 
 ln -nsf "$DOTFILES_SOURCE"/ideavimrc ~/.ideavimrc
 ln -nsf "$DOTFILES_SOURCE"/gitignore ~/.gitignore
+ln -nsf "$DOTFILES_SOURCE"/ripgreprc ~/.ripgreprc
 
 mkdir -p ~/.config/karabiner/assets/complex_modifications
 ln -nsf "$DOTFILES_SOURCE"/karabiner/ctrl-up-down.json ~/.config/karabiner/assets/complex_modifications/ctrl-up-down.json
