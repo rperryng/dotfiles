@@ -1,4 +1,5 @@
 " TODO:
+" 0. Mapping to open manifest file (Gemfile, package.json)
 " 1. Write a command tabedit the result of `bundle info <gem>`
 " 2. Write a command that deletes the 'project terminal', all buffers within
 " 3. Write a command that opens a TODO in a floating window
@@ -243,6 +244,7 @@ augroup filetypes
   " autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
   autocmd FileType typescript setlocal shiftwidth=2 tabstop=2 softtabstop=2
   autocmd FileType rust setlocal shiftwidth=4 tabstop=4 softtabstop=4
+  autocmd FileType xml setlocal shiftwidth=4 tabstop=4 softtabstop=4
 
   autocmd FileType rust nnoremap <buffer> <space>fo :RustFmt<CR>
   autocmd FileType typescript nnoremap <buffer> <space>fo :PrettierAsync<CR>
@@ -256,7 +258,27 @@ augroup filetypes
   " autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
 
-augroup neovim_terminal()
+" Move to left tab when tab is closed
+let s:prev_tab_count=tabpagenr('$')
+let s:previous_tab_was_not_last_tab=1
+function! s:tab_enter_autocmd_handler()
+  let less_tabs_than_before = tabpagenr('$') < s:prev_tab_count
+  let current_tab_is_not_first_tab = tabpagenr() != 1
+  if less_tabs_than_before && current_tab_is_not_first_tab && s:previous_tab_was_not_last_tab
+    tabprevious
+  else
+  endif
+  let s:prev_tab_count=tabpagenr('$')
+  let s:previous_tab_was_not_last_tab = tabpagenr() != tabpagenr('$')
+endfunction
+
+augroup TabClosed()
+  autocmd!
+
+  autocmd TabEnter * call s:tab_enter_autocmd_handler()
+augroup end
+
+augroup NeovimTerminal()
   autocmd!
 
   autocmd TermOpen * setlocal scrollback=50000
@@ -1099,7 +1121,6 @@ endfunction
 command! -nargs=* ProjectBuffers call ProjectBuffers()
 
 function! s:fuzzy_tab_open_handler(tab_name)
-  echom "handler called"
   let l:tabnr = matchstr(a:tab_name, '[0-9]\+')
   execute 'normal ' . l:tabnr . 'gt'
 endfunction
@@ -1390,7 +1411,9 @@ nnoremap <space>WR :WinResizerStartResize<CR>
 let g:winresizer_start_key = '<C-Q>'
 " }}}
 " {{{ vim-fugitive
-nnoremap <space>gvs :Gvsplit<CR>
+" nnoremap <space>gvs :Gvsplit<CR>
+nnoremap <space>gvss :Gvsplit
+nnoremap <space>gvsm :execute ':Gvsplit ' . trim(system("git symbolic-ref refs/remotes/origin/HEAD \| rg 'refs/remotes/origin/(.+)' -o -r '\$1'")) . ':%'<CR>
 nnoremap <space>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
 " {{{ vim-projectroot
@@ -1646,6 +1669,7 @@ let g:contabs#project#locations = [
   \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
+  \ { 'path': '~/code/worktrees', 'depth': 3, 'git_only': v:true },
   \]
 
 function! ContabsNewTab(cmd, context)
