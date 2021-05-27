@@ -78,6 +78,7 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'machakann/vim-swap'
 Plug 'mcchrish/nnn.vim'
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'michal-h21/vim-zettel'
 Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'pbogut/fzf-mru.vim'
@@ -861,10 +862,10 @@ endfunction
 cnoremap <c-\><c-f> <c-f>
 cnoremap <c-\><c-a> <c-a>
 
-nnoremap gh ^
-xnoremap gh ^
-nnoremap gl $
-xnoremap gl $h
+nnoremap sh ^
+xnoremap sh ^
+nnoremap sl $
+xnoremap sl $h
 
 " :)
 nnoremap s <Nop>
@@ -1446,7 +1447,6 @@ nnoremap <space>cd :call TcdProjectRoot()<CR>
 " nnoremap <space>cd :execute 'tcd ' . ProjectRootGet()<CR>
 " }}}
 " {{{ coc-nvim
-nmap slR :CocRestart<CR>
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
