@@ -81,6 +81,7 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'michal-h21/vim-zettel'
 Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'nvim-lua/plenary.nvim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
@@ -120,6 +121,9 @@ Plug 'preservim/nerdtree'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
+Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+Plug 'folke/zen-mode.nvim', { 'branch': 'main' }
 Plug 'haya14busa/vim-asterisk'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' }
 Plug 'joshdick/onedark.vim'
@@ -136,8 +140,6 @@ Plug 'rust-lang/rust.vim'
 Plug 'udalov/kotlin-vim'
 Plug 'webdevel/tabulous'
 Plug 'wlangstroth/vim-racket'
-Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
-Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 Plug 'morhetz/gruvbox'
 
@@ -239,7 +241,7 @@ augroup filetypes
   autocmd FileType yaml setlocal commentstring=#\ %s
   autocmd FileType tsx setlocal commentstring=//\ %s
   autocmd FileType python setlocal nosmartindent
-  autocmd FileType netrw setlocal nosmartindent
+  autocmd FileType netrw setlocal nosmartindent shiftwidth=4 tabstop=4 softtabstop=4
 
   autocmd FileType org setlocal shiftwidth=4 tabstop=4 softtabstop=4
   " autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
@@ -352,11 +354,12 @@ augroup init_colors
 augroup END
 
 let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_contrast_light='medium'
 let g:tokyonight_style = 'storm'
 
 let g:colorscheme = 'gruvbox'
 
-execute("colorscheme " . g:colorscheme)
+execute('colorscheme ' . g:colorscheme)
 set background=dark
 
 " hi normal guibg=NONE ctermbg=NONE
@@ -579,7 +582,6 @@ command! -nargs=1 LZ call ZLookup(<q-args>, 2)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! TerminalResize()
   let currwin=winnr()
-  wincmd=
   execute winnr("$") . 'wincmd w'
 
   let new_size = min([20, &lines / 3])
@@ -662,11 +664,7 @@ command! -nargs=0 ClearOtherBuffers call ClearOtherBuffers()
 
 " Format JSON
 """""""""""""
-function! FormatJson()
-  execute '%!python -m json.tool'
-  execute 'normal! gg=G'
-endfunction
-command! FormatJson call FormatJson()
+command! FormatJson :%!jq .
 
 " Profile Vim
 function! ProfileStart()
@@ -856,6 +854,42 @@ function! VimTestVimspectorStrategy(cmd)
   " Start the debugger
   call vimspector#Continue()
 endfunction
+
+function! CreateCenteredFloatingWindow() abort
+    let width = min([&columns - 4, max([80, &columns - 20])])
+    let height = min([&lines - 4, max([20, &lines - 10])])
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    let l:textbuf = nvim_create_buf(v:false, v:true)
+    call nvim_open_win(l:textbuf, v:true, opts)
+    au BufWipeout <buffer> exe 'bw '.s:buf
+    return l:textbuf
+endfunction
+
+function! OpenTodo() abort
+    let l:buf = CreateCenteredFloatingWindow()
+    call nvim_set_current_buf(l:buf)
+    edit ~/.todo.md
+    " setlocal filetype=help
+    " setlocal buftype=help
+    " execute 'help ' . a:query
+endfunction
+
+nnoremap <space>wf :call OpenTodo()<CR>
 " }}}
 " {{{ Mappings
 
@@ -1000,8 +1034,10 @@ nnoremap sf :set filetype=
 nnoremap sF :file<space>
 
 vnoremap <space>o :<C-U> call system('open ' . GetVisualSelection())<CR>
-nnoremap <space>S :mksession! ./Session.manual.vim
-nnoremap <space>R :source! ./Session.manual.vim
+" nnoremap <space>S :mksession! ./Session.manual.vim<CR>
+" nnoremap <space>R :source! ./Session.manual.vim<CR>
+
+nnoremap \e :edit!<CR>
 " }}}
 " {{{ Plugin Config
 
@@ -1058,10 +1094,10 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " }}}
 " {{{ FZF
-let $FZF_DEFAULT_OPTS .= ' --color=bg:#1d2021 --border --no-height --layout=reverse'
+let $FZF_DEFAULT_OPTS .= ' --border --no-height --layout=reverse'
 
 if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git"'
   set grepprg=rg\ --vimgrep
   command! -bang -nargs=* Find
     \ call fzf#vim#grep(
@@ -1319,7 +1355,7 @@ command! -nargs=0 GDiffFiles
 
 command! -nargs=0 GDiffMainFiles
       \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
-      \    'source': split(trim(system('git diff $(git_default_branch) --name-only')), "\n"),
+      \    'source': split(trim(system('git diff main --name-only')), "\n"),
       \ })))
 
 command! TerminalBuffers
@@ -1428,7 +1464,8 @@ let g:rootmarkers = [
       \  '_darcs',
       \  'build.xml',
       \  'MIT-LICENSE',
-      \  'README.md'
+      \  'README.md',
+      \  'package.json'
       \ ]
 
 " Change current working directory of all windows in tab to project root of current buffer
@@ -1744,6 +1781,11 @@ nnoremap <space>bw :Bwipeout!<CR>
 let g:githubinator_no_default_mapping=1
 nmap <space>gho <Plug>(githubinator-open)
 nmap <space>ghc <Plug>(githubinator-copy)
+
+function! OpenInGithub() abort
+  let branch_name = trim(system('git branch --show-current'))
+  let remote_raw = trim(system('git remote -v'))
+endfunction
 " }}}
 " {{{ firenvim
 let g:firenvim_config = {
@@ -1771,29 +1813,6 @@ endif
 " {{{ vim-peekaboo
 let g:peekaboo_prefix = '<space>'
 let g:peekaboo_ins_prefix = '<c-x>'
-
-function! CreateCenteredFloatingWindow()
-    let width = float2nr(&columns * 0.6)
-    let height = float2nr(&lines * 0.6)
-    let top = ((&lines - height) / 2) - 1
-    let left = (&columns - width) / 2
-    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
-
-    let top = "╭" . repeat("─", width - 2) . "╮"
-    let mid = "│" . repeat(" ", width - 2) . "│"
-    let bot = "╰" . repeat("─", width - 2) . "╯"
-    let lines = [top] + repeat([mid], height - 2) + [bot]
-    let s:buf = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
-    call nvim_open_win(s:buf, v:true, opts)
-    set winhl=Normal:Floating
-    let opts.row += 1
-    let opts.height -= 2
-    let opts.col += 2
-    let opts.width -= 4
-    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-    au BufWipeout <buffer> exe 'bw '.s:buf
-endfunction
 
 let g:peekaboo_window="call CreateCenteredFloatingWindow()"
 " }}}
@@ -1836,8 +1855,6 @@ let g:vimspector_sign_priority = {
 nmap <space>ds <Plug>VimspectorStop
 nmap <space>drs <Plug>VimspectorRestart
 nmap <space>dh <Plug>VimspectorRunToCursor
-nmap <space>dsin <Plug>VimspectorStepInto
-nmap <space>dsou <Plug>VimspectorStepOut
 nnoremap <space>dsD :VimspectorReset<CR>
 
 nmap <silent><space>dc <Plug>VimspectorContinue
@@ -1846,6 +1863,10 @@ nmap <silent><space>db <Plug>VimspectorToggleBreakpoint
       \ :silent call repeat#set("\<Plug>VimspectorToggleBreakpoint", -1)<CR>
 nmap <silent><space>dsov <Plug>VimspectorStepOver
       \ :silent call repeat#set("\<Plug>VimspectorStepOver", -1)<CR>
+nmap <silent><space>dsin <Plug>VimspectorStepInto
+      \ :silent call repeat#set("\<Plug>VimspectorStepInto", -1)<CR>
+nmap <silent><space>dsou <Plug>VimspectorStepOut
+      \ :silent call repeat#set("\<Plug>VimspectorStepOut", -1)<CR>
 nmap <silent><space>dse <Plug>VimspectorBalloonEval
       \ :silent call repeat#set("\<Plug>VimspectorBalloonEval", -1)<CR>
 
@@ -1879,6 +1900,8 @@ let g:projectionist_heuristics = {
       \     'alternate': [
       \       'src/{}.test.ts',
       \       'src/{}.spec.ts',
+      \       'test/{}.test.ts',
+      \       'test/{}.spec.ts',
       \     ],
       \   },
       \   'src/*.test.ts': {
@@ -1932,9 +1955,9 @@ require'nvim-treesitter.configs'.setup {
 local cb = require'diffview.config'.diffview_callback
 require'diffview'.setup {
   diff_binaries = false,    -- Show diffs for binaries
+  use_icons = false,         -- Requires nvim-web-devicons
   file_panel = {
     width = 35,
-    use_icons = false        -- Requires nvim-web-devicons
   },
   key_bindings = {
     -- The `view` bindings are active in the diff buffers, only when the current
@@ -1958,6 +1981,8 @@ require'diffview'.setup {
     }
   }
 }
+
+require("zen-mode")
 EOF
 " }}}
 " {{{ Terminal buffer configs
@@ -2008,6 +2033,12 @@ if has('nvim')
 
   " Neoterm / Vim-Test
   nnoremap \t :call ToggleProjectTerminal()<CR>
+
+  " this plugin mapping is by default bound to ',tt' :facepalm:, which
+  " introduces a delay when using ','
+  " Bind it to something that will never get used or conflict with another
+  " binding...
+  let g:neoterm_automap_keys='\\\\\\\\'
 
   " ?? For some reason, after a while the binding stops working...
   " Wrapping it in another function seems ok.

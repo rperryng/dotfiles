@@ -44,6 +44,7 @@ HISTDUP=erase               # Erase duplicates in the history file
 # }}}
 # {{{ Colours
 export BAT_THEME='gruvbox-dark-hard'
+# export BAT_THEME='gruvbox-light'
 # }}}
 # {{{ $EDITOR
 # Use neovim remote terminal if available
@@ -88,6 +89,7 @@ alias gcam="git commit --amend -m"
 alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
 alias g_branch="git symbolic-ref --short -q HEAD"
 alias gcne="git commit --no-edit"
+alias gcaem="git commit --allow-empty -m"
 
 # Push new local branch to remote under the same name
 alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
@@ -99,6 +101,17 @@ alias open-pr="open \"https://github.com/wealthsimple/\$(basename \$(git remote 
 alias ghrw="gh run watch -i1"
 alias ghrvw="gh run view --web"
 alias ghprvw="gh pr view --web"
+
+if [[ "$(uname)" == "Darwin" ]]; then
+  function ghrws() {
+    local folder_name
+    local msg
+    folder_name=$(basename "$PWD")
+    gh run watch && \
+      osx_notify "GitHub Actions" "Done workflow for ${folder_name}" && \
+      say "Done workflow for ${folder_name}"
+  }
+fi
 
 # }}}
 # {{{ Aliases, Functions
@@ -125,23 +138,75 @@ alias gdm='git diff $(git_default_branch)'
 alias gdmno='git diff --relative --name-only $(git_default_branch)'
 alias gdnom='git diff --relative --name-only $(git_default_branch)'
 
+alias git_repository_name='basename -s .git $(git config --get remote.origin.url)'
+
+# Worktrees
+function gwa() {
+  new_branch=$1
+  base_branch=$2
+  repo_name=$(git_repository_name)
+
+  if [ -z "$base_branch" ]; then
+    base_branch=$(git_default_branch)
+  fi
+
+  # TODO: FZF worktrees?
+  mkdir -p "$HOME/code/worktrees"
+  new_worktree_path="$HOME/code/worktrees/${repo_name}__${new_branch}"
+  git worktree add -b $new_branch $new_worktree_path $base_branch
+  cd $new_worktree_path
+}
+
+function point_branch_to_head() {
+  local branch_name
+  branch_name=$1
+  git branch -f $1 HEAD
+  git checkout $1
+}
+
 # replay all commits, starting at feature_branch exclusive, through
 # dependent_feature inclusive onto master
 function rebase_dependent() {
-  # $1 = feature_branch
-  # $2 = dependent branch
-  git rebase --onto master $1 $(g_branch)
+  local feature_branch
+  feature_branch=$1
+  git rebase --onto $(git_default_branch) "${feature_branch}" HEAD
 }
 
 function git_set_remote_ssh() {
+  local remote_url
   remote_url=$(git remote get-url origin | rg 'github.com/(.*)\.git' -o -r '$1')
   git remote set-url origin "git@github.com:${remote_url}.git"
   git remote set-url --push origin "git@github.com:${remote_url}.git"
 }
+
+function gh_close_dependabot_preview_prs() {
+  gh api repos/{owner}/{repo}/pulls --paginate | \
+    jq '.[] | select(.user.login=="dependabot-preview[bot]") | .number' | \
+    xargs -I {} gh api repos/{owner}/{repo}/pulls/{} --method PATCH --raw-field state=closed
+}
+
+function osx_notify() {
+  title=$1
+  message=$2
+  osascript -e "display notification \"${message}\" with title \"${title}\""
+}
+
 # }}}
 # {{{ FZF
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
 export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
+
+# gruvbox-dark
+export FZF_DEFAULT_OPTS='
+  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
+'
+
+# gruvbox-light
+# export FZF_DEFAULT_OPTS='
+#   --color fg:240,bg:230,hl:33,fg+:241,bg+:221,hl+:33
+#   --color info:33,prompt:33,pointer:166,marker:166,spinner:33
+# '
 # }}}
 # {{{ NNN
 export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'
