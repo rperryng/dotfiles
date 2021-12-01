@@ -41,7 +41,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 " :CocInstall coc-rust-analyzer
 " :CocInstall coc-tsserver
 " :CocInstall coc-solargraph
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
@@ -58,6 +58,10 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'habamax/vim-winlayout'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/vim-vsnip'
 Plug 'iamcco/vim-language-server'
 Plug 'inkarkat/vim-AdvancedSorters'
 Plug 'inkarkat/vim-ingo-library'
@@ -65,6 +69,7 @@ Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'jesseleite/vim-agriculture'
 Plug 'jiangmiao/auto-pairs'
+Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'junegunn/fzf', { 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
@@ -81,6 +86,7 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'michal-h21/vim-zettel'
 Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
+Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
@@ -110,6 +116,8 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
+Plug 'tami5/lspsaga.nvim'
+Plug 'folke/trouble.nvim'
 
 " Neovim Nightly
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -130,6 +138,7 @@ Plug 'joshdick/onedark.vim'
 Plug 'jparise/vim-graphql'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
+Plug 'kyazdani42/nvim-web-devicons'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
@@ -255,10 +264,6 @@ augroup filetypes
   " Help prevent accidentally modifying external source code resolved via
   " ctags or LSP functionality.
   autocmd BufReadPost */.cargo/*,*/.rustup/* setlocal readonly
-
-  " hacky-fix for coc-vim leaving the popup menu window open when creating a ruby
-  " block
-  " autocmd FileType ruby inoremap <Space>do <Space>do<Space><Backspace>
 augroup end
 
 " Move to left tab when tab is closed
@@ -681,26 +686,6 @@ function! ProfileEnd()
 endfunction
 command! ProfileEnd call ProfileEnd()
 
-" Start Ruby LSP for project of current file
-""""""""""""""""""""""""""""""""""""""""""""
-" function! Solargraph()
-"   execute 'ProjectRootCD'
-"   let solargraph_buffer_name = 'term-solargraph-' . fnamemodify(getcwd(), ':t')
-
-"   if bufexists(solargraph_buffer_name)
-"     echom solargraph_buffer_name . ' already running!'
-"     execute 'buffer ' . solargraph_buffer_name
-"     return
-"   endif
-
-"   botright split
-"   terminal solargraph socket
-"   let rename_buffer_command = 'file ' . solargraph_buffer_name
-"   execute rename_buffer_command
-" endfunction
-
-" command! Solargraph :call Solargraph()
-
 " Clear Terminal Scrollback history
 """""""""""""""""""""""""""""""""""
 function! ClearScrollback()
@@ -787,8 +772,11 @@ nnoremap <space>BD :DeleteCwdBuffers<CR>
 
 function! NNStart()
   edit ~/.vimrc
+  vsplit
+  execute 'edit'.expand("$DOTFILES_SOURCE/init.lua")
+  foldopen
   cd ~/code/dotfiles
-  split
+  botright split
   terminal
   file term-misc-dotfiles
   call TerminalResize()
@@ -949,7 +937,8 @@ vnoremap g<c-]> <c-]>
 
 nnoremap Y yg_
 nnoremap y% :let @+ = @%<CR>
-nnorema K a<Enter><Esc>
+nnoremap y<space>% :let @+ = fnamemodify(expand("%"), ":p")<left><left>
+nnoremap <space>y% :let @+ = fnamemodify(expand("%"), ":p")<left><left>
 
 "Ruby:t Ruby methods can commonly contain word boundary characters like ! or ?
 " Add helpers for motions that operate on the word under the cursor to include
@@ -1484,83 +1473,83 @@ nnoremap <space>cd :call TcdProjectRoot()<CR>
 " nnoremap <space>cd :execute 'tcd ' . ProjectRootGet()<CR>
 " }}}
 " {{{ coc-nvim
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> gn <Plug>(coc-diagnostic-next)
-      \ :silent call repeat#set("\<Plug>(coc-diagnostic-next)", v:count)<CR>
-nmap <silent> gp <Plug>(coc-diagnostic-prev)
-      \ :silent call repeat#set("\<Plug>(coc-diagnostic-prev)", v:count)<CR>
-nmap <silent> <space>re <Plug>(coc-refactor)
-nmap <silent> <space>rn <Plug>(coc-rename)
-nmap <silent> <space>rn <Plug>(coc-list)
-nnoremap <silent> <space>gl :CocList diagnostics<CR>
-inoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
-nmap <silent> <space>A :CocAction<CR>
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> gn <Plug>(coc-diagnostic-next)
+"       \ :silent call repeat#set("\<Plug>(coc-diagnostic-next)", v:count)<CR>
+" nmap <silent> gp <Plug>(coc-diagnostic-prev)
+"       \ :silent call repeat#set("\<Plug>(coc-diagnostic-prev)", v:count)<CR>
+" nmap <silent> <space>re <Plug>(coc-refactor)
+" nmap <silent> <space>rn <Plug>(coc-rename)
+" nmap <silent> <space>rn <Plug>(coc-list)
+" nnoremap <silent> <space>gl :CocList diagnostics<CR>
+" inoremap <silent><expr> <c-space> coc#refresh()
+" inoremap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
+" nmap <silent> <space>A :CocAction<CR>
 
-nnoremap K :call CocAction('doHover')<CR>
-" vmap <silent> re <Plug>(coc-refactor)
-vmap <silent> <space>ac :CocAction<CR>
+" nnoremap K :call CocAction('doHover')<CR>
+" " vmap <silent> re <Plug>(coc-refactor)
+" vmap <silent> <space>ac :CocAction<CR>
 
-imap <silent><expr> <c-k> <Plug>(coc-float-jump)
-nmap <silent> gF <Plug>(coc-float-jump)
-nmap <silent> gH <Plug>(coc-float-hide)
-nmap <silent> <esc> <Plug>(coc-float-hide)
+" imap <silent><expr> <c-k> <Plug>(coc-float-jump)
+" nmap <silent> gF <Plug>(coc-float-jump)
+" nmap <silent> gH <Plug>(coc-float-hide)
+" nmap <silent> <esc> <Plug>(coc-float-hide)
 
-inoremap <silent><expr> <tab>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+" inoremap <silent><expr> <tab>
+"       \ pumvisible() ? coc#_select_confirm() :
+"       \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-let g:coc_snippet_next = '<tab>'
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
+" let g:coc_snippet_next = '<tab>'
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-if exists('*complete_info')
-  inoremap <expr> <c-t> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
+" " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" " position. Coc only does snippet and additional edit on confirm.
+" " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+" if exists('*complete_info')
+"   inoremap <expr> <c-t> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+" else
+"   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" endif
 
-function! FloatScroll(forward) abort
-  let float = coc#util#get_float()
-  if !float | return '' | endif
-  let buf = nvim_win_get_buf(float)
-  let buf_height = nvim_buf_line_count(buf)
-  let win_height = nvim_win_get_height(float)
-  if buf_height < win_height | return '' | endif
-  let pos = nvim_win_get_cursor(float)
-  if a:forward
-    if pos[0] == 1
-      let pos[0] += 3 * win_height / 4
-    elseif pos[0] + win_height / 2 + 1 < buf_height
-      let pos[0] += win_height / 2 + 1
-    else
-      let pos[0] = buf_height
-    endif
-  else
-    if pos[0] == buf_height
-      let pos[0] -= 3 * win_height / 4
-    elseif pos[0] - win_height / 2 + 1  > 1
-      let pos[0] -= win_height / 2 + 1
-    else
-      let pos[0] = 1
-    endif
-  endif
-  call nvim_win_set_cursor(float, pos)
-  return ''
-endfunction
+" function! FloatScroll(forward) abort
+"   let float = coc#util#get_float()
+"   if !float | return '' | endif
+"   let buf = nvim_win_get_buf(float)
+"   let buf_height = nvim_buf_line_count(buf)
+"   let win_height = nvim_win_get_height(float)
+"   if buf_height < win_height | return '' | endif
+"   let pos = nvim_win_get_cursor(float)
+"   if a:forward
+"     if pos[0] == 1
+"       let pos[0] += 3 * win_height / 4
+"     elseif pos[0] + win_height / 2 + 1 < buf_height
+"       let pos[0] += win_height / 2 + 1
+"     else
+"       let pos[0] = buf_height
+"     endif
+"   else
+"     if pos[0] == buf_height
+"       let pos[0] -= 3 * win_height / 4
+"     elseif pos[0] - win_height / 2 + 1  > 1
+"       let pos[0] -= win_height / 2 + 1
+"     else
+"       let pos[0] = 1
+"     endif
+"   endif
+"   call nvim_win_set_cursor(float, pos)
+"   return ''
+" endfunction
 
-inoremap <silent><expr> <down> coc#util#has_float() ? FloatScroll(1) : "\<down>"
-inoremap <silent><expr> <up> coc#util#has_float() ? FloatScroll(0) :  "\<up>"
+" inoremap <silent><expr> <down> coc#util#has_float() ? FloatScroll(1) : "\<down>"
+" inoremap <silent><expr> <up> coc#util#has_float() ? FloatScroll(0) :  "\<up>"
 
 " }}}
 " {{{ vimwiki
@@ -1929,61 +1918,22 @@ nnoremap <space>gdo :DiffviewOpen ..HEAD<left><left><left><left><left><left>
 nmap <space>wu <Plug>(WinlayoutBackward)
 nmap <space>wr <Plug>(WinlayoutForward)
 " }}}
+" {{{ vim-swap
+silent! nunmap gs
+nmap <space>gi <Plug>(swap-interactive)
+" }}}
+" {{{ vim Trouble
+nnoremap <space>xx <cmd>TroubleToggle<cr>
+nnoremap <space>xw <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
+nnoremap <space>xd <cmd>TroubleToggle lsp_document_diagnostics<cr>
+nnoremap <space>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <space>xl <cmd>TroubleToggle loclist<cr>
+nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+" }}}
 
 " }}}
 " {{{ lua
-lua <<EOF
-require'nvim-treesitter'
--- require'lsp'
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained",
-  highlight = {
-    enable = true,
-  },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "gnn",
-      node_incremental = "grn",
-      scope_incremental = "grc",
-      node_decremental = "grm",
-    },
-  },
-}
-
--- Diffview
-local cb = require'diffview.config'.diffview_callback
-require'diffview'.setup {
-  diff_binaries = false,    -- Show diffs for binaries
-  use_icons = false,         -- Requires nvim-web-devicons
-  file_panel = {
-    width = 35,
-  },
-  key_bindings = {
-    -- The `view` bindings are active in the diff buffers, only when the current
-    -- tabpage is a Diffview.
-    view = {
-      ["<tab>"]    = cb("select_next_entry"),  -- Open the diff for the next file
-      ["<s-tab>"]  = cb("select_prev_entry"),  -- Open the diff for the previous file
-      ["<space>"]  = cb("focus_files"),        -- Bring focus to the files panel
-      ["<space>b"] = cb("toggle_files"),       -- Toggle the files panel.
-    },
-    file_panel = {
-      ["j"]        = cb("next_entry"),         -- Bring the cursor to the next file entry
-      ["k"]        = cb("prev_entry"),         -- Bring the cursor to the previous file entry.
-      ["<cr>"]     = cb("select_entry"),       -- Open the diff for the selected entry.
-      ["o"]        = cb("select_entry"),
-      ["R"]        = cb("refresh_files"),      -- Update stats and entries in the file list.
-      ["<tab>"]    = cb("select_next_entry"),
-      ["<s-tab>"]  = cb("select_prev_entry"),
-      ["<space>e"] = cb("focus_files"),
-      ["<space>b"] = cb("toggle_files"),
-    }
-  }
-}
-
-require("zen-mode")
-EOF
+lua dofile(vim.env.DOTFILES_SOURCE .. "/init.lua")
 " }}}
 " {{{ Terminal buffer configs
 
