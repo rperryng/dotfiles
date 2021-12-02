@@ -119,6 +119,10 @@ Plug 'wellle/targets.vim'
 Plug 'tami5/lspsaga.nvim'
 Plug 'folke/trouble.nvim'
 
+" Required
+Plug 'MunifTanjim/nui.nvim'
+Plug 'VonHeikemen/fine-cmdline.nvim'
+
 " Neovim Nightly
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
@@ -897,6 +901,9 @@ nnoremap Q <nop>
 inoremap jk <Esc>
 inoremap <C-s> <Esc>
 cnoremap <C-s> <Esc>
+
+" no need for man
+nnoremap K :echo "No binding set"<CR>
 
 " Window movements (Replaced with tmux-navigator)
 " nnoremap <C-h> <C-w>h
@@ -1929,6 +1936,10 @@ nnoremap <space>xd <cmd>TroubleToggle lsp_document_diagnostics<cr>
 nnoremap <space>xq <cmd>TroubleToggle quickfix<cr>
 nnoremap <space>xl <cmd>TroubleToggle loclist<cr>
 nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+" }}}
+" {{{ fine-cmdline
+nnoremap : <cmd>FineCmdline<CR>
+nnoremap \: :
 " }}}
 
 " }}}

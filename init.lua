@@ -143,8 +143,36 @@ end
 -- {{{ zen-mode
 require("zen-mode")
 -- }}}
--- {{{ nvim-web-devicons }}}
+-- {{{ nvim-web-devicons
 require('nvim-web-devicons').setup {
  default = true;
 }
+-- }}}
+-- {{{ fine-cmdline
+do
+  require('fine-cmdline').setup({
+    popup = {
+      position = {
+        row = '20%',
+        col = '50%',
+      },
+      size = {
+        width = '70%',
+      },
+      relative = "editor",
+    },
+    hooks = {
+      before_mount = function(input)
+        -- code
+      end,
+      after_mount = function(input)
+        -- code
+      end,
+      set_keymaps = function(imap, feedkeys)
+        -- code
+      end
+    }
+  })
+end
+-- }}}
 -- }}}

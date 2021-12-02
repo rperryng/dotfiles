@@ -5,7 +5,7 @@
 # brew install
 # ripgrep
 # nnn
-# rbenv
+# rbenv - rbenv-default-gems - solargraph
 # nodenv
 # pyenv
 
@@ -18,6 +18,7 @@
 # https://github.com/scmbreeze/scm_breeze
 # https://github.com/tpope/gem-ctags
 # https://github.com/tpope/rbenv-ctags
+# https://github.com/nodenv/nodenv-default-packages
 # https://github.com/zsh-users/zsh-autosuggestions
 # https://github.com/zsh-users/zsh-syntax-highlighting
 # https://github.com/sharkdp/bat
@@ -233,6 +234,8 @@ function update_languages() {
   # brew upgrade python-build
 
   function install_latest() {
+    local build_tool
+    local language_name
     build_tool=$1
     language_name=$2
 
