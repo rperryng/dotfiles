@@ -29,13 +29,27 @@ mkdir -p ~/.config/doom
 ln -nsf "$DOTFILES_SOURCE"/doom.d ~/.config/doom
 
 if command -v rbenv 2>/dev/null; then
+  local default_gems_path
   default_gems_path="$(rbenv root)/plugins/rbenv-default-gems"
   if [ ! -d "${default_gems_path}" ]; then
-    git clone https://github.com/rbenv/rbenv-default-gems.git "$(rbenv root)"/plugins/rbenv-default-gems
+    git clone https://github.com/rbenv/rbenv-default-gems.git $default_gems_path
   fi
 
-  ln -nsf "$DOTFILES_SOURCE"/default-gems "${default_gems_path}"
+  ln -nsf "$DOTFILES_SOURCE"/default-gems "$(rbenv root)/default-gems"
 else
   echo "rbenv not installed"
   echo "Don't forget to symlink default-gems file later!"
+fi
+
+if command -v nodenv 2>/dev/null; then
+  local default_packages_path
+  default_packages_path="$(nodenv root)/plugins/nodenv-default-packages"
+  if [ ! -d "${default_gems_path}" ]; then
+    git clone https://github.com/rbenv/rbenv-default-gems.git default_packages_path
+  fi
+
+  ln -nsf "$DOTFILES_SOURCE"/default-packages "$(nodenv root)/default-packages"
+else
+  echo "nodenv not installed"
+  echo "Don't forget to symlink default-packages file later!"
 fi
