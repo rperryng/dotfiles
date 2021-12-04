@@ -12,6 +12,7 @@ map * *
 map n n
 map N N
 map sl :nohlsearch<CR>
+map : :
 
 nmap <C-l> <C-w>l
 nmap <C-k> <C-w>k

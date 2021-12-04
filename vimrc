@@ -52,6 +52,7 @@ Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dbakker/vim-projectroot'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'folke/trouble.nvim'
 Plug 'gcmt/taboo.vim'
 Plug 'gisphm/vim-gitignore'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
@@ -88,15 +89,19 @@ Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lua/popup.nvim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
 Plug 'puremourning/vimspector'
+Plug 'ray-x/lsp_signature.nvim'
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
+Plug 'simrat39/rust-tools.nvim'
 Plug 'sindrets/diffview.nvim'
 Plug 'sjl/gundo.vim'
+Plug 'tami5/lspsaga.nvim'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-endwise'
@@ -116,10 +121,8 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
-Plug 'tami5/lspsaga.nvim'
-Plug 'folke/trouble.nvim'
 
-" Required
+" Dependent
 Plug 'MunifTanjim/nui.nvim'
 Plug 'VonHeikemen/fine-cmdline.nvim'
 
@@ -1395,6 +1398,7 @@ nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fsa :RgNoSpec<CR>
 nnoremap <space>fz :FZFMru<CR>
+nnoremap <space>: :Commands<CR>
 
 nnoremap <space>fB :Buffers!<CR>
 nnoremap <space>fC :Commands!<CR>
@@ -1930,11 +1934,11 @@ silent! nunmap gs
 nmap <space>gi <Plug>(swap-interactive)
 " }}}
 " {{{ vim Trouble
-nnoremap <space>xx <cmd>TroubleToggle<cr>
-nnoremap <space>xw <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
-nnoremap <space>xd <cmd>TroubleToggle lsp_document_diagnostics<cr>
-nnoremap <space>xq <cmd>TroubleToggle quickfix<cr>
-nnoremap <space>xl <cmd>TroubleToggle loclist<cr>
+nnoremap <space>kx <cmd>TroubleToggle<cr>
+nnoremap <space>kw <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
+nnoremap <space>kd <cmd>TroubleToggle lsp_document_diagnostics<cr>
+nnoremap <space>kq <cmd>TroubleToggle quickfix<cr>
+nnoremap <space>kl <cmd>TroubleToggle loclist<cr>
 nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 " }}}
 " {{{ fine-cmdline

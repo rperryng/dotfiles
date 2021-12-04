@@ -2,6 +2,7 @@
 -- {{{ lspconfig
 do
   local lspconfig = require('lspconfig')
+  local lsp_signature = require "lsp_signature"
   local saga = require('lspsaga')
   local null_ls = require("null-ls")
 
@@ -22,25 +23,69 @@ do
     bufmap(buffer, "n", "<space>gD", "<cmd>lua vim.lsp.buf.implementation()<CR>")
     bufmap(buffer, "n", "<space>re", ":Lspsaga rename<CR>")
     bufmap(buffer, "n", "K", ":Lspsaga hover_doc<CR>")
-    bufmap(buffer, "i", "<c-k>", "<C-\\><C-O>:Lspsaga hover_doc<CR>")
+    bufmap(buffer, "i", "<c-k>", "<C-O>:Lspsaga hover_doc<CR>")
+    bufmap(buffer, "n", "gk", ":Lspsaga show_line_diagnostics<CR>")
+    bufmap(buffer, "n", "gp", ":Lspsaga diagnostic_jump_prev<CR>")
     bufmap(buffer, "n", "gn", ":Lspsaga diagnostic_jump_next<CR>")
-    bufmap(buffer, "n", "gp", ":Lspsaga diagnostic_jump_next<CR>")
     bufmap(buffer, "n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
     bufmap(buffer, "n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
     bufmap(buffer, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+    bufmap(buffer, "n", "gy", "<cmd>lua vim.lsp.buf.type_definition()<CR>")
     bufmap(buffer, "n", "<space>gd", ":Lspsaga preview_definition<CR>")
   end
 
+  local custom_on_attach = function(client, buffer)
+    set_bindings(client, buffer)
+    -- lsp_signature.on_attach()
+  end
+
   require('lspconfig').tsserver.setup({
-    on_attach = function(client, buffer)
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
-      set_bindings(client, buffer)
-    end,
+    on_attach = custom_on_attach,
     capabilities = capabilities,
   })
 
-  vim.diagnostic.config({ float = { source = 'always', border = border }, })
+  require('lspconfig').solargraph.setup({
+    on_attach = custom_on_attach,
+    capabilities = capabilities,
+  })
+
+  require('lspconfig').rust_analyzer.setup({
+    on_attach = custom_on_attach,
+    capabilities = capabilities,
+  })
+
+  require("lspconfig")["null-ls"].setup({
+    on_attach = custom_on_attach,
+    capabilities = capabilities,
+  })
+
+  -- You will likely want to reduce updatetime which affects CursorHold
+  -- note: this setting is global and should be set only once
+
+  vim.diagnostic.config({
+    float = {
+      source = 'always',
+      border = border,
+    },
+    virtual_text = false,
+    signs = true,
+    underline = true,
+    update_in_insert = false,
+    severity_sort = false,
+  })
+end
+-- }}}
+-- {{{ null-ls
+do
+  local null_ls = require('null-ls')
+  local sources = {
+    null_ls.builtins.formatting.eslint_d,
+    null_ls.builtins.formatting.fixjson,
+    null_ls.builtins.diagnostics.eslint_d,
+    null_ls.builtins.diagnostics.pylint,
+    null_ls.builtins.diagnostics.yamllint,
+  }
+  null_ls.config({ sources = sources })
 end
 -- }}}
 -- {{{ nvim-lsp
@@ -83,6 +128,7 @@ do
     },
     sources = {
       { name = 'nvim_lsp' },
+      { name = 'buffer' }
     },
   }
 end
