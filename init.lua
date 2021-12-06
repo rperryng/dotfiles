@@ -1,4 +1,18 @@
 -- {{{ Plugin Config
+-- {{{ null-ls
+-- Must be run before 'lspconfig'
+do
+  local null_ls = require('null-ls')
+  local sources = {
+    null_ls.builtins.formatting.eslint_d,
+    null_ls.builtins.formatting.fixjson,
+    null_ls.builtins.diagnostics.eslint_d,
+    null_ls.builtins.diagnostics.pylint,
+    null_ls.builtins.diagnostics.yamllint,
+  }
+  null_ls.config({ sources = sources })
+end
+-- }}}
 -- {{{ lspconfig
 do
   local lspconfig = require('lspconfig')
@@ -18,7 +32,7 @@ do
     vim.api.nvim_buf_set_option(buffer, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
     bufmap(buffer, "n", "<space>A", ":Lspsaga code_action<CR>")
-    bufmap(buffer, "v", "<space>A", ":Lspsaga range_code_action<CR>")
+    bufmap(buffer, "v", "<space>A", ":<C-u>Lspsaga range_code_action<CR>")
     bufmap(buffer, "n", "<space>F", "<cmd>lua vim.lsp.buf.formatting()<CR>")
     bufmap(buffer, "n", "<space>gD", "<cmd>lua vim.lsp.buf.implementation()<CR>")
     bufmap(buffer, "n", "<space>re", ":Lspsaga rename<CR>")
@@ -75,19 +89,6 @@ do
   })
 end
 -- }}}
--- {{{ null-ls
-do
-  local null_ls = require('null-ls')
-  local sources = {
-    null_ls.builtins.formatting.eslint_d,
-    null_ls.builtins.formatting.fixjson,
-    null_ls.builtins.diagnostics.eslint_d,
-    null_ls.builtins.diagnostics.pylint,
-    null_ls.builtins.diagnostics.yamllint,
-  }
-  null_ls.config({ sources = sources })
-end
--- }}}
 -- {{{ nvim-lsp
 
 -- }}}
@@ -109,7 +110,8 @@ do
       ['<C-d>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.close(),
+      ['<ESC>'] = cmp.mapping.close(),
+      ['<C-s>'] = cmp.mapping.close(),
       ['<CR>'] = cmp.mapping.confirm {
         behavior = cmp.ConfirmBehavior.Replace,
         select = true,
@@ -118,17 +120,12 @@ do
         behavior = cmp.ConfirmBehavior.Replace,
         select = true,
       },
-      ['<S-Tab>'] = function(fallback)
-        if cmp.visible() then
-          cmp.select_prev_item()
-        else
-          fallback()
-        end
-      end,
     },
     sources = {
       { name = 'nvim_lsp' },
-      { name = 'buffer' }
+      { name = 'buffer' },
+      { name = 'path' },
+      { name = 'buffer' },
     },
   }
 end
