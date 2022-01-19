@@ -1,4 +1,4 @@
--- {{{ Plugin Config
+-- {Config{{ Plugin Config
 -- {{{ null-ls
 -- Must be run before 'lspconfig'
 do
@@ -50,7 +50,7 @@ do
 
   local custom_on_attach = function(client, buffer)
     set_bindings(client, buffer)
-    -- lsp_signature.on_attach()
+    lsp_signature.on_attach()
   end
 
   require('lspconfig').tsserver.setup({

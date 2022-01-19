@@ -41,7 +41,23 @@ call plug#begin('~/.local/share/nvim/plugged')
 " :CocInstall coc-rust-analyzer
 " :CocInstall coc-tsserver
 " :CocInstall coc-solargraph
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" LSP
+" Plug 'folke/trouble.nvim'
+" Plug 'hrsh7th/cmp-nvim-lsp'
+" Plug 'hrsh7th/cmp-vsnip'
+" Plug 'hrsh7th/cmp-path'
+" Plug 'hrsh7th/cmp-buffer'
+" Plug 'hrsh7th/nvim-cmp'
+" Plug 'hrsh7th/vim-vsnip'
+" Plug 'jose-elias-alvarez/null-ls.nvim'
+" Plug 'neovim/nvim-lspconfig'
+" Plug 'nvim-lua/popup.nvim'
+" Plug 'ray-x/lsp_signature.nvim'
+" Plug 'simrat39/rust-tools.nvim'
+" Plug 'tami5/lspsaga.nvim'
+" Plug 'MunifTanjim/nui.nvim'
 
 " Functionality
 Plug 'AndrewRadev/splitjoin.vim'
@@ -52,19 +68,12 @@ Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dbakker/vim-projectroot'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'folke/trouble.nvim'
 Plug 'gcmt/taboo.vim'
 Plug 'gisphm/vim-gitignore'
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'habamax/vim-winlayout'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'haya14busa/incsearch.vim'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/vim-vsnip'
 Plug 'iamcco/vim-language-server'
 Plug 'inkarkat/vim-AdvancedSorters'
 Plug 'inkarkat/vim-ingo-library'
@@ -72,7 +81,6 @@ Plug 'janko-m/vim-test'
 Plug 'jeetsukumaran/vim-indentwise'
 Plug 'jesseleite/vim-agriculture'
 Plug 'jiangmiao/auto-pairs'
-Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'junegunn/fzf', { 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
@@ -89,21 +97,16 @@ Plug 'michaeljsmith/vim-indent-object'
 Plug 'michal-h21/vim-zettel'
 Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
-Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-lua/popup.nvim'
 Plug 'pbogut/fzf-mru.vim'
 Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
 Plug 'puremourning/vimspector'
-Plug 'ray-x/lsp_signature.nvim'
 Plug 'rperryng/nvim-contabs'
 Plug 'segeljakt/vim-isotope'
 Plug 'simeji/winresizer'
-Plug 'simrat39/rust-tools.nvim'
 Plug 'sindrets/diffview.nvim'
 Plug 'sjl/gundo.vim'
-Plug 'tami5/lspsaga.nvim'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-endwise'
@@ -124,10 +127,6 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
 
-" Dependent
-Plug 'MunifTanjim/nui.nvim'
-Plug 'VonHeikemen/fine-cmdline.nvim'
-
 " Neovim Nightly
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
@@ -147,7 +146,6 @@ Plug 'joshdick/onedark.vim'
 Plug 'jparise/vim-graphql'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
-Plug 'kyazdani42/nvim-web-devicons'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
@@ -783,7 +781,6 @@ function! NNStart()
   edit ~/.vimrc
   vsplit
   execute 'edit'.expand("$DOTFILES_SOURCE/init.lua")
-  foldopen
   cd ~/code/dotfiles
   botright split
   terminal
@@ -1944,13 +1941,13 @@ nnoremap <space>kl <cmd>TroubleToggle loclist<cr>
 nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 " }}}
 " {{{ fine-cmdline
-nnoremap : <cmd>FineCmdline<CR>
-nnoremap \: :
+" nnoremap : <cmd>FineCmdline<CR>
+" nnoremap \: :
 " }}}
 
 " }}}
 " {{{ lua
-lua dofile(vim.env.DOTFILES_SOURCE .. "/init.lua")
+" lua dofile(vim.env.DOTFILES_SOURCE .. "/init.lua")
 " }}}
 " {{{ Terminal buffer configs
 
@@ -1965,7 +1962,7 @@ if has('nvim')
 
   nnoremap <space>T :call ToggleProjectTerminal()<CR>
 
-  nnoremap <space>term :terminal<CR>:file term-
+  nnoremap <space>term :terminal<CR>:file term-misc-
 
   " Terminal mode binds tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
