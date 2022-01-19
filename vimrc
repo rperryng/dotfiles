@@ -1388,7 +1388,7 @@ nnoremap <space><C-f> :GFiles<CR>
 nnoremap <space>fb :Buffers<CR>
 nnoremap <space>fc :Commands<CR>
 nnoremap <space>fi :Files<CR>
-nnoremap <space>fH :Helptags<CR>
+nnoremap <space>fh :Helptags<CR>
 nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
 nnoremap <space>fm :Marks<CR>
@@ -1400,10 +1400,9 @@ nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fsa :RgNoSpec<CR>
 nnoremap <space>fz :FZFMru<CR>
-nnoremap <space>f: :Commands<CR>
-nnoremap <space>fhh :History<CR>
-nnoremap <space>fh: :History:<CR>
-nnoremap <space>fh: :History/<CR>
+nnoremap <space>fH :History<CR>
+nnoremap <space>f: :History:<CR>
+nnoremap <space>f/ :History/<CR>
 
 nnoremap <space>fB :Buffers!<CR>
 nnoremap <space>fC :Commands!<CR>
