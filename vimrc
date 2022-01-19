@@ -1920,6 +1920,24 @@ let g:projectionist_heuristics = {
       \     'type': 'test',
       \     'alternate': 'src/{}.ts'
       \   },
+      \ },
+      \ 'pom.xml': {
+      \   'src/main/java/*.java': {
+      \     'type': 'source',
+      \     'alternate': 'src/test/java/{}Test.java'
+      \   },
+      \   'src/test/java/*Test.java': {
+      \     'type': 'test',
+      \     'alternate': 'src/main/java/{}.java'
+      \   },
+      \   'src/main/kotlin/*.kt': {
+      \     'type': 'source',
+      \     'alternate': 'src/test/kotlin/{}Test.kt'
+      \   },
+      \   'src/test/kotlin/*Test.kt': {
+      \     'type': 'test',
+      \     'alternate': 'src/main/kotlin/{}.kt'
+      \   },
       \ }}
 
 " Undocumented feature
