@@ -65,6 +65,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
+Plug 'Matt-A-Bennett/surround-funk.vim'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
 Plug 'christoomey/vim-tmux-navigator'
@@ -1049,8 +1050,14 @@ let g:nnn#action = {
       \ '<c-s><c-s>': 'split',
       \ '<c-v>': 'vsplit' }
 
-nnoremap <space>n :NnnPicker<CR>
-nnoremap <space>N :NnnPicker %:p:h<CR>
+let g:layout_floating = { 'layout': { 'window': { 'width': 0.9, 'height': 0.6 } } }
+let g:layout_embedded = { 'layout': 'enew' }
+
+nnoremap <space>n :call nnn#pick(getcwd(), g:layout_floating)<CR>
+nnoremap <space>N :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_floating)<CR>
+nnoremap <space>wn :call nnn#pick(getcwd(), g:layout_embedded)<CR>
+nnoremap <space>wN :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_embedded)<CR>
+
 " }}}
 " {{{ send-to-window
 let g:sendtowindow_use_defaults=0
@@ -1713,7 +1720,11 @@ let g:contabs#project#locations = [
   \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
-  \ { 'path': '~/code/worktrees', 'depth': 3, 'git_only': v:true },
+  \ { 'path': '~/code-worktrees', 'depth': 4, 'git_only': v:true },
+  \ { 'path': '~/code-worktrees', 'depth': 3, 'git_only': v:true },
+  \ { 'path': '~/code-worktrees', 'depth': 2, 'git_only': v:true },
+  \ { 'path': '~/code-worktrees', 'depth': 1, 'git_only': v:true },
+  \ { 'path': '~/code-worktrees', 'depth': 0, 'git_only': v:true },
   \]
 
 function! ContabsNewTab(cmd, context)
@@ -1965,6 +1976,39 @@ nnoremap <space>kd <cmd>TroubleToggle lsp_document_diagnostics<cr>
 nnoremap <space>kq <cmd>TroubleToggle quickfix<cr>
 nnoremap <space>kl <cmd>TroubleToggle loclist<cr>
 nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+" }}}
+" {{{ surround-funk.vim
+let g:surround_funk_create_mappings = 0
+
+" normal mode
+nmap dsf <Plug>DeleteSurroundingFunction
+nmap dsF <Plug>DeleteSurroundingFUNCTION
+nmap csf <Plug>ChangeSurroundingFunction
+nmap csF <Plug>ChangeSurroundingFUNCTION
+nmap ysf <Plug>YankSurroundingFunction
+nmap ysF <Plug>YankSurroundingFUNCTION
+
+" visual mode
+xmap <silent> af <Plug>SelectWholeFunction
+omap <silent> af <Plug>SelectWholeFunction
+xmap <silent> aF <Plug>SelectWholeFUNCTION
+omap <silent> aF <Plug>SelectWholeFUNCTION
+xmap <silent> if <Plug>SelectWholeFunction
+omap <silent> if <Plug>SelectWholeFunction
+xmap <silent> iF <Plug>SelectWholeFUNCTION
+omap <silent> iF <Plug>SelectWholeFUNCTION
+xmap <silent> <space>an <Plug>SelectFunctionName
+omap <silent> <space>an <Plug>SelectFunctionName
+xmap <silent> <space>aN <Plug>SelectFunctionNAME
+omap <silent> <space>aN <Plug>SelectFunctionNAME
+xmap <silent> <space>in <Plug>SelectFunctionName
+omap <silent> <space>in <Plug>SelectFunctionName
+xmap <silent> <space>iN <Plug>SelectFunctionNAME
+omap <silent> <space>iN <Plug>SelectFunctionNAME
+
+" operator pending mode
+" nmap <silent> gs <Plug>GripSurroundObject
+" vmap <silent> gs <Plug>GripSurroundObject
 " }}}
 
 " }}}
