@@ -1035,7 +1035,7 @@ nnoremap sp :tabprevious<CR>
 nnoremap sf :set filetype=
 nnoremap sF :file<space>
 
-vnoremap <space>o :<C-U> call system('open ' . GetVisualSelection())<CR>
+vnoremap <space>o :<C-U>call system('open ' . GetVisualSelection())<CR>
 " nnoremap <space>S :mksession! ./Session.manual.vim<CR>
 " nnoremap <space>R :source! ./Session.manual.vim<CR>
 
@@ -1465,7 +1465,7 @@ nnoremap <space>gvsm :execute ':Gvsplit ' . trim(system("git symbolic-ref refs/r
 nnoremap <space>blame :tabedit %<CR>:Gblame<CR><C-w>lV
 " }}}
 " {{{ vim-projectroot
-let g:rootmarkers = [
+let g:rpn_rootmarkers_nonmonorepo = [
       \  'Gemfile',
       \  '.projectroot',
       \  '.git',
@@ -1478,9 +1478,23 @@ let g:rootmarkers = [
       \  'README.md',
       \  'package.json'
       \ ]
+let g:rpn_rootmarkers_monorepo = [
+      \  'package.json',
+      \  'Gemfile',
+      \  '.projectroot',
+      \  '.git',
+      \  '.hg',
+      \  '.svn',
+      \  '.bzr',
+      \  '_darcs',
+      \  'build.xml',
+      \  'MIT-LICENSE',
+      \  'README.md'
+      \ ]
 
 " Change current working directory of all windows in tab to project root of current buffer
-function! TcdProjectRoot()
+function! TcdProjectRoot(rootmarkers_config)
+  let g:rootmarkers = deepcopy(a:rootmarkers_config)
   let l:project_root = ProjectRootGet()
 
   if l:project_root == ''
@@ -1491,7 +1505,8 @@ function! TcdProjectRoot()
   execute 'tcd ' . l:project_root
   echo 'switched to "' . l:project_root . '"'
 endfunction
-nnoremap <space>cd :call TcdProjectRoot()<CR>
+nnoremap <space>cd :call TcdProjectRoot(g:rpn_rootmarkers_nonmonorepo)<CR>
+nnoremap <space>cD :call TcdProjectRoot(g:rpn_rootmarkers_monorepo)<CR>
 " nnoremap <space>cd :execute 'tcd ' . ProjectRootGet()<CR>
 " }}}
 " {{{ coc-nvim
