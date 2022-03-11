@@ -131,6 +131,8 @@ alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:dro
 # Jump to repository root
 alias cdp='cd $(git rev-parse --show-toplevel)'
 
+alias yarn-linked="find . -type l | grep -v .bin | sed 's/^\.\/node_modules\///'"
+alias yarn-unlink-all="yarn-linked | grep -v 'puppeteer' | xargs yarn unlink && yarn install --check-files"
 function ydd() {
   if [[ -z $1 ]]; then
     yarn-deduplicate yarn.lock
@@ -209,6 +211,7 @@ function osx_notify() {
 # {{{ FZF
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
 export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
+export FZF_ALT_C_COMMAND="${FZF_DEFAULT_COMMAND} | sed -E 's#/[^/]+\$##' | sort -u"
 
 # gruvbox-dark
 export FZF_DEFAULT_OPTS='
