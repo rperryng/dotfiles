@@ -93,6 +93,10 @@ alias g_branch="git symbolic-ref --short -q HEAD"
 alias gcne="git commit --no-edit"
 alias gcaem="git commit --allow-empty -m"
 
+# Semantically a 'git rebase --continue --no-edit', i.e. re-use the same commit
+# message as the original.
+alias rbcne='GIT_EDITOR=true git rebase --continue'
+
 # Push new local branch to remote under the same name
 alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
 
