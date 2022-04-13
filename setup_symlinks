@@ -3,16 +3,19 @@ set -euo pipefail
 
 DOTFILES_SOURCE=$(pwd)
 
+# zshrc
 ln -nsf "$DOTFILES_SOURCE"/zshrc.extras ~/.zshrc.extras
 if ! grep '~/.zshrc.extras' "$HOME/.zshrc"; then
   echo "source ~/.zshrc.extras" >> ~/.zshrc
 fi
 
+# tmux
 ln -nsf "$DOTFILES_SOURCE"/tmux.conf ~/.tmux.conf
 ln -nsf "$DOTFILES_SOURCE"/tmux.conf.ui ~/.tmux.conf.ui
 ln -nsf "$DOTFILES_SOURCE"/tmux.conf.ubuntu ~/.tmux.conf.ubuntu
 ln -nsf "$DOTFILES_SOURCE"/tmux.conf.osx ~/.tmux.conf.osx
 
+# Vimrc (and related) files
 ln -nsf "$DOTFILES_SOURCE"/vimrc ~/.vimrc
 mkdir -p ~/.config/nvim
 ln -nsf "$DOTFILES_SOURCE"/vimrc ~/.config/nvim/init.vim
@@ -21,18 +24,30 @@ ln -nsf "$DOTFILES_SOURCE"/ideavimrc ~/.ideavimrc
 ln -nsf "$DOTFILES_SOURCE"/gitignore ~/.gitignore
 ln -nsf "$DOTFILES_SOURCE"/ripgreprc ~/.ripgreprc
 
+# Karabiner
 mkdir -p ~/.config/karabiner/assets/complex_modifications
 ln -nsf "$DOTFILES_SOURCE"/karabiner/ctrl-up-down.json ~/.config/karabiner/assets/complex_modifications/ctrl-up-down.json
 ln -nsf "$DOTFILES_SOURCE"/karabiner/caps-lock-remapping.json ~/.config/karabiner/assets/complex_modifications/caps-lock-remapping.json
+echo "Karabiner configs added - don't forget to manually "add" them in the Karabiner GUI"
 
+# Doom
 mkdir -p ~/.config/doom
 ln -nsf "$DOTFILES_SOURCE"/doom.d ~/.config/doom
 
+# Bat?
+if command -v bat 2>/dev/null; then
+  mkdir -p "$(bat --config-dir)/themes"
+  ln -nsf "${DOTFILES_SOURCE}/gruvbox-dark-hard.tmTheme" "$(bat --config-dir)/themes/gruvbox-hard.tmTheme"
+else
+  echo "bat not installed.  Skipping config"
+fi
+
+# rbenv plugins
 if command -v rbenv 2>/dev/null; then
   local default_gems_path
   default_gems_path="$(rbenv root)/plugins/rbenv-default-gems"
   if [ ! -d "${default_gems_path}" ]; then
-    git clone https://github.com/rbenv/rbenv-default-gems.git $default_gems_path
+    git clone https://github.com/rbenv/rbenv-default-gems.git "${default_gems_path}"
   fi
 
   ln -nsf "$DOTFILES_SOURCE"/default-gems "$(rbenv root)/default-gems"
@@ -41,11 +56,12 @@ else
   echo "Don't forget to symlink default-gems file later!"
 fi
 
+# nodenv plugins
 if command -v nodenv 2>/dev/null; then
   local default_packages_path
   default_packages_path="$(nodenv root)/plugins/nodenv-default-packages"
-  if [ ! -d "${default_gems_path}" ]; then
-    git clone https://github.com/rbenv/rbenv-default-gems.git default_packages_path
+  if [ ! -d "${default_packages_path}" ]; then
+    git clone https://github.com/rbenv/nodenv-default-gems.git "${default_packages_path}"
   fi
 
   ln -nsf "$DOTFILES_SOURCE"/default-packages "$(nodenv root)/default-packages"
