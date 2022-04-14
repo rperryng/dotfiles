@@ -45,7 +45,7 @@ SAVEHIST=5000               # Number of history entries to save to disk
 HISTDUP=erase               # Erase duplicates in the history file
 # }}}
 # {{{ Colours
-export BAT_THEME='gruvbox-dark-hard'
+export BAT_THEME='gruvbox-dark'
 # export BAT_THEME='gruvbox-light'
 # }}}
 # {{{ $EDITOR
@@ -206,6 +206,34 @@ function osx_notify() {
   message=$2
   osascript -e "display notification \"${message}\" with title \"${title}\""
 }
+
+function refresh_clone_urls() {
+  temp_file=$(mktemp)
+  (
+    gh api /user/repos --paginate | \
+        jq -r '
+          .[]
+          | select(.owner.login | test("wealthsimple*"))
+          | select(.archived | not)
+          | .ssh_url
+        ' > $temp_file && \
+        rm "$HOME/.clone_urls" && \
+        mv $temp_file "$HOME/.clone_urls" \
+  )
+}
+
+if command -v gh &> /dev/null; then
+  ws_clone() {
+    # In case the file doesn't exist yet
+    touch "$HOME/.clone_urls"
+
+    cat "$HOME/.clone_urls" | \
+      fzf --multi | \
+      xargs -I{} git -C "$HOME/code/wealthsimple" clone {}
+
+    refresh_clone_urls &
+  }
+fi
 
 # }}}
 # {{{ FZF

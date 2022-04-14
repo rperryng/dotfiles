@@ -1178,6 +1178,37 @@ function! FuzzyTabs()
         \ }))
 endfunction
 
+function! s:fuzzy_project_selector_handler(project_name)
+  echom 'received ' . a:project_name
+
+  let l:path = expand("$HOME") . '/code/' . a:project_name
+
+  if !isdirectory(l:path)
+    echo 'cloning '.a:project_name.' into '.l:path
+
+    let l:clone_url = 'git@github.com:'.a:project_name.'.git'
+    call system('git clone '.l:clone_url.' '.l:path)
+  endif
+
+  call ContabsNewTab(v:null, [v:null, l:path])
+  execute 'silent !refresh_clone_urls &'
+endfunction
+
+function! FuzzyProjectSelector()
+  let l:cloneable_entries = map(
+        \ copy(readfile(expand('$HOME') . '/.clone_urls')),
+        \ { _line, clone_url -> matchstr(clone_url, ':\zs.*\ze\.git')},
+        \ )
+
+  let l:contabs_projects = keys(copy(contabs#project#paths()))
+  let l:all_entries = uniq(sort(copy(l:cloneable_entries + l:contabs_projects)))
+
+  call fzf#run(fzf#wrap({
+        \    'source': l:all_entries,
+        \    'sink': function('s:fuzzy_project_selector_handler'),
+        \ }))
+endfunction
+
 function! s:fuzzy_buffer_delete_handler(projects)
   let l:project_roots = map(copy(a:projects), { _, project_path -> fnamemodify(project_path, ':p') })
   let l:buffers = filter(range(1, bufnr('$')), 'bufloaded(v:val)')
@@ -1767,14 +1798,14 @@ function! ContabsNewTab(cmd, context)
   wincmd t
 endfunction
 
-nnoremap <silent> <space>fp :call contabs#window#open(
-      \ 'projects',
-      \ contabs#project#paths(),
-      \ funcref('ContabsNewTab'),
-      \ [ 'edit', { 'ctrl-t': 'tabedit', 'ctrl-e': 'edit' } ],
-      \ )
-      \ <CR>
-
+" nnoremap <silent> <space>fp :call contabs#window#open(
+"       \ 'projects',
+"       \ contabs#project#paths(),
+"       \ funcref('ContabsNewTab'),
+"       \ [ 'edit', { 'ctrl-t': 'tabedit', 'ctrl-e': 'edit' } ],
+"       \ )
+"       \ <CR>
+nnoremap <silent> <space>fp :call FuzzyProjectSelector()<CR>
 nnoremap <silent> <space>Z :call contabs#project#select()<CR>
 " }}}
 " {{{ vim-smoothie
