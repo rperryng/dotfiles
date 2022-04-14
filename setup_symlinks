@@ -42,6 +42,10 @@ else
   echo "bat not installed.  Skipping config"
 fi
 
+# Alacritty
+mkdir -p "${HOME}/.config/alacritty"
+ln -nsf "${DOTFILES_SOURCE}/alacritty.yml" "${HOME}/.config/alacritty/alacritty.yml"
+
 # rbenv plugins
 if command -v rbenv 2>/dev/null; then
   local default_gems_path
