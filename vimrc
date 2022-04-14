@@ -1205,6 +1205,11 @@ function! s:fuzzy_project_selector_handler(project_name)
   let l:path = expand("$HOME") . '/code/' . a:project_name
 
   if !isdirectory(l:path)
+    if match(a:project_name, '/') == -1
+      echo "don't know how to clone: '".a:project_name."'"
+      return
+    endif
+
     echo 'cloning '.a:project_name.' into '.l:path
 
     let l:clone_url = 'git@github.com:'.a:project_name.'.git'
