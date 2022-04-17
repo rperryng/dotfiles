@@ -66,6 +66,8 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
 Plug 'Matt-A-Bennett/surround-funk.vim'
+Plug 'Olical/aniseed'
+Plug 'Olical/conjure'
 Plug 'abecodes/tabout.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
@@ -130,6 +132,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
+Plug 'wsdjeg/vim-fetch'
 
 " Neovim Nightly
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
