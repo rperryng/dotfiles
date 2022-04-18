@@ -897,8 +897,10 @@ nnoremap <space>wf :call OpenTodo()<CR>
 function! LazyGit()
   let l:project_name = fnamemodify(getcwd(), ':t')
   let l:buf_name = 'term-lazy-git-'.l:project_name
+  let l:tab_name = l:project_name.'-lazygit'
 
   tabedit
+  silent! execute 'TabooRename ' . l:tab_name
   if (bufexists(l:buf_name))
     execute 'edit '.l:buf_name
   else
@@ -906,8 +908,6 @@ function! LazyGit()
     call feedkeys("lazygit\<CR>")
     execute 'file term-lazy-git-'.l:project_name
   endif
-
-  startinsert
 endfunction
 nnoremap slg :call LazyGit()<CR>
 " }}}
