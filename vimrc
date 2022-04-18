@@ -908,7 +908,7 @@ function! LazyGit()
 
   startinsert
 endfunction
-nnoremap <space>lg :call LazyGit()<CR>
+nnoremap slg :call LazyGit()<CR>
 " }}}
 " {{{ Mappings
 
