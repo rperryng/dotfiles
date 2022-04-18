@@ -45,7 +45,7 @@ SAVEHIST=5000               # Number of history entries to save to disk
 HISTDUP=erase               # Erase duplicates in the history file
 # }}}
 # {{{ Colours
-export BAT_THEME='gruvbox-dark'
+export BAT_THEME='gruvbox-dark-hard'
 # export BAT_THEME='gruvbox-light'
 # }}}
 # {{{ $EDITOR
@@ -92,6 +92,8 @@ alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
 alias g_branch="git symbolic-ref --short -q HEAD"
 alias gcne="git commit --no-edit"
 alias gcaem="git commit --allow-empty -m"
+
+alias lg="lazygit"
 
 # Semantically a 'git rebase --continue --no-edit', i.e. re-use the same commit
 # message as the original.

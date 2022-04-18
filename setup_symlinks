@@ -2,6 +2,7 @@
 set -euo pipefail
 
 DOTFILES_SOURCE=$(pwd)
+mkdir "${HOME}"/.config
 
 # zshrc
 ln -nsf "$DOTFILES_SOURCE"/zshrc.extras ~/.zshrc.extras

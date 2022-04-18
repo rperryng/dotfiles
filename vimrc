@@ -8,7 +8,7 @@
 " 6. vimspector config for ruby tests
 " the cwd, and closes the tab
 
-" A void code execution vulnerability
+" Avoid code execution vulnerability
 set nomodeline
 
 " TODO
@@ -66,8 +66,6 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
 Plug 'Matt-A-Bennett/surround-funk.vim'
-Plug 'Olical/aniseed'
-Plug 'Olical/conjure'
 Plug 'abecodes/tabout.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
@@ -133,6 +131,9 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
 Plug 'wsdjeg/vim-fetch'
+
+" Plug 'Olical/aniseed'
+" Plug 'Olical/conjure'
 
 " Neovim Nightly
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
@@ -892,6 +893,22 @@ function! OpenTodo() abort
 endfunction
 
 nnoremap <space>wf :call OpenTodo()<CR>
+
+function! LazyGit()
+  let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:buf_name = 'term-lazy-git-'.l:project_name
+
+  tabedit
+  if (bufexists(l:buf_name))
+    execute 'edit '.l:buf_name
+  else
+    terminal lazygit
+    execute 'file term-lazy-git-'.l:project_name
+  endif
+
+  startinsert
+endfunction
+nnoremap <space>lg :call LazyGit()<CR>
 " }}}
 " {{{ Mappings
 
