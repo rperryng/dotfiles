@@ -31,14 +31,17 @@ ln -nsf "$DOTFILES_SOURCE"/karabiner/ctrl-up-down.json ~/.config/karabiner/asset
 ln -nsf "$DOTFILES_SOURCE"/karabiner/caps-lock-remapping.json ~/.config/karabiner/assets/complex_modifications/caps-lock-remapping.json
 echo "Karabiner configs added - don't forget to manually "add" them in the Karabiner GUI"
 
+# starship
+ln -nsf "$DOTFILES_SOURCE"/starship.toml ~/.config/starship.toml
+
 # Doom
 mkdir -p ~/.config/doom
 ln -nsf "$DOTFILES_SOURCE"/doom.d ~/.config/doom
 
-# Bat?
+# Bat
 if command -v bat 2>/dev/null; then
   mkdir -p "$(bat --config-dir)/themes"
-  ln -nsf "${DOTFILES_SOURCE}/gruvbox-dark-hard.tmTheme" "$(bat --config-dir)/themes/gruvbox-hard.tmTheme"
+  ln -nsf "${DOTFILES_SOURCE}/gruvbox-dark-hard.tmTheme" "$(bat --config-dir)/themes/gruvbox-dark-hard.tmTheme"
 else
   echo "bat not installed.  Skipping config"
 fi
