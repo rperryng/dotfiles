@@ -902,7 +902,8 @@ function! LazyGit()
   if (bufexists(l:buf_name))
     execute 'edit '.l:buf_name
   else
-    terminal lazygit
+    terminal
+    call feedkeys("lazygit\<CR>")
     execute 'file term-lazy-git-'.l:project_name
   endif
 
