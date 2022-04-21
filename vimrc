@@ -513,7 +513,7 @@ function! Tabe(name)
   terminal
   execute 'TabooRename ' . a:name
   execute 'TZ ' . a:name
-  execute 'file term-misc-' . a:name
+  execute 'file term-' . a:name
   call feedkeys('az ' . a:name . "\<CR>")
 endfunction
 
@@ -620,7 +620,7 @@ function! OpenAndSendCmdToProjectTerminal(cmd, ...)
 
   let l:project_name = fnamemodify(getcwd(), ':t')
   let l:current_buf_name = bufname()
-  let l:terminal_buf_name = 'term-misc-' . l:project_name
+  let l:terminal_buf_name = 'term-' . l:project_name
   let l:channel_id = -1
   let l:current_win = nvim_get_current_win()
 
@@ -647,7 +647,7 @@ endfunction
 function! ToggleProjectTerminal()
   let l:project_name = fnamemodify(getcwd(), ':t')
   let l:current_buf_name = bufname()
-  let l:terminal_buf_name = 'term-misc-' . l:project_name
+  let l:terminal_buf_name = 'term-' . l:project_name
 
   wincmd b
   if bufname() !~ "term-"
@@ -670,7 +670,7 @@ command! -nargs=0 ToggleProjectTerminal call ToggleProjectTerminal()
 " function! SendCommandToProjectTerminal(cmd)
 "   let l:project_name = fnamemodify(getcwd(), ':t')
 "   let l:current_buf_name = bufname()
-"   let l:terminal_buf_name = 'term-misc-' . l:project_name
+"   let l:terminal_buf_name = 'term-' . l:project_name
 
 "   execute 'edit ' . l:terminal_buf_name
 "   let l:channel_id = b:terminal_job_id
@@ -796,7 +796,7 @@ function! NNStart()
   cd ~/code/dotfiles
   botright split
   terminal
-  file term-misc-dotfiles
+  file term-dotfiles
   call TerminalResize()
   TabooRename dotfiles
 endfunction
@@ -908,7 +908,7 @@ function! LazyGit()
     execute 'edit '.l:buf_name
   else
     terminal
-    call feedkeys("lazygit\<CR>")
+    call feedkeys("ilazygit\<CR>")
     execute 'file term-lazy-git-'.l:project_name
   endif
 endfunction
@@ -1228,7 +1228,6 @@ function! FuzzyProjectSelector()
         \ copy(readfile(expand('$HOME') . '/.clone_urls')),
         \ { _line, clone_url -> matchstr(clone_url, ':\zs.*\ze\.git')},
         \ )
-
   let l:contabs_projects = keys(copy(contabs#project#paths()))
   let l:all_entries = uniq(sort(copy(l:cloneable_entries + l:contabs_projects)))
 
@@ -1255,7 +1254,7 @@ function! s:fuzzy_buffer_delete_handler(projects)
   " Filter terminal buffers which match a selected project
   let l:terminal_buffer_names = map(
         \ copy(a:projects),
-        \ { _, project -> 'term-misc-' . fnamemodify(project, ':t') }
+        \ { _, project -> 'term-' . fnamemodify(project, ':t') }
         \ )
 
   call extend(l:buffers_to_delete, l:terminal_buffer_names)
@@ -1817,7 +1816,7 @@ function! ContabsNewTab(cmd, context)
   " terminal
   " call TerminalResize()
 
-  " let l:buf_name = 'term-misc-' . l:project_name
+  " let l:buf_name = 'term-' . l:project_name
   " if (bufexists(l:buf_name))
   "   edit l:buf_name
   " else
@@ -2104,7 +2103,7 @@ if has('nvim')
 
   nnoremap <space>T :call ToggleProjectTerminal()<CR>
 
-  nnoremap <space>term :terminal<CR>:file term-misc-
+  nnoremap <space>term :terminal<CR>:file term-
 
   " Terminal mode binds tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
