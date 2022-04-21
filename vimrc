@@ -1354,6 +1354,24 @@ function! s:get_git_root()
   return v:shell_error ? '' : root
 endfunction
 
+function! s:fzf_gedit_lazy_branch_handler(selection)
+  let l:filename = expand('%')
+  execute 'Gedit '.a:selection.':'.l:filename
+endfunction
+
+function! GEditLazyBranch()
+  let l:branches = filter(
+        \ split(system('git branch --all')),
+        \ {_, s -> s =~ '^[a-zA-Z0-9-_/]\+$'}
+        \ )
+
+  call fzf#run(fzf#wrap(fzf#vim#with_preview({
+        \    'source': l:branches,
+        \    'sink': function('s:fzf_gedit_lazy_branch_handler'),
+        \ })))
+endfunction
+nnoremap <space>ge :call GEditLazyBranch()<CR>
+
 function! s:fzf_commits_diffview_sink(commits) abort
   let pat = '[0-9a-f]\{7,9}'
   let hashes = filter(map(copy(a:commits), 'matchstr(v:val, pat)'), 'len(v:val)')
