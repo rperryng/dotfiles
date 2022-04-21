@@ -29,6 +29,7 @@ ln -nsf "$DOTFILES_SOURCE"/ripgreprc ~/.ripgreprc
 mkdir -p ~/.config/karabiner/assets/complex_modifications
 ln -nsf "$DOTFILES_SOURCE"/karabiner/ctrl-up-down.json ~/.config/karabiner/assets/complex_modifications/ctrl-up-down.json
 ln -nsf "$DOTFILES_SOURCE"/karabiner/caps-lock-remapping.json ~/.config/karabiner/assets/complex_modifications/caps-lock-remapping.json
+ln -nsf "$DOTFILES_SOURCE"/karabiner/disable-default-shortcuts.json ~/.config/karabiner/assets/complex_modifications/disable-default-shortcuts.json
 echo "Karabiner configs added - don't forget to manually "add" them in the Karabiner GUI"
 
 # starship

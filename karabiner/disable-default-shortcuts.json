@@ -1,0 +1,42 @@
+{
+  "title": "Disable CMD-Q and CMD-M",
+  "rules": [
+    {
+      "description": "Disable CMD-Q and CMD-M",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "q",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "out"
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "from": {
+            "key_code": "m",
+            "modifiers": {
+              "mandatory": [
+                "command"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "out"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}
