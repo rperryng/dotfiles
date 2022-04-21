@@ -51,7 +51,7 @@ export BAT_THEME='gruvbox-dark-hard'
 # {{{ $EDITOR
 # Use neovim remote terminal if available
 if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
-  export VISUAL="nvr -cc split --remote-wait +'setlocal bufhidden=wipe'"
+  export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
   alias nvim="nvr"
   alias n="nvr"
   alias nnstart="echo 'Already in a neovim session'"
