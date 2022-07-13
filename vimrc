@@ -896,23 +896,6 @@ function! OpenTodo() abort
 endfunction
 
 nnoremap <space>wf :call OpenTodo()<CR>
-
-function! LazyGit()
-  let l:project_name = fnamemodify(getcwd(), ':t')
-  let l:buf_name = 'term-lazy-git-'.l:project_name
-  let l:tab_name = l:project_name.'-lazygit'
-
-  tabedit
-  silent! execute 'TabooRename ' . l:tab_name
-  if (bufexists(l:buf_name))
-    execute 'edit '.l:buf_name
-  else
-    terminal
-    call feedkeys("ilazygit\<CR>")
-    execute 'file term-lazy-git-'.l:project_name
-  endif
-endfunction
-nnoremap slg :call LazyGit()<CR>
 " }}}
 " {{{ Mappings
 
@@ -1541,6 +1524,9 @@ let g:winresizer_start_key = '<C-Q>'
 nnoremap <space>gvss :Gvsplit
 nnoremap <space>gvsm :execute ':Gvsplit ' . trim(system("git symbolic-ref refs/remotes/origin/HEAD \| rg 'refs/remotes/origin/(.+)' -o -r '\$1'")) . ':%'<CR>
 nnoremap <space>blame :tabedit %<CR>:Gblame<CR><C-w>lV
+
+" Browse the *history* of a single file
+nnoremap <space>ghs :0Gclog<CR>
 " }}}
 " {{{ vim-projectroot
 let g:rpn_rootmarkers_nonmonorepo = [
@@ -1912,6 +1898,10 @@ let g:firenvim_config = {
         \ },
     \ }
 \ }
+
+if exists('g:started_by_firenvim')
+  set guifont=Meslo LG M for Powerline:h14
+endif
 
 if exists('g:started_by_nvim')
   augroup firenvim
