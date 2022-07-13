@@ -35,19 +35,19 @@ colors:
 
 font:
   normal:
-    family: FiraCode Nerd Font
+    family: Meslo LG M for Powerline
     style: Regular
 
   bold:
-    family: FiraCode Nerd Font
+    family: Meslo LG M for Powerline
     style: Bold
 
   italic:
-    family: FiraCode Nerd Font
+    family: Meslo LG M for Powerline
     style: Italic
 
   bold_italic:
-    family: FiraCode Nerd Font
+    family: Meslo LG M for Powerline
     style: Bold Italic
 
   size: 12
@@ -57,3 +57,6 @@ window:
 
 key_bindings:
   - { key: Q, mods: Control, chars: "\x11" }
+
+window:
+  decorations: None
