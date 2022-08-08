@@ -1313,12 +1313,11 @@ command! -nargs=? -complete=dir Files
   \   <bang>0
   \ )
 
-command! -nargs=? -complete=dir AllFiles
-  \ call fzf#vim#files(
-  \   <q-args>,
-  \   fzf#vim#with_preview(),
-  \   <bang>0
-  \ )
+" New
+command! -nargs=? AllFiles
+      \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
+      \     'source': 'rg --files --hidden --no-ignore --follow',
+      \ })))
 
 command! -nargs=? -complete=dir GFiles
   \ call fzf#vim#gitfiles(
@@ -1456,6 +1455,7 @@ nnoremap <space><C-f> :GFiles<CR>
 nnoremap <space>fb :Buffers<CR>
 nnoremap <space>fc :Commands<CR>
 nnoremap <space>fi :Files<CR>
+nnoremap <space>fI :AllFiles<CR>
 nnoremap <space>fh :Helptags<CR>
 nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
@@ -1471,17 +1471,6 @@ nnoremap <space>fz :FZFMru<CR>
 nnoremap <space>fH :History<CR>
 nnoremap <space>f: :History:<CR>
 nnoremap <space>f/ :History/<CR>
-
-nnoremap <space>fB :Buffers!<CR>
-nnoremap <space>fC :Commands!<CR>
-nnoremap <space>fI :Files!<CR>
-nnoremap <space>flB :BLines!<CR>
-nnoremap <space>flL :Lines!<CR>
-nnoremap <space>fT :TerminalBuffers!<CR>
-nnoremap <space>fM :Marks!<CR>
-nnoremap <space>fG :GFiles?!<CR>
-nnoremap <space>fW :Windows!<CR>
-nnoremap <space>fR :Rg!<CR>
 
 nnoremap <space>fgdv :call FzfCommitsDiffview(0)<CR>
 nnoremap <space>fgdbv :call FzfCommitsDiffview(1)<CR>
@@ -2111,7 +2100,13 @@ if has('nvim')
 
   nnoremap <space>T :call ToggleProjectTerminal()<CR>
 
-  nnoremap <space>term :terminal<CR>:file term-
+  function! NewMiscTerm()
+    let l:project_name = fnamemodify(getcwd(), ':t')
+    let l:terminal_buf_name = 'term-' . l:project_name
+    terminal
+    call feedkeys(':file '.l:terminal_buf_name.'-')
+  endfunction
+  nnoremap <space>term :call NewMiscTerm()<CR>
 
   " Terminal mode binds tnoremap jk <C-\><C-N>
   tnoremap ;; <C-\><C-N>
