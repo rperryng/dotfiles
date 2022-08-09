@@ -922,6 +922,22 @@ function! OpenTodo() abort
 endfunction
 
 nnoremap <space>wf :call OpenTodo()<CR>
+
+function! IsWsl()
+  return system('cat /proc/version') =~ 'Microsoft'
+endfunction
+
+function! Open()
+  let l:selection = GetVisualSelection()
+  let l:program = 'open'
+  if IsWsl()
+    let l:program = 'wslview'
+  endif
+
+  let l:cmd = l:program." '".escape(GetVisualSelection(), "'")."'"
+  call system(l:cmd)
+endfunction
+vnoremap <space>o :<C-U>call Open()<CR>
 " }}}
 " {{{ Mappings
 
@@ -1065,10 +1081,6 @@ nnoremap sp :tabprevious<CR>
 
 nnoremap sf :set filetype=
 nnoremap srn :keepalt file<space>
-
-vnoremap <space>o :<C-U>call system('open ' . GetVisualSelection())<CR>
-" nnoremap <space>S :mksession! ./Session.manual.vim<CR>
-" nnoremap <space>R :source! ./Session.manual.vim<CR>
 
 nnoremap \e :edit!<CR>
 " }}}
