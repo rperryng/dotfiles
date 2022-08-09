@@ -143,6 +143,8 @@ Plug 'preservim/nerdtree'
 
 " UI
 Plug 'kevinhwang91/nvim-hlslens'
+Plug 'qxxxb/vim-searchhi'
+Plug 'haya14busa/vim-asterisk'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
@@ -159,12 +161,14 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'rakr/vim-one'
+Plug 'rebelot/kanagawa.nvim'
 Plug 'rust-lang/rust.vim'
 Plug 'udalov/kotlin-vim'
 Plug 'webdevel/tabulous'
 Plug 'wlangstroth/vim-racket'
 
-Plug 'morhetz/gruvbox'
+" Plug 'morhetz/gruvbox'
+Plug 'ellisonleao/gruvbox.nvim'
 
 " Requires lush
 " Need to figure out terminal green color messed up
@@ -382,6 +386,15 @@ let g:gruvbox_contrast_light='medium'
 let g:tokyonight_style = 'storm'
 
 let g:colorscheme = 'gruvbox'
+" let g:colorscheme = 'kanagawa'
+" let g:colorscheme = 'catppuccin'
+
+lua << EOF
+require('gruvbox').setup({
+  italic = false,
+  contrast = 'hard', -- can be "hard", "soft" or empty string
+})
+EOF
 
 execute('colorscheme ' . g:colorscheme)
 set background=dark
@@ -479,7 +492,7 @@ function! Layout()
   tabedit
   split
 
-  if bufexists('term-misc')
+  if buflisted('term-misc')
     buffer term-misc
   else
     terminal
@@ -630,9 +643,9 @@ function! OpenAndSendCmdToProjectTerminal(cmd, ...)
     call TerminalResize()
   endif
 
-  if !bufexists(l:terminal_buf_name)
+  if !buflisted(l:terminal_buf_name)
     terminal
-    execute 'file ' . l:terminal_buf_name
+    execute 'keepalt file ' . l:terminal_buf_name
     call TerminalResize()
   elseif bufname() !~ l:terminal_buf_name
     execute 'edit ' . l:terminal_buf_name
@@ -655,10 +668,14 @@ function! ToggleProjectTerminal()
     call TerminalResize()
   endif
 
-  if !bufexists(l:terminal_buf_name)
+  echom 'toggle project terminal for '.l:terminal_buf_name
+
+  if !buflisted(l:terminal_buf_name)
+    echom 'creating a new terminal '.l:terminal_buf_name
     terminal
-    execute 'file ' . l:terminal_buf_name
+    execute 'keepalt file ' . l:terminal_buf_name
   elseif bufname() !~ l:terminal_buf_name
+    echom 'just editing '.l:terminal_buf_name
     execute 'edit ' . l:terminal_buf_name
   else
     quit
@@ -958,8 +975,6 @@ vnoremap g<c-]> <c-]>
 
 nnoremap Y yg_
 nnoremap y% :let @+ = @%<CR>
-nnoremap y<space>% :let @+ = fnamemodify(expand("%"), ":p")<left><left>
-nnoremap <space>y% :let @+ = fnamemodify(expand("%"), ":p")<left><left>
 
 "Ruby:t Ruby methods can commonly contain word boundary characters like ! or ?
 " Add helpers for motions that operate on the word under the cursor to include
@@ -1012,7 +1027,6 @@ nnoremap <space>rl :source $MYVIMRC<CR>
 
 nnoremap <space>l <C-^>
 nnoremap <space>sl :nohlsearch<CR>
-" nnoremap <space>sL :set hlsearch<CR>
 nnoremap set :buffer term-<C-d>
 
 nnoremap <space>= vip:sort<CR>
@@ -1442,20 +1456,14 @@ command! -bang -nargs=* RgNoSpec
   \   <bang>0
   \ )
 
-" command! -bang -nargs=* RG
-"   \ call fzf#vim#grep(
-"   \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
-"   \   1,
-"   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
-"   \   <bang>0)
-
 " FZF Binds
 nnoremap <space><C-f> :GFiles<CR>
 
 nnoremap <space>fb :Buffers<CR>
 nnoremap <space>fc :Commands<CR>
 nnoremap <space>fi :Files<CR>
-nnoremap <space>fI :AllFiles<CR>
+nnoremap <space>fI :AllFiles<CR>!node_modules<space>
+nnoremap <space>ffi :AllFiles<CR>!node_modules<space>
 nnoremap <space>fh :Helptags<CR>
 nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
@@ -1464,7 +1472,8 @@ nnoremap <space>fM :Maps<CR>
 nnoremap <space>fgl :GFiles?<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
-nnoremap <space>fA :RG<CR>
+nnoremap <space>fA :RI<CR>!node_modules<space>
+nnoremap <space>ffa :RI<CR>!node_modules<space>
 nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fsa :RgNoSpec<CR>
@@ -1478,7 +1487,6 @@ nnoremap <space>fgdbv :call FzfCommitsDiffview(1)<CR>
 nnoremap <space>fgdf :GDiffFiles<CR>
 nnoremap <space>gdmf :GDiffMainFiles<CR>
 nnoremap <space>fd :call FuzzyBufferDelete()<CR>
-nnoremap <space>fA :RI<CR>
 nnoremap <space>rg :RG<CR>
 nnoremap <space>fu :ProjectBuffers<CR>
 nnoremap <space>fq :call FuzzyTabs()<CR>
@@ -1731,54 +1739,51 @@ let g:UltiSnipsExpandTrigger="<c-t>"
 let g:UltiSnipsSnippetDirectories=[$HOME.'/code/dotfiles/ultisnips', "UltiSnips"]
 " }}}
 " {{{ vim-searchhi
-" let g:searchhi_clear_all_autocmds = 'InsertEnter'
-" " let g:searchhi_clear_all_asap=1
-" " let g:searchhi_user_autocmds_enabled=1
-" nmap / <Plug>(searchhi-/)
-" nmap ? <Plug>(searchhi-?)
-" nmap n <Plug>(searchhi-n)
-" nmap N <Plug>(searchhi-N)
-" nmap <silent> <space>sl <Plug>(searchhi-clear-all)
+let g:searchhi_clear_all_autocmds = 'InsertEnter'
+" let g:searchhi_clear_all_asap=1
+" let g:searchhi_user_autocmds_enabled=1
+nmap / <Plug>(searchhi-/)
+nmap ? <Plug>(searchhi-?)
+nmap n <Plug>(searchhi-n)
+nmap N <Plug>(searchhi-N)
+nmap <silent> <space>sl <Plug>(searchhi-clear-all)
 
-" vmap / <Plug>(searchhi-v-/)
-" vmap ? <Plug>(searchhi-v-?)
-" vmap n <Plug>(searchhi-v-n)
-" vmap N <Plug>(searchhi-v-N)
-" vmap <silent> <space>sl <Plug>(searchhi-v-clear-all)
+vmap / <Plug>(searchhi-v-/)
+vmap ? <Plug>(searchhi-v-?)
+vmap n <Plug>(searchhi-v-n)
+vmap N <Plug>(searchhi-v-N)
+vmap <silent> <space>sl <Plug>(searchhi-v-clear-all)
 
-" " vim-searchhi / vim-asterisk
-" nmap * <Plug>(asterisk-z*)<Plug>(searchhi-update)
-" nmap # <Plug>(asterisk-z#)<Plug>(searchhi-update)
-" nmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
-" nmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
+" vim-searchhi / vim-asterisk
+nmap * <Plug>(asterisk-z*)<Plug>(searchhi-update)
+nmap # <Plug>(asterisk-z#)<Plug>(searchhi-update)
+nmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
+nmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
 
-" nmap z* <Plug>(asterisk-*)<Plug>(searchhi-update-stay-forward)
-" nmap z# <Plug>(asterisk-#)<Plug>(searchhi-update-stay-backward)
-" nmap zg* <Plug>(asterisk-gz*)<Plug>(searchhi-update-stay-forward)
-" nmap zg# <Plug>(asterisk-gz#)<Plug>(searchhi-update-stay-backward)
+nmap z* <Plug>(asterisk-*)<Plug>(searchhi-update-stay-forward)
+nmap z# <Plug>(asterisk-#)<Plug>(searchhi-update-stay-backward)
+nmap zg* <Plug>(asterisk-gz*)<Plug>(searchhi-update-stay-forward)
+nmap zg# <Plug>(asterisk-gz#)<Plug>(searchhi-update-stay-backward)
 
-" " These do not use the visual variant (`searchhi-v-update`) because these
-" " vim-asterisk commands only use the selected text as the search term, so there
-" " is no need to preserve the visual selection
-" vmap * <Plug>(asterisk-*)<Plug>(searchhi-update)
-" vmap # <Plug>(asterisk-#)<Plug>(searchhi-update)
-" vmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
-" vmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
+" These do not use the visual variant (`searchhi-v-update`) because these
+" vim-asterisk commands only use the selected text as the search term, so there
+" is no need to preserve the visual selection
+vmap * <Plug>(asterisk-*)<Plug>(searchhi-update)
+vmap # <Plug>(asterisk-#)<Plug>(searchhi-update)
+vmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
+vmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
 
-" " These all use the backward variant because the cursor is always at or in
-" " front of the start of the visual selection, so we need to search backwards to
-" " get to the start position
-" vmap z* <Plug>(asterisk-z*)<Plug>(searchhi-update-stay-backward)
-" vmap z# <Plug>(asterisk-z#)<Plug>(searchhi-update-stay-backward)
-" vmap zg* <Plug>(asterisk-zg*)<Plug>(searchhi-update-stay-backward)
-" vmap zg# <Plug>(asterisk-zg#)<Plug>(searchhi-update-stay-backward)
+" These all use the backward variant because the cursor is always at or in
+" front of the start of the visual selection, so we need to search backwards to
+" get to the start position
+vmap z* <Plug>(asterisk-z*)<Plug>(searchhi-update-stay-backward)
+vmap z# <Plug>(asterisk-z#)<Plug>(searchhi-update-stay-backward)
+vmap zg* <Plug>(asterisk-zg*)<Plug>(searchhi-update-stay-backward)
+vmap zg# <Plug>(asterisk-zg#)<Plug>(searchhi-update-stay-backward)
 
-" " Write all buffers and turn off search highlights
-" nmap <silent> <space>wa :silent! :wall<CR>:set nohlsearch<CR>
-" nnoremap <silent> <space>wa :silent! :wall<CR>:execute "normal \<Plug>(searchhi-clear-all)"<CR>
-
-" TODO: fixme
-nnoremap <silent> <space>wa :silent! :wall<CR>:set nohlsearch<CR>
+" Write all buffers and turn off search highlights
+nmap <silent> <space>wa :silent! :wall<CR>:set nohlsearch<CR>
+nnoremap <silent> <space>wa :silent! :wall<CR>:execute "normal \<Plug>(searchhi-clear-all)"<CR>
 " }}}
 " {{{ Tmux Navigator
 let g:tmux_navigator_disable_when_zoomed=1
@@ -1869,7 +1874,6 @@ let g:indent_guides_guide_size=1
 " use anyhow::{Context, Result, bail, anyhow};
 " becomes
 " use anyhow::{Context, Result, anyhow, bail};
-" nmap <silent> <space>oi ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
 nmap <silent> <Plug>SortInline ^f{gSjvi}:s/\(,\)\@<!$/,/<CR>vi}:sort<CR>/}<CR>:nohlsearch<CR>k$xva}JxF{lxj^f{
   \:call repeat#set("\<Plug>SortInline")<CR>
 nmap <space>oi <Plug>SortInline
@@ -2098,15 +2102,17 @@ omap <silent> <space>iN <Plug>SelectFunctionNAME
 " nmap <silent> gs <Plug>GripSurroundObject
 " vmap <silent> gs <Plug>GripSurroundObject
 " }}}
-" {{{ hlsens
-augroup hlsense
-  autocmd! InsertEnter * :nohlsearch
-augroup end
-" }}}
-
+" {{{ textobj-user
+call textobj#user#plugin('rpn', {
+      \ 'fold': {
+      \     'pattern': ['{{{', '}}}'],
+      \     'select-a': 'az',
+      \     'select-i': 'iz',
+      \   }
+      \ })
 " }}}
 " {{{ lua
-lua dofile(vim.env.DOTFILES_SOURCE .. "/nvim/init.lua")
+" lua dofile(vim.env.DOTFILES_SOURCE .. "/nvim/init.lua")
 " }}}
 " {{{ Terminal buffer configs
 
@@ -2125,7 +2131,7 @@ if has('nvim')
     let l:project_name = fnamemodify(getcwd(), ':t')
     let l:terminal_buf_name = 'term-' . l:project_name
     terminal
-    call feedkeys(':file '.l:terminal_buf_name.'-')
+    call feedkeys(':keepalt file '.l:terminal_buf_name.'-')
   endfunction
   nnoremap <space>term :call NewMiscTerm()<CR>
 

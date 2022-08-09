@@ -20,6 +20,7 @@ ln -nsf "$DOTFILES_SOURCE"/tmux.conf.osx ~/.tmux.conf.osx
 ln -nsf "$DOTFILES_SOURCE"/vimrc ~/.vimrc
 mkdir -p ~/.config/nvim
 ln -nsf "$DOTFILES_SOURCE"/vimrc ~/.config/nvim/init.vim
+ln -nsf "$DOTFILES_SOURCE"/nvim/init.lua ~/.config/nvim/init.lua
 
 ln -nsf "$DOTFILES_SOURCE"/ideavimrc ~/.ideavimrc
 ln -nsf "$DOTFILES_SOURCE"/gitignore ~/.gitignore
