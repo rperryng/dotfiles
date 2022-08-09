@@ -142,23 +142,22 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'preservim/nerdtree'
 
 " UI
+Plug 'kevinhwang91/nvim-hlslens'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'folke/zen-mode.nvim', { 'branch': 'main' }
-Plug 'haya14busa/vim-asterisk'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' }
 Plug 'joshdick/onedark.vim'
 Plug 'jparise/vim-graphql'
 Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/vim-journal'
-Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
+Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'patstockwell/vim-monokai-tasty'
-Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rust-lang/rust.vim'
 Plug 'udalov/kotlin-vim'
@@ -200,7 +199,8 @@ endif
 " Ruby
 if executable('rbenv')
   let ruby_version = trim(system('cat $DOTFILES_SOURCE/.ruby-version'))
-  let g:ruby_host_prog = '$(rbenv root)/versions/'.ruby_version.'/bin/neovim-ruby-host'
+  let rbenv_root = trim(system('echo $(rbenv root)'))
+  let g:ruby_host_prog = rbenv_root.'/versions/'.ruby_version.'/bin/neovim-ruby-host'
 else
   echom "Missing rbenv.  No ruby host set."
 endif
@@ -1011,7 +1011,7 @@ nnoremap <space>rl :source $MYVIMRC<CR>
 " nnoremap <space>zz :let &scrolloff=999-&scrolloff<CR>
 
 nnoremap <space>l <C-^>
-" nnoremap <space>sl :nohlsearch<CR>
+nnoremap <space>sl :nohlsearch<CR>
 " nnoremap <space>sL :set hlsearch<CR>
 nnoremap set :buffer term-<C-d>
 
@@ -1460,6 +1460,7 @@ nnoremap <space>fh :Helptags<CR>
 nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
 nnoremap <space>fm :Marks<CR>
+nnoremap <space>fM :Maps<CR>
 nnoremap <space>fgl :GFiles?<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
@@ -1588,16 +1589,28 @@ nmap <silent> gF <Plug>(coc-float-jump)
 nmap <silent> gH <Plug>(coc-float-hide)
 nmap <silent> <esc> <Plug>(coc-float-hide)
 
-inoremap <silent><expr> <tab>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+" from :help coc-completion
+inoremap <silent><expr> <c-e>
+      \ coc#pum#visible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ?
+      \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
+inoremap <silent><expr> <tab>
+      \ coc#pum#visible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ?
+      \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+" inoremap <silent><expr> <C-q> "\<c-o>:echom coc#pum#visible()='".coc#pum#visible()."'\n"
+inoremap <silent><expr> <C-q> coc#_select_confirm()
 
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
 let g:coc_snippet_next = '<tab>'
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
@@ -1718,51 +1731,54 @@ let g:UltiSnipsExpandTrigger="<c-t>"
 let g:UltiSnipsSnippetDirectories=[$HOME.'/code/dotfiles/ultisnips', "UltiSnips"]
 " }}}
 " {{{ vim-searchhi
-let g:searchhi_clear_all_autocmds = 'InsertEnter'
-" let g:searchhi_clear_all_asap=1
-" let g:searchhi_user_autocmds_enabled=1
-nmap / <Plug>(searchhi-/)
-nmap ? <Plug>(searchhi-?)
-nmap n <Plug>(searchhi-n)
-nmap N <Plug>(searchhi-N)
-nmap <silent> <space>sl <Plug>(searchhi-clear-all)
+" let g:searchhi_clear_all_autocmds = 'InsertEnter'
+" " let g:searchhi_clear_all_asap=1
+" " let g:searchhi_user_autocmds_enabled=1
+" nmap / <Plug>(searchhi-/)
+" nmap ? <Plug>(searchhi-?)
+" nmap n <Plug>(searchhi-n)
+" nmap N <Plug>(searchhi-N)
+" nmap <silent> <space>sl <Plug>(searchhi-clear-all)
 
-vmap / <Plug>(searchhi-v-/)
-vmap ? <Plug>(searchhi-v-?)
-vmap n <Plug>(searchhi-v-n)
-vmap N <Plug>(searchhi-v-N)
-vmap <silent> <space>sl <Plug>(searchhi-v-clear-all)
+" vmap / <Plug>(searchhi-v-/)
+" vmap ? <Plug>(searchhi-v-?)
+" vmap n <Plug>(searchhi-v-n)
+" vmap N <Plug>(searchhi-v-N)
+" vmap <silent> <space>sl <Plug>(searchhi-v-clear-all)
 
-" vim-searchhi / vim-asterisk
-nmap * <Plug>(asterisk-z*)<Plug>(searchhi-update)
-nmap # <Plug>(asterisk-z#)<Plug>(searchhi-update)
-nmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
-nmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
+" " vim-searchhi / vim-asterisk
+" nmap * <Plug>(asterisk-z*)<Plug>(searchhi-update)
+" nmap # <Plug>(asterisk-z#)<Plug>(searchhi-update)
+" nmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
+" nmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
 
-nmap z* <Plug>(asterisk-*)<Plug>(searchhi-update-stay-forward)
-nmap z# <Plug>(asterisk-#)<Plug>(searchhi-update-stay-backward)
-nmap zg* <Plug>(asterisk-gz*)<Plug>(searchhi-update-stay-forward)
-nmap zg# <Plug>(asterisk-gz#)<Plug>(searchhi-update-stay-backward)
+" nmap z* <Plug>(asterisk-*)<Plug>(searchhi-update-stay-forward)
+" nmap z# <Plug>(asterisk-#)<Plug>(searchhi-update-stay-backward)
+" nmap zg* <Plug>(asterisk-gz*)<Plug>(searchhi-update-stay-forward)
+" nmap zg# <Plug>(asterisk-gz#)<Plug>(searchhi-update-stay-backward)
 
-" These do not use the visual variant (`searchhi-v-update`) because these
-" vim-asterisk commands only use the selected text as the search term, so there
-" is no need to preserve the visual selection
-vmap * <Plug>(asterisk-*)<Plug>(searchhi-update)
-vmap # <Plug>(asterisk-#)<Plug>(searchhi-update)
-vmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
-vmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
+" " These do not use the visual variant (`searchhi-v-update`) because these
+" " vim-asterisk commands only use the selected text as the search term, so there
+" " is no need to preserve the visual selection
+" vmap * <Plug>(asterisk-*)<Plug>(searchhi-update)
+" vmap # <Plug>(asterisk-#)<Plug>(searchhi-update)
+" vmap g* <Plug>(asterisk-g*)<Plug>(searchhi-update)
+" vmap g# <Plug>(asterisk-g#)<Plug>(searchhi-update)
 
-" These all use the backward variant because the cursor is always at or in
-" front of the start of the visual selection, so we need to search backwards to
-" get to the start position
-vmap z* <Plug>(asterisk-z*)<Plug>(searchhi-update-stay-backward)
-vmap z# <Plug>(asterisk-z#)<Plug>(searchhi-update-stay-backward)
-vmap zg* <Plug>(asterisk-zg*)<Plug>(searchhi-update-stay-backward)
-vmap zg# <Plug>(asterisk-zg#)<Plug>(searchhi-update-stay-backward)
+" " These all use the backward variant because the cursor is always at or in
+" " front of the start of the visual selection, so we need to search backwards to
+" " get to the start position
+" vmap z* <Plug>(asterisk-z*)<Plug>(searchhi-update-stay-backward)
+" vmap z# <Plug>(asterisk-z#)<Plug>(searchhi-update-stay-backward)
+" vmap zg* <Plug>(asterisk-zg*)<Plug>(searchhi-update-stay-backward)
+" vmap zg# <Plug>(asterisk-zg#)<Plug>(searchhi-update-stay-backward)
 
-" Write all buffers and turn off search highlights
+" " Write all buffers and turn off search highlights
 " nmap <silent> <space>wa :silent! :wall<CR>:set nohlsearch<CR>
-nnoremap <silent> <space>wa :silent! :wall<CR>:execute "normal \<Plug>(searchhi-clear-all)"<CR>
+" nnoremap <silent> <space>wa :silent! :wall<CR>:execute "normal \<Plug>(searchhi-clear-all)"<CR>
+
+" TODO: fixme
+nnoremap <silent> <space>wa :silent! :wall<CR>:set nohlsearch<CR>
 " }}}
 " {{{ Tmux Navigator
 let g:tmux_navigator_disable_when_zoomed=1
@@ -2081,6 +2097,11 @@ omap <silent> <space>iN <Plug>SelectFunctionNAME
 " operator pending mode
 " nmap <silent> gs <Plug>GripSurroundObject
 " vmap <silent> gs <Plug>GripSurroundObject
+" }}}
+" {{{ hlsens
+augroup hlsense
+  autocmd! InsertEnter * :nohlsearch
+augroup end
 " }}}
 
 " }}}

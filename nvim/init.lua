@@ -27,9 +27,6 @@ do
   require('diffview').setup {
     diff_binaries = false,    -- Show diffs for binaries
     use_icons = false,         -- Requires nvim-web-devicons
-    file_panel = {
-      width = 35,
-    },
     key_bindings = {
       -- The `view` bindings are active in the diff buffers, only when the current
       -- tabpage is a Diffview.
@@ -74,5 +71,25 @@ do
     ignore_beginning = true, --[[ if the cursor is at the beginning of a filled element it will rather tab out than shift the content ]]
     exclude = {} -- tabout will ignore these filetypes
   }
+end
+-- }}}
+-- {{{ 
+do
+  require('hlslens').setup({
+    calm_down = false,
+  })
+
+  local kopts = {noremap = true, silent = true}
+
+  vim.api.nvim_set_keymap('n', 'n',
+      [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+      kopts)
+  vim.api.nvim_set_keymap('n', 'N',
+      [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+      kopts)
+  vim.api.nvim_set_keymap('n', '*', [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('n', '#', [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('n', 'g*', [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+  vim.api.nvim_set_keymap('n', 'g#', [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
 end
 -- }}}
