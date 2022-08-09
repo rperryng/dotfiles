@@ -690,6 +690,14 @@ command! -nargs=0 ClearOtherBuffers call ClearOtherBuffers()
 """""""""""""
 command! FormatJson :%!jq .
 
+function! CopyBufferContents()
+  let l:current_pos = getpos(".")
+  normal gg"+yG
+  call setpos('.', l:current_pos)
+endfunction
+command! CopyBufferContents call CopyBufferContents()
+nnoremap <space>Y :CopyBufferContents<CR>
+
 " Profile Vim
 function! ProfileStart()
 profile start profile.log
