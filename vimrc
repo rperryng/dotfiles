@@ -1,18 +1,5 @@
-" TODO:
-" 0. Mapping to open manifest file (Gemfile, package.json)
-" 1. Write a command tabedit the result of `bundle info <gem>`
-" 2. Write a command that deletes the 'project terminal', all buffers within
-" 3. Write a command that opens a TODO in a floating window
-" 4. Exiting from nnn session changes current working directory?
-" 5. Add Brewfile
-" 6. vimspector config for ruby tests
-" the cwd, and closes the tab
-
 " Avoid code execution vulnerability
 set nomodeline
-
-" TODO
-" 2. Fix 'Coc*Float' highlight group for symbol backgrounds
 
 let mapleader="\<Space>"
 
@@ -668,14 +655,10 @@ function! ToggleProjectTerminal()
     call TerminalResize()
   endif
 
-  echom 'toggle project terminal for '.l:terminal_buf_name
-
   if !buflisted(l:terminal_buf_name)
-    echom 'creating a new terminal '.l:terminal_buf_name
     terminal
     execute 'keepalt file ' . l:terminal_buf_name
   elseif bufname() !~ l:terminal_buf_name
-    echom 'just editing '.l:terminal_buf_name
     execute 'edit ' . l:terminal_buf_name
   else
     quit
@@ -1055,7 +1038,7 @@ nnoremap sn :tabnext<CR>
 nnoremap sp :tabprevious<CR>
 
 nnoremap sf :set filetype=
-nnoremap sF :file<space>
+nnoremap srn :keepalt file<space>
 
 vnoremap <space>o :<C-U>call system('open ' . GetVisualSelection())<CR>
 " nnoremap <space>S :mksession! ./Session.manual.vim<CR>
