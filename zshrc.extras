@@ -215,13 +215,13 @@ function refresh_clone_urls() {
     gh api /user/repos --paginate | \
         jq -r '
           .[]
-          | select(.owner.login | test("wealthsimple*"))
+          | select(.owner.login | test("rperryng*"))
           | select(.archived | not)
           | .ssh_url
         ' > $temp_file && \
-        rm "$HOME/.clone_urls" && \
+        rm --force "$HOME/.clone_urls" && \
         mv $temp_file "$HOME/.clone_urls" \
-  )
+  ) &
 }
 
 if command -v gh &> /dev/null; then

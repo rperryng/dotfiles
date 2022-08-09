@@ -1242,10 +1242,15 @@ function! s:fuzzy_project_selector_handler(project_name)
 endfunction
 
 function! FuzzyProjectSelector()
-  let l:cloneable_entries = map(
-        \ copy(readfile(expand('$HOME') . '/.clone_urls')),
-        \ { _line, clone_url -> matchstr(clone_url, ':\zs.*\ze\.git')},
-        \ )
+  let l:cloneable_entries = []
+  let l:cloneable_entries_path = expand('$HOME').'/.clone_urls'
+  if filereadable(l:cloneable_entries_path)
+    let l:cloneable_entries = map(
+          \ copy(readfile(l:cloneable_entries_path)),
+          \ { _line, clone_url -> matchstr(clone_url, ':\zs.*\ze\.git')},
+          \ )
+  endif
+
   let l:contabs_projects = keys(copy(contabs#project#paths()))
   let l:all_entries = uniq(sort(copy(l:cloneable_entries + l:contabs_projects)))
 
