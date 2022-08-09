@@ -15,11 +15,29 @@ endfunction
 
 " {{{ Automatic vim-plug install
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-autocmd VimEnter * PlugInstall | source $MYVIMRC
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
 endif
+" }}}
+" {{{ vim-plug snapshot
+let g:vim_plug_snapshot_path=expand('$DOTFILES_SOURCE').'/.vimplugsnapshot'
+
+function! LoadVimPlugSnapshot()
+  if !filereadable(g:vim_plug_snapshot_path)
+    echoerr "Vim plug snapshot '".g:vim_plug_snapshot_path."' does not exist"
+    return
+  endif
+
+  execute 'source '.g:vim_plug_snapshot_path
+endfunction
+
+function! UpdatePlugSnapshot()
+  execute ':PlugSnapshot! '.g:vim_plug_snapshot_path
+endfunction
+
+command! UpdatePlugSnapshot call UpdatePlugSnapshot()
 " }}}
 
 call plug#begin('~/.local/share/nvim/plugged')
