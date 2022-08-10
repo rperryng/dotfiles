@@ -147,7 +147,6 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'preservim/nerdtree'
 
 " UI
-Plug 'kevinhwang91/nvim-hlslens'
 Plug 'qxxxb/vim-searchhi'
 Plug 'haya14busa/vim-asterisk'
 Plug 'arzg/seoul8'
@@ -228,7 +227,12 @@ endif
 " {{{ OS Specific Settings
 
 " {{{ WSL 2 (Windows 10)
-if system('cat /proc/version') =~ 'Microsoft'
+function IsWsl()
+  let l:version_file_path = '/proc/version'
+  return filereadable(l:version_file_path) && system('cat /proc/version') =~ 'Microsoft'
+endfunction
+
+if IsWsl()
   inoremap <c-v> <c-r>+
   tmap <c-v> <c-\><c-r>+
 

@@ -241,6 +241,14 @@ function whatsusing() {
   sudo lsof -i -P | grep LISTEN | grep :$1
 }
 
+function iswsl() {
+  if [[ -f '/proc/version' ]]; then
+    grep -qi microsoft '/proc/version' && return
+  fi
+
+  false
+}
+
 # }}}
 # {{{ FZF
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
@@ -264,7 +272,7 @@ export NNN_OPTS="AH"
 export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'
 export NNN_NO_AUTOSELECT=1
 
-if grep -qi microsoft /proc/version; then
+if iswsl; then
   export NNN_BMS="a:$(wslpath 'C:\Users\ryanp\home');${NNN_BMS}"
 fi
 # }}}
