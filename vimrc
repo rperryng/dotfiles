@@ -1157,11 +1157,11 @@ nmap ga <Plug>(EasyAlign)
 let $FZF_DEFAULT_OPTS .= ' --border --no-height --layout=reverse'
 
 if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git"'
+  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/**" '
   set grepprg=rg\ --vimgrep
   command! -bang -nargs=* Find
     \ call fzf#vim#grep(
-    \   'rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
+    \   'rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/**" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
     \   1,
     \   <bang>0
     \ )
@@ -1179,7 +1179,7 @@ command! -bang -nargs=* RG
 
 command! -bang -nargs=* RI
   \ call fzf#vim#grep(
-  \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
+  \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --glob "!.git/**" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
   \   1,
   \   <bang>0
   \ )
@@ -1497,8 +1497,8 @@ nnoremap <space><C-f> :GFiles<CR>
 nnoremap <space>fb :Buffers<CR>
 nnoremap <space>fc :Commands<CR>
 nnoremap <space>fi :Files<CR>
-nnoremap <space>fI :AllFiles<CR>!node_modules<space>
-nnoremap <space>ffi :AllFiles<CR>!node_modules<space>
+nnoremap <space>fI :AllFiles<CR> !node_modules<space>
+nnoremap <space>ffi :AllFiles<CR> !node_modules<space>
 nnoremap <space>fh :Helptags<CR>
 nnoremap <space>flb :BLines<CR>
 nnoremap <space>fla :Lines<CR>
@@ -1507,8 +1507,8 @@ nnoremap <space>fM :Maps<CR>
 nnoremap <space>fgl :GFiles?<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
-nnoremap <space>fA :RI<CR>!node_modules<space>
-nnoremap <space>ffa :RI<CR>!node_modules<space>
+nnoremap <space>fA :RI<CR> !node_modules<space>
+nnoremap <space>ffa :RI<CR> !node_modules<space>
 nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fsa :RgNoSpec<CR>
