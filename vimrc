@@ -1087,7 +1087,13 @@ nnoremap \e :edit!<CR>
 " {{{ Plugin Config
 
 " {{{ Nnn
-let g:nnn#command = 'nnn -H'
+
+let g:nnn#command = 'nnn -AH'
+if !empty($NNN_OPTS)
+  echom 'helloworld'
+  let g:nnn#command = 'nnn -'.$NNN_OPTS
+endif
+
 let g:nnn#action = {
       \ '<c-t><c-t>': 'tab split',
       \ '<c-s><c-s>': 'split',
@@ -1098,8 +1104,11 @@ let g:layout_embedded = { 'layout': 'enew' }
 
 nnoremap <space>n :call nnn#pick(getcwd(), g:layout_floating)<CR>
 nnoremap <space>N :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_floating)<CR>
-nnoremap <space>wn :call nnn#pick(getcwd(), g:layout_embedded)<CR>
-nnoremap <space>wN :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_embedded)<CR>
+nnoremap <space>sn :call nnn#pick(getcwd(), g:layout_embedded)<CR>
+nnoremap <space>sN :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_embedded)<CR>
+
+nnoremap <space>wn :echo "use \<space\>sn"<CR>
+nnoremap <space>wN :echo "use \<space\>sN"<CR>
 
 " }}}
 " {{{ send-to-window
