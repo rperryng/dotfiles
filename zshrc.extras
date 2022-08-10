@@ -237,6 +237,10 @@ if command -v gh &> /dev/null; then
   }
 fi
 
+function whatsusing() {
+  sudo lsof -i -P | grep LISTEN | grep :$1
+}
+
 # }}}
 # {{{ FZF
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
