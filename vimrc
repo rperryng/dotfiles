@@ -2251,8 +2251,6 @@ if has('nvim')
   nmap gX <Plug>(neoterm-repl-send-line)
   xmap gX <Plug>(neoterm-repl-send-line)
 
-  nnoremap sT :tabedit<CR>:enew<CR>:terminal<CR>:file term-
-
   " neoterm settings
   let g:neoterm_autoscroll=1
 endif
