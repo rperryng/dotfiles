@@ -942,6 +942,22 @@ function! Open()
   call system(l:cmd)
 endfunction
 vnoremap <space>o :<C-U>call Open()<CR>
+
+function! RenameBuffer()
+  let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:current_buf_name = bufname()
+  let l:terminal_buf_name = 'term-' . l:project_name
+
+  if bufname() =~ l:terminal_buf_name
+    call feedkeys(":keepalt file ".l:terminal_buf_name." ", 'n')
+  elseif bufname() =~ 'term-'
+    call feedkeys(":keepalt file term-", 'n')
+  else
+    call feedkeys(":keepalt file ", 'n')
+  endif
+endfunction
+nnoremap srn :call RenameBuffer()<CR>
+
 " }}}
 " {{{ Mappings
 
@@ -1084,7 +1100,6 @@ nnoremap sn :tabnext<CR>
 nnoremap sp :tabprevious<CR>
 
 nnoremap sf :set filetype=
-nnoremap srn :keepalt file<space>
 
 nnoremap \e :edit!<CR>
 " }}}
