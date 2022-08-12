@@ -1052,7 +1052,15 @@ nnoremap <space>gr :%s/<C-r>=expand('<cword>')<CR>//g<left><left>
 xnoremap <space>gr y:%s/<C-r>0//g<left><left>
 
 " Open buffer in new tab and go to current position
-nnoremap st ml:tabedit %<CR>`l
+function! ReopenInNewTab()
+  let l:project_name = fnamemodify(getcwd(), ':t')
+
+  normal ml
+  tabedit %
+  execute ':TabooRename '.l:project_name
+  normal 'lzz
+endfunction
+nnoremap st :call ReopenInNewTab()<CR>
 
 " Make windows equal but shrink the bottommost window to 20 lines (usually a
 " terminal buffer)
@@ -1109,7 +1117,6 @@ nnoremap \e :edit!<CR>
 
 let g:nnn#command = 'nnn -AH'
 if !empty($NNN_OPTS)
-  echom 'helloworld'
   let g:nnn#command = 'nnn -'.$NNN_OPTS
 endif
 
