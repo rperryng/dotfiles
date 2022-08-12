@@ -1145,25 +1145,13 @@ xmap <space>wj <Plug>SendDownV
 let taboo_tab_format=' [%N-NoName]%m '
 let taboo_renamed_tab_format=' [%N-%l]%m '
 
-function! TabRename(...)
-  let current_directory = fnamemodify(getcwd(), ':t')
-  let name = get(a:, 1, '')
+function! TabRename()
+  let l:project_name = fnamemodify(getcwd(), ':t')
 
-  let tab_name = current_directory
-  if name != ''
-    let tab_name = tab_name . '-' . name
-  endif
-
-  echo substitute(tab_name, "\n", "", "")
-  silent! execute 'TabooRename ' . tab_name
-  execute 'normal! :TabooRename ' . current_directory . '-'
+  call feedkeys(":TabooRename ".l:project_name)
 endfunction
-
-command! -nargs=0 TabRename call TabRename(<f-args>)
-
-nnoremap <space>tr :TabooRename<space>
-" nnoremap <silent> <space>tR :execute 'TabooRename ' . expand('%')<CR>
-nnoremap <space>tR :execute 'TabooRename ' . fnamemodify(getcwd(), ':t')<CR>
+command! -nargs=0 TabRename call TabRename()
+nnoremap <space>tr :TabRename<CR>
 " }}}
 " {{{ gundo
 nnoremap <space>gu :GundoToggle<CR>
@@ -1196,9 +1184,15 @@ command! -bang -nargs=* RG
   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
   \   <bang>0)
 
-command! -bang -nargs=* RI
+command! -bang -nargs=* RgNoGitGlob
   \ call fzf#vim#grep(
   \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --glob "!.git/**" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
+  \   1,
+  \   <bang>0
+  \ )
+command! -bang -nargs=* RgNoIgnore
+  \ call fzf#vim#grep(
+  \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
   \   1,
   \   <bang>0
   \ )
@@ -1526,8 +1520,9 @@ nnoremap <space>fM :Maps<CR>
 nnoremap <space>fgl :GFiles?<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
-nnoremap <space>fA :RI<CR> !node_modules<space>
-nnoremap <space>ffa :RI<CR> !node_modules<space>
+nnoremap <space>fA :RgNoGitGlob<CR> !node_modules<space>
+nnoremap <space>fsa :RgNoGitGlob<CR> !node_modules<space>
+nnoremap <space>fse :RgNoIgnore<CR> !node_modules<space>
 nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fsa :RgNoSpec<CR>
