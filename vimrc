@@ -956,7 +956,8 @@ function! RenameBuffer()
     call feedkeys(":keepalt file ", 'n')
   endif
 endfunction
-nnoremap srn :call RenameBuffer()<CR>
+nnoremap srn :echo '"use <space>brn" instead'<CR>
+nnoremap <space>brn :call RenameBuffer()<CR>
 
 " }}}
 " {{{ Mappings
@@ -1020,6 +1021,7 @@ vnoremap g<c-]> <c-]>
 
 nnoremap Y yg_
 nnoremap y% :let @+ = @%<CR>
+nnoremap <space>y% :let @+ = fnamemodify(expand('%'), ':p')<CR>
 
 "Ruby:t Ruby methods can commonly contain word boundary characters like ! or ?
 " Add helpers for motions that operate on the word under the cursor to include
