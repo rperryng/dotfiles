@@ -407,17 +407,31 @@ function yarnWorkspaceFuzzy() {
   return $rcode
 }
 
+# Docker container id fuzzy
+function docker-container-widget() {
+  LBUFFER="${LBUFFER}$(select_docker_container_id)"
+  local rcode=$?
+  zle reset-prompt
+  return $rcode
+}
+zle -N docker-container-widget
+bindkey '^X^D' docker-container-widget
+
 # Yarn workspaces Fuzzy
 function yarn-workspace-widget() {
-  BUFFER="yarn workspace '$(yarnWorkspaceFuzzy)' "
-  local rcode=$?
+  local workspace
+  local rcode
+  workspace=$(yarnWorkspaceFuzzy)
+  rcode=$?
+
   if [[ $rcode -eq 0 ]]; then
+    BUFFER="yarn workspace '$(yarnWorkspaceFuzzy)' "
     zle end-of-line
-    zle reset-prompt
   fi
+  zle reset-prompt
 
   return $rcode
 }
 zle -N yarn-workspace-widget
-bindkey '^i' yarn-workspace-widget
+bindkey '^X^Y' yarn-workspace-widget
 # }}}
