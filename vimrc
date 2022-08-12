@@ -949,14 +949,14 @@ function! RenameBuffer()
   let l:terminal_buf_name = 'term-' . l:project_name
 
   if bufname() =~ l:terminal_buf_name
-    call feedkeys(":keepalt file ".l:terminal_buf_name." ", 'n')
+    call feedkeys(":keepalt file ".l:terminal_buf_name."-", 'n')
   elseif bufname() =~ 'term-'
     call feedkeys(":keepalt file term-", 'n')
   else
     call feedkeys(":keepalt file ", 'n')
   endif
 endfunction
-nnoremap srn :echo '"use <space>brn" instead'<CR>
+nnoremap srn :echo '"use [space]brn" instead'<CR>
 nnoremap <space>brn :call RenameBuffer()<CR>
 
 " }}}
