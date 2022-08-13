@@ -158,16 +158,18 @@ register_zsh_users_repo() {
 }
 
 install_zsh_plugins() {
-  plugins=("zsh-syntax-highlighting zsh-autosuggestions")
-
   # TODO: Move to stowed module?
-  git clone \
-    'https://github.com/zsh-users/zsh-syntax-highlighting.git' \
-    ~/.zsh-syntax-highlighting
+  if [[ ! -d ~/.zsh-syntax-highlighting ]]; then
+    git clone \
+      'https://github.com/zsh-users/zsh-syntax-highlighting.git' \
+      ~/.zsh-syntax-highlighting
+  fi
 
-  git clone \
-    'https://github.com/zsh-users/zsh-autosuggestions' \
-    ~/.zsh/zsh-autosuggestions
+  if [[ ! -d ~/.zsh-autosuggestions ]]; then
+    git clone \
+      'https://github.com/zsh-users/zsh-autosuggestions' \
+      ~/.zsh/zsh-autosuggestions
+  fi
 }
 
 clone_dotfiles() {
