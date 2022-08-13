@@ -139,24 +139,6 @@ install_prompt() {
   esac
 }
 
-register_zsh_users_repo() {
-  local plugin="$1"
-
-  case ${pkg_mgr} in
-    "apt")
-      debian_ver="11"
-      echo "deb http://download.opensuse.org/repositories/shells:/zsh-users:/$plugin/Debian_$debian_ver/ /" \
-        | $sudo_cmd tee "/etc/apt/sources.list.d/shells:zsh-users:$plugin.list"
-
-      curl -fsSL "https://download.opensuse.org/repositories/shells:zsh-users:$plugin/Debian_$debian_ver/Release.key" \
-        | gpg --dearmor \
-        | "$sudo_cmd tee /etc/apt/trusted.gpg.d/shells_zsh-users_$plugin.gpg" >/dev/null
-      $sudo_cmd apt update
-      ;;
-    *) ;;
-  esac
-}
-
 install_zsh_plugins() {
   # TODO: Move to stowed module?
   if [[ ! -d ~/.zsh-syntax-highlighting ]]; then
@@ -167,7 +149,7 @@ install_zsh_plugins() {
 
   if [[ ! -d ~/.zsh-autosuggestions ]]; then
     git clone \
-      'https://github.com/zsh-users/zsh-autosuggestions' \
+      'https://github.com/zsh-users/zsh-autosuggestions.git' \
       ~/.zsh/zsh-autosuggestions
   fi
 }
@@ -234,7 +216,7 @@ main() {
   install_prompt
 
   # configure dotfiles & shell
-  # setup_default_shells
+  setup_default_shells
   # backup_dotfiles
   echo "make!"
 
