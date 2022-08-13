@@ -140,14 +140,16 @@ install_prompt() {
 }
 
 install_zsh_plugins() {
+  mkdir -p ~/.zsh
+
   # TODO: Move to stowed module?
-  if [[ ! -d ~/.zsh-syntax-highlighting ]]; then
+  if [[ ! -d ~/.zsh/.zsh-syntax-highlighting ]]; then
     git clone \
       'https://github.com/zsh-users/zsh-syntax-highlighting.git' \
       ~/.zsh-syntax-highlighting
   fi
 
-  if [[ ! -d ~/.zsh-autosuggestions ]]; then
+  if [[ ! -d ~/.zsh/.zsh-autosuggestions ]]; then
     git clone \
       'https://github.com/zsh-users/zsh-autosuggestions.git' \
       ~/.zsh/zsh-autosuggestions
