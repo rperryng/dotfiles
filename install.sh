@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -e -o pipefail
 
 DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/.dotfiles}"
 DOTFILES_INSTALL_USE_SUDO="${DOTFILES_INSTALL_USE_SUDO:-0}"
