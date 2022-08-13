@@ -164,6 +164,9 @@ clone_dotfiles() {
     # Ensure repo is using the ssh remote
     pushd "${DOTFILES_DIR}" >/dev/null
     git remote set-url origin git@github.com:rperryng/dotfiles.git
+
+    # TODO: Remove this
+    git checkout ezsetup
     popd >/dev/null
   fi
 }
