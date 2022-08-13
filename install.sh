@@ -220,11 +220,11 @@ main() {
   # configure dotfiles & shell
   setup_default_shells
   # backup_dotfiles
-  echo "make!"
+  make
 
   # Start zsh
-  # echo "Starting zsh ..."
-  # zsh
+  echo "Starting zsh ..."
+  zsh
 }
 
 # Run the script

@@ -2,7 +2,8 @@
 PKG_DIR = $(CURDIR)/modules
 ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
-DEFAULT_PKGS = asdf fasd fzf git github shell ssh starship utility vim zsh
+DEFAULT_PKGS = git fzf shell starship zsh
+# DEFAULT_PKGS = asdf fasd fzf git github shell ssh starship utility vim zsh
 
 # XDG directories
 XDG_CONFIG_HOME := $(HOME)/.config
@@ -22,6 +23,11 @@ ifeq ($(shell uname), Linux)
 	DEFAULT_PKGS := $(DEFAULT_PKGS)
 endif
 
+# Windows Subsystem for Linux settings
+ifeq ($(shell cat /proc/version | grep -o microsoft), microsoft)
+	DEFAULT_PKGS := $(DEFAULT_PKGS)
+endif
+
 # Subdirectories with make files
 SUBDIRS = $(sort $(basename $(dir $(wildcard */Makefile))))
 PKG_MAKEFILES = $(SUBDIRS:/=)
@@ -38,8 +44,9 @@ check-shfmt:
 
 lint: shellcheck check-shfmt
 
+# TODO: is this needed?
+# @stow -t $(HOME) -d . -S etc
 setup:
-	@stow -t $(HOME) -d . -S etc
 
 prepare-dirs:
 	@mkdir -p $(CURDIR)/local

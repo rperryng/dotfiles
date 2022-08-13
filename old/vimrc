@@ -958,8 +958,6 @@ function! RenameBuffer()
   endif
 endfunction
 nnoremap srn :echo '"use [space]brn" instead'<CR>
-nnoremap <space>brn :call RenameBuffer()<CR>
-
 " }}}
 " {{{ Mappings
 
@@ -1206,8 +1204,6 @@ command! -bang -nargs=* RgNoIgnore
   \   1,
   \   <bang>0
   \ )
-
-" mnemonic: fzf all
 
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --no-ignore --column --line-number --no-heading --color=always --smart-case -- %s || true'
