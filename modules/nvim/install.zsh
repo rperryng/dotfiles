@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-install() {
+install_neovim() {
   if command -v nvim; then
     echo "neovim already installed"
     return
@@ -31,4 +31,10 @@ install() {
   popd >/dev/null
 }
 
-install()
+install_vim_plug() {
+  curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+}
+
+install_neovim
+install_vim_plug

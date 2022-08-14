@@ -13,17 +13,8 @@ endfunction
 " }}}
 "{{{ Plugins
 
-" {{{ Automatic vim-plug install
-if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-  echom "Installing vim-plug"
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-  autocmd VimEnter * PlugInstall | source $MYVIMRC
-endif
-" }}}
 " {{{ vim-plug snapshot
-let g:vim_plug_snapshot_path=expand('$DOTFILES_SOURCE').'/.vimplugsnapshot'
+let g:vim_plug_snapshot_path=expand('$XDG_CONFIG_HOME').'/nvim/.vim_plug_snapshot'
 
 function! LoadVimPlugSnapshot()
   if !filereadable(g:vim_plug_snapshot_path)
@@ -2169,7 +2160,8 @@ call textobj#user#plugin('rpn', {
       \ })
 " }}}
 " {{{ lua
-" lua dofile(vim.env.DOTFILES_SOURCE .. "/nvim/init.lua")
+" lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/test.lua")
+lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/test.lua")
 " }}}
 " {{{ Terminal buffer configs
 
