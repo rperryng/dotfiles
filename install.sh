@@ -102,7 +102,7 @@ install_package_managers() {
     *) ;;
   esac
 
-  if [[ "${pkg_mgr}" == "nix" ]]; then
+  if [[ "${package_manager}" == "nix" ]]; then
     "${DOTFILES_DIR}/modules/nix/install.sh"
   fi
 }
@@ -110,7 +110,7 @@ install_package_managers() {
 install_packages() {
   local pkgs="$1"
 
-  case ${pkg_mgr} in
+  case ${package_manager} in
     "apt") $sudo_cmd apt install -y $pkgs ;;
     "dnf") $sudo_cmd dnf install -y $pkgs ;;
     "yum") $sudo_cmd yum install -y $pkgs ;;
@@ -132,14 +132,12 @@ install_packages() {
   esac
 }
 
-install_prompt() {
-  case ${pkg_mgr} in
-    "apt") curl -sS https://starship.rs/install.sh | sh -s -- -y ;;
-    *) install_packages "starship" ;;
-  esac
-}
-
 install_default_packages() {
+  install_packages "stow"
+  install_packages "zsh"
+  install_packages "tldr"
+
+  modules/starship/install.zsh
   modules/fzf/install.zsh
   modules/nvim/install.zsh
   modules/zsh-autosuggestions/install.zsh
@@ -187,7 +185,7 @@ main() {
 
   # get OS family & preferred package manager
   os_family="$(get_os_family)"
-  pkg_mgr="$(get_package_manager)"
+  package_manager="$(get_package_manager)"
 
   # pre-setup steps
   install_prerequisites
@@ -198,16 +196,10 @@ main() {
 
   # install packages
   install_package_managers
-  install_packages "stow"
-  install_packages "zsh"
-
-  # TODO: Neovim nnn
-  install_prompt
   install_default_packages
 
   # configure dotfiles & shell
   setup_default_shells
-  # backup_dotfiles
   make
 
   # Start zsh

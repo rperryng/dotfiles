@@ -1,0 +1,19 @@
+#!/usr/bin/env zsh
+
+DEBIAN_RELEASE_URL='https://github.com/jarun/nnn/releases/download/v4.6/nnn-static-4.6.x86_64.tar.gz'
+NNN_HOME="${XDG_OPT_HOME}/nnn"
+
+function install() {
+  case ${package_manager} in
+    "apt")
+      curl -fsSL "${DEBIAN_RELEASE_URL}" > /tmp/nnn-static.tar.gz
+      tar -xf /tmp/nnn-static.tar.gz --directory="${NNN_HOME}"
+      mv "${NNN_HOME}/nnn-static" "${XDG_BIN_HOME}/nnn"
+      ;;
+    *)
+      install_packages "nnn"
+      ;;
+  esac
+}
+
+install

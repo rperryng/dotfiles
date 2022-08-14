@@ -92,3 +92,47 @@ get_os_family() {
   echo "${os_family}"
 }
 os_family="$(get_os_family)"
+
+get_package_manager() {
+  if [[ -n "$DOTFILES_INSTALL_PACKAGE_MANAGER" ]]; then
+    echo "$DOTFILES_INSTALL_PACKAGE_MANAGER"
+  else
+    case ${os_family} in
+      "macos") echo "brew" ;;
+      "debian") echo "apt" ;;
+      "fedora") echo "dnf" ;;
+      "rhel") echo "yum" ;;
+      "arch") echo "pacman" ;;
+      *) ;;
+    esac
+  fi
+}
+package_manager=$(get_package_manager)
+
+install_packages() {
+  local pkgs="$1"
+
+  case ${pkg_mgr} in
+    "apt") $sudo_cmd apt install -y $pkgs ;;
+    "dnf") $sudo_cmd dnf install -y $pkgs ;;
+    "yum") $sudo_cmd yum install -y $pkgs ;;
+    "pacman") $sudo_cmd pacman -S $pkgs ;;
+    "brew")
+      echo "brew not ported yet"
+      exit 1
+
+      # source "${DOTFILES_DIR}/modules/homebrew/.config/profile.d/homebrew.sh"
+      # # shellcheck disable=SC2086
+      # brew install $pkgs
+      ;;
+    "nix")
+      source "${DOTFILES_DIR}/modules/nix/.config/profile.d/nix.sh"
+      nix_pkgs=("$pkgs")
+      # shellcheck disable=SC2068
+      for pkg in ${nix_pkgs[@]}; do
+        nix-env -iA nixpkgs."$pkg"
+      done
+      ;;
+    *) ;;
+  esac
+}
