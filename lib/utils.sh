@@ -9,9 +9,9 @@ source_files_in() {
     if [[ -n "$PROFILE_STARTUP" ]]; then
       # eval function name for profiling
       fn=$(basename "$file")
-      eval "$fn() { source_file $file }; $fn"
+      eval "$fn() { source $file }; $fn"
     else
-      source_file "$file"
+      source "$file"
     fi
   done
 
