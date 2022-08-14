@@ -2,7 +2,7 @@
 PKG_DIR = $(CURDIR)/modules
 ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
-DEFAULT_PKGS = git fzf shell starship zsh nvim example zsh-autosuggestions
+DEFAULT_PKGS = git fzf shell starship zsh nvim example zsh-autosuggestions zsh-syntax-highlighting nnn wsl
 # DEFAULT_PKGS = asdf fasd fzf git github shell ssh starship utility vim zsh
 
 # XDG directories
