@@ -254,6 +254,7 @@ main() {
 
   # Start zsh
   echo "Starting zsh ..."
+  echo "Install modules from ${DOTFILES_DIR}/install"
   zsh
 }
 
