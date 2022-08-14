@@ -65,3 +65,30 @@ function append_path() {
     fi
   done
 }
+
+get_os_family() {
+  if [ -f '/proc/version' ] && grep -qi microsoft '/proc/version'; then
+    # TODO: Change to wsl?
+    echo 'debian'
+    return
+  fi
+
+  # ideally we would use an associative array here
+  # but this needs to work in bash < v4 for macos
+  os_info=(
+    "/proc/auto_master::macos"
+    "/etc/auto_master::macos"
+    "/etc/debian_version::debian"
+    "/etc/fedora-release::fedora"
+    "/etc/redhat-release::rhel"
+    "/etc/arch-release::arch"
+    "/etc/alpine-release::alpine"
+  )
+  for kv in "${os_info[@]}"; do
+    key="${kv%%::*}"
+    val="${kv##*::}"
+    [[ -f "$key" ]] && os_family="${val}"
+  done
+  echo "${os_family}"
+}
+os_family="$(get_os_family)"

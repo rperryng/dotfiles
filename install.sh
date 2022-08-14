@@ -140,9 +140,10 @@ install_prompt() {
 }
 
 install_default_packages() {
-  modules/nvim/install
-  modules/zsh-autosuggestions/install
-  modules/rg/install
+  modules/fzf/install.zsh
+  modules/nvim/install.zsh
+  modules/zsh-autosuggestions/install.zsh
+  modules/rg/install.zsh
 }
 
 clone_dotfiles() {
