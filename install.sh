@@ -161,7 +161,7 @@ install_neovim() {
   esac
 
   if [[ ! -d "$HOME/.neovim" ]]; then
-    git clone https://github.com/neovim/neovim.git $(HOME)/.neovim
+    git clone https://github.com/neovim/neovim.git ${HOME}/.neovim
   fi
 
   pushd $(HOME)/.neovim >/dev/null
@@ -243,12 +243,8 @@ main() {
   install_packages "zsh"
 
   # TODO: Neovim nnn
-
-  install_packages "fasd fzf"
-
-  install_neovim
-
-  install_zsh_plugins
+  # install_neovim
+  # install_zsh_plugins
   install_prompt
 
   # configure dotfiles & shell
