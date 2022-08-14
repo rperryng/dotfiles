@@ -9,5 +9,8 @@ git clone \
   "$FZF_HOME"
 
 pushd $FZF_HOME
-./install
+./install \
+  --key-bindings \
+  --completion \
+  --no-updaterc
 popd
