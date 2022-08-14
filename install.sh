@@ -146,13 +146,13 @@ install_zsh_plugins() {
   if [[ ! -d ~/.zsh-syntax-highlighting ]]; then
     git clone \
       'https://github.com/zsh-users/zsh-syntax-highlighting.git' \
-      ~/zsh-syntax-highlighting
+      ~/.zsh-syntax-highlighting
   fi
 
   if [[ ! -d ~/zsh-autosuggestions ]]; then
     git clone \
       'https://github.com/zsh-users/zsh-autosuggestions.git' \
-      ~/zsh-autosuggestions
+      ~/.zsh-autosuggestions
   fi
 }
 
