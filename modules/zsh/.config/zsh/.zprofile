@@ -1,4 +1,3 @@
- 14 lines (11 sloc) 394 Bytes
 #!/usr/bin/env zsh
 #
 # Executes commands at login pre-zshrc

@@ -1861,8 +1861,6 @@ nmap <space>gdu :SignifyHunkUndo<CR>
 " }}}
 " {{{ nvim-contabs
 let g:contabs#project#locations = [
-  \ { 'path': '~/.dotfiles' },
-  \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },

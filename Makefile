@@ -2,7 +2,7 @@
 PKG_DIR = $(CURDIR)/modules
 ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
-DEFAULT_PKGS = git fzf shell starship zsh
+DEFAULT_PKGS = git fzf shell starship zsh nvim example
 # DEFAULT_PKGS = asdf fasd fzf git github shell ssh starship utility vim zsh
 
 # XDG directories
@@ -45,9 +45,8 @@ check-shfmt:
 
 lint: shellcheck check-shfmt
 
-# TODO: is this needed?
-# @stow -t $(HOME) -d . -S etc
 setup:
+	@stow -t $(HOME) -d . -S etc
 
 prepare-dirs:
 	@mkdir -p $(CURDIR)/local
@@ -85,6 +84,7 @@ chklink:
 	@chkstow -a -b -t $(XDG_DATA_HOME)
 	@chkstow -a -b -t $(XDG_BIN_HOME)
 	@chkstow -a -b -t $(XDG_LIB_HOME)
+	@chkstow -a -b -t $(XDG_OPT_HOME)
 
 .PHONY: list-pkgs
 list-pkgs:
