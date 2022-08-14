@@ -139,6 +139,11 @@ install_prompt() {
   esac
 }
 
+install_default_packages() {
+  modules/nvim/install
+  modules/zsh-autosuggestions/install.zsh
+}
+
 install_neovim() {
   if command -v nvim; then
     echo "neovim already installed"
@@ -168,23 +173,6 @@ install_neovim() {
   make CMAKE_BUILD_TYPE=Release
   $sudo_cmd make install
   popd >/dev/null
-}
-
-install_zsh_plugins() {
-  mkdir -p ~/.zsh
-
-  # TODO: Move to stowed module?
-  if [[ ! -d ~/.zsh-syntax-highlighting ]]; then
-    git clone \
-      'https://github.com/zsh-users/zsh-syntax-highlighting.git' \
-      ~/.zsh-syntax-highlighting
-  fi
-
-  if [[ ! -d ~/.zsh-autosuggestions ]]; then
-    git clone \
-      'https://github.com/zsh-users/zsh-autosuggestions.git' \
-      ~/.zsh-autosuggestions
-  fi
 }
 
 clone_dotfiles() {
@@ -244,8 +232,8 @@ main() {
 
   # TODO: Neovim nnn
   # install_neovim
-  # install_zsh_plugins
   install_prompt
+  install_default_packages
 
   # configure dotfiles & shell
   setup_default_shells
