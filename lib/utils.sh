@@ -11,7 +11,7 @@ source_files_in() {
       fn=$(basename "$file")
       eval "$fn() { source_file $file }; $fn"
     else
-      source_file "$file"
+      source "$file"
     fi
   done
 
