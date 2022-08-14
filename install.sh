@@ -143,16 +143,16 @@ install_zsh_plugins() {
   mkdir -p ~/.zsh
 
   # TODO: Move to stowed module?
-  if [[ ! -d ~/.zsh/.zsh-syntax-highlighting ]]; then
+  if [[ ! -d ~/.zsh-syntax-highlighting ]]; then
     git clone \
       'https://github.com/zsh-users/zsh-syntax-highlighting.git' \
-      ~/.zsh/zsh-syntax-highlighting
+      ~/zsh-syntax-highlighting
   fi
 
-  if [[ ! -d ~/.zsh/.zsh-autosuggestions ]]; then
+  if [[ ! -d ~/zsh-autosuggestions ]]; then
     git clone \
       'https://github.com/zsh-users/zsh-autosuggestions.git' \
-      ~/.zsh/zsh-autosuggestions
+      ~/zsh-autosuggestions
   fi
 }
 
@@ -215,9 +215,7 @@ main() {
 
   install_packages "fasd fzf"
 
-  echo "install zsh plugins"
   install_zsh_plugins
-  echo "finished installing zsh plugins"
   install_prompt
 
   # configure dotfiles & shell
