@@ -12,8 +12,8 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 # Non-standard
 export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
-export XDG_LIB_HOME="${XDG_BIN_HOME:-$HOME/.local/lib}"
-export XDG_OPT_HOME="${XDG_BIN_HOME:-$HOME/.local/opt}"
+export XDG_LIB_HOME="${XDG_LIB_HOME:-$HOME/.local/lib}"
+export XDG_OPT_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}"
 
 # Dotfiles dir
 export DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/.dotfiles}"
