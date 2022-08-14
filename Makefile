@@ -9,9 +9,10 @@ DEFAULT_PKGS = git fzf shell starship zsh
 XDG_CONFIG_HOME := $(HOME)/.config
 XDG_DATA_HOME := $(HOME)/.local/share
 XDG_CACHE_HOME := $(HOME)/.cache
-# Non standard
+# Non-standard
 XDG_BIN_HOME := $(HOME)/.local/bin
 XDG_LIB_HOME := $(HOME)/.local/lib
+XDG_OPT_HOME := $(HOME)/.local/opt
 
 # macOS specific settings
 ifeq ($(shell uname), Darwin)
@@ -59,6 +60,7 @@ prepare-dirs:
 	@mkdir -p $(XDG_CACHE_HOME)/less
 	@mkdir -p $(XDG_BIN_HOME)
 	@mkdir -p $(XDG_LIB_HOME)
+	@mkdir -p $(XDG_OPT_HOME)
 ifeq ($(shell uname), Darwin)
 	@mkdir -p $(XDG_CONFIG_HOME)/hammerspoon
 	@mkdir -p $(XDG_CONFIG_HOME)/homebrew
