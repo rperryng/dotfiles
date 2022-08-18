@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Summary:
+#   Generate an SSH key
+#
+# Usage:
+#   ssh-keygen
+
+# Exit if there are any errors
+set -e
+
+# The target directory for the new key
+TARGET_DIR="${1:-$HOME/.ssh}"
+
+# Get the name of the new key
+KEY_NAME="id_ed25519"
+
+# The path to the new key
+KEY_PATH="${TARGET_DIR}/${KEY_NAME}"
+if [[ -e "${KEY_PATH}" ]]; then
+  echo "${KEY_PATH} already exists"
+  exit 1
+else
+  mkdir -p "${TARGET_DIR}"
+fi
+
+# Generate a new ssh key key
+ssh-keygen -t ed25519 -C "ryanperrynguyen@gmail.com"
+
+echo "Created ${KEY_PATH}"
+
+# Add key to ssh agent
+eval "$(ssh-agent -s)" && ssh-add "${KEY_PATH}"
+
+# Copy public key to clipboard
+if [[ $(command -v pbcopy) ]]; then
+  pbcopy <"${KEY_PATH}.pub"
+  echo "Public key copied to clipboard"
+elif [[ $(command -v wine32yank.exe) ]]; then
+  cat "${KEY_PATH}.pub" | win32yank.exe -i
+  echo "Public key copied to clipboard"
+else
+  echo "Public key not copied to clipboard, unsure how to interact with system clipboard (current OS: ${DOTFILES_OS})"
+fi
