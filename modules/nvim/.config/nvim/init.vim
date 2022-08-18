@@ -1917,7 +1917,7 @@ nmap <space>oi <Plug>SortInline
 
 " }}}
 " {{{ vim-bbye
-nnoremap <space>bd :Bdelete!<CR>
+nnoremap <space>bd :keepalt Bdelete!<CR>
 nnoremap <space>bw :Bwipeout!<CR>
 " }}}
 " {{{ vim-githubinator
@@ -2156,8 +2156,8 @@ lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/test.lua")
 
 " For some reason WSL terminal shells don't start zsh
 if IsWsl() && executable('zsh')
-  let s:zsh_path = trim(system('which zsh'))
-  execute "let &shell='".s:zsh_path." --login'"
+  let g:zsh_path = trim(system('which zsh'))
+  execute "let &shell='".g:zsh_path."'"
 endif
 
 if has('nvim')
