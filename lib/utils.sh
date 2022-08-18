@@ -91,7 +91,7 @@ get_os_family() {
   done
   echo "${os_family}"
 }
-os_family="$(get_os_family)"
+export DOTFILES_OS="$(get_os_family)"
 
 get_package_manager() {
   if [[ -n "$DOTFILES_INSTALL_PACKAGE_MANAGER" ]]; then
@@ -107,7 +107,7 @@ get_package_manager() {
     esac
   fi
 }
-package_manager=$(get_package_manager)
+export DOTFILES_PKG_MGR=$(get_package_manager)
 
 install_packages() {
   local pkgs="$1"

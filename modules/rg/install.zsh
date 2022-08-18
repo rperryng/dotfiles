@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 function install() {
-  case ${os_family} in
+  case ${DOTFILES_OS} in
     "macos")
       brew install ripgrep
       ;;
@@ -9,7 +9,7 @@ function install() {
       sudo apt install ripgrep
       ;;
     *)
-      echo "OS family: '${os_family}' not supported"
+      echo "OS family: '${DOTFILES_OS}' not supported"
       exit 1
       ;;
   esac

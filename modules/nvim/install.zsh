@@ -1,39 +1,44 @@
 #!/usr/bin/env zsh
 
+NVIM_HOME="${XDG_OPT_HOME}/nvim"
+
 install_neovim() {
   if command -v nvim; then
     echo "neovim already installed"
     return
   fi
 
-  case ${os_family} in
+  case ${DOTFILES_OS} in
     "macos")
-      install_packages \
-        'ninja libtool automake cmake pkg-config gettext curl'
+      brew install \
+        ninja libtool automake cmake pkg-config gettext curl
       ;;
     "debian")
-      install_packages \
-        'ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen'
+      sudo apt install \
+        ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen
       ;;
     *)
-      echo "OS family: '${os_family}' not supported"
+      echo "OS family: '${DOTFILES_OS}' not supported"
       exit 1
       ;;
   esac
 
-  if [[ ! -d "$HOME/.neovim" ]]; then
-    git clone https://github.com/neovim/neovim.git ${HOME}/.neovim
+  if [[ ! -d "${NVIM_HOME}" ]]; then
+    git clone https://github.com/neovim/neovim.git "${NVIM_HOME}"
   fi
 
-  pushd $(HOME)/.neovim >/dev/null
+  pushd ${NVIM_HOME} >/dev/null
   make CMAKE_BUILD_TYPE=Release
-  $sudo_cmd make install
+  sudo make install
   popd >/dev/null
 }
 
 install_vim_plug() {
-  curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+  # TODO: markdown-preview, firenvim, nvim-treesitter installation errors
+  nvim +PlugInstall +qAll
 }
 
 install_neovim

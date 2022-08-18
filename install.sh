@@ -5,6 +5,8 @@ set -e -o pipefail
 DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/.dotfiles}"
 DOTFILES_INSTALL_USE_SUDO="${DOTFILES_INSTALL_USE_SUDO:-0}"
 
+export XDG_OPT_HOME="${HOME}/.local/opt"
+
 # Get the appropriate package manager script
 get_os_family() {
   if [ -f '/proc/version' ] && grep -qi microsoft '/proc/version'; then

@@ -4,7 +4,7 @@ DEBIAN_RELEASE_URL='https://github.com/jarun/nnn/releases/download/v4.6/nnn-stat
 NNN_HOME="${XDG_OPT_HOME}/nnn"
 
 function install() {
-  case ${package_manager} in
+  case ${DOTFILES_PKG_MGR} in
     "apt")
       curl -fsSL "${DEBIAN_RELEASE_URL}" > /tmp/nnn-static.tar.gz
       tar -xf /tmp/nnn-static.tar.gz --directory="${NNN_HOME}"
