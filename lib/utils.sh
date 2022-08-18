@@ -97,7 +97,7 @@ get_package_manager() {
   if [[ -n "$DOTFILES_INSTALL_PACKAGE_MANAGER" ]]; then
     echo "$DOTFILES_INSTALL_PACKAGE_MANAGER"
   else
-    case ${os_family} in
+    case ${DOTFILES_OS} in
       "macos") echo "brew" ;;
       "debian") echo "apt" ;;
       "fedora") echo "dnf" ;;

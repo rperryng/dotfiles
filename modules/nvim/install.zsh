@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+echo "Installing neovim"
+
 NVIM_HOME="${XDG_OPT_HOME}/nvim"
 
 install_neovim() {

@@ -1161,13 +1161,14 @@ nmap ga <Plug>(EasyAlign)
 " }}}
 " {{{ FZF
 let $FZF_DEFAULT_OPTS .= ' --border --no-height --layout=reverse'
+let g:fzf_default_rg_opts= '--hidden --follow --glob "!.git/**"'
 
 if executable('rg')
-  let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/**" '
+  let $FZF_DEFAULT_COMMAND = 'rg --files '.g:fzf_default_rg_opts.' '
   set grepprg=rg\ --vimgrep
   command! -bang -nargs=* Find
     \ call fzf#vim#grep(
-    \   'rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/**" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
+    \   'rg '.g:fzf_default_rg_opts.' --column --line-number --no-heading --fixed-strings --ignore-case --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
     \   1,
     \   <bang>0
     \ )
@@ -1178,20 +1179,14 @@ let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 " :like :Rg but only search file content, i.e. do not match directories
 command! -bang -nargs=* RG
   \ call fzf#vim#grep(
-  \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
+  \   "rg".g:fzf_default_rg_opts." --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
   \   1,
   \   fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}),
   \   <bang>0)
 
-command! -bang -nargs=* RgNoGitGlob
-  \ call fzf#vim#grep(
-  \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --glob "!.git/**" --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
-  \   1,
-  \   <bang>0
-  \ )
 command! -bang -nargs=* RgNoIgnore
   \ call fzf#vim#grep(
-  \   'rg --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
+  \   'rg '.g:fzf_default_rg_opts.' --glob ".git/**" --no-ignore --column --line-number --no-heading --fixed-strings --smart-case --color "always" '.shellescape(<q-args>).'| tr -d "\017"',
   \   1,
   \   <bang>0
   \ )
@@ -1359,31 +1354,30 @@ endfunction
 
 " :Tags
 command! -nargs=* Tags
-  \ call fzf#vim#tags(
-  \    <q-args>,
-  \    {'options': '--delimiter : --nth 4..'},
-  \    <bang>0
-  \ )
+      \ call fzf#vim#tags(
+      \    <q-args>,
+      \    {'options': '--delimiter : --nth 4..'},
+      \    <bang>0
+      \ )
 
 command! -nargs=? -complete=dir Files
-  \ call fzf#vim#files(
-  \   <q-args>,
-  \   fzf#vim#with_preview(),
-  \   <bang>0
-  \ )
+      \ call fzf#vim#files(
+      \   <q-args>,
+      \   fzf#vim#with_preview(),
+      \   <bang>0
+      \ )
 
-" New
 command! -nargs=? AllFiles
       \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
-      \     'source': 'rg --files --hidden --no-ignore --follow',
+      \     'source': 'rg '.g:fzf_default_rg_opts.' --files --no-ignore',
       \ })))
 
 command! -nargs=? -complete=dir GFiles
-  \ call fzf#vim#gitfiles(
-  \   <q-args>,
-  \   fzf#vim#with_preview(),
-  \   <bang>0
-  \ )
+      \ call fzf#vim#gitfiles(
+      \   <q-args>,
+      \   fzf#vim#with_preview(),
+      \   <bang>0
+      \ )
 
 command! -nargs=0 FzfGDiffView
       \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
@@ -1492,14 +1486,10 @@ command! TerminalBuffers
   \  <bang>0
   \ )
 
-" :Rg, prepopulate search with '!spec '
-  " \   fzf#vim#with_preview({'options': ['--query', '!spec ']}),
-command! -bang -nargs=* RgNoSpec
-  \ call fzf#vim#grep(
-  \   "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>),
-  \   1,
-  \   <bang>0
-  \ )
+command! -bang -nargs=* Rg
+      \ call fzf#vim#grep(
+      \   'rg '.g:fzf_default_rg_opts.' --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+      \   fzf#vim#with_preview(), <bang>0)
 
 " FZF Binds
 nnoremap <space><C-f> :GFiles<CR>
@@ -1522,7 +1512,6 @@ nnoremap <space>fsa :RgNoGitGlob<CR> !node_modules<space>
 nnoremap <space>fse :RgNoIgnore<CR> !node_modules<space>
 nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
-nnoremap <space>fsa :RgNoSpec<CR>
 nnoremap <space>fz :FZFMru<CR>
 nnoremap <space>fH :History<CR>
 nnoremap <space>f: :History:<CR>
@@ -2164,6 +2153,12 @@ call textobj#user#plugin('rpn', {
 lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/test.lua")
 " }}}
 " {{{ Terminal buffer configs
+
+" For some reason WSL terminal shells don't start zsh
+if IsWsl() && executable('zsh')
+  let s:zsh_path = trim(system('which zsh'))
+  execute "let &shell='".s:zsh_path." --login'"
+endif
 
 if has('nvim')
   augroup tmappings

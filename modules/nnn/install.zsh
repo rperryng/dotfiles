@@ -6,6 +6,7 @@ NNN_HOME="${XDG_OPT_HOME}/nnn"
 function install() {
   case ${DOTFILES_PKG_MGR} in
     "apt")
+      mkdir -p "${NNN_HOME}"
       curl -fsSL "${DEBIAN_RELEASE_URL}" > /tmp/nnn-static.tar.gz
       tar -xf /tmp/nnn-static.tar.gz --directory="${NNN_HOME}"
       mv "${NNN_HOME}/nnn-static" "${XDG_BIN_HOME}/nnn"
