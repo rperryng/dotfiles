@@ -138,6 +138,8 @@ install_default_packages() {
   install_packages "stow"
   install_packages "zsh"
   install_packages "tldr"
+  install_packages "jq"
+  install_packages "unzip"
 
   modules/starship/install.zsh
   modules/fzf/install.zsh
