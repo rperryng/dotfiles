@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
 DEBIAN_RELEASE_URL='https://github.com/jarun/nnn/releases/download/v4.6/nnn-static-4.6.x86_64.tar.gz'
-NNN_HOME="${XDG_OPT_HOME}/nnn"
+NNN_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nnn"
 
 function install() {
   case ${DOTFILES_PKG_MGR} in

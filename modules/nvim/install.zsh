@@ -2,7 +2,7 @@
 
 echo "Installing neovim"
 
-NVIM_HOME="${XDG_OPT_HOME}/nvim"
+NVIM_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nvim"
 
 install_neovim() {
   if command -v nvim; then
@@ -16,7 +16,7 @@ install_neovim() {
         ninja libtool automake cmake pkg-config gettext curl
       ;;
     "debian")
-      sudo apt install \
+      sudo apt install --yes \
         ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen
       ;;
     *)

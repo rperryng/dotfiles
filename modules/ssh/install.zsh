@@ -1,9 +1,9 @@
 #!/usr/bin/env zsh
 
-FZF_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/fzf"
+SSH_HOME="${HOME}/.ssh"
 
 install() {
-  if command -v fzf; then
+  if command -v nvim; then
     echo "'fzf' command already available; skipping"
     return
   fi
@@ -18,9 +18,7 @@ install() {
   ./install \
     --key-bindings \
     --completion \
-    --no-bash \
-    --no-zsh \
-    --no-fish
+    --no-updaterc
   popd
 }
 

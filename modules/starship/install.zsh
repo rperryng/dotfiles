@@ -5,7 +5,7 @@ function install() {
     "debian") curl -sS https://starship.rs/install.sh | sh -s -- -y ;;
     "macos") brew install "starship" ;;
     *)
-      echo "unsupported os ${DOTFILES_OS}"
+      echo "unsupported os '${DOTFILES_OS}'"
       exit 1
       ;;
   esac
