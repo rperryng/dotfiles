@@ -112,7 +112,7 @@ export DOTFILES_PKG_MGR=$(get_package_manager)
 install_packages() {
   local pkgs="$1"
 
-  case ${pkg_mgr} in
+  case ${DOTFILES_PKG_MGR} in
     "apt") $sudo_cmd apt install -y $pkgs ;;
     "dnf") $sudo_cmd dnf install -y $pkgs ;;
     "yum") $sudo_cmd yum install -y $pkgs ;;

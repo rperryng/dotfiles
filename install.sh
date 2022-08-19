@@ -5,7 +5,17 @@ set -e -o pipefail
 DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/.dotfiles}"
 DOTFILES_INSTALL_USE_SUDO="${DOTFILES_INSTALL_USE_SUDO:-0}"
 
-export XDG_OPT_HOME="${HOME}/.local/opt"
+# XDG configuration
+# - https://wiki.archlinux.org/index.php/XDG_Base_Directory
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# Non-standard
+export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
+export XDG_LIB_HOME="${XDG_LIB_HOME:-$HOME/.local/lib}"
+export XDG_OPT_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}"
 
 # Get the appropriate package manager script
 get_os_family() {
