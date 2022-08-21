@@ -52,9 +52,3 @@ fi
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\C-x\C-e' edit-command-line
-
-# TODO: install fzf binds
-# FZF binds
-# bindkey "^y" fzf-cd-widget
-# bindkey "^r" fzf-history-widget
-# bindkey "^t" fzf-file-widget
