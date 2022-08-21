@@ -112,11 +112,11 @@ export DOTFILES_PKG_MGR=$(get_package_manager)
 install_packages() {
   local pkgs="$1"
 
+  # Ensure $pkgs is word split by space when running in zsh
+  [ -n "${ZSH_VERSION:-}" ] && set -A pkgs ${=pkgs}
+
   case ${DOTFILES_PKG_MGR} in
-    "apt") $sudo_cmd apt install -y $pkgs ;;
-    "dnf") $sudo_cmd dnf install -y $pkgs ;;
-    "yum") $sudo_cmd yum install -y $pkgs ;;
-    "pacman") $sudo_cmd pacman -S $pkgs ;;
+    "apt") sudo apt install -y $pkgs ;;
     "brew")
       echo "brew not ported yet"
       exit 1
