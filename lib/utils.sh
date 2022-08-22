@@ -93,6 +93,14 @@ get_os_family() {
 }
 export DOTFILES_OS="$(get_os_family)"
 
+is_wsl() {
+  if [[ -f '/proc/version' ]]; then
+    grep -qi microsoft '/proc/version' && return
+  fi
+
+  false
+}
+
 get_package_manager() {
   if [[ -n "$DOTFILES_INSTALL_PACKAGE_MANAGER" ]]; then
     echo "$DOTFILES_INSTALL_PACKAGE_MANAGER"
