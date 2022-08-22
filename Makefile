@@ -16,6 +16,7 @@ DEFAULT_PKGS += nvim
 DEFAULT_PKGS += rg
 DEFAULT_PKGS += scm_breeze
 DEFAULT_PKGS += shell
+DEFAULT_PKGS += docker
 DEFAULT_PKGS += ssh
 DEFAULT_PKGS += starship
 DEFAULT_PKGS += wsl
