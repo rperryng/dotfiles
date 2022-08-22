@@ -64,10 +64,7 @@ fi
 
 export EDITOR="$VISUAL"
 # }}}
-# {{{ Git
-# global gitignore
-git config --global core.excludesfile ~/.gitignore
-
+# {{{ GitHub
 if command -v gh &> /dev/null; then
   clone() {
     cat "${HOME}/.cache/clone_urls.txt" | \
@@ -82,25 +79,6 @@ fi
 
 # When enter starts inputting ^M...
 alias pls="stty sane"
-
-# Git aliases
-alias glo="git log --oneline"
-alias gcmsg="git commit -m"
-alias gcane="git commit --amend --no-edit"
-alias gcam="git commit --amend -m"
-alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
-alias g_branch="git symbolic-ref --short -q HEAD"
-alias gcne="git commit --no-edit"
-alias gcaem="git commit --allow-empty -m"
-
-alias lg="lazygit"
-
-# Semantically a 'git rebase --continue --no-edit', i.e. re-use the same commit
-# message as the original.
-alias rbcne='GIT_EDITOR=true git rebase --continue'
-
-# Push new local branch to remote under the same name
-alias gpsu="git push -u origin \$(git symbolic-ref --short -q HEAD)"
 
 # Open the PR page for the current branch.
 function gh_openpr() {
@@ -257,24 +235,6 @@ function iswsl() {
   false
 }
 
-# }}}
-# {{{ FZF
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
-export FZF_DEFAULT_COMMAND="rg --files --no-ignore --hidden --follow --no-messages"
-export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
-export FZF_ALT_C_COMMAND="${FZF_DEFAULT_COMMAND} | sed -E 's#/[^/]+\$##' | sort -u"
-
-# gruvbox-dark
-export FZF_DEFAULT_OPTS='
-  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
-  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
-'
-
-# gruvbox-light
-# export FZF_DEFAULT_OPTS='
-#   --color fg:240,bg:230,hl:33,fg+:241,bg+:221,hl+:33
-#   --color info:33,prompt:33,pointer:166,marker:166,spinner:33
-# '
 # }}}
 # {{{ docker
 function select_docker_container_id() {
