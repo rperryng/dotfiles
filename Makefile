@@ -10,6 +10,7 @@ DEFAULT_PKGS += example
 DEFAULT_PKGS += fzf
 DEFAULT_PKGS += git
 DEFAULT_PKGS += github-cli
+DEFAULT_PKGS += lazygit
 DEFAULT_PKGS += nnn
 DEFAULT_PKGS += nvim
 DEFAULT_PKGS += rg

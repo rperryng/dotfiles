@@ -47,18 +47,6 @@ fi
 export EDITOR="$VISUAL"
 # }}}
 # {{{ GitHub
-if command -v gh &> /dev/null; then
-  clone() {
-    cat "${HOME}/.cache/clone_urls.txt" | \
-      fzf --multi | \
-      xargs -I{} git -C "$HOME/code" clone {}
-
-    gh api /user/repos --paginate | \
-      jq -r '.[] | .ssh_url' > \
-      "${HOME}/.cache/clone_urls.txt" &
-  }
-fi
-
 # When enter starts inputting ^M...
 alias pls="stty sane"
 
@@ -70,13 +58,6 @@ function gh_openpr() {
     gh pr create --web
   fi
 }
-
-alias open-pr="gh_openpr"
-
-# gh cli aliases
-alias ghrw="gh run watch -i1"
-alias ghrvw="gh run view --web"
-alias ghprvw="gh pr view --web"
 
 if [[ "$(uname)" == "Darwin" ]]; then
   function ghrws() {
