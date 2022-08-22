@@ -5,6 +5,7 @@ LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
 
 DEFAULT_PKGS += 1password
 DEFAULT_PKGS += asdf
+DEFAULT_PKGS += bat
 DEFAULT_PKGS += example
 DEFAULT_PKGS += fzf
 DEFAULT_PKGS += git
@@ -17,8 +18,8 @@ DEFAULT_PKGS += shell
 DEFAULT_PKGS += ssh
 DEFAULT_PKGS += starship
 DEFAULT_PKGS += wsl
-DEFAULT_PKGS += zsh
 DEFAULT_PKGS += z
+DEFAULT_PKGS += zsh
 DEFAULT_PKGS += zsh-autosuggestions
 DEFAULT_PKGS += zsh-syntax-highlighting
 

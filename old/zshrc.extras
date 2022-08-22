@@ -2,25 +2,13 @@
 # compinit
 
 # {{{ One time installs
-# brew install
-# ripgrep
-# nnn
-# rbenv - rbenv-default-gems - solargraph
-# nodenv
 # pyenv
-
-# http://www.rushiagr.com/blog/2016/06/16/everything-you-need-to-know-about-tmux-copy-pasting-ubuntu/
-# https://github.com/dmarcotte/easy-move-resize
 # https://github.com/rbenv/rbenv
-# https://github.com/rupa/z
 # https://github.com/scmbreeze/scm_breeze
 # https://github.com/tpope/gem-ctags
 # https://github.com/tpope/rbenv-ctags
 # https://github.com/nodenv/nodenv-default-packages
 # https://github.com/nodenv/nodenv-aliases
-# https://github.com/zsh-users/zsh-autosuggestions
-# https://github.com/zsh-users/zsh-syntax-highlighting
-# https://github.com/sharkdp/bat
 
 # Enable esc+ to treat option keys as alt
 # https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
@@ -41,10 +29,6 @@ HISTSIZE=5000               # How many lines of history to keep in memory
 HISTFILE=~/.zsh_history     # Where to save history to disk
 SAVEHIST=5000               # Number of history entries to save to disk
 HISTDUP=erase               # Erase duplicates in the history file
-# }}}
-# {{{ Colours
-export BAT_THEME='gruvbox-dark-hard'
-# export BAT_THEME='gruvbox-light'
 # }}}
 # {{{ $EDITOR
 # Use neovim remote terminal if available
