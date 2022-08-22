@@ -3,10 +3,12 @@ PKG_DIR = $(CURDIR)/modules
 ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
 
+DEFAULT_PKGS += 1password
 DEFAULT_PKGS += asdf
 DEFAULT_PKGS += example
 DEFAULT_PKGS += fzf
 DEFAULT_PKGS += git
+DEFAULT_PKGS += github-cli
 DEFAULT_PKGS += nnn
 DEFAULT_PKGS += nvim
 DEFAULT_PKGS += rg
