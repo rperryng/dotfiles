@@ -2185,7 +2185,6 @@ if has('nvim')
   tnoremap <C-q> <C-\><C-n>
   tnoremap <C-\><C-\> <C-n>
   tnoremap <C-\><C-s> <C-n>
-  tnoremap granch $(g_branch)
   " tnoremap is0 iso8601
 
   " Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
