@@ -18,6 +18,7 @@ DEFAULT_PKGS += ssh
 DEFAULT_PKGS += starship
 DEFAULT_PKGS += wsl
 DEFAULT_PKGS += zsh
+DEFAULT_PKGS += z
 DEFAULT_PKGS += zsh-autosuggestions
 DEFAULT_PKGS += zsh-syntax-highlighting
 
