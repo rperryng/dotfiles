@@ -3,7 +3,6 @@
 
 # {{{ One time installs
 # pyenv
-# https://github.com/rbenv/rbenv
 # https://github.com/scmbreeze/scm_breeze
 # https://github.com/tpope/gem-ctags
 # https://github.com/tpope/rbenv-ctags
@@ -12,23 +11,6 @@
 
 # Enable esc+ to treat option keys as alt
 # https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
-# }}}
-# {{{ XDG
-mkdir -p "$HOME/.config"
-mkdir -p "$HOME/.cache"
-# }}}
-# {{{ History
-# Immediately append to the history file, not just when a term is killed# Base16
-setopt    sharehistory
-# Share history across terminals
-setopt    appendhistory
-# Append history to the history file (no overwriting)
-setopt    incappendhistory
-
-HISTSIZE=5000               # How many lines of history to keep in memory
-HISTFILE=~/.zsh_history     # Where to save history to disk
-SAVEHIST=5000               # Number of history entries to save to disk
-HISTDUP=erase               # Erase duplicates in the history file
 # }}}
 # {{{ $EDITOR
 # Use neovim remote terminal if available
@@ -51,14 +33,6 @@ export EDITOR="$VISUAL"
 alias pls="stty sane"
 
 # Open the PR page for the current branch.
-function gh_openpr() {
-  if gh pr view --json url; then
-    gh pr view --web
-  else
-    gh pr create --web
-  fi
-}
-
 if [[ "$(uname)" == "Darwin" ]]; then
   function ghrws() {
     local folder_name
@@ -72,7 +46,6 @@ fi
 
 # }}}
 # {{{ Aliases, Functions
-alias rm-swap="rm ~/.local/share/nvim/swap/*"
 alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
 alias be="bundle exec"
 alias migrate="bundle exec rake db:migrate && RACK_ENV=test bundle exec rake db:migrate"
@@ -199,43 +172,6 @@ function iswsl() {
 }
 
 # }}}
-# {{{ docker
-function select_docker_container_id() {
-  local docker_container_ls_output=$(
-    docker container ls \
-      --format 'table {{.Names}}\t{{.ID}}\t{{.Status}}\t{{.RunningFor}}\t{{.Image}}' \
-  )
-
-  echo $docker_container_ls_output \
-    | tail -n+2 \
-    | fzf --header="$(echo $docker_container_ls_output | head -1)" \
-    | grep -oE '\s([a-zA-Z0-9]+)' \
-    | head -1 \
-    | grep -oE '([a-zA-Z0-9]+)'
-}
-
-function dlogs() {
-  local container_id=$(select_docker_container_id)
-  if [[ -n "${container_id}" ]]; then
-    echo "container_id is '${container_id}'"
-    docker container logs --follow "${container_id}"
-    return
-  fi
-
-  false
-}
-
-# }}}
-# {{{ NNN
-export NNN_OPTS="AH"
-export NNN_BMS='d:~/Downloads;w:~/code/ws;c:~/code;h:~'
-export NNN_NO_AUTOSELECT=1
-export NNN_COLORS=4321
-
-if iswsl; then
-  export NNN_BMS="a:$(wslpath 'C:\Users\ryanp\home');${NNN_BMS}"
-fi
-# }}}
 # {{{ Secrets
 # security add-generic-password \
 #   -a "$USER"\
@@ -247,33 +183,6 @@ if [ "$(uname)" = "Darwin" ]; then
 fi
 # }}}
 # {{{ Environment
-export DOTFILES_SOURCE="${HOME}/code/dotfiles"
-
-function update_languages() {
-  brew update
-  brew upgrade ruby-build
-  brew upgrade node-build
-  # brew upgrade python-build
-
-  function install_latest() {
-    local build_tool
-    local language_name
-    build_tool=$1
-    language_name=$2
-
-    echo "updating ${build_tool}"
-
-    latest_version=$(eval "${build_tool} versions | tail -n1 | rg -o '\d+.\d+.\d+'")
-    eval "${build_tool} install --skip-existing ${latest_version}"
-    eval "${build_tool} global ${latest_version}"
-    echo "${latest_version}" >| "${DOTFILES_SOURCE}/.${language_name}-version"
-    echo "Using ${language_name} ${latest_version}"
-  }
-
-  install_latest 'rbenv' 'ruby'
-  install_latest 'nodenv' 'node'
-  # install_latest 'pyenv' 'python'
-}
 
 # cat .ruby-version | xargs -I {} rbenv install --skip-existing {}
 # cat .node-version | xargs -I {} nodenv install --skip-existing {}
@@ -281,30 +190,6 @@ function update_languages() {
 # }}}
 # {{{ bindkey
 # emacs insert-mode binds ;)
-bindkey -e
-
-# Enable Ctrl-x-e to edit command line
-autoload -U edit-command-line
-zle -N edit-command-line
-bindkey '^xe' edit-command-line
-bindkey '^x^e' edit-command-line
-
-# Shouldn't be necessary...
-bindkey "^A" beginning-of-line
-bindkey "^E" end-of-line
-bindkey "^U" backward-kill-line
-bindkey "^B" backward-char
-bindkey "^F" forward-char
-
-# Vim conventions
-bindkey "^P" up-line-or-search
-bindkey "^N" down-line-or-search
-
-# FZF binds
-bindkey "^Y" fzf-cd-widget
-bindkey "^R" fzf-history-widget
-bindkey "^T" fzf-file-widget
-
 function yarnWorkspaceFuzzy() {
   local workspaces
   local rcode
@@ -330,16 +215,6 @@ function yarnWorkspaceFuzzy() {
   echo $workspace
   return $rcode
 }
-
-# Docker container id fuzzy
-function docker-container-widget() {
-  LBUFFER="${LBUFFER}$(select_docker_container_id)"
-  local rcode=$?
-  zle reset-prompt
-  return $rcode
-}
-zle -N docker-container-widget
-bindkey '^X^D' docker-container-widget
 
 # Yarn workspaces Fuzzy
 function yarn-workspace-widget() {
