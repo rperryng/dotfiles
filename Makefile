@@ -13,6 +13,7 @@ DEFAULT_PKGS += github-cli
 DEFAULT_PKGS += lazygit
 DEFAULT_PKGS += nnn
 DEFAULT_PKGS += nvim
+DEFAULT_PKGS += karabiner
 DEFAULT_PKGS += rg
 DEFAULT_PKGS += scm_breeze
 DEFAULT_PKGS += shell
