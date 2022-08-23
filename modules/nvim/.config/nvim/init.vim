@@ -963,6 +963,33 @@ function! RenameBuffer()
   endif
 endfunction
 nnoremap srn :echo '"use [space]brn" instead'<CR>
+
+" lazygit
+function! OpenLazyGit()
+  let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:lazygit_buffer_name = 'term-'.l:project_name.'-lazygit'
+  let l:lazygit_window_search = win_findbuf(bufnr('term-.dotfiles-lazygit'))
+
+  if len(l:lazygit_window_search) > 0
+    call win_gotoid(l:lazygit_window_search[0])
+  elseif buflisted(l:lazygit_buffer_name)
+    tabedit
+    tabmove -1
+    execute ':TabooRename '.l:project_name. ' (git)'
+    execute 'buffer '.l:lazygit_buffer_name
+    autocmd TermClose <buffer> :bdelete
+  else
+    tabedit
+    tabmove -1
+    terminal lazygit
+    execute ':keepalt file '.l:lazygit_buffer_name
+    execute ':TabooRename '.l:project_name. ' (git)'
+    autocmd TermClose <buffer> :bdelete
+  endif
+
+  startinsert
+endfunction
+nnoremap <space>git :call OpenLazyGit()<CR>
 " }}}
 " {{{ Mappings
 
