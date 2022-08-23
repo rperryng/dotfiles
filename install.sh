@@ -151,12 +151,11 @@ install_default_packages() {
   install_packages "jq"
   install_packages "unzip"
 
-  modules/starship/install.zsh
-  modules/fzf/install.zsh
-  modules/neovim/install.zsh
-  modules/zsh-autosuggestions/install.zsh
-  modules/zsh-syntax-highlighting/install.zsh
-  modules/rg/install.zsh
+  local packages
+  packages=$(git ls-files | grep 'modules/.*/install.zsh')
+  while IFS= read -r package; do
+    "$package"
+  done <<< "$packages"
 }
 
 clone_dotfiles() {
