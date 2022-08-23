@@ -8,6 +8,7 @@ export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME}/asdf/asdfrc"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME}/asdf/tool-versions"
 export ASDF_PYTHON_DEFAULT_PACKAGES_FILE="${XDG_CONFIG_HOME}/asdf/default-python-packages"
 export ASDF_NPM_DEFAULT_PACKAGES_FILE="${XDG_CONFIG_HOME}/asdf/default-npm-packages"
+export ASDF_GEM_DEFAULT_PACKAGES_FILE="${XDG_CONFIG_HOME}/asdf/default-gem-packages"
 
 # Load ASDF
 . "${XDG_OPT_HOME:-$HOME/.local/opt}/asdf/asdf.sh"
