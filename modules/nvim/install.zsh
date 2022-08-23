@@ -43,5 +43,32 @@ install_vim_plug() {
   nvim +PlugInstall +qAll
 }
 
+install_vim_virtual_environments() {
+
+  # Python2
+  mkdir -p "${XDG_OPT_HOME}/nvim/virtualenvs"
+  pushd "${XDG_OPT_HOME}/nvim/virtualenvs"
+
+  export ASDF_PYTHON_VERSION=$(asdf_python2_version)
+  virtualenv neovim2
+  source neovim2/bin/activate
+  pip install neovim
+  deactivate
+
+  # Python3
+  export ASDF_PYTHON_VERSION=$(asdf_python3_version)
+  virtualenv neovim3
+  source neovim3/bin/activate
+  pip install neovim neovim-remote
+  deactivate
+
+  asdf reshim python
+
+  # Node
+  yarn global add neovim
+
+  popd
+}
+
 install_neovim
 install_vim_plug

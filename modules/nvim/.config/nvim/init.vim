@@ -189,30 +189,44 @@ call plug#end()
 " ===========
 " https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
 " activate 'neovim3', then python -m pip install pynvim
-" Ruby
-if executable('pyenv')
-  let g:python3_host_prog=trim(system('PYENV_VERSION=neovim3 pyenv which python'))
+
+
+
+" Python
+if isdirectory($XDG_OPT_HOME.'/nvim/virtualenvs/neovim2')
+  let g:python_host_prog=$XDG_OPT_HOME.'/nvim/virtualenvs/neovim2/bin/python'
 else
-  echom "missing pyenv.  No python host set."
+  echom "No python 2 host set."
+endif
+
+" Python
+if isdirectory($XDG_OPT_HOME.'/nvim/virtualenvs/neovim3')
+  let g:python3_host_prog=$XDG_OPT_HOME.'/nvim/virtualenvs/neovim3/bin/python'
+else
+  echom "No python 3 host set."
 endif
 
 " Ruby
-if executable('rbenv')
-  let ruby_version = trim(system('cat $DOTFILES_DIR/.ruby-version'))
-  let rbenv_root = trim(system('echo $(rbenv root)'))
-  let g:ruby_host_prog = rbenv_root.'/versions/'.ruby_version.'/bin/neovim-ruby-host'
+if executable('asdf')
+  let ruby_version = trim(system('asdf_tool_version ruby'))
+  let ruby_path = trim(system('asdf where ruby '.ruby_version))
+  let g:ruby_host_prog = ruby_path.'/bin/ruby'
 else
-  echom "Missing rbenv.  No ruby host set."
+  echom "No ruby host set."
 endif
 
 " Node
-if executable('nodenv')
-  let g:coc_node_path=trim(system('NODENV_VERSION=$(cat $DOTFILES_DIR/.node-version) nodenv which node'))
+if executable('asdf')
+  let nodejs_version = trim(system('asdf_tool_version nodejs'))
+  let nodejs_path = trim(system('asdf where nodejs '.nodejs_version))
+
+  " TODO: This should point to the project node version? :thinking:
+  let g:coc_node_path = nodejs_path.'/bin/node'
 
   let yarn_global_dir = trim(system('yarn global dir'))
   let g:node_host_prog = yarn_global_dir.'/node_modules/neovim/bin/cli.js'
 else
-  echom "Missing nodenv.  No ruby host set."
+  echom "No node host set."
 endif
 
 " }}}
