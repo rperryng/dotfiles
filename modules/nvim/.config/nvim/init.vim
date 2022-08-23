@@ -198,7 +198,7 @@ endif
 
 " Ruby
 if executable('rbenv')
-  let ruby_version = trim(system('cat $DOTFILES_SOURCE/.ruby-version'))
+  let ruby_version = trim(system('cat $DOTFILES_DIR/.ruby-version'))
   let rbenv_root = trim(system('echo $(rbenv root)'))
   let g:ruby_host_prog = rbenv_root.'/versions/'.ruby_version.'/bin/neovim-ruby-host'
 else
@@ -207,7 +207,7 @@ endif
 
 " Node
 if executable('nodenv')
-  let g:coc_node_path=trim(system('NODENV_VERSION=$(cat $DOTFILES_SOURCE/.node-version) nodenv which node'))
+  let g:coc_node_path=trim(system('NODENV_VERSION=$(cat $DOTFILES_DIR/.node-version) nodenv which node'))
 
   let yarn_global_dir = trim(system('yarn global dir'))
   let g:node_host_prog = yarn_global_dir.'/node_modules/neovim/bin/cli.js'
@@ -814,7 +814,7 @@ nnoremap <space>BD :DeleteCwdBuffers<CR>
 function! NNStart()
   edit ~/.vimrc
   vsplit
-  execute 'edit'.expand("$DOTFILES_SOURCE/nvim/init.lua")
+  execute 'edit'.expand("$DOTFILES_DIR/nvim/init.lua")
   cd ~/code/dotfiles
   botright split
   terminal

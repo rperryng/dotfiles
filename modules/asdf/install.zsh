@@ -51,10 +51,15 @@ install_ruby() {
 
   asdf plugin add ruby ${ASDF_PLUGIN_RUBY_URL}
   asdf install ruby
-
   # TODO: add default-gems
+}
+
+install_python() {
+  asdf plugin-add python
+  asdf install python
 }
 
 install
 install_nodejs
 install_ruby
+install_python
