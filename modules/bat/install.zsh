@@ -21,8 +21,8 @@ install() {
       mkdir -p /tmp/bat
       tar xf /tmp/bat.tar.gz --directory=/tmp/bat
       extract_dir_name=$(ls /tmp/bat)
-      mv "/tmp/bat/${extract_dir_name}/bat" "${XDG_BIN_HOME}"
-      chmod +x "${XDG_BIN_HOME}/bat"
+      mv "/tmp/bat/${extract_dir_name}/bat" "${XDG_BIN_HOME:-$HOME/.local/bin}"
+      chmod +x "${XDG_BIN_HOME:-$HOME/.local/bin}/bat"
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"
