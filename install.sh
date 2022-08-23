@@ -153,7 +153,7 @@ install_default_packages() {
 
   modules/starship/install.zsh
   modules/fzf/install.zsh
-  modules/nvim/install.zsh
+  modules/neovim/install.zsh
   modules/zsh-autosuggestions/install.zsh
   modules/zsh-syntax-highlighting/install.zsh
   modules/rg/install.zsh

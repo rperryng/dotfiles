@@ -21,12 +21,12 @@ if [ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]; then
   export NVIM_LISTEN_ADDRESS=$DOTFILES_NVIM_LISTEN_ADDRESS
   alias nvim="nvr"
   alias n="nvr"
-  alias nnstart="echo 'Already in a neovim session'"
+  alias nstart="echo 'Already in a neovim session'"
 else
   export VISUAL=nvim
   alias nv="nvim"
   alias n="nvim"
-  alias nnstart="clear; nvim +'call NNStart()'"
+  alias nstart="clear; nvim +'call NNStart()'"
 fi
 
 export EDITOR="$VISUAL"
