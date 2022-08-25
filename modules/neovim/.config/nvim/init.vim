@@ -2317,8 +2317,8 @@ endif
 " {{{ Misc
 " things I don't want to commit to repo
 " (tnoremap abbreviations for commonly used activerecord objects)
-if filereadable(expand('$HOME').'/.vimrc.private')
-  source expand('$HOME').'/.vimrc.private'
+if filereadable($HOME.'/.vimrc.private')
+  execute 'source '.$HOME.'/.vimrc.private'
 endif
 
 " Search highlight comes back after reloading vimrc.  Hide it
