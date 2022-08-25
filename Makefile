@@ -4,6 +4,7 @@ ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
 
 DEFAULT_PKGS += 1password
+DEFAULT_PKGS += alacritty
 DEFAULT_PKGS += asdf
 DEFAULT_PKGS += bat
 DEFAULT_PKGS += docker
