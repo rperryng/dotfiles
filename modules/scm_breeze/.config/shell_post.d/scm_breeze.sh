@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # load scm_breeze
 SCM_BREEZE_PATH="${XDG_OPT_HOME}/scm_breeze/scm_breeze.sh"

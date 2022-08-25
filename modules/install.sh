@@ -7,14 +7,20 @@ install() {
 
   local packages
   packages=$(git ls-files | grep "./*/install.sh")
-  echo "packages to install:\n\n${packages}"
 
   while IFS= read -r package; do
-    echo "==================================="
-    echo "===========  DOTFILES  ============"
-    echo "Installing module '$(basename $(dirname ${package}))'"
+    local name=$(basename $(dirname ${package}))
+
+    echo "==================================================="
+    echo "           Installing module '$name'"
+    echo "==================================================="
 
     "$package"
+
+    echo "==================================================="
+    echo "           done installing '$name'"
+    echo "==================================================="
+    echo "..."
   done <<< "$packages"
 
   popd

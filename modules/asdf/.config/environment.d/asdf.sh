@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 export ASDF_DIR="${XDG_OPT_HOME:-$HOME/.local/opt}/asdf"
 
@@ -25,7 +25,9 @@ asdf_tool_version() {
 asdf_python2_version() {
   cat $ASDF_DEFAULT_TOOL_VERSIONS_FILENAME | rg '^python' | rg --only-matching '2\.\d+\.\d+'
 }
+export DOTFILES_PYTHON2_VERSION=$(asdf_python2_version)
 
 asdf_python3_version() {
   cat $ASDF_DEFAULT_TOOL_VERSIONS_FILENAME | rg '^python' | rg --only-matching '3\.\d+\.\d+'
 }
+export DOTFILES_PYTHON3_VERSION=$(asdf_python3_version)

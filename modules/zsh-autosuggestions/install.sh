@@ -12,4 +12,3 @@ install() {
 }
 
 install
-

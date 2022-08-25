@@ -5,11 +5,10 @@
 
 set -e
 
-# Prompt for admin password upfront
-sudo -v
-
 # Check if homebrew is installed
 if [[ ! -x "$(command -v brew)" ]]; then
+  sudo -v
+
   if [[ "${DOTFILES_OS}" == 'macos' ]]; then
     # Install standard homebrew
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

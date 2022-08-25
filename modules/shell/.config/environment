@@ -37,6 +37,10 @@ export PAGER="less"
 prepend_path "${DOTFILES_DIR}/bin"
 prepend_path "${XDG_BIN_HOME}"
 
+if [[ -d "/opt/homebrew/bin" ]]; then
+  prepend_path "/opt/homebrew/bin"
+fi
+
 # Load extra environment files into environment
 if [ -d "${XDG_CONFIG_HOME}/environment.d" ]; then
   source_files_in "${XDG_CONFIG_HOME}"/environment.d/*

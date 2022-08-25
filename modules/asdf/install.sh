@@ -36,15 +36,19 @@ install_nodejs() {
     return 1;
   fi
 
-  asdf plugin list | grep --quiet nodejs
+
+  set +e
+  asdf plugin list | grep --quiet 'nodejs'
   local return_code=$?
+  set -e
+
   if [[ "${return_code}" -eq 0 ]]; then
     return 0;
   fi
 
   case ${DOTFILES_OS} in
-    "macos") install_packages 'gpg gawk' ;;
-    "debian") install_packages 'dirmngr gpg curl gawk' ;;
+    "macos") brew install gpg gawk ;;
+    "debian") sudo apt install dirmngr gpg curl gawk ;;
     *) ;;
   esac
 
@@ -60,22 +64,25 @@ install_ruby() {
     return 1;
   fi
 
+  set +e
   asdf plugin list | grep --quiet ruby
   local return_code=$?
+  set -e
+
   if [[ "${return_code}" -eq 0 ]]; then
     return 0;
   fi
 
   case ${DOTFILES_OS} in
     "macos")
-      install_packages openssl@1.1 readline libyaml
+      brew install openssl@1.1 readline libyaml
       export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
       ;;
     "debian")
-      install_packages \
-        'autoconf bison build-essential libssl-dev libyaml-dev ' \
-        'libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 ' \
-        'libgdbm-dev libdb-dev uuid-dev'
+      sudo apt install \
+        autoconf bison build-essential libssl-dev libyaml-dev  \
+        libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6  \
+        libgdbm-dev libdb-dev uuid-dev
       ;;
     *) ;;
   esac
@@ -90,8 +97,11 @@ install_python() {
     return 1;
   fi
 
+  set +e
   asdf plugin list | grep --quiet python
   local return_code=$?
+  set -e
+
   if [[ "${return_code}" -eq 0 ]]; then
     return 0;
   fi

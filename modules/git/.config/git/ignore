@@ -31,3 +31,4 @@ yarn-error.log
 # Editor files
 .vscode
 *.swp
+.vim-bookmarks

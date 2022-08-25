@@ -56,7 +56,7 @@ install_vim_virtual_environments() {
 
   # Python2
   if [[ ! -d './neovim2' ]]; then
-    export ASDF_PYTHON_VERSION=$(asdf_python2_version)
+    export ASDF_PYTHON_VERSION=${DOTFILES_PYTHON2_VERSION}
     virtualenv neovim2
     source neovim2/bin/activate
     pip install neovim neovim-remote
@@ -65,7 +65,7 @@ install_vim_virtual_environments() {
   fi
 
   if [[ ! -d './neovim3' ]]; then
-    export ASDF_PYTHON_VERSION=$(asdf_python3_version)
+    export ASDF_PYTHON_VERSION=${DOTFILES_PYTHON3_VERSION}
     virtualenv neovim3
     source neovim3/bin/activate
     pip install neovim neovim-remote
