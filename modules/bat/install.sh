@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 BAT_LATEST_RELEASE_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
 ASSET_NAME="bat-v0.21.0-x86_64-unknown-linux-gnu.tar.gz"
 

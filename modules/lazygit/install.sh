@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 install() {
   if [[ -x "$(command -v lazygit)" ]]; then
     return 0;

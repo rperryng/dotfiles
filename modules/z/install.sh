@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 Z_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/z"
 Z_GIT_URL="https://github.com/rupa/z"
 

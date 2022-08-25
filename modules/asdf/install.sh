@@ -85,6 +85,17 @@ install_ruby() {
 }
 
 install_python() {
+  if [[ ! -x $(command -v asdf) ]]; then
+    echo "asdf not installed; cannot install python"
+    return 1;
+  fi
+
+  asdf plugin list | grep --quiet python
+  local return_code=$?
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0;
+  fi
+
   asdf plugin-add python
   asdf install python
 }

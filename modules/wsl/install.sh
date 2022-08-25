@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 WIN32YANK_LATEST_RELEASE_URL="https://api.github.com/repos/equalsraf/win32yank/releases/latest"
 
 install() {

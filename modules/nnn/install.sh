@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+ set -e
+
 DEBIAN_RELEASE_URL='https://github.com/jarun/nnn/releases/download/v4.6/nnn-static-4.6.x86_64.tar.gz'
 NNN_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nnn"
 

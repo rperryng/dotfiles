@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SCM_BREEZE_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/scm_breeze"
 CLONE_URL="https://github.com/scmbreeze/scm_breeze.git"
 

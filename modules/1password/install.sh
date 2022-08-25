@@ -2,9 +2,11 @@
 
 # https://developer.1password.com/docs/cli/get-started/
 
+set -e
+
 function install() {
   if [[ -x "$(command -v op)" ]]; then
-    "1password installed"
+    echo "1password installed"
     return 0;
   fi
 

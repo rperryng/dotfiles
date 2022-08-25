@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
 install() {
   if [[ "${DOTFILES_OS}" != "macos" ]]; then
-    return
+    return 0
   fi
 
   # TODO: Install Karabiner??

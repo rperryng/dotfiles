@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 function install() {
   case ${DOTFILES_OS} in
     "debian") curl -sS https://starship.rs/install.sh | sh -s -- -y ;;

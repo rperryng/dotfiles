@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 FZF_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/fzf"
 
 install() {
