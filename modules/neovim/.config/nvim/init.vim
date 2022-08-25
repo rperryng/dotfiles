@@ -826,15 +826,15 @@ command! DeleteCwdBuffers call DeleteCwdBuffers()
 nnoremap <space>BD :DeleteCwdBuffers<CR>
 
 function! NNStart()
-  edit ~/.vimrc
+  edit $MYVIMRC
   vsplit
-  execute 'edit'.expand("$DOTFILES_DIR/nvim/init.lua")
-  cd ~/code/dotfiles
+  execute 'edit'.expand("$XDG_CONFIG_HOME/nvim/lua/init.lua")
+  cd $DOTFILES_DIR
   botright split
   terminal
-  file term-dotfiles
+  file term-.dotfiles
   call TerminalResize()
-  TabooRename dotfiles
+  TabooRename .dotfiles
 endfunction
 
 " function VimTestVimspectorStrategyTest(executable, args)
