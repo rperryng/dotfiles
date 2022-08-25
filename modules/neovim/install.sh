@@ -35,11 +35,14 @@ install_neovim() {
 }
 
 install_vim_plug() {
-  sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  VIM_PLUG_DEST="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim"
 
-  # TODO: markdown-preview, firenvim, nvim-treesitter installation errors
-  nvim +PlugInstall +qall!
+  if [[ ! -f $VIM_PLUG_DEST ]]; then
+    sh -c "curl -fLo ${VIM_PLUG_DEST} --create-dirs \
+         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+
+    nvim "+source ${XDG_CONFIG_HOME}/nvim/.vim_plug_snapshot" "+qall!" || true
+  fi
 }
 
 install_vim_virtual_environments() {

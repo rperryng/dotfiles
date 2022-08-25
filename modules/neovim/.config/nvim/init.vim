@@ -24,6 +24,7 @@ function! LoadVimPlugSnapshot()
 
   execute 'source '.g:vim_plug_snapshot_path
 endfunction
+command! LoadVimPlugSnapshot call LoadVimPlugSnapshot()
 
 function! UpdatePlugSnapshot()
   execute ':PlugSnapshot! '.g:vim_plug_snapshot_path

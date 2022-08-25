@@ -38,8 +38,16 @@ install() {
 }
 
 install_gruvbox_bat_theme() {
-  mkdir -p "$(bat --config-dir)/themes"
-  cp "${DOTFILES_DIR:-$HOME/.dotfiles}/data/gruvbox-dark-hard.tmTheme" "$(bat --config-dir)/themes"
+  bat_theme_path="$(bat --config-dir)/themes"
+  src_path="${DOTFILES_DIR:-$HOME/.dotfiles}/data/gruvbox-dark-hard.tmTheme"
+  dest_path="${bat_theme_path}/gruvbox-dark-hard.tmTheme"
+
+  if [[ -f "${dest_path}" ]]; then
+    return 0;
+  fi
+
+  mkdir -p $bat_theme_path
+  cp ${src_path} ${dest_path}
   bat cache --build
 }
 

@@ -7,6 +7,8 @@ install() {
 
   local packages
   packages=$(git ls-files | grep "./*/install.sh")
+  echo "packages to install:\n\n${packages}"
+
   while IFS= read -r package; do
     echo "==================================="
     echo "===========  DOTFILES  ============"
