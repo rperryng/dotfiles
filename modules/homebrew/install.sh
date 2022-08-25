@@ -23,6 +23,8 @@ if [[ ! -x "$(command -v brew)" ]]; then
     # Install linuxbrew
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
   fi
+else
+  echo "brew already installed."
 fi
 
 # Install brews using brew bundle (uses the Brewfile)
