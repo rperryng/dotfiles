@@ -211,10 +211,11 @@ main() {
   setup_default_shells
   make
 
-  # Install the modules in a ZSH session
+  # Install the user modules in a ZSH session, so that proper envs are loaded
   "${DOTFILES_DIR}/modules/install.zsh"
 
   # Start zsh
+  echo "Starting zsh..."
   zsh
 }
 

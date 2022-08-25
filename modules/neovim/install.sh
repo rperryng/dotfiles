@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 NVIM_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nvim"
 
 install_neovim() {
@@ -37,7 +39,7 @@ install_vim_plug() {
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
   # TODO: markdown-preview, firenvim, nvim-treesitter installation errors
-  nvim +PlugInstall +qAll
+  nvim +PlugInstall +qall!
 }
 
 install_vim_virtual_environments() {
@@ -46,24 +48,27 @@ install_vim_virtual_environments() {
     return 1
   fi
 
-  # Python2
   mkdir -p "${XDG_OPT_HOME}/nvim/virtualenvs"
   pushd "${XDG_OPT_HOME}/nvim/virtualenvs"
 
-  export ASDF_PYTHON_VERSION=$(asdf_python2_version)
-  virtualenv neovim2
-  source neovim2/bin/activate
-  pip install neovim
-  deactivate
+  # Python2
+  if [[ ! -d './neovim2' ]]; then
+    export ASDF_PYTHON_VERSION=$(asdf_python2_version)
+    virtualenv neovim2
+    source neovim2/bin/activate
+    pip install neovim neovim-remote
+    deactivate
+    asdf reshim python
+  fi
 
-  # Python3
-  export ASDF_PYTHON_VERSION=$(asdf_python3_version)
-  virtualenv neovim3
-  source neovim3/bin/activate
-  pip install neovim neovim-remote
-  deactivate
-
-  asdf reshim python
+  if [[ ! -d './neovim3' ]]; then
+    export ASDF_PYTHON_VERSION=$(asdf_python3_version)
+    virtualenv neovim3
+    source neovim3/bin/activate
+    pip install neovim neovim-remote
+    deactivate
+    asdf reshim python
+  fi
 
   popd
 }

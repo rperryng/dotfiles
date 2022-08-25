@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 ASDF_REPOSITORY_URL="https://github.com/asdf-vm/asdf.git"
 
 export ASDF_DIR="${XDG_OPT_HOME:-$HOME/.local/opt}/asdf"
