@@ -37,21 +37,6 @@ XDG_BIN_HOME := $(HOME)/.local/bin
 XDG_LIB_HOME := $(HOME)/.local/lib
 XDG_OPT_HOME := $(HOME)/.local/opt
 
-# macOS specific settings
-ifeq ($(shell uname), Darwin)
-	DEFAULT_PKGS := $(DEFAULT_PKGS) macos homebrew hammerspoon karabiner
-endif
-
-# Linux specific settings
-ifeq ($(shell uname), Linux)
-	DEFAULT_PKGS := $(DEFAULT_PKGS)
-endif
-
-# Windows Subsystem for Linux settings
-ifeq ($(shell cat /proc/version | grep -o microsoft), microsoft)
-	DEFAULT_PKGS := $(DEFAULT_PKGS)
-endif
-
 # Subdirectories with make files
 SUBDIRS = $(sort $(basename $(dir $(wildcard */Makefile))))
 PKG_MAKEFILES = $(SUBDIRS:/=)
