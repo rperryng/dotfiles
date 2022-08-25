@@ -38,8 +38,10 @@ install_nodejs() {
     return 0;
   fi
 
-  if [[ $(cat /tmp/tool-versions | grep --quiet nodejs) -eq 0 ]]; then
-    echo "nodejs installed"
+  cat /tmp/tool-versions | grep --quiet asdfnodejs
+  local return_code=$?
+  if [[ $return_code -eq 0 ]]; then
+    return 0;
   fi
 
   case ${DOTFILES_OS} in

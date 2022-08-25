@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 
-echo "Installing neovim"
-
 NVIM_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nvim"
 
 install_neovim() {
-  if command -v nvim; then
-    echo "neovim already installed"
-    return
+  if [[ -x $(command -v nvim) ]]; then
+    return 0
   fi
 
   case ${DOTFILES_OS} in
@@ -44,6 +41,10 @@ install_vim_plug() {
 }
 
 install_vim_virtual_environments() {
+  if [[ ! -x "$(command -v asdf)" ]]; then
+    echo "asdf not installed - cannot setup virtual vim environments"
+    return 1
+  fi
 
   # Python2
   mkdir -p "${XDG_OPT_HOME}/nvim/virtualenvs"
@@ -64,11 +65,9 @@ install_vim_virtual_environments() {
 
   asdf reshim python
 
-  # Node
-  yarn global add neovim
-
   popd
 }
 
 install_neovim
 install_vim_plug
+install_vim_virtual_environments

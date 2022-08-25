@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 install() {
+  if [[ -x "$(command -v lazygit)" ]]; then
+    return 0;
+  fi
+
   case ${DOTFILES_OS} in
     "macos")
       brew install jesseduffield/lazygit/lazygit

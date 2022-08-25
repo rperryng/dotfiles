@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 function install() {
+  if [[ -x "$(command -v gh)" ]]; then
+    return 0;
+  fi
+
   case ${DOTFILES_OS} in
     "macos")
       install_packages gh
