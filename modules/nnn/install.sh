@@ -1,10 +1,14 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 DEBIAN_RELEASE_URL='https://github.com/jarun/nnn/releases/download/v4.6/nnn-static-4.6.x86_64.tar.gz'
 NNN_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nnn"
 
 function install() {
-  case ${DOTFILES_PKG_MGR} in
+  if [[ -x "$(command -v nnn)" ]]; then
+    return 0;
+  fi
+
+  case ${DOTFILES_OS} in
     "macos")
       brew install nnn
       ;;

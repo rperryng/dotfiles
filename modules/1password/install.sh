@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # https://developer.1password.com/docs/cli/get-started/
 

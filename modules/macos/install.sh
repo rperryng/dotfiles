@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 install() {
   # https://github.com/dmarcotte/easy-move-resize

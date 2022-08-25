@@ -1,9 +1,13 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 BAT_LATEST_RELEASE_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
 ASSET_NAME="bat-v0.21.0-x86_64-unknown-linux-gnu.tar.gz"
 
 install() {
+  if [[ -x "$(command -v bat)" ]]; then
+    return;
+  fi
+
   case ${DOTFILES_OS} in
     "macos")
       brew install bat
@@ -33,7 +37,7 @@ install() {
 
 install_gruvbox_bat_theme() {
   mkdir -p "$(bat --config-dir)/themes"
-  cp "${DOTFILES_DIR}/data/gruvbox-dark-hard.tmTheme" "$(bat --config-dir)/themes"
+  cp "${DOTFILES_DIR:-$HOME/.dotfiles}/data/gruvbox-dark-hard.tmTheme" "$(bat --config-dir)/themes"
   bat cache --build
 }
 

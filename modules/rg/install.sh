@@ -1,6 +1,10 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 function install() {
+  if [[ -x $(command -v rg) ]]; then
+    return 0
+  fi
+
   case ${DOTFILES_OS} in
     "macos")
       brew install ripgrep

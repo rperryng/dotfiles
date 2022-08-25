@@ -1,8 +1,16 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 WIN32YANK_LATEST_RELEASE_URL="https://api.github.com/repos/equalsraf/win32yank/releases/latest"
 
 install() {
+  if ! is_wsl; then
+    return 0;
+  fi
+
+  if [[ -x "$(command -v win32yank.exe)" ]]; then
+    return 0;
+  fi
+
   MACHINE_TYPE=$(uname -m)
   if [ ${MACHINE_TYPE} = 'x86_64' ]; then
     ASSET_NAME="win32yank-x64.zip"
@@ -10,8 +18,6 @@ install() {
     ASSET_NAME="win32yank-x86.zip"
     # 32-bit stuff here
   fi
-
-  echo "attempting to install: ${ASSET_NAME}"
 
   download_url=$( \
     curl -sSL \

@@ -1,4 +1,6 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
+
+set -e
 
 ASDF_REPOSITORY_URL="https://github.com/asdf-vm/asdf.git"
 
@@ -8,20 +10,38 @@ export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
 
 install() {
-  latest_tag=$( \
-    git -c 'versionsort.suffix=-' \
+  if [[ -x "$(command -v asdf)" ]]; then
+    return 0
+  fi
+
+  if [[ ! -d "${ASDF_DIR}" ]]; then
+    latest_tag=$( \
+      git -c 'versionsort.suffix=-' \
       ls-remote --exit-code --refs --sort='version:refname' --tags ${ASDF_REPOSITORY_URL} '*.*.*' \
       | tail --lines=1 \
       | cut --delimiter='/' --fields=3 \
-  )
+    )
 
-  git clone \
-    "${ASDF_REPOSITORY_URL}" "${ASDF_DIR}" \
-    --branch "${latest_tag}"
+    git clone \
+      "${ASDF_REPOSITORY_URL}" "${ASDF_DIR}" \
+      --branch "${latest_tag}"
+  fi
 }
 
 ASDF_PLUGIN_NODEJS_URL="https://github.com/asdf-vm/asdf-nodejs.git"
 install_nodejs() {
+  if [[ ! -x $(command -v asdf) ]]; then
+    return 1;
+  fi
+
+  if [[ $(asdf plugin list | grep --quiet nodejs) ]]; then
+    return 0;
+  fi
+
+  if [[ $(cat /tmp/tool-versions | grep --quiet nodejs) -eq 0 ]]; then
+    echo "nodejs installed"
+  fi
+
   case ${DOTFILES_OS} in
     "macos") install_packages 'gpg gawk' ;;
     "debian") install_packages 'dirmngr gpg curl gawk' ;;

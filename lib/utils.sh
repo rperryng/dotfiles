@@ -95,10 +95,10 @@ export DOTFILES_OS="$(get_os_family)"
 
 is_wsl() {
   if [[ -f '/proc/version' ]]; then
-    grep -qi microsoft '/proc/version' && return
+    grep -qi microsoft '/proc/version' && return 0
   fi
 
-  false
+  return 1
 }
 
 get_package_manager() {
