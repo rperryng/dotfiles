@@ -127,7 +127,8 @@ install_packages() {
     "yum") $sudo_cmd yum install -y $pkgs ;;
     "pacman") $sudo_cmd pacman -S $pkgs ;;
     "brew")
-      source "${DOTFILES_DIR}/modules/homebrew/.config/profile.d/homebrew.sh"
+      echo "brew installing: '${pkgs}'"
+      # source "${DOTFILES_DIR}/modules/homebrew/.config/profile.d/homebrew.sh"
       # shellcheck disable=SC2086
       brew install $pkgs
       ;;
@@ -144,6 +145,7 @@ install_packages() {
 }
 
 install_default_packages() {
+  echo "installing default packages"
   install_packages "stow"
   install_packages "zsh"
   install_packages "tldr"
@@ -151,8 +153,12 @@ install_default_packages() {
   install_packages "unzip"
 
   local packages
-  packages=$(git ls-files | grep 'modules/.*/install.zsh')
+  packages=$(git ls-files | grep 'modules/.*/install.sh')
   while IFS= read -r package; do
+    echo "==================================="
+    echo "===========  DOTFILES  ============"
+    echo "Installing module '$(basename $(dirname ${package}))'"
+
     "$package"
   done <<< "$packages"
 }
