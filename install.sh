@@ -169,6 +169,10 @@ clone_dotfiles() {
 }
 
 setup_default_shells() {
+  if [[ "${SHELL}" =~ zsh ]]; then
+    return 0
+  fi
+
   local bash_path
   bash_path="$(which bash | head -1)"
   local zsh_path
