@@ -5,6 +5,9 @@ NNN_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nnn"
 
 function install() {
   case ${DOTFILES_PKG_MGR} in
+    "macos")
+      brew install nnn
+      ;;
     "apt")
       mkdir -p "${NNN_HOME}"
       curl -fsSL "${DEBIAN_RELEASE_URL}" > /tmp/nnn-static.tar.gz

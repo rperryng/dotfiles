@@ -438,8 +438,8 @@ set lazyredraw
 set colorcolumn=80
 set synmaxcol=500
 set signcolumn=yes
-set scrolloff=0
-set sidescrolloff=15
+set scrolloff=5
+set sidescrolloff=0
 set showcmd
 set splitbelow
 set splitright
