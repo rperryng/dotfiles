@@ -109,7 +109,6 @@ install_package_managers() {
     "macos")
       # Always install homebrew on macos
       "${DOTFILES_DIR}/modules/homebrew/install.sh"
-      brew install "$pkgs"
       ;;
     *) ;;
   esac
