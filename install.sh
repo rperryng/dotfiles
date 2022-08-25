@@ -2,7 +2,6 @@
 
 set -e -o pipefail
 
-DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/.dotfiles}"
 DOTFILES_INSTALL_USE_SUDO="${DOTFILES_INSTALL_USE_SUDO:-0}"
 
 # XDG configuration
@@ -16,6 +15,7 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 export XDG_BIN_HOME="${XDG_BIN_HOME:-$HOME/.local/bin}"
 export XDG_LIB_HOME="${XDG_LIB_HOME:-$HOME/.local/lib}"
 export XDG_OPT_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}"
+export DOTFILES_DIR="${DOTFILES_DIR:-${HOME}/.dotfiles}"
 
 # Get the appropriate package manager script
 get_os_family() {

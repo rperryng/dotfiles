@@ -29,7 +29,9 @@ if [[ -x "$(command -v brew)" ]]; then
   # printf "Do you want run brew bundle [y/N]? "
   # read -r answer
   # case "${answer}" in [yY] | [yY][eE][sS])
-    brewfile="${DOTFILES_DIR}/modules/homebrew/.config/homebrew"
+    brewfile="${DOTFILES_DIR}/modules/homebrew/.config/homebrew/Brewfile"
+    echo "brewfile: ${brewfile}"
+    cat $brewfile
     HOMEBREW_BUNDLE_FILE="$brewfile" brew bundle
     # ;;
   # esac
