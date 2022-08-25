@@ -136,6 +136,7 @@ Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
 Plug 'wellle/targets.vim'
 Plug 'wsdjeg/vim-fetch'
+Plug 'MattesGroeger/vim-bookmarks'
 
 " Plug 'Olical/aniseed'
 " Plug 'Olical/conjure'
@@ -432,8 +433,8 @@ set lazyredraw
 set colorcolumn=80
 set synmaxcol=500
 set signcolumn=yes
-set scrolloff=0
-set sidescrolloff=15
+set scrolloff=5
+set sidescrolloff=0
 set showcmd
 set splitbelow
 set splitright
@@ -2171,6 +2172,23 @@ call textobj#user#plugin('rpn', {
 " }}}
 " {{{ lua
 " lua dofile(vim.env.DOTFILES_SOURCE .. "/nvim/init.lua")
+" }}}
+" {{{ vim-bookmarks
+let g:bookmark_no_default_key_mappings = 1
+let g:bookmark_save_per_working_dir = 1
+let g:bookmark_auto_save = 1
+
+nmap <space>mm <Plug>BookmarkToggle
+nmap <space>mi <Plug>BookmarkAnnotate
+nmap <space>ml <Plug>BookmarkShowAll
+nmap <space>mj <Plug>BookmarkNext
+nmap <space>mk <Plug>BookmarkPrev
+nmap <space>mc <Plug>BookmarkClear
+nmap <space>mx <Plug>BookmarkClearAll
+nmap <space>mkk <Plug>BookmarkMoveUp
+nmap <space>mjj <Plug>BookmarkMoveDown
+nmap <space>mg <Plug>BookmarkMoveToLine
+" }}}
 " }}}
 " {{{ Terminal buffer configs
 

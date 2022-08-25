@@ -5,3 +5,4 @@ notes.wiki
 .vimspector.json
 .vscode/
 Session.vim
+.vim-bookmarks
