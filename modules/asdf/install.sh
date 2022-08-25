@@ -16,10 +16,11 @@ install() {
 
   if [[ ! -d "${ASDF_DIR}" ]]; then
     latest_tag=$( \
-      git -c 'versionsort.suffix=-' \
-      ls-remote --exit-code --refs --sort='version:refname' --tags ${ASDF_REPOSITORY_URL} '*.*.*' \
-      | tail --lines=1 \
-      | cut --delimiter='/' --fields=3 \
+      git \
+        -c 'versionsort.suffix=-' \
+        ls-remote --exit-code --refs --sort='version:refname' --tags ${ASDF_REPOSITORY_URL} '*.*.*' \
+        | tail --lines=1 \
+        | grep -E --only-matching 'v\d+\.\d+\.\d+' \
     )
 
     git clone \
