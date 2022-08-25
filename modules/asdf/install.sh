@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 ASDF_REPOSITORY_URL="https://github.com/asdf-vm/asdf.git"
 
 export ASDF_DIR="${XDG_OPT_HOME:-$HOME/.local/opt}/asdf"
@@ -32,16 +30,13 @@ install() {
 ASDF_PLUGIN_NODEJS_URL="https://github.com/asdf-vm/asdf-nodejs.git"
 install_nodejs() {
   if [[ ! -x $(command -v asdf) ]]; then
+    echo "asdf not installed; cannot install nodejs"
     return 1;
   fi
 
-  if [[ $(asdf plugin list | grep --quiet nodejs) ]]; then
-    return 0;
-  fi
-
-  cat /tmp/tool-versions | grep --quiet asdfnodejs
+  asdf plugin list | grep --quiet nodejs
   local return_code=$?
-  if [[ $return_code -eq 0 ]]; then
+  if [[ "${return_code}" -eq 0 ]]; then
     return 0;
   fi
 
@@ -53,11 +48,22 @@ install_nodejs() {
 
   asdf plugin add nodejs ${ASDF_PLUGIN_NODEJS_URL}
   asdf nodejs update-nodebuild
-  asdf install nodejs 16.17.0
+  asdf install nodejs
 }
 
 ASDF_PLUGIN_RUBY_URL="https://github.com/asdf-vm/asdf-ruby.git"
 install_ruby() {
+  if [[ ! -x $(command -v asdf) ]]; then
+    echo "asdf not installed; cannot install ruby"
+    return 1;
+  fi
+
+  asdf plugin list | grep --quiet ruby
+  local return_code=$?
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0;
+  fi
+
   case ${DOTFILES_OS} in
     "macos")
       install_packages openssl@1.1 readline libyaml
@@ -74,7 +80,6 @@ install_ruby() {
 
   asdf plugin add ruby ${ASDF_PLUGIN_RUBY_URL}
   asdf install ruby
-  # TODO: add default-gems
 }
 
 install_python() {

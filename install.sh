@@ -151,16 +151,6 @@ install_default_packages() {
   install_packages "tldr"
   install_packages "jq"
   install_packages "unzip"
-
-  local packages
-  packages=$(git ls-files | grep 'modules/.*/install.sh')
-  while IFS= read -r package; do
-    echo "==================================="
-    echo "===========  DOTFILES  ============"
-    echo "Installing module '$(basename $(dirname ${package}))'"
-
-    "$package"
-  done <<< "$packages"
 }
 
 clone_dotfiles() {
@@ -213,7 +203,7 @@ main() {
   clone_dotfiles
   cd "$DOTFILES_DIR"
 
-  # install packages
+  # install things
   install_package_managers
   install_default_packages
 
@@ -221,9 +211,10 @@ main() {
   setup_default_shells
   make
 
+  # Install the modules in a ZSH session
+  "${DOTFILES_DIR}/modules/install.zsh"
+
   # Start zsh
-  echo "Starting zsh ..."
-  echo "Install modules from ${DOTFILES_DIR}/install"
   zsh
 }
 
