@@ -18,6 +18,7 @@ alias gpsu="git push --set-upstream origin \$(git symbolic-ref --short -q HEAD)"
 # Semantically a 'git rebase --continue --no-edit', i.e. re-use the same commit
 # message as the original.
 alias grbcne='GIT_EDITOR=true git rebase --continue'
+alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
 
 git_migrate_to_main() {
   git branch -m master main
