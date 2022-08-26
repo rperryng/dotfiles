@@ -2,13 +2,6 @@
 # compinit
 
 # {{{ One time installs
-# pyenv
-# https://github.com/scmbreeze/scm_breeze
-# https://github.com/tpope/gem-ctags
-# https://github.com/tpope/rbenv-ctags
-# https://github.com/nodenv/nodenv-default-packages
-# https://github.com/nodenv/nodenv-aliases
-
 # Enable esc+ to treat option keys as alt
 # https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
 # }}}
@@ -36,9 +29,6 @@ alias migrate="bundle exec rake db:migrate && RACK_ENV=test bundle exec rake db:
 alias rollback="bundle exec rake db:rollback && RACK_ENV=test bundle exec rake db:rollback"
 alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:drop db:create db:migrate && RACK_ENV=test bundle exec rake db:migrate"
 
-# Jump to repository root
-alias cdp='cd $(git rev-parse --show-toplevel)'
-
 alias yarn-linked="find . -type l | grep -v .bin | sed 's/^\.\/node_modules\///'"
 alias yarn-unlink-all="yarn-linked | grep -v 'puppeteer' | xargs yarn unlink && yarn install --check-files"
 function ydd() {
@@ -55,14 +45,6 @@ function git_migrate_to_main() {
   git branch -u origin/main main
   git remote set-head origin -a
 }
-
-alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | rg 'refs/remotes/origin/(.+)' -o -r '\$1'"
-alias gcom='git checkout $(git_default_branch)'
-alias gdm='git diff $(git_default_branch)'
-alias gdmno='git diff --relative --name-only $(git_default_branch)'
-alias gdnom='git diff --relative --name-only $(git_default_branch)'
-
-alias git_repository_name='basename -s .git $(git config --get remote.origin.url)'
 
 # Worktrees
 function gwa() {
