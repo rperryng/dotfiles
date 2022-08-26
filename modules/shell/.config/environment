@@ -46,6 +46,17 @@ if [ -d "${XDG_CONFIG_HOME}/environment.d" ]; then
   source_files_in "${XDG_CONFIG_HOME}"/environment.d/*
 fi
 
+# Load secrets
+if [ -d "${XDG_CONFIG_HOME}/secrets.d" ]; then
+  set -o allexport
+
+  for secrets_file in "${XDG_CONFIG_HOME}"/secrets.d/*.env; do
+    . $secrets_file
+  done
+
+  set +o allexport
+fi
+
 # Go to the dotfiles directory
 if [[ -n "${DOTFILES_DIR}" ]]; then
   alias dotdir='cd ${DOTFILES_DIR}'
