@@ -24,7 +24,7 @@ git_migrate_to_main() {
   git branch --move master main
   git fetch origin
   git branch --set-upstream-to='origin/main' main
-  git remote set-head origin -a
+  git remote set-head origin --auto
 }
 
 point_branch_to_head() {
