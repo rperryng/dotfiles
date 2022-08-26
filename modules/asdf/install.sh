@@ -10,10 +10,6 @@ export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/tool-versions"
 
 install() {
-  if [[ -x "$(command -v asdf)" ]]; then
-    return 0
-  fi
-
   if [[ ! -d "${ASDF_DIR}" ]]; then
     latest_tag=$( \
       git \
@@ -31,12 +27,6 @@ install() {
 
 ASDF_PLUGIN_NODEJS_URL="https://github.com/asdf-vm/asdf-nodejs.git"
 install_nodejs() {
-  if [[ ! -x $(command -v asdf) ]]; then
-    echo "asdf not installed; cannot install nodejs"
-    return 1;
-  fi
-
-
   set +e
   asdf plugin list | grep --quiet 'nodejs'
   local return_code=$?
@@ -59,11 +49,6 @@ install_nodejs() {
 
 ASDF_PLUGIN_RUBY_URL="https://github.com/asdf-vm/asdf-ruby.git"
 install_ruby() {
-  if [[ ! -x $(command -v asdf) ]]; then
-    echo "asdf not installed; cannot install ruby"
-    return 1;
-  fi
-
   set +e
   asdf plugin list | grep --quiet ruby
   local return_code=$?
@@ -92,11 +77,6 @@ install_ruby() {
 }
 
 install_python() {
-  if [[ ! -x $(command -v asdf) ]]; then
-    echo "asdf not installed; cannot install python"
-    return 1;
-  fi
-
   set +e
   asdf plugin list | grep --quiet python
   local return_code=$?
@@ -110,7 +90,28 @@ install_python() {
   asdf install python
 }
 
+ASDF_PLUGIN_ALIAS_URL="https://github.com/andrewthauer/asdf-alias.git"
+install_alias() {
+  set +e
+  asdf plugin list | grep --quiet alias
+  local return_code=$?
+  set -e
+
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0;
+  fi
+
+  asdf plugin-add alias $ASDF_PLUGIN_ALIAS_URL
+}
+
 install
+
+if [[ ! -x $(command -v asdf) ]]; then
+  echo "asdf not installed; cannot install asdf plugins"
+  exit 1;
+fi
+
 install_nodejs
 install_ruby
 install_python
+install_alias

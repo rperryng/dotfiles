@@ -2,4 +2,5 @@
 # For the global gitignore file, see: 'modules/git/.config/git/ignore'
 
 *.env
+*.zcompdump
 .stow-bogus-links
