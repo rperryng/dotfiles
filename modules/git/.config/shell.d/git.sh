@@ -45,6 +45,7 @@ rebase_dependent() {
   git rebase --onto $(git_default_branch) "${feature_branch}" HEAD
 }
 
+export DOTFILES_CLONE_URLS_PATH="${XDG_CONFIG_HOME}/.clone_urls"
 refresh_clone_urls() {
   temp_file=$(mktemp)
   (
@@ -55,7 +56,7 @@ refresh_clone_urls() {
           | select(.archived | not)
           | .ssh_url
         ' > $temp_file && \
-        rm --force "$HOME/.clone_urls" && \
-        mv $temp_file "$HOME/.clone_urls" \
+        rm --force $DOTFILES_CLONE_URLS_PATH && \
+        mv $temp_file $DOTFILES_CLONE_URLS_PATH \
   ) &
 }

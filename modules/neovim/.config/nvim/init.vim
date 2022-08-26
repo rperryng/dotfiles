@@ -1300,10 +1300,9 @@ endfunction
 
 function! FuzzyProjectSelector()
   let l:cloneable_entries = []
-  let l:cloneable_entries_path = expand('$HOME').'/.clone_urls'
-  if filereadable(l:cloneable_entries_path)
+  if filereadable($DOTFILES_CLONE_URLS_PATH)
     let l:cloneable_entries = map(
-          \ copy(readfile(l:cloneable_entries_path)),
+          \ copy(readfile($DOTFILES_CLONE_URLS_PATH)),
           \ { _line, clone_url -> matchstr(clone_url, ':\zs.*\ze\.git')},
           \ )
   endif
