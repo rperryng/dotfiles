@@ -16,10 +16,12 @@ DEFAULT_PKGS += github-cli
 DEFAULT_PKGS += homebrew
 DEFAULT_PKGS += karabiner
 DEFAULT_PKGS += lazygit
+DEFAULT_PKGS += direnv
 DEFAULT_PKGS += neovim
 DEFAULT_PKGS += nnn
 DEFAULT_PKGS += rg
 DEFAULT_PKGS += scm_breeze
+DEFAULT_PKGS += secrets
 DEFAULT_PKGS += shell
 DEFAULT_PKGS += ssh
 DEFAULT_PKGS += starship
@@ -69,6 +71,7 @@ prepare-dirs:
 	@mkdir -p $(XDG_BIN_HOME)
 	@mkdir -p $(XDG_LIB_HOME)
 	@mkdir -p $(XDG_OPT_HOME)
+	@mkdir -p $(HOME)/code
 ifeq ($(shell uname), Darwin)
 	@mkdir -p $(XDG_CONFIG_HOME)/hammerspoon
 	@mkdir -p $(XDG_CONFIG_HOME)/homebrew
