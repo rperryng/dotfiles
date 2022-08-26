@@ -1,0 +1,5 @@
+# Starship prompt config: https://starship.rs/config/
+
+[cmd_duration]
+min_time = 0
+style = "yellow"

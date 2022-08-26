@@ -1,8 +1,0 @@
-tags
-notes.wiki
-.bundle/
-.DS_Store
-.vimspector.json
-.vscode/
-Session.vim
-.vim-bookmarks

@@ -1,0 +1,15 @@
+[user]
+	email = ryanperrynguyen@gmail.com
+	name = Ryan Perry-Nguyen
+
+[core]
+  excludesfile = ~/.config/git/ignore
+
+[init]
+  defaultBranch = main
+
+[pull]
+	ff = only
+
+[push]
+  default = simple

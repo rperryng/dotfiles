@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+#
+# Common login shell profile
+#
+
+# Load extra profile files into login shell env
+if [ -d "${XDG_CONFIG_HOME}/profile.d" ]; then
+  source_files_in "${XDG_CONFIG_HOME}"/profile.d/*
+fi

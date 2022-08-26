@@ -1,0 +1,22 @@
+local pkgs="$1"
+
+# Ensure $pkgs is word split by space when running in zsh
+[ -n "${ZSH_VERSION:-}" ] && set -A pkgs ${=pkgs}
+
+case ${DOTFILES_PKG_MGR} in
+  "apt") sudo apt install -y $pkgs ;;
+  "brew")
+    # source "${DOTFILES_DIR}/modules/homebrew/.config/profile.d/homebrew.sh"
+    # # shellcheck disable=SC2086
+    brew install $pkgs
+    ;;
+  "nix")
+    source "${DOTFILES_DIR}/modules/nix/.config/profile.d/nix.sh"
+    nix_pkgs=("$pkgs")
+    # shellcheck disable=SC2068
+    for pkg in ${nix_pkgs[@]}; do
+      nix-env -iA nixpkgs."$pkg"
+    done
+    ;;
+  *) ;;
+esac

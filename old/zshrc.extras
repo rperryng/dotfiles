@@ -1,0 +1,220 @@
+# Autoload -Uz compinit
+# compinit
+
+# {{{ One time installs
+# pyenv
+# https://github.com/scmbreeze/scm_breeze
+# https://github.com/tpope/gem-ctags
+# https://github.com/tpope/rbenv-ctags
+# https://github.com/nodenv/nodenv-default-packages
+# https://github.com/nodenv/nodenv-aliases
+
+# Enable esc+ to treat option keys as alt
+# https://github.com/junegunn/fzf.vim/issues/54#issuecomment-350417085
+# }}}
+# {{{ GitHub
+# When enter starts inputting ^M...
+alias pls="stty sane"
+
+# Open the PR page for the current branch.
+if [[ "$(uname)" == "Darwin" ]]; then
+  function ghrws() {
+    local folder_name
+    local msg
+    folder_name=$(basename "$PWD")
+    gh run watch && \
+      osx_notify "GitHub Actions" "Done workflow for ${folder_name}" && \
+      say "Done workflow for ${folder_name}"
+  }
+fi
+
+# }}}
+# {{{ Aliases, Functions
+alias rm_postgres_lockfile="rm /usr/local/var/postgres/postmaster.pid"
+alias be="bundle exec"
+alias migrate="bundle exec rake db:migrate && RACK_ENV=test bundle exec rake db:migrate"
+alias rollback="bundle exec rake db:rollback && RACK_ENV=test bundle exec rake db:rollback"
+alias db-rebuild="git checkout master -- db/schema.rb && bundle exec rake db:drop db:create db:migrate && RACK_ENV=test bundle exec rake db:migrate"
+
+# Jump to repository root
+alias cdp='cd $(git rev-parse --show-toplevel)'
+
+alias yarn-linked="find . -type l | grep -v .bin | sed 's/^\.\/node_modules\///'"
+alias yarn-unlink-all="yarn-linked | grep -v 'puppeteer' | xargs yarn unlink && yarn install --check-files"
+function ydd() {
+  if [[ -z $1 ]]; then
+    yarn-deduplicate yarn.lock
+  else
+    yarn-deduplicate $1
+  fi
+}
+
+function git_migrate_to_main() {
+  git branch -m master main
+  git fetch origin
+  git branch -u origin/main main
+  git remote set-head origin -a
+}
+
+alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | rg 'refs/remotes/origin/(.+)' -o -r '\$1'"
+alias gcom='git checkout $(git_default_branch)'
+alias gdm='git diff $(git_default_branch)'
+alias gdmno='git diff --relative --name-only $(git_default_branch)'
+alias gdnom='git diff --relative --name-only $(git_default_branch)'
+
+alias git_repository_name='basename -s .git $(git config --get remote.origin.url)'
+
+# Worktrees
+function gwa() {
+  new_branch=$1
+  base_branch=$2
+  repo_name=$(git_repository_name)
+
+  if [ -z "$base_branch" ]; then
+    base_branch=$(git_default_branch)
+  fi
+
+  # TODO: FZF worktrees?
+  mkdir -p "$HOME/code/worktrees"
+  new_worktree_path="$HOME/code/worktrees/${repo_name}__${new_branch}"
+  git worktree add -b $new_branch $new_worktree_path $base_branch
+  cd $new_worktree_path
+}
+
+function point_branch_to_head() {
+  local branch_name
+  branch_name=$1
+  git branch -f $1 HEAD
+  git checkout $1
+}
+
+# replay all commits, starting at feature_branch exclusive, through
+# dependent_feature inclusive onto master
+function rebase_dependent() {
+  local feature_branch
+  feature_branch=$1
+  git rebase --onto $(git_default_branch) "${feature_branch}" HEAD
+}
+
+function git_set_remote_ssh() {
+  local remote_url
+  remote_url=$(git remote get-url origin | rg 'github.com/(.*)\.git' -o -r '$1')
+  git remote set-url origin "git@github.com:${remote_url}.git"
+  git remote set-url --push origin "git@github.com:${remote_url}.git"
+}
+
+function gh_close_dependabot_preview_prs() {
+  gh api repos/{owner}/{repo}/pulls --paginate | \
+    jq '.[] | select(.user.login=="dependabot-preview[bot]") | .number' | \
+    xargs -I {} gh api repos/{owner}/{repo}/pulls/{} --method PATCH --raw-field state=closed
+}
+
+function osx_notify() {
+  title=$1
+  message=$2
+  osascript -e "display notification \"${message}\" with title \"${title}\""
+}
+
+function refresh_clone_urls() {
+  temp_file=$(mktemp)
+  (
+    gh api /user/repos --paginate | \
+        jq -r '
+          .[]
+          | select(.owner.login | test("rperryng*"))
+          | select(.archived | not)
+          | .ssh_url
+        ' > $temp_file && \
+        rm --force "$HOME/.clone_urls" && \
+        mv $temp_file "$HOME/.clone_urls" \
+  ) &
+}
+
+if command -v gh &> /dev/null; then
+  ws_clone() {
+    # In case the file doesn't exist yet
+    touch "$HOME/.clone_urls"
+
+    cat "$HOME/.clone_urls" | \
+      fzf --multi | \
+      xargs -I{} git -C "$HOME/code/wealthsimple" clone {}
+
+    refresh_clone_urls &
+  }
+fi
+
+function whatsusing() {
+  sudo lsof -i -P | grep LISTEN | grep :$1
+}
+
+function iswsl() {
+  if [[ -f '/proc/version' ]]; then
+    grep -qi microsoft '/proc/version' && return
+  fi
+
+  false
+}
+
+# }}}
+# {{{ Secrets
+# security add-generic-password \
+#   -a "$USER"\
+#   -s 'github_token' \
+#   -w 'TOKEN_VALUE'
+# security delete-generic-password -a "$USER" -s 'github_token'
+if [ "$(uname)" = "Darwin" ]; then
+  export GITHUB_TOKEN=$(security find-generic-password -a "$USER" -s 'github_token' -w)
+fi
+# }}}
+# {{{ Environment
+
+# cat .ruby-version | xargs -I {} rbenv install --skip-existing {}
+# cat .node-version | xargs -I {} nodenv install --skip-existing {}
+# cat .pyenv-version | xargs -I {} pyenv install --skip-existing {}
+# }}}
+# {{{ bindkey
+# emacs insert-mode binds ;)
+function yarnWorkspaceFuzzy() {
+  local workspaces
+  local rcode
+  local workspace
+
+  workspaces=$(yarn --json workspaces info)
+  rcode=$?
+  if [[ ! $rcode -eq 0 ]]; then
+    return $rcode
+  fi
+
+  workspace=$(
+    yarn --json workspaces info \
+      | jq '.data' --raw-output \
+      | jq 'keys | .[]' --raw-output \
+      | fzf --reverse --height '40%'
+  )
+  rcode=$?
+  if [[ ! $ret_code -eq 0 ]]; then
+    return $rcode
+  fi
+
+  echo $workspace
+  return $rcode
+}
+
+# Yarn workspaces Fuzzy
+function yarn-workspace-widget() {
+  local workspace
+  local rcode
+  workspace=$(yarnWorkspaceFuzzy)
+  rcode=$?
+
+  if [[ $rcode -eq 0 ]]; then
+    BUFFER="yarn workspace '$(yarnWorkspaceFuzzy)' "
+    zle end-of-line
+  fi
+  zle reset-prompt
+
+  return $rcode
+}
+zle -N yarn-workspace-widget
+bindkey '^X^Y' yarn-workspace-widget
+# }}}
