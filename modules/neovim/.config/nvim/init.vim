@@ -827,7 +827,7 @@ endfunction
 command! DeleteCwdBuffers call DeleteCwdBuffers()
 nnoremap <space>BD :DeleteCwdBuffers<CR>
 
-function! NNStart()
+function! NStart()
   edit $MYVIMRC
   vsplit
   execute 'edit'.expand("$XDG_CONFIG_HOME/nvim/lua/init.lua")
