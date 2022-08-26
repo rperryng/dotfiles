@@ -2,3 +2,4 @@
 # For the global gitignore file, see: 'modules/git/.config/git/ignore'
 
 *.env
+.stow-bogus-links

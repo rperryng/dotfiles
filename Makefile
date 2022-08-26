@@ -60,18 +60,29 @@ unlink:
 	@stow -t $(HOME) -D local
 	@stow -t $(HOME) -d $(PKG_DIR) -D $(filter-out stow,$(ALL_PKGS))
 
-.PHONY: .chklink
+.PHONY: chklink
 chklink:
 	@echo "\n--- Default package files currently unlinked ---\n"
 	@stow -n -v -t $(HOME) -d $(PKG_DIR) -S $(ALL_MODULE_NAMES)
 	@echo "\n--- Local packages currently unlinked ---\n"
 	@stow -n -v -t $(HOME) -d $(CURDIR) -S local
 	@echo "\n--- Bogus links ---\n"
-	@chkstow -a -b -t $(XDG_CONFIG_HOME)
-	@chkstow -a -b -t $(XDG_DATA_HOME)
-	@chkstow -a -b -t $(XDG_BIN_HOME)
-	@chkstow -a -b -t $(XDG_LIB_HOME)
-	@chkstow -a -b -t $(XDG_OPT_HOME)
+	@rm --force .stow-bogus-links
+	@chkstow -a -b -t $(XDG_CONFIG_HOME) | sed 's/Bogus link: //' >> $(DOTFILES_DIR)/.stow-bogus-links
+	@chkstow -a -b -t $(XDG_DATA_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
+	@chkstow -a -b -t $(XDG_BIN_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
+	@chkstow -a -b -t $(XDG_LIB_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
+	@chkstow -a -b -t $(XDG_OPT_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
+	@cat .stow-bogus-links
+	@echo "run 'make clnlink' to remove these files"
+
+.PHONY: clnlink
+clnlink:
+	if [ ! -f $(DOTFILES_DIR)/.stow-bogus-links ]; then \
+	  echo "no bogus links to clean"; \
+	  exit 1; \
+	fi
+	cat $(DOTFILES_DIR)/.stow-bogus-links | xargs rm
 
 .PHONY: list-pkgs
 list-pkgs:
