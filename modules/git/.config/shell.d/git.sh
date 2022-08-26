@@ -20,6 +20,9 @@ alias gpsu="git push --set-upstream origin \$(git symbolic-ref --short -q HEAD)"
 alias grbcne='GIT_EDITOR=true git rebase --continue'
 alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
 
+# Jump to repository root
+alias cdp='cd $(git rev-parse --show-toplevel)'
+
 git_migrate_to_main() {
   git branch --move master main
   git fetch origin
