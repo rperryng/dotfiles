@@ -3,34 +3,6 @@ PKG_DIR = $(CURDIR)/modules
 ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
 
-DEFAULT_PKGS += 1password
-DEFAULT_PKGS += alacritty
-DEFAULT_PKGS += asdf
-DEFAULT_PKGS += bat
-DEFAULT_PKGS += docker
-DEFAULT_PKGS += docker
-DEFAULT_PKGS += example
-DEFAULT_PKGS += fzf
-DEFAULT_PKGS += git
-DEFAULT_PKGS += github-cli
-DEFAULT_PKGS += homebrew
-DEFAULT_PKGS += karabiner
-DEFAULT_PKGS += lazygit
-DEFAULT_PKGS += direnv
-DEFAULT_PKGS += neovim
-DEFAULT_PKGS += nnn
-DEFAULT_PKGS += rg
-DEFAULT_PKGS += scm_breeze
-DEFAULT_PKGS += secrets
-DEFAULT_PKGS += shell
-DEFAULT_PKGS += ssh
-DEFAULT_PKGS += starship
-DEFAULT_PKGS += wsl
-DEFAULT_PKGS += z
-DEFAULT_PKGS += zsh
-DEFAULT_PKGS += zsh-autosuggestions
-DEFAULT_PKGS += zsh-syntax-highlighting
-
 # XDG directories
 XDG_CONFIG_HOME := $(HOME)/.config
 XDG_DATA_HOME := $(HOME)/.local/share
@@ -79,7 +51,7 @@ endif
 
 link: prepare-dirs setup
 	@stow -t $(HOME) -d $(CURDIR) -S local
-	@stow -t $(HOME) -d $(PKG_DIR) -S $(DEFAULT_PKGS)
+	@stow -t $(HOME) -d $(PKG_DIR) -S $(ALL_PKGS)
 
 unlink:
 	@stow -t $(HOME) -D local
@@ -88,7 +60,7 @@ unlink:
 .PHONY: .chklink
 chklink:
 	@echo "\n--- Default package files currently unlinked ---\n"
-	@stow -n -v -t $(HOME) -d $(PKG_DIR) -S $(DEFAULT_PKGS)
+	@stow -n -v -t $(HOME) -d $(PKG_DIR) -S $(ALL_PKGS)
 	@echo "\n--- Local packages currently unlinked ---\n"
 	@stow -n -v -t $(HOME) -d $(CURDIR) -S local
 	@echo "\n--- Bogus links ---\n"
