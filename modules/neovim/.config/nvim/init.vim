@@ -2211,6 +2211,11 @@ nmap <space>mkk <Plug>BookmarkMoveUp
 nmap <space>mjj <Plug>BookmarkMoveDown
 nmap <space>mg <Plug>BookmarkMoveToLine
 " }}}
+" {{{ neovim-remote
+if has('nvim')
+  let $GIT_EDITOR = 'nvr --remote-wait'
+endif
+" }}}
 " }}}
 " {{{ Terminal buffer configs
 
