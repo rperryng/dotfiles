@@ -3,6 +3,9 @@ PKG_DIR = $(CURDIR)/modules
 ALL_PKGS = $(sort $(basename $(dir $(wildcard modules/*/))))
 LOCAL_PKGS = $(sort $(notdir $(wildcard ./local*)))
 
+MODULE_PATHS = $(sort $(basename $(dir $(wildcard modules/*/*))))
+ALL_MODULE_NAMES = $(notdir $(MODULE_PATHS:/=))
+
 # XDG directories
 XDG_CONFIG_HOME := $(HOME)/.config
 XDG_DATA_HOME := $(HOME)/.local/share
@@ -13,7 +16,7 @@ XDG_LIB_HOME := $(HOME)/.local/lib
 XDG_OPT_HOME := $(HOME)/.local/opt
 
 # Subdirectories with make files
-SUBDIRS = $(sort $(basename $(dir $(wildcard */Makefile))))
+SUBDIRS = $(sort $(dir $(wildcard */Makefile)))
 PKG_MAKEFILES = $(SUBDIRS:/=)
 
 all: setup prepare-dirs link
@@ -51,7 +54,7 @@ endif
 
 link: prepare-dirs setup
 	@stow -t $(HOME) -d $(CURDIR) -S local
-	@stow -t $(HOME) -d $(PKG_DIR) -S $(ALL_PKGS)
+	@stow -t $(HOME) -d $(PKG_DIR) -S $(ALL_MODULE_NAMES)
 
 unlink:
 	@stow -t $(HOME) -D local
@@ -60,7 +63,7 @@ unlink:
 .PHONY: .chklink
 chklink:
 	@echo "\n--- Default package files currently unlinked ---\n"
-	@stow -n -v -t $(HOME) -d $(PKG_DIR) -S $(ALL_PKGS)
+	@stow -n -v -t $(HOME) -d $(PKG_DIR) -S $(ALL_MODULE_NAMES)
 	@echo "\n--- Local packages currently unlinked ---\n"
 	@stow -n -v -t $(HOME) -d $(CURDIR) -S local
 	@echo "\n--- Bogus links ---\n"
