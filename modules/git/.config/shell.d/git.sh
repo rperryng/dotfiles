@@ -21,9 +21,9 @@ alias grbcne='GIT_EDITOR=true git rebase --continue'
 alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
 
 git_migrate_to_main() {
-  git branch -m master main
+  git branch --move master main
   git fetch origin
-  git branch -u origin/main main
+  git branch --set-upstream-to='origin/main' main
   git remote set-head origin -a
 }
 

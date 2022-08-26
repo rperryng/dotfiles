@@ -2,8 +2,6 @@
 
 set -e -o pipefail
 
-DOTFILES_INSTALL_USE_SUDO="${DOTFILES_INSTALL_USE_SUDO:-0}"
-
 # XDG configuration
 # - https://wiki.archlinux.org/index.php/XDG_Base_Directory
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -66,21 +64,21 @@ install_prerequisites() {
       fi
       ;;
     "debian")
-      $sudo_cmd apt update &&
-        $sudo_cmd apt install -y build-essential &&
-        $sudo_cmd apt install -y $pkgs
+      sudo apt update &&
+        sudo apt install -y build-essential &&
+        sudo apt install -y $pkgs
       ;;
     "fedora")
-      $sudo_cmd dnf groupinstall "Development Tools" &&
-        $sudo_cmd dnf install -y libxcrypt-compat util-linux-user $pkgs
+      sudo dnf groupinstall "Development Tools" &&
+        sudo dnf install -y libxcrypt-compat util-linux-user $pkgs
       ;;
     "rhel")
-      $sudo_cmd yum groupinstall "Development Tools" &&
-        $sudo_cmd yum install -y $pkgs
+      sudo yum groupinstall "Development Tools" &&
+        sudo yum install -y $pkgs
       ;;
     "arch")
       echo "pacman"
-      $sudo_cmd pacman -S base-devel $pkgs
+      sudo pacman -S base-devel $pkgs
       ;;
     *)
       echo "OS family: '${os_family}' not supported"
@@ -122,10 +120,10 @@ install_packages() {
   local pkgs="$1"
 
   case ${package_manager} in
-    "apt") $sudo_cmd apt install -y $pkgs ;;
-    "dnf") $sudo_cmd dnf install -y $pkgs ;;
-    "yum") $sudo_cmd yum install -y $pkgs ;;
-    "pacman") $sudo_cmd pacman -S $pkgs ;;
+    "apt") sudo apt install -y $pkgs ;;
+    "dnf") sudo dnf install -y $pkgs ;;
+    "yum") sudo yum install -y $pkgs ;;
+    "pacman") sudo pacman -S $pkgs ;;
     "brew")
       echo "brew installing: '${pkgs}'"
       # source "${DOTFILES_DIR}/modules/homebrew/.config/profile.d/homebrew.sh"
@@ -161,9 +159,6 @@ clone_dotfiles() {
     # Ensure repo is using the ssh remote
     pushd "${DOTFILES_DIR}" >/dev/null
     git remote set-url origin git@github.com:rperryng/dotfiles.git
-
-    # TODO: Remove this
-    git checkout ezsetup
     popd >/dev/null
   fi
 }
@@ -180,8 +175,8 @@ setup_default_shells() {
 
   if [[ "${os_family}" == "macos" ]]; then
     # Add available shells
-    ! grep -q "${bash_path}" /etc/shells && echo "${bash_path}/bin/bash" | $sudo_cmd tee -a /etc/shells
-    ! grep -q "${zsh_path}" /etc/shells && echo "${zsh_path}/bin/zsh" | $sudo_cmd tee -a /etc/shells
+    ! grep -q "${bash_path}" /etc/shells && echo "${bash_path}/bin/bash" | sudo tee -a /etc/shells
+    ! grep -q "${zsh_path}" /etc/shells && echo "${zsh_path}/bin/zsh" | sudo tee -a /etc/shells
   fi
 
   # Change default shell to zsh
@@ -190,11 +185,7 @@ setup_default_shells() {
 
 main() {
   # Prompt for admin password upfront
-  # sudo -v
-
-  # sudo command
-  sudo_cmd=""
-  [[ "$DOTFILES_INSTALL_USE_SUDO" -eq 1 ]] && sudo_cmd="sudo "
+  sudo -v
 
   # get OS family & preferred package manager
   os_family="$(get_os_family)"
