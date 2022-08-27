@@ -147,6 +147,7 @@ install_default_packages() {
   install_packages "stow"
   install_packages "zsh"
   install_packages "tldr"
+  install_packages "ripgrep"
   install_packages "jq"
   install_packages "unzip"
 }
