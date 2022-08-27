@@ -5,7 +5,7 @@ set -e
 SSH_HOME="${HOME}/.ssh"
 
 install() {
-  if is_wsl; then
+  if [[ ${DOTFILES_IS_WSL} == 1 ]]; then
     sudo apt install keychain
   fi
 }
