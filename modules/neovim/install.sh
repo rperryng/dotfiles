@@ -29,6 +29,7 @@ install_neovim() {
   fi
 
   pushd ${NVIM_HOME} >/dev/null
+  git checkout stable
   make CMAKE_BUILD_TYPE=Release
   sudo make install
   popd >/dev/null
