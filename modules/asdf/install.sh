@@ -2,8 +2,7 @@
 
 set -e
 
-ASDF_REPOSITORY_URL="https://github.com/asdf-vm/asdf.git"
-
+export ASDF_REPOSITORY_URL="https://github.com/asdf-vm/asdf.git"
 export ASDF_DIR="${XDG_OPT_HOME:-$HOME/.local/opt}/asdf"
 export ASDF_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/asdf"
 export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/asdf/asdfrc"
@@ -14,14 +13,16 @@ install() {
     latest_tag=$( \
       git \
         -c 'versionsort.suffix=-' \
-        ls-remote --exit-code --refs --sort='version:refname' --tags ${ASDF_REPOSITORY_URL} '*.*.*' \
+        ls-remote --exit-code --refs --sort='version:refname' --tags ${ASDF_REPOSITORY_URL} 'v*.*.*' \
         | tail --lines=1 \
-        | grep -E --only-matching 'v\d+\.\d+\.\d+' \
+        | cut --delimiter='/' --fields=3
     )
 
     git clone \
       "${ASDF_REPOSITORY_URL}" "${ASDF_DIR}" \
       --branch "${latest_tag}"
+
+    source "${XDG_OPT_HOME:-$HOME/.local/opt}/asdf/asdf.sh"
   fi
 }
 
@@ -38,7 +39,7 @@ install_nodejs() {
 
   case ${DOTFILES_OS} in
     "macos") brew install gpg gawk ;;
-    "debian") sudo apt install dirmngr gpg curl gawk ;;
+    "debian") sudo apt install -y dirmngr gpg curl gawk ;;
     *) ;;
   esac
 
@@ -64,7 +65,7 @@ install_ruby() {
       export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
       ;;
     "debian")
-      sudo apt install \
+      sudo apt install -y \
         autoconf bison build-essential libssl-dev libyaml-dev  \
         libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6  \
         libgdbm-dev libdb-dev uuid-dev
