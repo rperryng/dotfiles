@@ -100,6 +100,7 @@ is_wsl() {
 
   return 1
 }
+export DOTFILES_IS_WSL=$(is_wsl && echo 1 || echo 0)
 
 get_package_manager() {
   if [[ -n "$DOTFILES_INSTALL_PACKAGE_MANAGER" ]]; then

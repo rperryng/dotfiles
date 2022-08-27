@@ -5,7 +5,7 @@ set -e
 WIN32YANK_LATEST_RELEASE_URL="https://api.github.com/repos/equalsraf/win32yank/releases/latest"
 
 install() {
-  if ! is_wsl; then
+  if [[ ${DOTFILES_IS_WSL} != "1" ]]; then
     return 0;
   fi
 
@@ -14,7 +14,7 @@ install() {
   fi
 
   MACHINE_TYPE=$(uname -m)
-  if [ ${MACHINE_TYPE} = 'x86_64' ]; then
+  if [[ ${MACHINE_TYPE} == 'x86_64' ]]; then
     ASSET_NAME="win32yank-x64.zip"
   else
     ASSET_NAME="win32yank-x86.zip"
