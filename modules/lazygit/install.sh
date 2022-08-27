@@ -21,7 +21,7 @@ install() {
         /tmp/lazygit.tar.gz \
         "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
 
-      sudo tar xf lazygit.tar.gz -C ${XDG_BIN_HOME} lazygit
+      sudo tar xf /tmp/lazygit.tar.gz -C ${XDG_BIN_HOME} lazygit
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"
