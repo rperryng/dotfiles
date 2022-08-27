@@ -14,7 +14,7 @@ function install() {
     "macos")
       brew install nnn
       ;;
-    "apt")
+    "debian")
       mkdir -p "${NNN_HOME}"
       curl -fsSL "${DEBIAN_RELEASE_URL}" > /tmp/nnn-static.tar.gz
       tar -xf /tmp/nnn-static.tar.gz --directory="${NNN_HOME}"
