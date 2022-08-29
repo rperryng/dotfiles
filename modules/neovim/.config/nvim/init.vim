@@ -1295,7 +1295,7 @@ function! s:fuzzy_project_selector_handler(project_name)
   endif
 
   call ContabsNewTab(v:null, [v:null, l:path])
-  execute 'silent !refresh_clone_urls &'
+  execute 'silent !refresh_clone_urls'
 endfunction
 
 function! FuzzyProjectSelector()

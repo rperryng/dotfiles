@@ -52,11 +52,11 @@ refresh_clone_urls() {
     gh api /user/repos --paginate | \
         jq -r '
           .[]
-          | select(.owner.login | test("rperryng*"))
+          | select(.owner.login | test("rperryng*|wealthsimple*"))
           | select(.archived | not)
           | .ssh_url
         ' > $temp_file && \
-        rm --force $DOTFILES_CLONE_URLS_PATH && \
+        rm -f $DOTFILES_CLONE_URLS_PATH && \
         mv $temp_file $DOTFILES_CLONE_URLS_PATH \
   ) &
 }
