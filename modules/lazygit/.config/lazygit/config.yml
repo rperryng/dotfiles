@@ -1,5 +1,5 @@
 gui:
-  showFileTree: false
+  showFileTree: true
 os:
   editCommand: 'nvr'
   editCommandTemplate: '{{editor}} --remote-wait +"setlocal bufhidden=wipe" +{{line}} -- {{filename}}'
