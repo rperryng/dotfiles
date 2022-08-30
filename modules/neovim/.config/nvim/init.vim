@@ -697,6 +697,27 @@ endfunction
 
 command! -nargs=0 ToggleProjectTerminal call ToggleProjectTerminal()
 
+function! RestartProjectTerminal()
+  let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:current_buf_name = bufname()
+  let l:terminal_buf_name = 'term-' . l:project_name
+
+  wincmd b
+  if bufname() !~ "term-"
+    botright split
+    call TerminalResize()
+  endif
+
+  if buflisted(l:terminal_buf_name)
+    execute 'Bdelete! ' . l:terminal_buf_name
+  endif
+
+  terminal
+  execute 'keepalt file ' . l:terminal_buf_name
+endfunction
+
+command! -nargs=0 RestartProjectTerminal call RestartProjectTerminal()
+
 " function! SendCommandToProjectTerminal(cmd)
 "   let l:project_name = fnamemodify(getcwd(), ':t')
 "   let l:current_buf_name = bufname()
@@ -2234,6 +2255,7 @@ if has('nvim')
   hi! TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=14 guibg=#93a1a1 cterm=NONE gui=NONE
 
   nnoremap <space>T :call ToggleProjectTerminal()<CR>
+  nnoremap <space>sT :call RestartProjectTerminal()<CR>
 
   function! NewMiscTerm()
     let l:project_name = fnamemodify(getcwd(), ':t')
