@@ -5,7 +5,6 @@
 # Usage:
 #   ssh-keygen
 
-# Exit if there are any errors
 set -e
 
 # The target directory for the new key

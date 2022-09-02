@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Summary:
+#   Update dotfiles
+#
+# Usage:
+#   update-dotfiles
+
+set -e
+
+pushd "${DOTFILES_DIR:-${HOME}/.dotfiles}"
+git pull
+make link
+make chklink
+make clnlink
+popd
