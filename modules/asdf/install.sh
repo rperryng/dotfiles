@@ -105,6 +105,20 @@ install_alias() {
   asdf plugin-add alias $ASDF_PLUGIN_ALIAS_URL
 }
 
+ASDF_PLUGIN_RUST_URL="https://github.com/asdf-community/asdf-rust.git"
+install_rust() {
+  set +e
+  asdf plugin list | grep --quiet rust
+  local return_code=$?
+  set -e
+
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0;
+  fi
+
+  asdf plugin-add rust $ASDF_PLUGIN_RUST_URL
+}
+
 install
 
 if [[ ! -x $(command -v asdf) ]]; then
@@ -112,7 +126,8 @@ if [[ ! -x $(command -v asdf) ]]; then
   exit 1;
 fi
 
+install_alias
 install_nodejs
 install_ruby
 install_python
-install_alias
+install_rust
