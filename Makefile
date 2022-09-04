@@ -17,6 +17,7 @@ XDG_OPT_HOME := $(HOME)/.local/opt
 
 # Dotfiles
 DOTFILES_DIR := $(HOME)/.dotfiles
+BOGUS_LINKS_PATH := $(DOTFILES_DIR)/.stow-bogus-links
 
 # Subdirectories with make files
 SUBDIRS = $(sort $(basename $(dir $(wildcard */Makefile))))
@@ -71,21 +72,33 @@ chklink:
 	@stow -n -v -t $(HOME) -d $(CURDIR) -S local
 	@echo "\n--- Bogus links ---\n"
 	@rm --force .stow-bogus-links
-	@chkstow -a -b -t $(XDG_CONFIG_HOME) | sed 's/Bogus link: //' >> $(DOTFILES_DIR)/.stow-bogus-links
-	@chkstow -a -b -t $(XDG_DATA_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
-	@chkstow -a -b -t $(XDG_BIN_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
-	@chkstow -a -b -t $(XDG_LIB_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
-	@chkstow -a -b -t $(XDG_OPT_HOME) >> $(DOTFILES_DIR)/.stow-bogus-links
+	@chkstow -a -b -t $(XDG_CONFIG_HOME) | sed 's/Bogus link: //' >> $(BOGUS_LINKS_PATH)
+	@chkstow -a -b -t $(XDG_DATA_HOME) >> $(BOGUS_LINKS_PATH)
+	@chkstow -a -b -t $(XDG_BIN_HOME) >> $(BOGUS_LINKS_PATH)
+	@chkstow -a -b -t $(XDG_LIB_HOME) >> $(BOGUS_LINKS_PATH)
+	@chkstow -a -b -t $(XDG_OPT_HOME) >> $(BOGUS_LINKS_PATH)
+
 	@cat .stow-bogus-links
-	@echo "run 'make clnlink' to remove these files"
+
+	@if [ -s $(BOGUS_LINKS_PATH) ]; then \
+		echo "run 'make clnlink' to remove these files"; \
+	fi
 
 .PHONY: clnlink
 clnlink:
-	if [ ! -f $(DOTFILES_DIR)/.stow-bogus-links ]; then \
+	@if [ ! -f $(BOGUS_LINKS_PATH) ]; then \
 	  echo "no bogus links to clean"; \
 	  exit 1; \
 	fi
-	cat $(DOTFILES_DIR)/.stow-bogus-links | xargs rm
+
+	@if [ ! -s $(BOGUS_LINKS_PATH) ]; then \
+		echo ""; \
+		exit 1; \
+	fi
+
+  @echo "deleting bogus links at $(BOGUS_LINKS_PATH)"
+	@cat $(BOGUS_LINKS_PATH)
+	@cat $(BOGUS_LINKS_PATH) | xargs rm
 
 .PHONY: list-pkgs
 list-pkgs:
