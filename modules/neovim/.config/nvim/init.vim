@@ -1894,9 +1894,9 @@ xmap ac <plug>(signify-motion-outer-visual)
 let g:signify_update_on_focusgained = 1
 nnoremap <space>gg :SignifyToggle<CR>
 
-nmap ]c <Plug>(signify-next-hunk)
+nmap gN <Plug>(signify-next-hunk)
       \ :silent call repeat#set("\<Plug>(signify-next-hunk)", -1)<CR>
-nmap [c <Plug>(signify-prev-hunk)
+nmap gP <Plug>(signify-prev-hunk)
       \ :silent call repeat#set("\<Plug>(signify-prev-hunk)", -1)<CR>
 nmap <space>gdh :SignifyHunkDiff<CR>
 nmap <space>gdu :SignifyHunkUndo<CR>
