@@ -96,7 +96,7 @@ clnlink:
 		exit 1; \
 	fi
 
-  @echo "deleting bogus links at $(BOGUS_LINKS_PATH)"
+	@echo "deleting bogus links at $(BOGUS_LINKS_PATH)"
 	@cat $(BOGUS_LINKS_PATH)
 	@cat $(BOGUS_LINKS_PATH) | xargs rm
 
