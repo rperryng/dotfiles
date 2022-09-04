@@ -320,7 +320,7 @@ function! s:tab_enter_autocmd_handler()
   let s:previous_tab_was_not_last_tab = tabpagenr() != tabpagenr('$')
 endfunction
 
-augroup TabClosed()
+augroup TabClosedMoveLeft()
   autocmd!
 
   autocmd TabEnter * call s:tab_enter_autocmd_handler()
@@ -997,17 +997,17 @@ function! OpenLazyGit()
     call win_gotoid(l:lazygit_window_search[0])
   elseif buflisted(l:lazygit_buffer_name)
     tabedit
-    tabmove -1
     execute ':TabooRename '.l:project_name. ' (git)'
     execute 'buffer '.l:lazygit_buffer_name
-    autocmd TermClose <buffer> :bdelete
+
+    " calling :bdlete does not trigger 'TabLeave' for some reason.
+    autocmd TermClose <buffer> lua vim.api.nvim_input("<CR>")
   else
     tabedit
-    tabmove -1
     terminal lazygit
     execute ':keepalt file '.l:lazygit_buffer_name
     execute ':TabooRename '.l:project_name. ' (git)'
-    autocmd TermClose <buffer> :bdelete
+    autocmd TermClose <buffer> lua vim.api.nvim_input("<CR>")
   endif
 
   startinsert
