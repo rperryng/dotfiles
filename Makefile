@@ -71,7 +71,7 @@ chklink:
 	@echo "\n--- Local packages currently unlinked ---\n"
 	@stow -n -v -t $(HOME) -d $(CURDIR) -S local
 	@echo "\n--- Bogus links ---\n"
-	@rm --force .stow-bogus-links
+	@rm -f .stow-bogus-links
 	@chkstow -a -b -t $(XDG_CONFIG_HOME) | sed 's/Bogus link: //' >> $(BOGUS_LINKS_PATH)
 	@chkstow -a -b -t $(XDG_DATA_HOME) >> $(BOGUS_LINKS_PATH)
 	@chkstow -a -b -t $(XDG_BIN_HOME) >> $(BOGUS_LINKS_PATH)

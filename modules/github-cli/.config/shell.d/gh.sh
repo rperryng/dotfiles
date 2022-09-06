@@ -14,7 +14,7 @@ fi
 
 # Open the PR page for the current branch.
 function gh_openpr() {
-  if gh pr view --json url; then
+  if gh pr view --json url 1> /dev/null; then
     gh pr view --web
   else
     gh pr create --web
