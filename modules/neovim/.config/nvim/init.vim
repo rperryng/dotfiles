@@ -299,7 +299,7 @@ augroup filetypes
   autocmd Filetype yaml setlocal shiftwidth=2 tabstop=2 softtabstop=2
 
   autocmd FileType rust nnoremap <buffer> <space>fo :RustFmt<CR>
-  autocmd FileType typescript nnoremap <buffer> <space>fo :PrettierAsync<CR>
+  autocmd FileType typescript nnoremap <buffer> <space>fo :Prettier<CR>
 
   " Help prevent accidentally modifying external source code resolved via
   " ctags or LSP functionality.
@@ -1013,6 +1013,15 @@ function! OpenLazyGit()
   startinsert
 endfunction
 nnoremap <space>git :call OpenLazyGit()<CR>
+
+function! ToggleQuickFixWindow()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        copen
+    else
+        cclose
+    endif
+endfunction
+nnoremap <space>TQ :call ToggleQuickFixWindow()<CR>
 " }}}
 " {{{ Mappings
 
@@ -1684,11 +1693,9 @@ nnoremap <silent> gl :CocList<CR>
 nnoremap <silent> <space>gl :CocList diagnostics<CR>
 inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <silent> <c-l> <Esc>:call CocActionAsync('showSignatureHelp')<CR>a
-nmap <silent> <space>A :CocAction<CR>
+nmap <space>A <Plug>(coc-codeaction)
 
 nnoremap K :call CocAction('doHover')<CR>
-" vmap <silent> re <Plug>(coc-refactor)
-vmap <silent> <space>ac :CocAction<CR>
 
 imap <silent> <c-k> <esc><Plug>(coc-float-jump)
 nmap <silent> gF <Plug>(coc-float-jump)
@@ -2152,6 +2159,7 @@ nnoremap <space>a :A<CR>
 " }}}
 " {{{ DiffView
 nnoremap <space>gdo :DiffviewOpen ..HEAD<left><left><left><left><left><left>
+nnoremap <space>gq :DiffviewClose<CR>
 " }}}
 " {{{ vim-winlayout
 nmap <space>wu <Plug>(WinlayoutBackward)
@@ -2227,8 +2235,8 @@ nmap <space>mj <Plug>BookmarkNext
 nmap <space>mk <Plug>BookmarkPrev
 nmap <space>mc <Plug>BookmarkClear
 nmap <space>mx <Plug>BookmarkClearAll
-nmap <space>mkk <Plug>BookmarkMoveUp
-nmap <space>mjj <Plug>BookmarkMoveDown
+nmap <space>mK <Plug>BookmarkMoveUp
+nmap <space>mJ <Plug>BookmarkMoveDown
 nmap <space>mg <Plug>BookmarkMoveToLine
 " }}}
 " {{{ neovim-remote
