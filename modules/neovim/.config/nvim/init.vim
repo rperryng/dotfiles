@@ -142,14 +142,14 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'preservim/nerdtree'
 
 " UI
-Plug 'qxxxb/vim-searchhi'
-Plug 'haya14busa/vim-asterisk'
 Plug 'arzg/seoul8'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
 Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'folke/zen-mode.nvim', { 'branch': 'main' }
+Plug 'hashivim/vim-terraform'
+Plug 'haya14busa/vim-asterisk'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install' }
 Plug 'joshdick/onedark.vim'
 Plug 'jparise/vim-graphql'
@@ -159,6 +159,7 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhinz/vim-signify'
 Plug 'patstockwell/vim-monokai-tasty'
+Plug 'qxxxb/vim-searchhi'
 Plug 'rakr/vim-one'
 Plug 'rebelot/kanagawa.nvim'
 Plug 'rust-lang/rust.vim'
@@ -2244,6 +2245,10 @@ nmap <space>mg <Plug>BookmarkMoveToLine
 if has('nvim')
   let $GIT_EDITOR = 'nvr --remote-wait'
 endif
+" }}}
+" {{{ vim-duck
+nnoremap <space>dd :lua require("duck").hatch()<CR>
+nnoremap <space>dk :lua require("duck").cook()<CR>
 " }}}
 " }}}
 " {{{ Terminal buffer configs
