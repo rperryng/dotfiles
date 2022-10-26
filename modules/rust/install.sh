@@ -14,14 +14,14 @@ install_rustup() {
     "debian")
       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
         | sh -s -- -y --no-modify-path
+
+      export PATH="${XDG_CONFIG_HOME}/.cargo/bin:${PATH}"
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"
       exit 1
       ;;
   esac
-
-  prepend_path "${XDG_CONFIG_HOME}/.cargo/bin"
 
   rustup toolchain install beta
 }
