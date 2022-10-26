@@ -1,6 +1,5 @@
 bundler
 gem-browse
-gem-ctags
 solargraph
 yard
 byebug
