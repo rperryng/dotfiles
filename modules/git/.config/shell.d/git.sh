@@ -5,7 +5,7 @@ alias g_branch="git symbolic-ref --short -q HEAD"
 alias gcom='git checkout $(git_default_branch)'
 alias gdm="git diff --stat --color master..\$(git symbolic-ref --short -q HEAD)"
 alias glog="git log --oneline"
-alias glo="git log --decorate --format='%C(yellow)%H%C(auto)%d %C(reset)%s' -10"
+alias glo="git log --format='%C(yellow)%H%C(auto)%d %C(reset)%s'"
 
 alias gcaem="git commit --allow-empty --message"
 alias gcam="git commit --amend --message"
