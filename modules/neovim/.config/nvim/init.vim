@@ -1299,7 +1299,7 @@ command! -nargs=* ProjectBuffers call ProjectBuffers()
 
 function! s:fuzzy_tab_open_handler(tab_name)
   let l:tabnr = matchstr(a:tab_name, '[0-9]\+')
-  execute 'normal ' . l:tabnr . 'gt'
+  call feedkeys(l:tabnr . 'gt')
 endfunction
 function! FuzzyTabs()
   let l:tabs = sort(copy(MatchStrAll(TabooTabline(), '\[[0-9]\+-[^]]\+\]')))
