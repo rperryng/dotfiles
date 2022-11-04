@@ -12,14 +12,15 @@ if [[ ! -x "$(command -v brew)" ]]; then
   if [[ "${DOTFILES_OS}" == 'macos' ]]; then
     # Install standard homebrew
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  elif [[ "${OSTYPE}" == linux* ]]; then
+  elif [[ "${DOTFILES_OS}" == linux* ]]; then
     # Make sure this is in the path
     if [[ ! "$PATH" == */home/linuxbrew/.linuxbrew/bin* ]]; then
       PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
     fi
 
-    # Install linuxbrew
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+    # Install standard homebrew
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   fi
 else
   echo "brew already installed."
