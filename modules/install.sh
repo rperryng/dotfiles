@@ -8,6 +8,9 @@ install() {
   local packages
   packages=$(git ls-files | grep "./*/install.sh")
 
+  # Install ASDF first
+  ./asdf/install.sh
+
   while IFS= read -r package; do
     local name=$(basename $(dirname ${package}))
 

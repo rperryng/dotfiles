@@ -3,18 +3,17 @@
 set -e -o pipefail
 
 function install() {
-  if [[ -x "$(command -v nnn)" ]]; then
+  if [[ -x "$(command -v just)" ]]; then
     return 0;
   fi
 
-  case ${DOTFILES_OS} in
-    "macos"|"debian")
-      brew install just
-      ;;
-    *)
-      echo "don't know how to install 'just' on ${DOTFILES_OS}"
-      ;;
-  esac
+  if [[ ! -x "$(command -v asdf)" ]]; then
+    echo "command 'asdf' not available. can't install 'just'"
+    return 1;
+  fi
+
+  asdf plugin add just
+  asdf install just '1.8.0'
 }
 
 install
