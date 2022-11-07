@@ -970,7 +970,7 @@ function! Open(input)
   let l:cmd = l:program." '".escape(a:input, "'")."'"
   call system(l:cmd)
 endfunction
-vnoremap <space>o :<C-U>call Open(GetVisualSelection)<CR>
+vnoremap <space>o :<C-U>call Open(GetVisualSelection())<CR>
 
 function! RenameBuffer()
   let l:project_name = fnamemodify(getcwd(), ':t')
