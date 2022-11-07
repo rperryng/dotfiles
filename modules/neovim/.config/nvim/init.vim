@@ -1234,10 +1234,6 @@ nnoremap <space>n :call nnn#pick(getcwd(), g:layout_floating)<CR>
 nnoremap <space>N :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_floating)<CR>
 nnoremap <space>sn :call nnn#pick(getcwd(), g:layout_embedded)<CR>
 nnoremap <space>sN :call nnn#pick(fnamemodify(expand('%'), ':p:h'), g:layout_embedded)<CR>
-
-nnoremap <space>wn :echo "use \<space\>sn"<CR>
-nnoremap <space>wN :echo "use \<space\>sN"<CR>
-
 " }}}
 " {{{ send-to-window
 let g:sendtowindow_use_defaults=0
