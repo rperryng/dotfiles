@@ -102,7 +102,6 @@ Plug 'moll/vim-bbye'
 Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'pbogut/fzf-mru.vim'
-Plug 'prakashdanish/vim-githubinator'
 Plug 'prettier/vim-prettier'
 Plug 'puremourning/vimspector'
 Plug 'rperryng/nvim-contabs'
@@ -962,17 +961,16 @@ function! IsWsl()
   return system('cat /proc/version') =~ 'Microsoft'
 endfunction
 
-function! Open()
-  let l:selection = GetVisualSelection()
+function! Open(input)
   let l:program = 'open'
   if IsWsl()
     let l:program = 'wslview'
   endif
 
-  let l:cmd = l:program." '".escape(GetVisualSelection(), "'")."'"
+  let l:cmd = l:program." '".escape(a:input, "'")."'"
   call system(l:cmd)
 endfunction
-vnoremap <space>o :<C-U>call Open()<CR>
+vnoremap <space>o :<C-U>call Open(GetVisualSelection)<CR>
 
 function! RenameBuffer()
   let l:project_name = fnamemodify(getcwd(), ':t')
@@ -1024,6 +1022,43 @@ function! ToggleQuickFixWindow()
     endif
 endfunction
 nnoremap <space>TQ :call ToggleQuickFixWindow()<CR>
+" {{{ vim github links
+function! GetGithubLink()
+  if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
+    echomsg getcwd().' is not in a git repository.'
+    return
+  endif
+
+  let l:remote_output = trim(system('git remote -v'))
+  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs\w*\/\w*\ze\.git')
+  if empty(l:remote_reponame)
+    echomsg 'could not parse organization/repository name from remote: '.l:remote_output
+    return
+  endif
+
+  let l:remote_ref_output = trim(system('git rev-parse --abref-ref --symbolic-full-name @{u}'))
+  let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs\w*\/[0-9a-zA-Z-@]*')
+  if empty(l:remote_ref)
+    echomsg 'Could not find remote ref'
+    return
+  endif
+
+  let l:git_root = fnamemodify(trim(system(('git rev-parse --show-toplevel'))), ':p')
+  let l:current_file = fnamemodify(expand('%'), ':p')
+  let l:relative_path = substitute(l:current_file, escape(l:git_root, '/'), '', '')
+  let l:line = line('.')
+  let l:location = l:relative_path.'#L'.l:line
+
+  let [l:remote, l:branch] = split(l:remote_ref, '/')
+  let l:base_url = 'https://github.com'
+  let l:url = join([l:base_url, l:remote_reponame, 'blob', l:branch, l:location], '/')
+
+  return l:url
+endfunction
+
+nmap <space>gho :call Open(GetGithubLink())<CR>
+nmap <space>ghc :let @+ = GetGithubLink()<CR>
+" }}}
 " }}}
 " {{{ Mappings
 
@@ -1991,16 +2026,6 @@ nmap <space>oi <Plug>SortInline
 " {{{ vim-bbye
 nnoremap <space>bd :keepalt Bdelete!<CR>
 nnoremap <space>bw :Bwipeout!<CR>
-" }}}
-" {{{ vim-githubinator
-let g:githubinator_no_default_mapping=1
-nmap <space>gho <Plug>(githubinator-open)
-nmap <space>ghc <Plug>(githubinator-copy)
-
-function! OpenInGithub() abort
-  let branch_name = trim(system('git branch --show-current'))
-  let remote_raw = trim(system('git remote -v'))
-endfunction
 " }}}
 " {{{ firenvim
 let g:firenvim_config = {
