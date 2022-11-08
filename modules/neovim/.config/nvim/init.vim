@@ -69,7 +69,6 @@ Plug 'MattesGroeger/vim-bookmarks'
 Plug 'abecodes/tabout.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
-Plug 'casey/just'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'dbakker/vim-projectroot'
 Plug 'editorconfig/editorconfig-vim'
@@ -129,6 +128,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vimwiki/vimwiki'
+Plug 'vmchale/just-vim'
 Plug 'wellle/targets.vim'
 Plug 'wsdjeg/vim-fetch'
 
@@ -1040,8 +1040,13 @@ function! GetGithubLink()
   let l:remote_ref_output = trim(system('git rev-parse --abref-ref --symbolic-full-name @{u}'))
   let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs\w*\/[0-9a-zA-Z-@]*')
   if empty(l:remote_ref)
-    echomsg 'Could not find remote ref'
-    return
+    let l:remote_ref_output = trim(system('git remote -v'))
+    let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs\w*\/[0-9a-zA-Z-@]*')
+
+    if empty(l:remote_ref)
+      echomsg 'Could not find remote ref'
+      return
+    endif
   endif
 
   let l:git_root = fnamemodify(trim(system(('git rev-parse --show-toplevel'))), ':p')
