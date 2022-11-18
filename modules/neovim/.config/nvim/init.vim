@@ -302,6 +302,7 @@ augroup filetypes
 
   autocmd FileType rust nnoremap <buffer> <space>fo :RustFmt<CR>
   autocmd FileType typescript nnoremap <buffer> <space>fo :Prettier<CR>
+  autocmd FileType typescriptreact nnoremap <buffer> <space>fo :Prettier<CR>
 
   " Help prevent accidentally modifying external source code resolved via
   " ctags or LSP functionality.
@@ -986,7 +987,7 @@ function! RenameBuffer()
     call feedkeys(":keepalt file ", 'n')
   endif
 endfunction
-nnoremap srn :echo '"use [space]brn" instead'<CR>
+nnoremap <space>brn :call RenameBuffer()<CR>
 
 " lazygit
 function! OpenLazyGit()
