@@ -1033,14 +1033,14 @@ function! GetGithubLink()
   endif
 
   let l:remote_output = trim(system('git remote -v'))
-  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs\w*\/\w*\ze\.git')
+  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
   if empty(l:remote_reponame)
     echomsg 'could not parse organization/repository name from remote: '.l:remote_output
     return
   endif
 
   let l:remote_ref_output = trim(system('git rev-parse --abref-ref --symbolic-full-name @{u}'))
-  let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs\w*\/[0-9a-zA-Z-@]*')
+  let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs[a-zA-Z0-9-_]*\/[0-9a-zA-Z-@]*')
 
   " Default to default branch if local branch doesn't exist on remote
   if empty(l:remote_ref)
