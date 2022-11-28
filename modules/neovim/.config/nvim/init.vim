@@ -1040,12 +1040,21 @@ function! GetGithubLink()
 
   let l:remote_ref_output = trim(system('git rev-parse --abref-ref --symbolic-full-name @{u}'))
   let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs\w*\/[0-9a-zA-Z-@]*')
-  if empty(l:remote_ref)
-    let l:remote_ref_output = trim(system('git remote -v'))
-    let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs\w*\/[0-9a-zA-Z-@]*')
 
-    if empty(l:remote_ref)
-      echomsg 'Could not find remote ref'
+  " Default to default branch if local branch doesn't exist on remote
+  if empty(l:remote_ref)
+    let l:remote_name = trim(system('git remote'))
+
+    if empty(l:remote_name)
+      echomsg 'could not find remote for this repo'
+      return
+    endif
+
+    let l:remote_name = split(l:remote_name)[0]
+    let l:remote_ref = trim(system('git rev-parse --abbrev-ref '.l:remote_name.'/HEAD'))
+
+    if empty(l:remote_name)
+      echomsg 'could not find default remote branch for this repo'
       return
     endif
   endif
@@ -1056,9 +1065,9 @@ function! GetGithubLink()
   let l:line = line('.')
   let l:location = l:relative_path.'#L'.l:line
 
-  let [l:remote, l:branch] = split(l:remote_ref, '/')
+  let [l:remote, l:ref] = split(l:remote_ref, '/')
   let l:base_url = 'https://github.com'
-  let l:url = join([l:base_url, l:remote_reponame, 'blob', l:branch, l:location], '/')
+  let l:url = join([l:base_url, l:remote_reponame, 'blob', l:ref, l:location], '/')
 
   return l:url
 endfunction
@@ -2046,7 +2055,7 @@ let g:firenvim_config = {
 \ }
 
 if exists('g:started_by_firenvim')
-  set guifont=Meslo LG M for Powerline:h14
+  " set guifont='Meslo LG M for Powerline:h14'
 endif
 
 if exists('g:started_by_nvim')
