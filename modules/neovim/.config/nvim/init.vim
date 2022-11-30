@@ -1024,7 +1024,7 @@ function! ToggleQuickFixWindow()
         cclose
     endif
 endfunction
-nnoremap <space>TQ :call ToggleQuickFixWindow()<CR>
+nnoremap <space>Q :call ToggleQuickFixWindow()<CR>
 " {{{ vim github links
 function! GetGithubLink()
   if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
