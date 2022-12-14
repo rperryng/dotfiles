@@ -1698,6 +1698,7 @@ let g:rpn_rootmarkers_nonmonorepo = [
       \  'package.json'
       \ ]
 let g:rpn_rootmarkers_monorepo = [
+      \  'Cargo.toml',
       \  'package.json',
       \  'Gemfile',
       \  '.projectroot',

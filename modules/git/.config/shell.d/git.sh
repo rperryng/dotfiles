@@ -8,6 +8,7 @@ alias glog="git log --oneline"
 alias glo="git log --format='%C(yellow)%H%C(auto)%d %C(reset)%s'"
 
 alias gcaem="git commit --allow-empty --message"
+alias gca="git commit --amend"
 alias gcam="git commit --amend --message"
 alias gcane="git commit --amend --no-edit"
 alias gcmsg="git commit --message"
