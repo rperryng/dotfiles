@@ -66,6 +66,7 @@ Plug 'Julian/vim-textobj-variable-segment'
 Plug 'KKPMW/vim-sendtowindow'
 Plug 'Matt-A-Bennett/surround-funk.vim'
 Plug 'MattesGroeger/vim-bookmarks'
+Plug 'NoahTheDuke/vim-just'
 Plug 'abecodes/tabout.nvim'
 Plug 'alvan/vim-closetag'
 Plug 'arthurxavierx/vim-caser'
@@ -1962,7 +1963,6 @@ nmap <space>gdu :SignifyHunkUndo<CR>
 let g:contabs#project#locations = [
   \ { 'path': '~/.dotfiles' },
   \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
-  \ { 'path': '~/code', 'depth': 2, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 1, 'git_only': v:true },
   \ { 'path': '~/code', 'depth': 0, 'git_only': v:true },
   \ { 'path': '~/code-worktrees', 'depth': 4, 'git_only': v:true },
@@ -1971,6 +1971,14 @@ let g:contabs#project#locations = [
   \ { 'path': '~/code-worktrees', 'depth': 1, 'git_only': v:true },
   \ { 'path': '~/code-worktrees', 'depth': 0, 'git_only': v:true },
   \]
+
+if IsWsl() && isdirectory('/mnt/d/wsl-home/code')
+  let g:contabs#project#locations = g:contabs#project#locations + [
+  \ { 'path': '/mnt/d/wsl-home/code/', 'depth': 0, 'git_only': v:true },
+  \ { 'path': '/mnt/d/wsl-home/code/', 'depth': 1, 'git_only': v:true },
+  \ { 'path': '/mnt/d/wsl-home/code/', 'depth': 2, 'git_only': v:true },
+  \  ]
+endif
 
 function! ContabsNewTab(cmd, context)
   let [ l:location, l:directory ] = a:context
