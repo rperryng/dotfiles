@@ -2177,6 +2177,23 @@ let g:projectionist_heuristics = {
       \     'type': 'test',
       \     'alternate': 'src/{}.ts'
       \   },
+      \   'src/*.tsx': {
+      \     'type': 'source',
+      \     'alternate': [
+      \       'src/{}.test.tsx',
+      \       'src/{}.spec.tsx',
+      \       'test/{}.test.tsx',
+      \       'test/{}.spec.tsx',
+      \     ],
+      \   },
+      \   'src/*.test.tsx': {
+      \     'type': 'test',
+      \     'alternate': 'src/{}.tsx'
+      \   },
+      \   'src/*.spec.tsx': {
+      \     'type': 'test',
+      \     'alternate': 'src/{}.tsx'
+      \   },
       \ },
       \ 'pom.xml': {
       \   'src/main/java/*.java': {
