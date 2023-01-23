@@ -27,11 +27,48 @@
       }
     },
     {
-      "if": {
-        "app": "org.mozilla.firefox"
+      "if" : {
+        "app" : "org.mozilla.firefox",
+        "device" : {
+          "productName" : "Razer Basilisk Ultimate Dongle",
+          "productID" : "0x88",
+          "category" : "mouse",
+          "vendorID" : "0x1532"
+        }
       },
-      "scrolling": {
-        "distance": 7
+      "scrolling" : {
+        "distance" : 7
+      }
+    },
+    {
+      "if" : {
+        "device" : {
+          "productName" : "Apple Internal Keyboard \/ Trackpad",
+          "productID" : "0x343",
+          "category" : "trackpad",
+          "vendorID" : "0x5ac"
+        }
+      },
+      "scrolling" : {
+        "distance" : "auto"
+      }
+    },
+    {
+      "if" : {
+        "device" : {
+          "productName" : "Moonlander Mark I",
+          "productID" : "0x1969",
+          "category" : "mouse",
+          "vendorID" : "0x3297"
+        }
+      },
+      "scrolling" : {
+        "modifiers" : {
+          "command" : {
+            "type" : "changeSpeed",
+            "scale" : 8
+          }
+        }
       }
     }
   ]
