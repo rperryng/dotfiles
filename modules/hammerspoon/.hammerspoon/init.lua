@@ -55,9 +55,11 @@ spoon.SpoonInstall:andUse('FadeLogo', {
 })
 
 -- Application hotkeys
-hs.hotkey.bind(hyper, '1', launchById('com.1password.1password'))
+hs.hotkey.bind(hyper, 'p', launchById('com.1password.1password'))
 hs.hotkey.bind(hyper, 'f', launchById('org.mozilla.firefox'))
 hs.hotkey.bind(hyper, 's', launchById('com.spotify.client'))
 hs.hotkey.bind(hyper, 't', launchById('io.alacritty'))
 hs.hotkey.bind(hyper, 'c', launchById('com.tinyspeck.slackmacgap'))
+hs.hotkey.bind(hyper, 'm', launchById('com.tdesktop.Telegram'))
+hs.hotkey.bind(hyper, 'n', launchById('notion.id'))
 hs.hotkey.bind(hyper, 'h', openWithFinder('~/Applications/Chrome Apps.localized/Google Meet.app'))

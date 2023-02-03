@@ -304,6 +304,7 @@ augroup filetypes
   autocmd FileType rust nnoremap <buffer> <space>fo :RustFmt<CR>
   autocmd FileType typescript nnoremap <buffer> <space>fo :Prettier<CR>
   autocmd FileType typescriptreact nnoremap <buffer> <space>fo :Prettier<CR>
+  autocmd FileType typescriptreact nnoremap <buffer> <space>fo :Prettier<CR>
 
   " Help prevent accidentally modifying external source code resolved via
   " ctags or LSP functionality.
@@ -1629,9 +1630,7 @@ nnoremap <space>fM :Maps<CR>
 nnoremap <space>fgl :GFiles?<CR>
 nnoremap <space>fw :Windows<CR>
 nnoremap <space>fa :Rg<CR>
-nnoremap <space>fA :RgNoGitGlob<CR> !node_modules<space>
-nnoremap <space>fsa :RgNoGitGlob<CR> !node_modules<space>
-nnoremap <space>fse :RgNoIgnore<CR> !node_modules<space>
+nnoremap <space>fA :RgNoIgnore<CR> !node_modules<space>
 nnoremap <space>fr :Rg<CR>
 nnoremap <space>ft :TerminalBuffers<CR>
 nnoremap <space>fz :FZFMru<CR>

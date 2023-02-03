@@ -63,12 +63,11 @@
         }
       },
       "scrolling" : {
-        "modifiers" : {
-          "command" : {
-            "type" : "changeSpeed",
-            "scale" : 8
-          }
-        }
+        "reverse" : {
+          "horizontal" : false,
+          "vertical" : true
+        },
+        "distance" : 6
       }
     }
   ]
