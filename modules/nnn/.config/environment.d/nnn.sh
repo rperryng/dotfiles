@@ -6,5 +6,9 @@ export NNN_NO_AUTOSELECT=1
 export NNN_COLORS=4321
 
 if is_wsl; then
-  export NNN_BMS="w:$(wslpath 'D:\wsl-home');${NNN_BMS}"
+  wsl_home_path="$(wslpath 'D:\wsl-home')" 2>/dev/null
+
+  if [[ $? -eq 0 ]]; then
+    export NNN_BMS="w:${wsl_home_path};${NNN_BMS}"
+  fi
 fi
