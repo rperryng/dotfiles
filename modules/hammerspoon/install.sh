@@ -11,6 +11,8 @@ install() {
     return 0;
   fi
 
+  # TODO: install SpoonInstall
+
   echo "Hammerspoon not installed (https://github.com/Hammerspoon/hammerspoon/releases/latest)"
 }
 
