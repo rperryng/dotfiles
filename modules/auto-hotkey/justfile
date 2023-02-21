@@ -1,0 +1,18 @@
+windows_home := `wslpath "C:\Users\ryanp\home"`
+scripts_folder := `wslpath 'C:\Users\ryanp\home\auto_hotkey_scripts'`
+
+sync:
+  #!/usr/bin/env bash
+  if [[ ! -d "{{windows_home}}" ]]; then
+    echo "unrecognized windows environment"
+    exit 1
+  fi
+
+
+  if [[ -d "{{scripts_folder}}" ]]; then
+    echo "deleting '{{scripts_folder}}'"
+    sudo rm -rf "{{scripts_folder}}"
+  fi
+
+  mkdir "{{scripts_folder}}"
+  cp -r "${DOTFILES_DIR}/modules/auto-hotkey/scripts" "{{scripts_folder}}"
