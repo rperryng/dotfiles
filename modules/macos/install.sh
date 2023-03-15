@@ -9,7 +9,6 @@ install() {
   fi
 
   brew install --cask easy-move-plus-resize
-  brew install --cask hammerspoon
 }
 
 install

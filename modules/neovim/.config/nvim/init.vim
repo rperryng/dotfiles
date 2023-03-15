@@ -1,4 +1,4 @@
-" Avoid code execution vulnerability
+" avoid code execution vulnerability
 set nomodeline
 
 let mapleader="\<Space>"
@@ -1376,7 +1376,7 @@ function! s:fuzzy_project_selector_handler(project_name)
   endif
 
   call ContabsNewTab(v:null, [v:null, l:path])
-  execute 'silent !refresh_clone_urls'
+  call system('refresh_clone_urls')
 endfunction
 
 function! FuzzyProjectSelector()
@@ -1731,7 +1731,7 @@ nnoremap <space>cD :call TcdProjectRoot(g:rpn_rootmarkers_monorepo)<CR>
 " {{{ coc-nvim
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gI <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gn <Plug>(coc-diagnostic-next)
       \ :silent call repeat#set("\<Plug>(coc-diagnostic-next)", v:count)<CR>
