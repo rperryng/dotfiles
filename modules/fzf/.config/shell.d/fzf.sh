@@ -3,7 +3,7 @@
 #
 # FZF Configuration
 #
-export FZF_DEFAULT_OPTS="--height 70% --layout=reverse"
+export FZF_DEFAULT_OPTS="--height 70%"
 
 if [ -x "$(command -v rg)" ]; then
   export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
