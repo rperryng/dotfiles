@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #
 # FZF Configuration
 #
@@ -10,3 +12,16 @@ if [ -x "$(command -v rg)" ]; then
 fi
 
 prepend_path "${XDG_OPT_HOME}/fzf/bin"
+
+fzf_with_header() {
+  local input="$(< /dev/stdin)"
+  local header=$(echo $input | head -1)
+  local contents=$(echo $input | tail -n+2)
+  local pattern=$1
+
+  echo $contents \
+    | fzf --header="${header}" \
+    | grep -oE "\\s${pattern}" \
+    | head -1 \
+    | grep -oE $pattern
+}
