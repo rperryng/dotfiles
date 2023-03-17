@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-alias dk="docker"
+alias d="docker"
 
 function select_docker_container_id() {
   local docker_container_ls_output=$(
