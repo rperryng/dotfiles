@@ -18,3 +18,8 @@ vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
 
 -- Tabs
 vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
+
+-- Normal Mode
+vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
+vim.keymap.set('i', '<c-s>', '<esc>', { desc = 'Normal mode' })
+vim.keymap.set('t', '<c-s>', '<esc>', { desc = 'Normal mode' })
