@@ -77,6 +77,6 @@ install_vim_virtual_environments() {
   popd
 }
 
-install_neovim
+# install_neovim
 install_vim_plug
 install_vim_virtual_environments
