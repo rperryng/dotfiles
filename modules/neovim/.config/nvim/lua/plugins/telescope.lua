@@ -14,12 +14,21 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
       t = require('telescope')
-      t.setup()
+      t.setup({
+        defaults = {
+          mappings = {
+            i = {
+              ['<c-u>'] = false,
+              ['<c-d>'] = false,
+            }
+          }
+        }
+      })
       t.load_extension('fzf')
 
       builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<space>?', builtin.oldfiles, { desc = '[?] Find recently opened files' })
-      vim.keymap.set('n', '<space><space>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<space>fr', builtin.oldfiles, { desc = '[F]ind [R]ecently opened files' })
+      vim.keymap.set('n', '<space>fb', builtin.buffers, { desc = '[F]ind [B]uffers' })
       vim.keymap.set('n', '<space>fi', builtin.find_files, { desc = '[F]ind F[i]les' })
       vim.keymap.set('n', '<space>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
       vim.keymap.set('n', '<space>fw', builtin.grep_string, { desc = '[F]ind current [W]ord' })
