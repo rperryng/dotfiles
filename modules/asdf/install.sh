@@ -105,6 +105,20 @@ install_alias() {
   asdf plugin-add alias $ASDF_PLUGIN_ALIAS_URL
 }
 
+install_neovim() {
+  set +e
+  asdf plugin list | grep --quiet neovim
+  local return_code=$?
+  set -e
+
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0;
+  fi
+
+  asdf plugin add neovim
+  asdf install neovim
+}
+
 install
 
 if [[ ! -x $(command -v asdf) ]]; then
@@ -116,3 +130,4 @@ install_alias
 install_nodejs
 install_ruby
 install_python
+install_neovim

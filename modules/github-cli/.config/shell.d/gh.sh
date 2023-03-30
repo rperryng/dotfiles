@@ -26,3 +26,8 @@ alias open-pr="gh_openpr"
 alias ghrw="gh run watch -i1"
 alias ghrvw="gh run view --web"
 alias ghprvw="gh pr view --web"
+
+ghrwn() {
+  gh run watch -i1
+  say "done $(basename $(git rev-parse --show-toplevel))"
+}
