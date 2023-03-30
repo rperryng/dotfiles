@@ -411,12 +411,7 @@ let g:colorscheme = 'gruvbox'
 " let g:colorscheme = 'kanagawa'
 " let g:colorscheme = 'catppuccin'
 
-lua << EOF
-require('gruvbox').setup({
-  italic = false,
-  contrast = 'hard', -- can be "hard", "soft" or empty string
-})
-EOF
+lua require('gruvbox').setup({ italic = false, contrast = 'hard' })
 
 execute('colorscheme ' . g:colorscheme)
 set background=dark
