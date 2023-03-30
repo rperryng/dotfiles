@@ -9,16 +9,33 @@ return {
       'nvim-tree/nvim-web-devicons',
       'MunifTanjim/nui.nvim',
     },
-    keys = {
-      {
-        '<space>st',
-        function()
-          require('neo-tree.command').execute({ toggle = true })
-        end,
-      },
+    opts = {
+      filesystem = {
+        filtered_items = {
+          hide_dotfiles = false,
+          hide_gitignored = false,
+          hide_hidden = false,
+        }
+      }
     },
-    config = function()
-      require('neo-tree').setup()
+    config = function(_, opts)
+      require('neo-tree').setup(opts)
+
+      local cmd = require('neo-tree.command')
+
+      vim.keymap.set('n', '<space>sto', '', {
+        desc = 'Open neotree',
+        callback = function()
+          cmd.execute({ toggle = true })
+        end,
+      })
+
+      vim.keymap.set('n', '<space>str', '', {
+        desc = 'Open neotree',
+        callback = function()
+          cmd.execute({ toggle = true, reveal = true })
+        end,
+      })
     end,
   }
 }

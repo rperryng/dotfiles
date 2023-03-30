@@ -32,6 +32,7 @@ vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 0
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.number = true
 
 -- Search
 vim.opt.ignorecase = true

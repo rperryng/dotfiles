@@ -2,6 +2,11 @@
 vim.keymap.set('n', '<space>q', '<cmd>quit!<cr>', { desc = '[q] Quit' })
 vim.keymap.set('n', '<space>wa', '<cmd>wall<cr><cmd>set nohlsearch<cr>', { desc = '[wa] Write all' })
 
+-- j/k respect line linewrap
+
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+
 -- Sourcing
 vim.keymap.set('n', '<space>rl', '<cmd>source $MYVIMRC<cr>', { desc = '[rl] Reload' })
 vim.keymap.set('n', '<space>sl', '<cmd>set nohlsearch<cr>', { desc = '[sl] Set No Search Highlight' })

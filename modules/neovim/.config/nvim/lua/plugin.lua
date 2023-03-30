@@ -13,4 +13,8 @@ end
 vim.opt.runtimepath:prepend(lazypath)
 
 -- Automatically source all configs in plugins directory.
-require("lazy").setup("plugins")
+require("lazy").setup("plugins", {
+  change_detection = {
+    notify = false,
+  }
+})
