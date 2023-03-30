@@ -3,6 +3,10 @@
 set -e -o pipefail
 
 install() {
+  if [[ -x $(command -d ctags) ]]; then
+    return 0
+  fi
+
   case ${DOTFILES_OS} in
     "macos")
       brew install ctags

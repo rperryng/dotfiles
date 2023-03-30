@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
 
-alias dk="docker"
+alias d="docker"
 
 function select_docker_container_id() {
-  local docker_container_ls_output=$(
-    docker container ls \
-      --format 'table {{.Names}}\t{{.ID}}\t{{.Status}}\t{{.RunningFor}}\t{{.Image}}' \
-  )
-
-  echo $docker_container_ls_output \
-    | tail -n+2 \
-    | fzf --header="$(echo $docker_container_ls_output | head -1)" \
-    | grep -oE '\s([a-zA-Z0-9]+)' \
-    | head -1 \
-    | grep -oE '([a-zA-Z0-9]+)'
+  docker container ls \
+    --format 'table {{.Names}}\t{{.ID}}\t{{.Status}}\t{{.RunningFor}}\t{{.Image}}' \
+    | fzf_with_header '([a-zA-Z0-9]+)'
 }
 
 function dlogs() {

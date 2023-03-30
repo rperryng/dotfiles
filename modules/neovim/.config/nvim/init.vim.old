@@ -1,4 +1,4 @@
-" Avoid code execution vulnerability
+" avoid code execution vulnerability
 set nomodeline
 
 let mapleader="\<Space>"
@@ -1027,6 +1027,25 @@ function! ToggleQuickFixWindow()
 endfunction
 nnoremap <space>Q :call ToggleQuickFixWindow()<CR>
 " {{{ vim github links
+function! GetGithubRepoLink()
+  if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
+    echomsg getcwd().' is not in a git repository.'
+    return
+  endif
+
+  let l:remote_output = trim(system('git remote -v'))
+  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
+  if empty(l:remote_reponame)
+    echomsg 'could not parse organization/repository name from remote: '.l:remote_output
+    return
+  endif
+
+  let l:base_url = 'https://github.com'
+  let l:url = join([l:base_url, l:remote_reponame], '/')
+  echom "opening ".l:url
+  return l:url
+endfunction
+
 function! GetGithubLink()
   if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
     echomsg getcwd().' is not in a git repository.'
@@ -1073,6 +1092,8 @@ function! GetGithubLink()
 
   return l:url
 endfunction
+
+nmap <space>ghro :call Open(GetGithubRepoLink())<CR>
 
 nmap <space>gho :call Open(GetGithubLink())<CR>
 nmap <space>ghc :let @+ = GetGithubLink()<CR>
@@ -1376,7 +1397,7 @@ function! s:fuzzy_project_selector_handler(project_name)
   endif
 
   call ContabsNewTab(v:null, [v:null, l:path])
-  execute 'silent !refresh_clone_urls'
+  call system('refresh_clone_urls')
 endfunction
 
 function! FuzzyProjectSelector()
@@ -1731,7 +1752,7 @@ nnoremap <space>cD :call TcdProjectRoot(g:rpn_rootmarkers_monorepo)<CR>
 " {{{ coc-nvim
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gI <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gn <Plug>(coc-diagnostic-next)
       \ :silent call repeat#set("\<Plug>(coc-diagnostic-next)", v:count)<CR>
