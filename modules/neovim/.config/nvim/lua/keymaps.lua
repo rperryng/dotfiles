@@ -19,7 +19,10 @@ vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
 -- Tabs
 vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
 
+-- Last buffer
+vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })
+
 -- Normal Mode
 vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
 vim.keymap.set('i', '<c-s>', '<esc>', { desc = 'Normal mode' })
-vim.keymap.set('t', '<c-s>', '<esc>', { desc = 'Normal mode' })
+vim.keymap.set('t', '<c-s>', '<c-\\><c-n>', { desc = 'Normal mode' })
