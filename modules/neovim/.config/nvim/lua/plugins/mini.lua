@@ -1,9 +1,19 @@
-return {
+rturn {
   {
     'echasnovski/mini.bracketed',
     version = false,
     config = function()
       require('mini.bracketed').setup()
+    end,
+  },
+  {
+    'echasnovski/mini.indentscope',
+    version = false,
+    init = function()
+      vim.g.miniindentscope_disable = true
+    end,
+    config = function()
+      require('mini.indentscope').setup()
     end,
   },
   {
@@ -29,10 +39,10 @@ return {
     end,
   },
   {
-    'echasnovski/mini.surround',
+    'echasnovski/mini.splitjoin',
     version = false,
     config = function()
-      require('mini.surround').setup()
-    end,
+      require('mini.splitjoin').setup()
+    end
   },
 }

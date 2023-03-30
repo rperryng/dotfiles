@@ -11,6 +11,7 @@ return {
     },
     opts = {
       filesystem = {
+        find_by_full_path_words = true,
         filtered_items = {
           hide_dotfiles = false,
           hide_gitignored = false,
@@ -18,12 +19,15 @@ return {
         }
       }
     },
+    init = function()
+
+    end,
     config = function(_, opts)
       require('neo-tree').setup(opts)
 
       local cmd = require('neo-tree.command')
 
-      vim.keymap.set('n', '<space>sto', '', {
+      vim.keymap.set('n', '<space>E', '', {
         desc = 'Open neotree',
         callback = function()
           cmd.execute({ toggle = true })
@@ -31,9 +35,9 @@ return {
       })
 
       vim.keymap.set('n', '<space>str', '', {
-        desc = 'Open neotree',
+        desc = 'Reveal file in neotree',
         callback = function()
-          cmd.execute({ toggle = true, reveal = true })
+          cmd.execute({ reveal = true })
         end,
       })
     end,
