@@ -28,9 +28,21 @@ return {
       t.load_extension('fzf')
 
       builtin = require('telescope.builtin')
+
+      vim.keymap.set(
+        'n',
+        '<space>fi',
+        function()
+          if (vim.fn)
+
+          builtin.find_files()
+        end,
+        builtin.find_files,
+        { desc = '[F]ind F[i]les' }
+      )
+
       vim.keymap.set('n', '<space>fr', builtin.oldfiles, { desc = '[F]ind [R]ecently opened files' })
       vim.keymap.set('n', '<space>fb', builtin.buffers, { desc = '[F]ind [B]uffers' })
-      vim.keymap.set('n', '<space>fi', builtin.find_files, { desc = '[F]ind F[i]les' })
       vim.keymap.set('n', '<space>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
       vim.keymap.set('n', '<space>fw', builtin.grep_string, { desc = '[F]ind current [W]ord' })
       vim.keymap.set('n', '<space>fa', builtin.live_grep, { desc = '[F]ind in [A]ll files' })

@@ -10,4 +10,5 @@
 require('options')
 require('keymaps')
 require('augroups')
+require('utils')
 require('plugin')
