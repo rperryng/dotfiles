@@ -23,36 +23,72 @@ return {
       }
     },
     config = function(_, opts)
-      t = require('telescope')
-      t.setup(opts)
-      t.load_extension('fzf')
+      -- Setup telescope
+      local telescope = require('telescope')
+      telescope.setup(opts)
+      telescope.load_extension('fzf')
+      local builtin = require('telescope.builtin')
 
-      builtin = require('telescope.builtin')
+      local function find_files()
+        local home_dir = vim.fn.expand('$HOME')
+        local current_working_directory = vim.fn.expand('%:p:h')
 
-      vim.keymap.set(
-        'n',
-        '<space>fi',
-        function()
-          if (vim.fn)
+        if current_working_directory == home_dir then
+          print("cwd is $HOME, skipping")
+          return
+        end
 
-          builtin.find_files()
-        end,
-        builtin.find_files,
-        { desc = '[F]ind F[i]les' }
-      )
+        builtin.find_files()
+      end
 
-      vim.keymap.set('n', '<space>fr', builtin.oldfiles, { desc = '[F]ind [R]ecently opened files' })
-      vim.keymap.set('n', '<space>fb', builtin.buffers, { desc = '[F]ind [B]uffers' })
-      vim.keymap.set('n', '<space>fh', builtin.help_tags, { desc = '[F]ind [H]elp' })
-      vim.keymap.set('n', '<space>fw', builtin.grep_string, { desc = '[F]ind current [W]ord' })
-      vim.keymap.set('n', '<space>fa', builtin.live_grep, { desc = '[F]ind in [A]ll files' })
-      vim.keymap.set('n', '<space>fd', builtin.diagnostics, { desc = '[F]ind [D]iagnostics' })
-      vim.keymap.set('n', '<space>fc', builtin.commands, { desc = '[F]ind [C]ommands' })
-      vim.keymap.set('n', '<space>fC', builtin.command_history, { desc = '[F]ind [C]ommand history' })
-      vim.keymap.set('n', '<space>fs', builtin.search_history, { desc = '[F]ind Search History' })
-      vim.keymap.set('n', '<space>fm', builtin.keymaps, { desc = '[F]ind [M]appings' })
-      vim.keymap.set('n', '<space>fM', builtin.marks, { desc = '[F]ind [M]arks' })
-      vim.keymap.set('n', '<space>fgb', builtin.git_branches, { desc = '[F]ind [G]it [B]ranches' })
+      local function fuzzy_find_files_and_text()
+        builtin.grep_string({
+          path_display = { 'smart' },
+          only_sort_text = false,
+          word_match = "-w",
+          search = '',
+        })
+      end
+
+      local function fuzzy_find_text_only()
+        builtin.grep_string({
+          path_display = { 'smart' },
+          only_sort_text = true,
+          word_match = "-w",
+          search = '',
+        })
+      end
+
+      local keymaps = {
+        n = {
+          ['<space>fi'] = { func = find_files, desc = '[F]uzzy F[i]les' },
+          ['<space>fa'] = { func = fuzzy_find_files_and_text, desc = '[F]uzzy in [A]ll files' },
+          ['<space>fA'] = { func = fuzzy_find_text_only, desc = '[F]uzzy in [A]ll files' },
+          ['<space>frg'] = { func = builtin.live_grep, desc = '[F]uzzy [R]ipgrep' },
+          ['<space>frf'] = { func = builtin.oldfiles, desc = '[F]uzzy [R]ecently opened files' },
+          ['<space>ftr'] = { func = builtin.treesitter, desc = '[F]uzzy [R]ecently opened files' },
+          ['<space>fb'] = { func = builtin.buffers, desc = '[F]uzzy [Tr]eesitter' },
+          ['<space>fh'] = { func = builtin.help_tags, desc = '[F]uzzy [H]elp' },
+          ['<space>fw'] = { func = builtin.grep_string, desc = '[F]uzzy current [W]ord' },
+          ['<space>fd'] = { func = builtin.diagnostics, desc = '[F]uzzy [D]iagnostics' },
+          ['<space>fc'] = { func = builtin.commands, desc = '[F]uzzy [C]ommands' },
+          ['<space>fC'] = { func = builtin.command_history, desc = '[F]uzzy [C]ommand history' },
+          ['<space>fs'] = { func = builtin.search_history, desc = '[F]uzzy Search History' },
+          ['<space>fm'] = { func = builtin.keymaps, desc = '[F]uzzy [M]appings' },
+          ['<space>fM'] = { func = builtin.marks, desc = '[F]uzzy [M]arks' },
+          ['<space>fgb'] = { func = builtin.git_branches, desc = '[F]uzzy [G]it [B]ranches' },
+        }
+      }
+
+      -- Function to create keymap bindings
+      local function set_keymaps(keymaps)
+        for mode, mappings in pairs(keymaps) do
+          for key, value in pairs(mappings) do
+            vim.keymap.set(mode, key, value.func, { desc = value.desc })
+          end
+        end
+      end
+      set_keymaps(keymaps)
     end,
   },
 }

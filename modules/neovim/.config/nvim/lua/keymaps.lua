@@ -1,6 +1,6 @@
 -- Saving
 vim.keymap.set('n', '<space>q', '<cmd>quit!<cr>', { desc = '[q] Quit' })
-vim.keymap.set('n', '<space>wa', '<cmd>wall<cr><cmd>set nohlsearch<cr>', { desc = '[wa] Write all' })
+vim.keymap.set('n', '<space>wa', '<cmd>silent! wall<cr><cmd>set nohlsearch<cr>', { desc = '[wa] Write all', silent = true })
 
 -- j/k respect line linewrap
 
@@ -31,3 +31,6 @@ vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })
 vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
 vim.keymap.set('i', '<c-s>', '<esc>', { desc = 'Normal mode' })
 vim.keymap.set('t', '<c-s>', '<c-\\><c-n>', { desc = 'Normal mode' })
+
+-- Terminal Mappings
+--
