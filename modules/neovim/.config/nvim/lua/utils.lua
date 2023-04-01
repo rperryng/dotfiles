@@ -15,39 +15,11 @@ end
 vim.api.nvim_create_user_command('Redir', redir_command, { nargs = '+', complete = 'command' })
 vim.keymap.set('n', '<space>rm', '<cmd>Redir messages<cr>', { desc = '[R]edirect "[M]essages" command output to a new buffer' })
 
--- Project Terminal (terminal based on cwd)
--- local function toggle_terminal()
---   local bufname_pattern = 'term://' .. vim.fn.expand('%:p:t')
---   local terminal_buf = vim.fn.bufnr(bufname_pattern)
---
---   if terminal_buf == -1 then
---     -- Create a new terminal buffer
---     terminal_buf = vim.api.nvim_create_buf(true, true)
---     vim.api.nvim_buf_set_name(terminal_buf, bufname_pattern)
---
---     local cmd = vim.fn.expand('$SHELL')
---     vim.fn.termopen(cmd)
---   end
---
---   local win = vim.fn.bufwinnr(terminal_buf)
---   if win == -1 then
---     -- Terminal buffer is not visible, create a new window
---     local columns = vim.api.nvim_get_option('columns')
---     local lines = vim.api.nvim_get_option('lines')
---     local split_height = math.floor(lines * 0.3)
---
---     vim.cmd('topleft ' .. split_height .. 'sp')
---     vim.api.nvim_win_set_buf(0, terminal_buf)
---   else
---     -- Terminal buffer is visible, close the window
---     vim.api.nvim_win_close(win, true)
---   end
--- end
-
 local function terminal_resize()
   local current_win = vim.api.nvim_get_current_win()
-  local current_tab = vim.api.nvim_get_current_tabpage()
-  local windows = vim.api.nvim_tabpage_list_wins(current_tab)
+  local windows = vim.api.nvim_tabpage_list_wins(
+    vim.api.nvim_get_current_tabpage()
+  )
   local last_window = windows[#windows]
   vim.api.nvim_set_current_win(last_window)
 
