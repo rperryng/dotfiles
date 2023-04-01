@@ -28,9 +28,6 @@ return {
         }
       }
     },
-    init = function()
-
-    end,
     config = function(_, opts)
       require('neo-tree').setup(opts)
 
