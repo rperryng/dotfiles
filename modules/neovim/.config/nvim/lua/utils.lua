@@ -34,7 +34,7 @@ local function toggle_project_terminal()
   local terminal_buf_name = 'term-' .. project_name
 
   vim.cmd('wincmd b')
-  if string.find(current_buf_name, '^term-') == nil then
+  if string.find(vim.fn.expand('%'), '^term-') == nil then
     vim.cmd('botright split')
     terminal_resize()
   end
