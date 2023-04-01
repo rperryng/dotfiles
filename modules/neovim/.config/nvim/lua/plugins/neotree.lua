@@ -17,6 +17,14 @@ return {
           hide_dotfiles = false,
           hide_gitignored = false,
           hide_hidden = false,
+        },
+        window = {
+          mappings = {
+            ['/'] = 'none',
+            ['<space>/'] = 'fuzzy_finder',
+            ['?'] = 'none',
+            ['<space>?'] = 'show_help',
+          }
         }
       }
     },
