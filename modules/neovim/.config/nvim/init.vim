@@ -132,6 +132,7 @@ Plug 'vimwiki/vimwiki'
 Plug 'vmchale/just-vim'
 Plug 'wellle/targets.vim'
 Plug 'wsdjeg/vim-fetch'
+Plug 'github/copilot.vim'
 
 " Plug 'Olical/aniseed'
 " Plug 'Olical/conjure'
@@ -144,6 +145,7 @@ Plug 'preservim/nerdtree'
 
 " UI
 Plug 'arzg/seoul8'
+Plug 'jjo/vim-cue'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
@@ -1763,24 +1765,24 @@ nmap <space>A <Plug>(coc-codeaction)
 
 nnoremap K :call CocAction('doHover')<CR>
 
-imap <silent> <c-k> <esc><Plug>(coc-float-jump)
+" imap <silent> <c-k> <esc><Plug>(coc-float-jump)
 nmap <silent> gF <Plug>(coc-float-jump)
 nmap <silent> gH <Plug>(coc-float-hide)
 nmap <silent> <esc> <Plug>(coc-float-hide)
 
 " from :help coc-completion
-inoremap <silent><expr> <c-e>
+inoremap <silent><expr> <c-i>
       \ coc#pum#visible() ? coc#_select_confirm() :
       \ coc#expandableOrJumpable() ?
       \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <silent><expr> <tab>
-      \ coc#pum#visible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ?
-      \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+" inoremap <silent><expr> <tab>
+"       \ coc#pum#visible() ? coc#_select_confirm() :
+"       \ coc#expandableOrJumpable() ?
+"       \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
 
 " inoremap <silent><expr> <C-q> "\<c-o>:echom coc#pum#visible()='".coc#pum#visible()."'\n"
 inoremap <silent><expr> <C-q> coc#_select_confirm()
@@ -2327,6 +2329,10 @@ endif
 " {{{ vim-duck
 nnoremap <space>dd :lua require("duck").hatch()<CR>
 nnoremap <space>dk :lua require("duck").cook()<CR>
+" }}}
+" {{{ copilot.vim
+" imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
+" let g:copilot_no_tab_map = v:true
 " }}}
 " }}}
 " {{{ Terminal buffer configs

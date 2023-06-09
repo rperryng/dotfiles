@@ -14,6 +14,10 @@ alias gcane="git commit --amend --no-edit"
 alias gcmsg="git commit --message"
 alias gcne="git commit --no-edit"
 
+alias gr="git rebase"
+alias grc="git rebase --continue"
+alias grcne="git rebase --continue --no-edit"
+
 # Push new local branch to remote under the same name
 alias gpsu="git push --set-upstream origin \$(git symbolic-ref --short -q HEAD)"
 
@@ -21,6 +25,10 @@ alias gpsu="git push --set-upstream origin \$(git symbolic-ref --short -q HEAD)"
 # message as the original.
 alias grbcne='GIT_EDITOR=true git rebase --continue'
 alias git_default_branch="git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'"
+
+# Update `refs/remotes/origin/HEAD` if it was updated in the remote (e.g.
+# default branch renamed to `main`)
+alias git_fix_origin_head="git remote set-head origin --auto"
 
 # Jump to repository root
 alias cdp='cd $(git rev-parse --show-toplevel)'
