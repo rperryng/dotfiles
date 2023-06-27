@@ -19,7 +19,8 @@ source_files_in() {
 }
 
 #
-# Prepends a path to the path variable (avoiding duplicates)
+# Prepends a path to the path variable, if the value already exists it is moved
+# to the front of the path
 #
 # usage:
 #   prepend_path [path_to_prepend]
@@ -34,10 +35,17 @@ source_files_in() {
 #
 function prepend_path() {
   local i
+  local arg
   local paths=("$1")
   for ((i = $#; i > 0; i--)); do
     arg=${paths[i]}
-    if [ -d "$arg" ] && [[ ":$PATH:" != *":$arg:"* ]]; then
+    if [ -d "$arg" ]; then
+      # Remove existing instance of the directory
+      PATH=":$PATH:"
+      PATH=${PATH//:$arg:/:}
+      PATH=${PATH#:}; PATH=${PATH%:}
+
+      # Prepend the directory to the PATH
       PATH="$arg${PATH:+":$PATH"}"
     fi
   done
