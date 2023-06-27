@@ -34,19 +34,13 @@ source_files_in() {
 #   # PATH="/path/abc:/path/xyz:/usr/bin:/bin"
 #
 function prepend_path() {
-  local i
-  local arg
-  local paths=("$1")
-  for ((i = $#; i > 0; i--)); do
-    arg=${paths[i]}
-    if [ -d "$arg" ]; then
+  for dir; do
+    if [ -d "$dir" ]; then
       # Remove existing instance of the directory
-      PATH=":$PATH:"
-      PATH=${PATH//:$arg:/:}
-      PATH=${PATH#:}; PATH=${PATH%:}
-
+      PATH=$(echo "$PATH" | tr ':' '\n' | grep -vx "$dir" | tr '\n' ':' | sed 's/:$//')
+      
       # Prepend the directory to the PATH
-      PATH="$arg${PATH:+":$PATH"}"
+      PATH="$dir:$PATH"
     fi
   done
 }
