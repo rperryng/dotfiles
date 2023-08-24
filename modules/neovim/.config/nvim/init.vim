@@ -690,7 +690,7 @@ function! ToggleProjectTerminal()
   if !buflisted(l:terminal_buf_name)
     terminal
     execute 'keepalt file ' . l:terminal_buf_name
-  elseif bufname() !~ l:terminal_buf_name
+  elseif match(bufname(), '^'.l:terminal_buf_name.'$')
     execute 'edit ' . l:terminal_buf_name
   else
     quit
