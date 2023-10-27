@@ -9,7 +9,8 @@ install() {
   packages=$(git ls-files | grep "./*/install.sh")
 
   # Install ASDF first
-  ./asdf/install.sh
+  source ./asdf/install.sh
+
 
   while IFS= read -r package; do
     local name=$(basename $(dirname ${package}))
@@ -18,7 +19,7 @@ install() {
     echo "           Installing module '$name'"
     echo "==================================================="
 
-    "$package"
+    source "$package"
 
     echo "==================================================="
     echo "           done installing '$name'"
