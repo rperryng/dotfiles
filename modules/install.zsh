@@ -4,4 +4,4 @@
 # the root install.sh could be executed from bash, so using a `.zsh` here
 # at least ensures that the zsh environment variables/config etc are present
 # before installing all the modules.
-"${DOTFILES_DIR:-$HOME/.dotfiles}/modules/install.sh"
+source "${DOTFILES_DIR:-$HOME/.dotfiles}/modules/install.sh"

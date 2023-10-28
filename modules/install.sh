@@ -11,6 +11,13 @@ install() {
   # Install ASDF first
   source ./asdf/install.sh
 
+  echo "Installed ASDF.?  Running ASDF Debug Script?"
+  source ./asdf/debug.sh
+
+  if [[ ! -x $(command -v asdf) ]]; then
+    echo "[modules/install.sh]: ASDF still not installed.  Aborting"
+    exit 1;
+  fi
 
   while IFS= read -r package; do
     local name=$(basename $(dirname ${package}))

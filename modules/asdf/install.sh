@@ -22,7 +22,7 @@ install() {
       "${ASDF_REPOSITORY_URL}" "${ASDF_DIR}" \
       --branch "${latest_tag}"
 
-    source "${XDG_OPT_HOME:-$HOME/.local/opt}/asdf/asdf.sh"
+    source "${ASDF_DIR}/asdf.sh"
   fi
 }
 
