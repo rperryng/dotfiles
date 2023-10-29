@@ -11,11 +11,10 @@ install() {
   # Install ASDF first
   source ./asdf/install.sh
 
-  echo "Installed ASDF.?  Running ASDF Debug Script?"
-  source ./asdf/debug.sh
-
   if [[ ! -x $(command -v asdf) ]]; then
     echo "[modules/install.sh]: ASDF still not installed.  Aborting"
+
+    source ./asdf/debug.sh
     exit 1;
   fi
 
