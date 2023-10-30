@@ -14,14 +14,15 @@ install() {
       brew install bat
       ;;
     "debian")
-      release_version="$(uname -m)-unknown-linux"
+      release_version="$(uname -m)-unknown-linux-musl"
       download_url=$( \
         curl -sSL \
           -H "Accept: application/vnd.github+json" \
           "${BAT_LATEST_RELEASE_URL}" \
-          | jq ".assets[] | select(.name | contains(\"${release_version}\"))" \
-          | jq '.browser_download_url' --raw-output
+          | jq ".assets[] | select(.name | contains(\"${release_version}\")) | .browser_download_url" --raw-output
       )
+
+      echo "download URL for latest bats ${release_version}: ${download_url}"
 
       curl -sSL "${download_url}" > /tmp/bat.tar.gz
       mkdir -p /tmp/bat
