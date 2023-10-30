@@ -187,7 +187,7 @@ setup_default_shells() {
   fi
 
   # Change default shell to zsh
-  chsh -s "$zsh_path"
+  sudo chsh -s "$zsh_path" "${USER}"
 }
 
 main() {
