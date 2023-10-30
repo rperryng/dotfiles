@@ -33,7 +33,6 @@ install() {
     echo "           Done installing '$name'"
     echo "==================================================="
     echo "..."
-  # done <<< "$packages"
   done
 
   echo "============================"
