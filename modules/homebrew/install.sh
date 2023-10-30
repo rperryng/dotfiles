@@ -21,4 +21,4 @@ install() {
   source "${DOTFILES_DIR}/modules/homebrew/.config/shell.d/brew.sh"
 }
 
-install()
+install
