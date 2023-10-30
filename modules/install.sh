@@ -30,6 +30,8 @@ install() {
     echo "           Done installing '$name'"
     echo "==================================================="
     echo "..."
+    echo "Remaining packages:"
+    echo "$packages"
   done <<< "$packages"
 
   echo "============================"
