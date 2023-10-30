@@ -2,6 +2,10 @@
 
 set -e
 
+# Also see: modules/rust/.config/shell.d/rust.sh
+export RUSTUP_HOME="${XDG_CONFIG_HOME}/.rustup"
+export CARGO_HOME="${XDG_CONFIG_HOME}/.cargo"
+
 install_rustup() {
   if [[ -x "$(command -v rustup)" ]]; then
     return 0;
@@ -15,7 +19,7 @@ install_rustup() {
       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
         | sh -s -- -y --no-modify-path
 
-      export PATH="${XDG_CONFIG_HOME}/.cargo/bin:${PATH}"
+      export PATH="${CARGO_HOME}/bin:${PATH}"
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"

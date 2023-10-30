@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Also see: modules/rust/install.sh
 export RUSTUP_HOME="${XDG_CONFIG_HOME}/.rustup"
 export CARGO_HOME="${XDG_CONFIG_HOME}/.cargo"
 

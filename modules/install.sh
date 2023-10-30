@@ -18,7 +18,8 @@ install() {
   echo "============================"
   echo "..."
 
-  # Use a custom file descriptor to avoid interpreting output from a subcommand
+  # Use a custom file descriptor instead of STDIN in case any scripts
+  # consume the STDIN contents
   while IFS= read -r package <&3; do
     local name=$(basename $(dirname ${package}))
 
