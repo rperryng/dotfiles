@@ -32,6 +32,11 @@ install() {
     echo "..."
   done <<< "$packages"
 
+  echo "============================"
+  echo "Done installing modules"
+  echo "============================"
+  echo "..."
+
   popd
 }
 
