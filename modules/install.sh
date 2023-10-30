@@ -9,7 +9,9 @@ install() {
   source ./asdf/install.sh
 
   local packages
-  packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")
+  readarray -t packages_array < <(git ls-files | grep "./*/install.sh" | grep -v "asdf")
+  # packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")
+  
 
   echo "============================"
   echo "Installing modules:"
@@ -17,7 +19,8 @@ install() {
   echo "============================"
   echo "..."
 
-  while IFS= read -r package; do
+  # while IFS= read -r package; do
+  for package in "${packages_array[@]}"
     local name=$(basename $(dirname ${package}))
 
     echo "==================================================="
