@@ -8,7 +8,7 @@ install() {
   # Install ASDF first
   source ./asdf/install.sh
 
-  local packages
+  # local packages
   readarray -t packages_array < <(git ls-files | grep "./*/install.sh" | grep -v "asdf")
   # packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")
   
@@ -20,7 +20,7 @@ install() {
   echo "..."
 
   # while IFS= read -r package; do
-  for package in "${packages_array[@]}"
+  for package in "${packages_array[@]}"; do
     local name=$(basename $(dirname ${package}))
 
     echo "==================================================="
@@ -33,8 +33,6 @@ install() {
     echo "           Done installing '$name'"
     echo "==================================================="
     echo "..."
-    echo "Remaining packages:"
-    echo "$packages"
   # done <<< "$packages"
   done
 
