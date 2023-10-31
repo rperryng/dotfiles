@@ -5,26 +5,40 @@ set -e -o pipefail
 install() {
   pushd "${DOTFILES_DIR:-$HOME/.dotfiles}/modules"
 
-  local packages
-  packages=$(git ls-files | grep "./*/install.sh")
-
   # Install ASDF first
-  ./asdf/install.sh
+  source ./asdf/install.sh
 
-  while IFS= read -r package; do
+  local packages
+  packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")
+  
+
+  echo "============================"
+  echo "Installing modules:"
+  echo "$packages"
+  echo "============================"
+  echo "..."
+
+  # Use a custom file descriptor instead of STDIN in case any scripts
+  # consume the STDIN contents
+  while IFS= read -r package <&3; do
     local name=$(basename $(dirname ${package}))
 
     echo "==================================================="
     echo "           Installing module '$name'"
     echo "==================================================="
 
-    "$package"
+    source "$package"
 
     echo "==================================================="
-    echo "           done installing '$name'"
+    echo "           Done installing '$name'"
     echo "==================================================="
     echo "..."
-  done <<< "$packages"
+  done 3< <(echo "$packages")
+
+  echo "============================"
+  echo "Done installing modules"
+  echo "============================"
+  echo "..."
 
   popd
 }

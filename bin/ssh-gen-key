@@ -34,7 +34,7 @@ eval "$(ssh-agent -s)" && ssh-add "${KEY_PATH}"
 if [[ $(command -v pbcopy) ]]; then
   pbcopy <"${KEY_PATH}.pub"
   echo "Public key copied to clipboard"
-elif [[ $(command -v wine32yank.exe) ]]; then
+elif [[ $(command -v win32yank.exe) ]]; then
   cat "${KEY_PATH}.pub" | win32yank.exe -i
   echo "Public key copied to clipboard"
 else

@@ -6,6 +6,9 @@ NVIM_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nvim"
 
 install_neovim() {
   if [[ -x $(command -v nvim) ]]; then
+    if [[ $(commanv -v nvim) == *"asdf"* ]]; then
+      echo "Neovim installed via asdf"
+    fi
     return 0
   fi
 
@@ -56,14 +59,14 @@ install_vim_virtual_environments() {
   pushd "${XDG_OPT_HOME}/nvim/virtualenvs"
 
   # Python2
-  if [[ ! -d './neovim2' ]]; then
-    export ASDF_PYTHON_VERSION=${DOTFILES_PYTHON2_VERSION}
-    virtualenv neovim2
-    source neovim2/bin/activate
-    pip install neovim neovim-remote
-    deactivate
-    asdf reshim python
-  fi
+  # if [[ ! -d './neovim2' ]]; then
+  #   export ASDF_PYTHON_VERSION=${DOTFILES_PYTHON2_VERSION}
+  #   virtualenv neovim2
+  #   source neovim2/bin/activate
+  #   pip install neovim neovim-remote
+  #   deactivate
+  #   asdf reshim python
+  # fi
 
   if [[ ! -d './neovim3' ]]; then
     export ASDF_PYTHON_VERSION=${DOTFILES_PYTHON3_VERSION}
@@ -80,3 +83,5 @@ install_vim_virtual_environments() {
 # install_neovim
 install_vim_plug
 install_vim_virtual_environments
+
+echo "installed neovim successfully"

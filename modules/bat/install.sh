@@ -3,7 +3,6 @@
 set -e
 
 BAT_LATEST_RELEASE_URL="https://api.github.com/repos/sharkdp/bat/releases/latest"
-ASSET_NAME="bat-v0.21.0-x86_64-unknown-linux-gnu.tar.gz"
 
 install() {
   if [[ -x "$(command -v bat)" ]]; then
@@ -15,13 +14,15 @@ install() {
       brew install bat
       ;;
     "debian")
+      release_version="$(uname -m)-unknown-linux-musl"
       download_url=$( \
         curl -sSL \
           -H "Accept: application/vnd.github+json" \
           "${BAT_LATEST_RELEASE_URL}" \
-          | jq ".assets[] | select(.name == \""${ASSET_NAME}"\") " \
-          | jq '.browser_download_url' --raw-output
+          | jq ".assets[] | select(.name | contains(\"${release_version}\")) | .browser_download_url" --raw-output
       )
+
+      echo "download URL for latest bats ${release_version}: ${download_url}"
 
       curl -sSL "${download_url}" > /tmp/bat.tar.gz
       mkdir -p /tmp/bat

@@ -160,6 +160,12 @@ clone_dotfiles() {
     # Ensure repo is using the ssh remote
     pushd "${DOTFILES_DIR}" >/dev/null
     git remote set-url origin git@github.com:rperryng/dotfiles.git
+
+    if [[ -n "${DOTFILES_BRANCH}" ]]; then
+      echo "Checking out dotfiles branch: ${DOTFILES_BRANCH}"
+      git checkout "${DOTFILES_BRANCH}"
+    fi 
+
     popd >/dev/null
   fi
 }
@@ -181,7 +187,7 @@ setup_default_shells() {
   fi
 
   # Change default shell to zsh
-  chsh -s "$zsh_path"
+  sudo chsh -s "$zsh_path" "${USER}"
 }
 
 main() {

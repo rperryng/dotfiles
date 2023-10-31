@@ -137,9 +137,6 @@ Plug 'github/copilot.vim'
 " Plug 'Olical/aniseed'
 " Plug 'Olical/conjure'
 
-" Neovim Nightly
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
 " To show tree style views for coworkers not used to buffer based workflows
 Plug 'preservim/nerdtree'
 
@@ -195,16 +192,27 @@ call plug#end()
 " {{{ Host programs
 " ===========
 " https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
-" activate 'neovim3', then python -m pip install pynvim
 
+" function! MatchStrAll(str, pat)
+"     let l:res = []
+"     call substitute(a:str, a:pat, '\=add(l:res, submatch(0))', 'g')
+"     return l:res
+" endfunction
 
+function! GetRuntimeVersion(runtime)
+    let tool_versions_file = $HOME.'/.config/asdf/tool-versions'
+    let runtime_pattern = '\v^'.a:runtime.'\s+\zs\d+\.\d+\.\d+'
 
-" Python
-if isdirectory($XDG_OPT_HOME.'/nvim/virtualenvs/neovim2')
-  let g:python_host_prog=$XDG_OPT_HOME.'/nvim/virtualenvs/neovim2/bin/python'
-else
-  echom "No python 2 host set."
-endif
+    let file = readfile(tool_versions_file)
+    for line in file
+        let l:version = matchstr(line, runtime_pattern)
+        if !empty(l:version)
+            return l:version
+        endif
+    endfor
+
+    return 'Runtime not found'
+endfunction
 
 " Python
 if isdirectory($XDG_OPT_HOME.'/nvim/virtualenvs/neovim3')
@@ -215,7 +223,7 @@ endif
 
 " Ruby
 if executable('asdf')
-  let ruby_version = trim(system('asdf_tool_version ruby'))
+  let ruby_version = GetRuntimeVersion('ruby')
   let ruby_path = trim(system('asdf where ruby '.ruby_version))
   let g:ruby_host_prog = ruby_path.'/bin/ruby'
 else
@@ -224,14 +232,14 @@ endif
 
 " Node
 if executable('asdf')
-  let nodejs_version = trim(system('asdf_tool_version nodejs'))
+  let yarn_global_dir = trim(system('yarn global dir'))
+  let g:node_host_prog = yarn_global_dir.'/node_modules/neovim/bin/cli.js'
+
+  let nodejs_version = GetRuntimeVersion('nodejs')
   let nodejs_path = trim(system('asdf where nodejs '.nodejs_version))
 
   " TODO: This should point to the project node version? :thinking:
   let g:coc_node_path = nodejs_path.'/bin/node'
-
-  let yarn_global_dir = trim(system('yarn global dir'))
-  let g:node_host_prog = yarn_global_dir.'/node_modules/neovim/bin/cli.js'
 else
   echom "No node host set."
 endif
