@@ -87,7 +87,7 @@ install_python() {
     return 0;
   fi
 
-  asdf plugin-add python
+  asdf plugin add python
   asdf install python
 }
 
@@ -119,7 +119,6 @@ install_neovim() {
   asdf install neovim
 }
 
-ASDF_PLUGIN_JUST_URL="https://github.com/olofvndrhr/asdf-just.git"
 install_just() {
   set +e
   asdf plugin list | grep --quiet python
@@ -130,8 +129,25 @@ install_just() {
     return 0;
   fi
 
-  asdf plugin add just https://github.com/olofvndrhr/asdf-just.git
+  asdf plugin add just
   asdf install just
+
+  if [[ $(which just) != *"asdf"* ]]; then
+    echo "current 'just' distribution not from asdf - attempting to uninstall current 'just' $(which just)"
+
+    case ${DOTFILES_OS} in
+      "macos")
+        brew uninstall just
+        ;;
+      "debian")
+        sudo apt remove just
+        ;;
+      *)
+        echo "OS family: '${DOTFILES_OS}' not supported"
+        exit 1
+        ;;
+    esac
+  fi
 }
 
 install
