@@ -121,7 +121,7 @@ install_neovim() {
 
 install_just() {
   set +e
-  asdf plugin list | grep --quiet python
+  asdf plugin list | grep --quiet just
   local return_code=$?
   set -e
 
