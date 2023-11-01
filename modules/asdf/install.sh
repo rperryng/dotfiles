@@ -119,6 +119,21 @@ install_neovim() {
   asdf install neovim
 }
 
+ASDF_PLUGIN_JUST_URL="https://github.com/olofvndrhr/asdf-just.git"
+install_just() {
+  set +e
+  asdf plugin list | grep --quiet python
+  local return_code=$?
+  set -e
+
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0;
+  fi
+
+  asdf plugin add just https://github.com/olofvndrhr/asdf-just.git
+  asdf install just
+}
+
 install
 
 if [[ ! -x $(command -v asdf) ]]; then
@@ -131,3 +146,4 @@ install_nodejs
 install_ruby
 install_python
 install_neovim
+install_just
