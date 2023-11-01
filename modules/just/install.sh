@@ -13,7 +13,7 @@ function install() {
   fi
 
   asdf plugin add just
-  asdf install just '1.8.0'
+  asdf install just
 }
 
 install

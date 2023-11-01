@@ -149,6 +149,7 @@ install_default_packages() {
   install_packages "tldr"
   install_packages "ripgrep"
   install_packages "jq"
+  install_packages "just"
   install_packages "unzip"
 }
 
@@ -211,7 +212,7 @@ main() {
 
   # configure dotfiles & shell
   setup_default_shells
-  make
+  just stow
 
   # Install the user modules in a ZSH session, so that proper envs are loaded
   "${DOTFILES_DIR}/modules/install.zsh"

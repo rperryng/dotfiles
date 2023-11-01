@@ -1256,6 +1256,9 @@ nnoremap sp :tabprevious<CR>
 nnoremap sf :set filetype=
 
 nnoremap \e :edit!<CR>
+
+nmap <silent><space>@ @@ :silent call repeat#set("@@", -1)<CR>
+      \ :silent! call repeat#set("@@", -1)<CR>
 " }}}
 " {{{ Plugin Config
 
