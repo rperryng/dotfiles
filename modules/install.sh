@@ -10,7 +10,6 @@ install() {
 
   local packages
   packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")
-  
 
   echo "============================"
   echo "Installing modules:"
