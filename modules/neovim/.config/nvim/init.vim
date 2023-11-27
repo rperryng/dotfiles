@@ -193,12 +193,6 @@ call plug#end()
 " ===========
 " https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
 
-" function! MatchStrAll(str, pat)
-"     let l:res = []
-"     call substitute(a:str, a:pat, '\=add(l:res, submatch(0))', 'g')
-"     return l:res
-" endfunction
-
 function! GetRuntimeVersion(runtime)
     let tool_versions_file = $HOME.'/.config/asdf/tool-versions'
     let runtime_pattern = '\v^'.a:runtime.'\s+\zs\d+\.\d+\.\d+'
@@ -1032,19 +1026,31 @@ function! ToggleQuickFixWindow()
 endfunction
 nnoremap <space>Q :call ToggleQuickFixWindow()<CR>
 " {{{ vim github links
+function! GetGithubOwnerRepo()
+  let l:remote_output = trim(system('git remote -v'))
+
+  " SSH links
+  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
+  if !empty(l:remote_reponame)
+    return l:remote_reponame
+  endif
+
+  " https links
+  let l:remote_reponame = matchstr(g:remote_output, 'github.com/\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
+  if !empty(l:remote_reponame)
+    return l:remote_reponame
+  endif
+
+  echomsg 'could not parse organization/repository name from remote: '.l:remote_output
+endfunction
+
 function! GetGithubRepoLink()
   if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
     echomsg getcwd().' is not in a git repository.'
     return
   endif
 
-  let l:remote_output = trim(system('git remote -v'))
-  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
-  if empty(l:remote_reponame)
-    echomsg 'could not parse organization/repository name from remote: '.l:remote_output
-    return
-  endif
-
+  let l:remote_reponame = GetGithubOwnerRepo()
   let l:base_url = 'https://github.com'
   let l:url = join([l:base_url, l:remote_reponame], '/')
   echom "opening ".l:url
@@ -1057,12 +1063,8 @@ function! GetGithubLink()
     return
   endif
 
+  let l:remote_reponame = GetGithubOwnerRepo()
   let l:remote_output = trim(system('git remote -v'))
-  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
-  if empty(l:remote_reponame)
-    echomsg 'could not parse organization/repository name from remote: '.l:remote_output
-    return
-  endif
 
   let l:remote_ref_output = trim(system('git rev-parse --abref-ref --symbolic-full-name @{u}'))
   let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs[a-zA-Z0-9-_]*\/[0-9a-zA-Z-@]*')
@@ -1200,9 +1202,11 @@ xnoremap <space>gr y:%s/<C-r>0//g<left><left>
 " Open buffer in new tab and go to current position
 function! ReopenInNewTab()
   let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:current_buffer = bufnr('%')
 
   normal ml
-  tabedit %
+  tabedit
+  execute ':buffer '.l:current_buffer
   execute ':TabooRename '.l:project_name
   normal 'lzz
 endfunction
@@ -2345,6 +2349,8 @@ nnoremap <space>dk :lua require("duck").cook()<CR>
 " imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
 " let g:copilot_no_tab_map = v:true
 " }}}
+" coc-deno
+command! Deno execute ':CocCommand deno.initializeWorkspace'
 " }}}
 " {{{ Terminal buffer configs
 
