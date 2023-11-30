@@ -132,18 +132,17 @@ Plug 'vimwiki/vimwiki'
 Plug 'vmchale/just-vim'
 Plug 'wellle/targets.vim'
 Plug 'wsdjeg/vim-fetch'
+Plug 'github/copilot.vim'
 
 " Plug 'Olical/aniseed'
 " Plug 'Olical/conjure'
-
-" Neovim Nightly
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " To show tree style views for coworkers not used to buffer based workflows
 Plug 'preservim/nerdtree'
 
 " UI
 Plug 'arzg/seoul8'
+Plug 'jjo/vim-cue'
 Plug 'chriskempson/base16-vim'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'folke/lsp-colors.nvim', { 'branch': 'main' }
@@ -193,16 +192,21 @@ call plug#end()
 " {{{ Host programs
 " ===========
 " https://github.com/deoplete-plugins/deoplete-jedi/wiki/Setting-up-Python-for-Neovim
-" activate 'neovim3', then python -m pip install pynvim
 
+function! GetRuntimeVersion(runtime)
+    let tool_versions_file = $HOME.'/.config/asdf/tool-versions'
+    let runtime_pattern = '\v^'.a:runtime.'\s+\zs\d+\.\d+\.\d+'
 
+    let file = readfile(tool_versions_file)
+    for line in file
+        let l:version = matchstr(line, runtime_pattern)
+        if !empty(l:version)
+            return l:version
+        endif
+    endfor
 
-" Python
-if isdirectory($XDG_OPT_HOME.'/nvim/virtualenvs/neovim2')
-  let g:python_host_prog=$XDG_OPT_HOME.'/nvim/virtualenvs/neovim2/bin/python'
-else
-  echom "No python 2 host set."
-endif
+    return 'Runtime not found'
+endfunction
 
 " Python
 if isdirectory($XDG_OPT_HOME.'/nvim/virtualenvs/neovim3')
@@ -213,7 +217,7 @@ endif
 
 " Ruby
 if executable('asdf')
-  let ruby_version = trim(system('asdf_tool_version ruby'))
+  let ruby_version = GetRuntimeVersion('ruby')
   let ruby_path = trim(system('asdf where ruby '.ruby_version))
   let g:ruby_host_prog = ruby_path.'/bin/ruby'
 else
@@ -222,14 +226,14 @@ endif
 
 " Node
 if executable('asdf')
-  let nodejs_version = trim(system('asdf_tool_version nodejs'))
+  let yarn_global_dir = trim(system('yarn global dir'))
+  let g:node_host_prog = yarn_global_dir.'/node_modules/neovim/bin/cli.js'
+
+  let nodejs_version = GetRuntimeVersion('nodejs')
   let nodejs_path = trim(system('asdf where nodejs '.nodejs_version))
 
   " TODO: This should point to the project node version? :thinking:
   let g:coc_node_path = nodejs_path.'/bin/node'
-
-  let yarn_global_dir = trim(system('yarn global dir'))
-  let g:node_host_prog = yarn_global_dir.'/node_modules/neovim/bin/cli.js'
 else
   echom "No node host set."
 endif
@@ -411,12 +415,7 @@ let g:colorscheme = 'gruvbox'
 " let g:colorscheme = 'kanagawa'
 " let g:colorscheme = 'catppuccin'
 
-lua << EOF
-require('gruvbox').setup({
-  italic = false,
-  contrast = 'hard', -- can be "hard", "soft" or empty string
-})
-EOF
+lua require('gruvbox').setup({ italic = false, contrast = 'hard' })
 
 execute('colorscheme ' . g:colorscheme)
 set background=dark
@@ -693,7 +692,7 @@ function! ToggleProjectTerminal()
   if !buflisted(l:terminal_buf_name)
     terminal
     execute 'keepalt file ' . l:terminal_buf_name
-  elseif bufname() !~ l:terminal_buf_name
+  elseif match(bufname(), '^'.l:terminal_buf_name.'$')
     execute 'edit ' . l:terminal_buf_name
   else
     quit
@@ -1027,19 +1026,31 @@ function! ToggleQuickFixWindow()
 endfunction
 nnoremap <space>Q :call ToggleQuickFixWindow()<CR>
 " {{{ vim github links
+function! GetGithubOwnerRepo()
+  let l:remote_output = trim(system('git remote -v'))
+
+  " SSH links
+  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
+  if !empty(l:remote_reponame)
+    return l:remote_reponame
+  endif
+
+  " https links
+  let l:remote_reponame = matchstr(g:remote_output, 'github.com/\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
+  if !empty(l:remote_reponame)
+    return l:remote_reponame
+  endif
+
+  echomsg 'could not parse organization/repository name from remote: '.l:remote_output
+endfunction
+
 function! GetGithubRepoLink()
   if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
     echomsg getcwd().' is not in a git repository.'
     return
   endif
 
-  let l:remote_output = trim(system('git remote -v'))
-  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
-  if empty(l:remote_reponame)
-    echomsg 'could not parse organization/repository name from remote: '.l:remote_output
-    return
-  endif
-
+  let l:remote_reponame = GetGithubOwnerRepo()
   let l:base_url = 'https://github.com'
   let l:url = join([l:base_url, l:remote_reponame], '/')
   echom "opening ".l:url
@@ -1052,12 +1063,8 @@ function! GetGithubLink()
     return
   endif
 
+  let l:remote_reponame = GetGithubOwnerRepo()
   let l:remote_output = trim(system('git remote -v'))
-  let l:remote_reponame = matchstr(l:remote_output, 'github.com.*:\zs[a-zA-Z0-9-_]\+\/[a-zA-Z0-9-_]\+\ze\.git')
-  if empty(l:remote_reponame)
-    echomsg 'could not parse organization/repository name from remote: '.l:remote_output
-    return
-  endif
 
   let l:remote_ref_output = trim(system('git rev-parse --abref-ref --symbolic-full-name @{u}'))
   let l:remote_ref = matchstr(l:remote_ref_output, 'refs\/remotes\/\zs[a-zA-Z0-9-_]*\/[0-9a-zA-Z-@]*')
@@ -1195,9 +1202,11 @@ xnoremap <space>gr y:%s/<C-r>0//g<left><left>
 " Open buffer in new tab and go to current position
 function! ReopenInNewTab()
   let l:project_name = fnamemodify(getcwd(), ':t')
+  let l:current_buffer = bufnr('%')
 
   normal ml
-  tabedit %
+  tabedit
+  execute ':buffer '.l:current_buffer
   execute ':TabooRename '.l:project_name
   normal 'lzz
 endfunction
@@ -1251,6 +1260,9 @@ nnoremap sp :tabprevious<CR>
 nnoremap sf :set filetype=
 
 nnoremap \e :edit!<CR>
+
+nmap <silent><space>@ @@ :silent call repeat#set("@@", -1)<CR>
+      \ :silent! call repeat#set("@@", -1)<CR>
 " }}}
 " {{{ Plugin Config
 
@@ -1768,24 +1780,24 @@ nmap <space>A <Plug>(coc-codeaction)
 
 nnoremap K :call CocAction('doHover')<CR>
 
-imap <silent> <c-k> <esc><Plug>(coc-float-jump)
+" imap <silent> <c-k> <esc><Plug>(coc-float-jump)
 nmap <silent> gF <Plug>(coc-float-jump)
 nmap <silent> gH <Plug>(coc-float-hide)
 nmap <silent> <esc> <Plug>(coc-float-hide)
 
 " from :help coc-completion
-inoremap <silent><expr> <c-e>
+inoremap <silent><expr> <c-i>
       \ coc#pum#visible() ? coc#_select_confirm() :
       \ coc#expandableOrJumpable() ?
       \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
-inoremap <silent><expr> <tab>
-      \ coc#pum#visible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ?
-      \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
+" inoremap <silent><expr> <tab>
+"       \ coc#pum#visible() ? coc#_select_confirm() :
+"       \ coc#expandableOrJumpable() ?
+"       \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
 
 " inoremap <silent><expr> <C-q> "\<c-o>:echom coc#pum#visible()='".coc#pum#visible()."'\n"
 inoremap <silent><expr> <C-q> coc#_select_confirm()
@@ -2333,6 +2345,12 @@ endif
 nnoremap <space>dd :lua require("duck").hatch()<CR>
 nnoremap <space>dk :lua require("duck").cook()<CR>
 " }}}
+" {{{ copilot.vim
+" imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
+" let g:copilot_no_tab_map = v:true
+" }}}
+" coc-deno
+command! Deno execute ':CocCommand deno.initializeWorkspace'
 " }}}
 " {{{ Terminal buffer configs
 

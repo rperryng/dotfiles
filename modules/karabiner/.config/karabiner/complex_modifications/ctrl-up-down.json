@@ -2,14 +2,16 @@
   "title": "Ctrl-n and Ctrl-p for down and up",
   "rules": [
     {
-      "description": "Ctrl-n and Ctrl-p to navigate down and up in Telegram",
+      "description": "Ctrl-n and Ctrl-p to navigate down and up in Telegram, Firefox, Slack",
       "manipulators": [
         {
           "conditions": [
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.tdesktop.Telegram"
+                "com.tdesktop.Telegram",
+                "org.mozilla.firefox",
+                "com.tinyspeck.slackmacgap"
               ]
             }
           ],
@@ -33,7 +35,9 @@
             {
               "type": "frontmost_application_if",
               "bundle_identifiers": [
-                "com.tdesktop.Telegram"
+                "com.tdesktop.Telegram",
+                "org.mozilla.firefox",
+                "com.tinyspeck.slackmacgap"
               ]
             }
           ],

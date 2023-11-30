@@ -52,6 +52,11 @@ function is_wsl() {
   return 1
 }
 
+setup_debian_prebuilt_mpr() {
+  wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null
+  echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list
+}
+
 install_prerequisites() {
   local pkgs="curl file git"
 
@@ -64,7 +69,8 @@ install_prerequisites() {
       fi
       ;;
     "debian")
-      sudo apt update &&
+      setup_debian_prebuilt_mpr &&
+        sudo apt update &&
         sudo apt install -y build-essential &&
         sudo apt install -y $pkgs
       ;;
@@ -149,6 +155,7 @@ install_default_packages() {
   install_packages "tldr"
   install_packages "ripgrep"
   install_packages "jq"
+  install_packages "just"
   install_packages "unzip"
 }
 
@@ -160,6 +167,12 @@ clone_dotfiles() {
     # Ensure repo is using the ssh remote
     pushd "${DOTFILES_DIR}" >/dev/null
     git remote set-url origin git@github.com:rperryng/dotfiles.git
+
+    if [[ -n "${DOTFILES_BRANCH}" ]]; then
+      echo "Checking out dotfiles branch: ${DOTFILES_BRANCH}"
+      git checkout "${DOTFILES_BRANCH}"
+    fi 
+
     popd >/dev/null
   fi
 }
@@ -181,7 +194,7 @@ setup_default_shells() {
   fi
 
   # Change default shell to zsh
-  chsh -s "$zsh_path"
+  sudo chsh -s "$zsh_path" "${USER}"
 }
 
 main() {
@@ -205,7 +218,7 @@ main() {
 
   # configure dotfiles & shell
   setup_default_shells
-  make
+  just stow
 
   # Install the user modules in a ZSH session, so that proper envs are loaded
   "${DOTFILES_DIR}/modules/install.zsh"

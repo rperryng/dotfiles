@@ -1,4 +1,6 @@
 # Setup
+
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/rperryng/dotfiles/main/install.sh)"
+export DOTFILES_BRANCH="main"; bash -c \
+  "$(curl -fsSL "https://raw.githubusercontent.com/rperryng/dotfiles/${DOTFILES_BRANCH}/install.sh")"
 ```

@@ -31,6 +31,10 @@ bindkey '^[[1;5C' forward-word
 # [Ctrl-LeftArrow] - move backward one word
 bindkey '^[[1;5D' backward-word
 
+# [Ctrl-U] - delete backward from cursor to beginning of line
+# This is the default in bash, but in zsh this binding kills the whole line
+bindkey '\C-u' backward-kill-line
+
 # [Shift-Tab] - move through the completion menu backwards
 if [[ "${terminfo[kcbt]}" != "" ]]; then
   bindkey "${terminfo[kcbt]}" reverse-menu-complete

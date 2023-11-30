@@ -2,6 +2,8 @@
 
 set -e
 
+echo "debug... ${XDG_BIN_HOME:-'XDG_BIN_HOME not loaded'}"
+
 install() {
   if [[ -x "$(command -v lazygit)" ]]; then
     return 0;
@@ -12,16 +14,17 @@ install() {
       brew install jesseduffield/lazygit/lazygit
       ;;
     "debian")
-      LAZYGIT_VERSION=$( \
+      release_version="Linux_$(uname -m)"
+      lazygit_download_url=$( \
         curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" \
-        | grep -Po '"tag_name": "v\K[0-35.]+' \
+        | jq --raw-output ".assets[] | select(.name | contains(\"${release_version}\")) | .browser_download_url" \
       )
 
       curl -Lo \
         /tmp/lazygit.tar.gz \
-        "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        "${lazygit_download_url}"
 
-      sudo tar xf /tmp/lazygit.tar.gz -C ${XDG_BIN_HOME} lazygit
+      sudo tar xf /tmp/lazygit.tar.gz -C ${XDG_BIN_HOME:-$HOME/.local/bin} lazygit
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"

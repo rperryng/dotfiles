@@ -4,61 +4,28 @@
 
 alias k="kubectl"
 alias kx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
+alias kxa='kubectl config get-contexts'
 alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
 alias kna='kubectl get namespace --all-namespaces'
 
-#!/bin/bash
-
-function split_double_spaces() {
-    local input="$1"
-    local result="$(echo "$input" | sd '  +' '|' | tr '|' '\n')"
-    echo "$result"
+function get_column_data() {
+    # Read the first line of STDIN as the header
+    read -r header
+    
+    # Split the header into an array based on whitespace
+    read -ra columns <<< "$header"
+    
+    # Find the index of the matching column name
+    for i in "${!columns[@]}"; do
+        if [[ "${columns[$i]}" == "$1" ]]; then
+            index=$i
+            break
+        fi
+    done
+    
+    # Extract the data for the matching column and print it to STDOUT
+    awk "{print \$${index+1}}" 
 }
-
-# This function extracts a specified column from an input table, where columns are separated by two or more spaces.
-# The function takes one argument: the column name (case-insensitive).
-# The input table should be provided through STDIN, and the output will be printed to STDOUT.
-# Usage example:
-#  k get pods | extract_column "name"
-extract_column() {
-  col_name="$1"
-
-  # Read the header and find the starting index of the column
-  read -r header
-  start_index=$(echo "$header" | awk -v name="$col_name" -F "  +" '{ for (i = 1; i <= NF; i++) { if (tolower($i) == tolower(name)) { print index($0, $i); exit; } } }')
-
-  # Calculate the ending index of the column using heredoc
-  end_index=$(echo "$header" | awk -v start="$start_index" -v name="$col_name" -F "  +" "$(cat << 'EOF'
-BEGIN { FS="  +" }
-{
-  for (i = 1; i <= NF; i++) {
-    if (tolower($i) == tolower(name)) {
-      if (i < NF) { # If the column is not the last one
-        next_col_start = index($0, $(i+1)); # Find the starting index of the next column
-        print next_col_start - 2; # Set the end_index to the next column's starting index minus 2
-      } else { # If the column is the last one
-        print length($0); # Set the end_index to the length of the header
-      }
-      exit;
-    }
-  }
-}
-EOF
-)")
-
-  # Extract the specified column from each row
-  while read -r line; do
-    echo "$line" | cut -c "${start_index}-${end_index}"
-  done
-}
-
-# Example usage:
-# cat /tmp/k_pods_sample.json | ./script.sh extract_column_data "NAME"
-# cat /tmp/k_pods_sample.json | ./script.sh extract_column_data "STATUS"
-
-# Example usage:
-# echo "$table_data" | extract_column_data "NAME"
-# echo "$table_data" | extract_column_data "STATUS"
 
 # Example usage:
 # echo -e "Name\tAge\tCity\nAlice\t25\tNew York\nBob\t30\tSan Francisco\nCharlie\t40\tSeattle" | get_column_data "Age"

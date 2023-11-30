@@ -12,7 +12,7 @@ install() {
       brew install magic-wormhole
       ;;
     "debian")
-      sudo apt install magic-wormhole
+      sudo apt install -y magic-wormhole
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"
