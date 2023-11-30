@@ -88,9 +88,9 @@ prepare-directories:
   mkdir -p "${XDG_LIB_HOME}"
   mkdir -p "${XDG_OPT_HOME}"
   mkdir -p "${HOME}/code"
-  
+
   if [[ "$DOTFILES_OS" == "macos" ]]; then
-    mkdir "${XDG_CONFIG_HOME}/hammerspoon"
-    mkdir "${XDG_CONFIG_HOME}/homebrew"
+    mkdir -p "${XDG_CONFIG_HOME}/hammerspoon"
+    mkdir -p "${XDG_CONFIG_HOME}/homebrew"
   fi
 
