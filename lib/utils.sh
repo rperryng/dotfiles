@@ -147,3 +147,10 @@ install_packages() {
     *) ;;
   esac
 }
+
+# Usage:
+#   untar <tarball> [destination]
+untar () {
+  [[ -n "$2" ]] && mkdir -p "$2"
+  tar -xf "$1" -C "${2:-.}"
+}

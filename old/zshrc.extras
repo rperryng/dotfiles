@@ -74,6 +74,7 @@ function rebase_dependent() {
   feature_branch=$1
   git rebase --onto $(git_default_branch) "${feature_branch}" HEAD
 }
+alias grd="git rebase_dependent"
 
 function git_set_remote_ssh() {
   local remote_url

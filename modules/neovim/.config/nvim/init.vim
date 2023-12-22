@@ -297,6 +297,7 @@ augroup filetypes
   autocmd FileType ruby setlocal textwidth=100
   autocmd FileType tsx setlocal commentstring=//\ %s
   autocmd FileType yaml setlocal commentstring=#\ %s
+  autocmd FileType markdown setlocal textwidth=80
 
   " autocmd FileType typescript setlocal shiftwidth=4 tabstop=4 softtabstop=4
   autocmd FileType org setlocal shiftwidth=4 tabstop=4 softtabstop=4
@@ -441,7 +442,7 @@ set tabstop=2
 
 " UI
 set lazyredraw
-set colorcolumn=80
+set colorcolumn=81
 set synmaxcol=500
 set signcolumn=yes
 set scrolloff=5
@@ -1054,6 +1055,25 @@ function! GetGithubRepoLink()
   let l:base_url = 'https://github.com'
   let l:url = join([l:base_url, l:remote_reponame], '/')
   echom "opening ".l:url
+  return l:url
+endfunction
+
+function! GetGithubBlameLink()
+  if trim(system('git rev-parse --is-inside-work-tree')) != 'true'
+    echomsg getcwd().' is not in a git repository.'
+    return
+  endif
+
+  let l:remote_reponame = GetGithubOwnerRepo()
+  let l:line_number = line('.')
+  let l:file_path = expand('%:.')
+  let l:commit_hash = matchstr(system('git rev-parse HEAD'), '^\zs[0-9a-f]\+')
+  " let l:blame_output = trim(system('git blame -L '.l:line_number.','.l:line_number.' --porcelain '.l:file_path))
+  " let l:commit_hash = matchstr(l:blame_output, '^\zs[0-9a-f]\+')
+
+  let l:base_url = 'https://github.com'
+  let l:file_path_line = l:file_path.'#L'.l:line_number
+  let l:url = join([l:base_url, l:remote_reponame, 'blame', l:commit_hash, l:file_path_line], '/')
   return l:url
 endfunction
 
@@ -2351,6 +2371,7 @@ nnoremap <space>dk :lua require("duck").cook()<CR>
 " }}}
 " coc-deno
 command! Deno execute ':CocCommand deno.initializeWorkspace'
+nnoremap <space>deno :Deno<CR>
 " }}}
 " {{{ Terminal buffer configs
 
