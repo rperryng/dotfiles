@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 install() {
-  if [[ -x $(command -d ctags) ]]; then
+  if [[ -x $(command -v ctags) ]]; then
     return 0
   fi
 

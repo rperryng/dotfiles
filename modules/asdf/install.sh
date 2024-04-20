@@ -15,7 +15,7 @@ install() {
         -c 'versionsort.suffix=-' \
         ls-remote --exit-code --refs --sort='version:refname' --tags ${ASDF_REPOSITORY_URL} 'v*.*.*' \
         | tail --lines=1 \
-        | cut --delimiter='/' --fields=3
+        | cut -d '/' -f 3
     )
 
     git clone \

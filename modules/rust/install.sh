@@ -13,7 +13,9 @@ install_rustup() {
 
   case ${DOTFILES_OS} in
     "macos")
-      brew install rustup
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+        | sh -s -- -y --no-modify-path
+      export PATH="${CARGO_HOME}/bin:${PATH}"
       ;;
     "debian")
       curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \

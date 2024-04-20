@@ -9,7 +9,7 @@ function install() {
 
   case ${DOTFILES_OS} in
     "macos")
-      install_packages gh
+      brew install gh
       ;;
     "debian")
       curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \

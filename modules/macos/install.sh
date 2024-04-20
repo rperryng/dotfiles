@@ -8,7 +8,9 @@ install() {
     return 0;
   fi
 
-  brew install --cask easy-move-plus-resize
+  brew install --cask \
+    easy-move-plus-resize \
+    rectangle
 }
 
 install
