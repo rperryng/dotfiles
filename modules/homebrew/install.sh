@@ -7,13 +7,12 @@ set -e
 
 install() {
   if [[ -x "$(command -v brew)" ]]; then
-    echo "brew already installed."
-    exit 0
+    return 0
   fi
 
   if [[ "${DOTFILES_OS}" != 'macos' && "${DOTFILES_OS}" != 'debian' ]]; then
     echo "unsupported OS for homebrew: ${DOTFILES_OS}"
-    exit 0
+    return 0
   fi
 
   sudo -v

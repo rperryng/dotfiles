@@ -2,8 +2,6 @@
 
 set -e
 
-echo "debug... ${XDG_BIN_HOME:-'XDG_BIN_HOME not loaded'}"
-
 install() {
   if [[ -x "$(command -v lazygit)" ]]; then
     return 0;
