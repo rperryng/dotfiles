@@ -474,6 +474,64 @@ set list
 " set statusline+=\ %l:%c
 " set statusline+=\ 
 
+" Use one status line per window, make it show the cwd
+function! GetCwdName()
+  return fnamemodify(getcwd(),':t')
+endfunction
+
+set laststatus=3
+set statusline=
+set statusline+=%#CursorLineNr#
+set statusline+=\ %=(%{GetCwdName()})%=
+
+function! WinBarHighlightExpr()
+  if win_getid() == g:actual_curwin
+    return '%#StatusLine#'
+  else
+    return '%#StatusLineNC#'
+  endif
+endfunction
+
+function! WinBarOutsideWorkingDirectory()
+  let l:token = ''
+  if win_getid() == g:actual_curwin
+    l:token = '%#StatusLine#'
+  else
+    l:token '%#StatusLineNC#'
+  endif
+
+  let l:actual_bufname = getbufinfo(g:actual_curbuf)[0].name
+  let l:actual_bufwd
+endfunction
+
+" Reset Winbar
+set winbar=
+
+" Set WinBar Highlight Group
+set winbar+=%{%WinBarHighlightExpr()%}
+
+" File name and buffer flags ([Help], [RO], [+] (modified) etc)
+set winbar+=\ %f
+set winbar+=\ %m
+set winbar+=\ %h
+set winbar+=\ %w
+set winbar+=\ %q
+
+" filetype set (e.g. [vim])
+set winbar+=%=
+set winbar+=%y
+set winbar+=\ 
+
+" highlight link StatusLineNC WinBarNC
+" highlight link WinBarNC StatusLineNC
+
+function! GetHighlightGroupUnderCursor()
+  let id = synID(line('.'), col('.'), 1)
+  echo synIDattr(id, 'name') . '; translated: ' . synIDattr(synIDtrans(id), 'name')
+endfunction
+
+nmap <space>ghl :call GetHighlightGroupUnderCursor()<CR>
+
 " Show trailing whitespace with error highlighting group
 " highlight! link Whitespace Error
 
@@ -1405,6 +1463,11 @@ function! s:fuzzy_tab_open_handler(tab_name)
 endfunction
 function! FuzzyTabs()
   let l:tabs = sort(copy(MatchStrAll(TabooTabline(), '\[[0-9]\+-[^]]\+\]')))
+
+  " workaround: an autocmd from searchhi throws an error when the
+  " searchhighlight is active and we navigate away from a terminal buffer
+  execute "normal \<Plug>(searchhi-clear-all)"
+
   call fzf#run(fzf#wrap({
         \    'source': l:tabs,
         \    'sink': function('s:fuzzy_tab_open_handler'),

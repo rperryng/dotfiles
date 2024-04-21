@@ -32,6 +32,10 @@ yarn-error.log
 .vscode
 *.swp
 .vim-bookmarks
+.vim
 
 # Created by java LSP
 .project
+.factorypath
+.classpath
+.settings/

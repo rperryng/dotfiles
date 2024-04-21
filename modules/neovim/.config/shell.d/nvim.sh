@@ -11,6 +11,8 @@ nstart() {
   local rand=$(echo $((1 + $RANDOM % 100000000)))
   local socket_name="/tmp/nvimsocket.${rand}"
 
+  clear
+
   ( \
     DOTFILES_NVIM_LISTEN_ADDRESS="$socket_name" \
     nvim \

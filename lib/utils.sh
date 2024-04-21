@@ -129,12 +129,12 @@ install_packages() {
   case ${DOTFILES_PKG_MGR} in
     "apt") sudo apt install -y $pkgs ;;
     "brew")
-      echo "brew not ported yet"
-      exit 1
+      # echo "brew not ported yet"
+      # exit 1
 
       # source "${DOTFILES_DIR}/modules/homebrew/.config/profile.d/homebrew.sh"
       # # shellcheck disable=SC2086
-      # brew install $pkgs
+      brew install $pkgs
       ;;
     "nix")
       source "${DOTFILES_DIR}/modules/nix/.config/profile.d/nix.sh"
