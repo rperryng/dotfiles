@@ -475,14 +475,14 @@ set list
 " set statusline+=\ 
 
 " Use one status line per window, make it show the cwd
-function! GetCwdName()
+function! StatusLineCwdName()
   return fnamemodify(getcwd(),':t')
 endfunction
 
 set laststatus=3
 set statusline=
 set statusline+=%#CursorLineNr#
-set statusline+=\ %=(%{GetCwdName()})%=
+set statusline+= %=(%{StatusLineCwdName()})%=
 
 function! WinBarHighlightExpr()
   if win_getid() == g:actual_curwin
@@ -1786,7 +1786,7 @@ map s? <Plug>(incsearch-fuzzy-?)
 map sg/ <Plug>(incsearch-fuzzy-stay)
 " }}}
 " {{{ win-reszier
-nnoremap <space>WR :WinResizerStartResize<CR>
+" nnoremap <c-q> :WinResizerStartResize<CR>
 let g:winresizer_start_key = '<C-Q>'
 " }}}
 " {{{ vim-fugitive
