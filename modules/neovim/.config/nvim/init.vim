@@ -1,4 +1,4 @@
-" avoid code execution vulnerability
+"  avoid code execution vulnerability
 set nomodeline
 
 let mapleader="\<Space>"
@@ -482,7 +482,7 @@ endfunction
 set laststatus=3
 set statusline=
 set statusline+=%#CursorLineNr#
-set statusline+= %=(%{StatusLineCwdName()})%=
+set statusline+=%=(%{StatusLineCwdName()})%=
 
 function! WinBarHighlightExpr()
   if win_getid() == g:actual_curwin
