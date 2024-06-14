@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Aliases
 alias g_branch="git symbolic-ref --short -q HEAD"
@@ -47,12 +47,20 @@ point_branch_to_head() {
   git checkout $1
 }
 
+rpn_test() {
+  local feature_branch dependent_branch
+  feature_branch=$1
+  dependent_branch=${2:HEAD}
+  git rebase --onto $(git_default_branch) "${feature_branch}" "${dependent_branch}"
+}
+
 # replay all commits, starting at feature_branch exclusive, through
 # dependent_feature inclusive onto master
 rebase_dependent() {
-  local feature_branch
+  local feature_branch dependent_branch
   feature_branch=$1
-  git rebase --onto $(git_default_branch) "${feature_branch}" HEAD
+  dependent_branch=${2:HEAD}
+  git rebase --onto $(git_default_branch) "${feature_branch}" "${dependent_branch}"
 }
 
 export DOTFILES_CLONE_URLS_PATH="${XDG_CONFIG_HOME}/.clone_urls"

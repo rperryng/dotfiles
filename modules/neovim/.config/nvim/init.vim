@@ -551,78 +551,8 @@ function! MatchStrAll(str, pat)
     return l:res
 endfunction
 
-function! EqualWindowHorizontally()
-endfunction
-
-function! OnlyWindow()
-  let currwin=winnr()
-endfunction
-
-" Preferred Layout When starting a new session
-function! Layout()
-  edit ~/vimwiki/index.wiki
-  vsplit
-  edit ~/vimwiki/Standup.wiki
-  vsplit
-  edit ~/vimwiki/misc_TODO.wiki
-  TabooRename Today
-  tabedit ~/.vimrc
-  vertical help
-  TabooRename Vim
-  tabedit
-  split
-
-  if buflisted('term-misc')
-    buffer term-misc
-  else
-    terminal
-    file term-misc
-  endif
-
-  wincmd k
-  execute 'TabooRename ' . fnamemodify(getcwd(), ':t')
-endfunction
-
-command! -nargs=0 Layout call Layout()
-
 " Eval vimscript contents
 xnoremap <space>: y:@"<CR>
-
-" Easily insert new vimwiki TODO items
-function! Todo(...)
-  edit ~/vimwiki/misc_TODO.wiki
-  execute 'normal G'
-
-  if a:0 > 0
-    execute 'normal o' . join(a:000)
-  endif
-endfunction
-
-command! -nargs=* Todo call Todo(<f-args>)
-
-function! Tabe(name)
-  tabedit
-  split
-  terminal
-  execute 'TabooRename ' . a:name
-  execute 'TZ ' . a:name
-  execute 'file term-' . a:name
-  call feedkeys('az ' . a:name . "\<CR>")
-endfunction
-
-command! -nargs=1 TE call Tabe(<q-args>)
-
-function! CursorSaveAndTabulous()
-  let t:active_windownr = winnr()
-  execute winnr('$') . 'wincmd w'
-endfunction
-
-function! CursorRestore()
-  execute t:active_windownr . 'wincmd w'
-endfunction
-
-" Get terminal output
-tnoremap <C-Enter> <C-\><C-n>mza<CR>
 
 " Join lines and remove whitespace
 " Like gJ, but always remove spaces
@@ -639,35 +569,6 @@ endfun
 command! -nargs=0 JoinSpaceless call JoinSpaceless()
 nnoremap <space>gJ :call JoinSpaceless()<CR>
 xnoremap <space>gJ :call JoinSpaceless()<CR>
-
-" Slow Paste
-""""""""""""
-" Paste 10 lines to the window below
-function! SlowPaste()
-  HighlightedyankOff
-  normal qp
-  silent .,+9yank
-  normal 10j
-  wincmd j
-  put 0
-  wincmd k
-  normal q
-  HighlightedyankOn
-endfunction
-
-command! SlowPaste call SlowPaste()
-
-function! SlowPasteRange() range
-  echo split(GetVisualSelection(), "\n")
-  " for i in split(GetVisualSelection(), "\n")
-
-  " endfor
-  " echo "firstline ".a:firstline." lastline ".a:lastline
-  " echo "firstline contents" . getline(a:firstline)
-  " echo "lastline contents" . getline(a:lastline)
-endfunction
-
-command! -range SlowPasteRange <line1>,<line2>call SlowPasteRange()
 
 " Strip Whitespace
 """"""""""""""""""
@@ -780,18 +681,6 @@ function! RestartProjectTerminal()
 endfunction
 
 command! -nargs=0 RestartProjectTerminal call RestartProjectTerminal()
-
-" function! SendCommandToProjectTerminal(cmd)
-"   let l:project_name = fnamemodify(getcwd(), ':t')
-"   let l:current_buf_name = bufname()
-"   let l:terminal_buf_name = 'term-' . l:project_name
-
-"   execute 'edit ' . l:terminal_buf_name
-"   let l:channel_id = b:terminal_job_id
-"   execute 'edit ' . l:current_buf_name
-
-"   chansend(l:channel_id, cmd)
-" endfunction
 
 " Remove all buffers from other projects
 function! ClearOtherBuffers()
@@ -923,29 +812,6 @@ function! NStart()
   TabooRename .dotfiles
 endfunction
 
-" function VimTestVimspectorStrategyTest(executable, args)
-"   if !(filereadable(".vimspector.json"))
-"     echo "No '.vimspector.json' found, starting with vscode-node sample"
-"     system('cp ~/.vimspector.json.sample ./.vimspector.json')
-"   endif
-
-"   let l:vimspector_config = json_decode(join(readfile('.vimspector.json')))
-
-"   " Assign program
-"   let l:vimspector_config['configurations']['run']['configuration']['program'] =
-"         \ '${workspaceFolder}/' . a:executable
-
-"   " Assign args
-"   let l:vimspector_config['configurations']['run']['configuration']['args'] =
-"         \ a:args
-"         " \ map(copy(a:args), { _, val -> substitute(val, '\$', '\\$', '') })
-
-"   call writefile(split(json_encode(l:vimspector_config), "\n"), glob('.vimspector.json'), 'b')
-
-"   " Start the debugger
-"   call vimspector#Continue()
-" endfunction
-
 function! VimTestVimspectorStrategy(cmd)
   if !filereadable(".vimspector.json")
     echo "No '.vimspector.json' found, starting with vscode-node sample"
@@ -1007,17 +873,6 @@ function! CreateCenteredFloatingWindow() abort
     au BufWipeout <buffer> exe 'bw '.s:buf
     return l:textbuf
 endfunction
-
-function! OpenTodo() abort
-    let l:buf = CreateCenteredFloatingWindow()
-    call nvim_set_current_buf(l:buf)
-    edit ~/.todo.md
-    " setlocal filetype=help
-    " setlocal buftype=help
-    " execute 'help ' . a:query
-endfunction
-
-nnoremap <space>wf :call OpenTodo()<CR>
 
 function! IsWsl()
   return system('cat /proc/version') =~ 'Microsoft'
@@ -1969,6 +1824,20 @@ endfunction
 " {{{ vim-markdown
 let g:mkdp_echo_preview_url=0
 let g:mkdp_auto_close=0
+let g:mkdp_preview_options = {
+    \ 'mkit': {},
+    \ 'katex': {},
+    \ 'uml': {},
+    \ 'maid': {},
+    \ 'disable_sync_scroll': 1,
+    \ 'sync_scroll_type': 'middle',
+    \ 'hide_yaml_meta': 1,
+    \ 'sequence_diagrams': {},
+    \ 'flowchart_diagrams': {},
+    \ 'content_editable': v:false,
+    \ 'disable_filename': 0,
+    \ 'toc': {}
+    \ }
 " }}}
 " {{{ vim-test
 let test#ruby#rspec#executable = 'bundle exec rspec'
@@ -2347,7 +2216,7 @@ nmap <space>wr <Plug>(WinlayoutForward)
 " }}}
 " {{{ vim-swap
 silent! nunmap gs
-nmap <space>gi <Plug>(swap-interactive)
+nmap <space>gs <Plug>(swap-interactive)
 " }}}
 " {{{ vim Trouble
 nnoremap <space>kx <cmd>TroubleToggle<cr>
