@@ -420,7 +420,8 @@ let g:colorscheme = 'gruvbox'
 " let g:colorscheme = 'kanagawa'
 " let g:colorscheme = 'catppuccin'
 
-lua require('gruvbox').setup({ italic = false, contrast = 'hard' })
+" gruvbox-lua related setup
+lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/colors.lua")
 
 execute('colorscheme ' . g:colorscheme)
 set background=dark
@@ -2275,6 +2276,7 @@ call textobj#user#plugin('rpn', {
 " {{{ lua
 " lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/test.lua")
 lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/test.lua")
+lua dofile(vim.env.XDG_CONFIG_HOME .. "/nvim/lua/init.lua")
 " }}}
 " {{{ vim-bookmarks
 let g:bookmark_no_default_key_mappings = 1
@@ -2305,7 +2307,7 @@ nnoremap <space>dk :lua require("duck").cook()<CR>
 " imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
 " let g:copilot_no_tab_map = v:true
 " }}}
-" coc-deno
+" {{{ coc-deno
 command! Deno execute ':CocCommand deno.initializeWorkspace'
 nnoremap <space>deno :Deno<CR>
 " }}}
