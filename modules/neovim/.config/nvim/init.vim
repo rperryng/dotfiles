@@ -132,8 +132,12 @@ Plug 'vimwiki/vimwiki'
 Plug 'vmchale/just-vim'
 Plug 'wellle/targets.vim'
 Plug 'wsdjeg/vim-fetch'
-Plug 'github/copilot.vim'
 
+" Copilot
+Plug 'zbirenbaum/copilot.lua'
+Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
+
+" Plug 'github/copilot.vim'
 " Plug 'Olical/aniseed'
 " Plug 'Olical/conjure'
 
