@@ -1,7 +1,9 @@
--- Misc
+-- Mouse
+vim.opt.mouse = 'a'
+
+-- Timeout
 vim.opt.timeout = true
 vim.opt.timeoutlen = 500
-vim.opt.mouse = 'a'
 
 -- :)
 vim.opt.swapfile = false
