@@ -23,6 +23,6 @@ asdf_tool_version() {
 }
 
 asdf_python3_version() {
-  cat $ASDF_DEFAULT_TOOL_VERSIONS_FILENAME | rg '^python' | rg --only-matching '3\.\d+\.\d+'
+  cat $ASDF_DEFAULT_TOOL_VERSIONS_FILENAME | grep '^python' | sed 's/python //'
 }
 export DOTFILES_PYTHON3_VERSION=$(asdf_python3_version)
