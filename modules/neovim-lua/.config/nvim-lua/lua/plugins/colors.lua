@@ -5,6 +5,13 @@ return {
     lazy = false,
     config = true,
     opts = {
+      italic = {
+        strings = false,
+        emphasis = false,
+        comments = false,
+        operators = false,
+        folds = false,
+      },
       contrast = 'hard'
     },
     init = function()

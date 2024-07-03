@@ -157,6 +157,7 @@ install_default_packages() {
   install_packages "jq"
   install_packages "just"
   install_packages "unzip"
+  install_packages "cmake"
 }
 
 clone_dotfiles() {
