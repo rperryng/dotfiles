@@ -30,19 +30,19 @@ foreground = "0xd5c4a1"
 size = 12
 
 [font.bold]
-family = "Meslo LG M for Powerline"
+family = "MesloLGM Nerd Font Mono"
 style = "Bold"
 
 [font.bold_italic]
-family = "Meslo LG M for Powerline"
+family = "MesloLGM Nerd Font Mono"
 style = "Bold Italic"
 
 [font.italic]
-family = "Meslo LG M for Powerline"
+family = "MesloLGM Nerd Font Mono"
 style = "Italic"
 
 [font.normal]
-family = "Meslo LG M for Powerline"
+family = "MesloLGM Nerd Font Mono"
 style = "Regular"
 
 [[keyboard.bindings]]
