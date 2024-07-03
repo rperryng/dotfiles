@@ -26,8 +26,8 @@ vim.keymap.set('n', '<c-k>', '<c-w>k', { desc = 'Move to Upper Window' })
 vim.keymap.set('n', '<c-l>', '<c-w>l', { desc = 'Move to Right Window' })
 
 -- Marks
-vim.keymap.set('n', '\'', '`', { desc = 'Jump to mark' })
-vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
+-- vim.keymap.set('n', '\'', '`', { desc = 'Jump to mark' })
+-- vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
 
 -- Last buffer
 vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })

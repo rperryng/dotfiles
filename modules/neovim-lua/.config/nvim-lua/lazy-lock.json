@@ -1,4 +1,5 @@
 {
+  "gruvbox.nvim": { "branch": "main", "commit": "fa8138d25c061b9cbfacdd3f4dd1929e2a6d92ce" },
   "lazy.nvim": { "branch": "main", "commit": "d0921f5b9b3d2c5e09618da55a018228edcc4d16" },
   "mini.bufremove": { "branch": "main", "commit": "e6044aa28e61d4dd9ec86194d6f81743eced0c1c" },
   "which-key.nvim": { "branch": "main", "commit": "0099511294f16b81c696004fa6a403b0ae61f7a0" }
