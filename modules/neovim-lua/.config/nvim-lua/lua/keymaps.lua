@@ -1,3 +1,5 @@
+vim.g.mapleader = ' '
+
 -- Saving
 vim.keymap.set('n', '<space>q', '<cmd>quit!<cr>', { desc = 'Quit' })
 vim.keymap.set('n', '<space>wa', '<cmd>silent! wall<cr><cmd>set nohlsearch<cr>', { desc = 'Write all', silent = true })
