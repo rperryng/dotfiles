@@ -2,7 +2,12 @@
 
 install() {
   if [[ -x "$(command -v stylua)" ]]; then
-    return 0;
+    return 0
+  fi
+
+  if [[ -x $(command -v cargo) ]]; then
+    cargo install stylua
+    return 0
   fi
 
   case ${DOTFILES_OS} in

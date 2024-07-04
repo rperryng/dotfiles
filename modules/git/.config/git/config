@@ -25,4 +25,4 @@
   sort = -committerdate
 
 [merge]
-  conflictstyle = zdiff3
+  conflictstyle = diff3
