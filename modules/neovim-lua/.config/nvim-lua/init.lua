@@ -11,6 +11,7 @@ local function loadbaseconfig()
   require('options')
   require('keymaps')
   require('augroups')
+  require('ui')
   -- require('utils')
 end
 
