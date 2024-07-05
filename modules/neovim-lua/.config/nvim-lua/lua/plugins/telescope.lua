@@ -38,13 +38,55 @@ return {
       require('telescope').load_extension('fzf')
 
       local builtin = require('telescope.builtin')
-      vim.keymap.set('n', '<space>ff', builtin.find_files, {})
-      vim.keymap.set('n', '<space>fg', builtin.live_grep, {})
-      vim.keymap.set('n', '<space>fb', builtin.buffers, {})
-      vim.keymap.set('n', '<space>fh', builtin.help_tags, {})
+      vim.keymap.set(
+        'n',
+        '<space>ff',
+        builtin.find_files,
+        { desc = 'Fuzzy search files' }
+      )
+      vim.keymap.set('n', '<space>fg', function()
+        builtin.grep_string({
+          path_display = { 'smart' },
+          only_sort_text = false,
+          word_match = '-w',
+          search = '',
+        })
+      end, { desc = 'Fuzzy search code (match on filenames too)' })
 
-      vim.keymap.set('n', '<space>fr', builtin.registers, {})
-      vim.keymap.set('n', '<space>fk', builtin.keymaps, {})
+      vim.keymap.set('n', '<space>fG', function()
+        builtin.grep_string({
+          path_display = { 'smart' },
+          only_sort_text = true,
+          word_match = '-w',
+          search = '',
+        })
+      end, { desc = 'Fuzzy search code (no matching on filenames)' })
+
+      vim.keymap.set(
+        'n',
+        '<space>fb',
+        builtin.buffers,
+        { desc = 'Fuzzy search buffers' }
+      )
+      vim.keymap.set(
+        'n',
+        '<space>fh',
+        builtin.help_tags,
+        { desc = 'Fuzzy search help docs' }
+      )
+
+      vim.keymap.set(
+        'n',
+        '<space>fr',
+        builtin.registers,
+        { desc = 'Fuzzy search registers' }
+      )
+      vim.keymap.set(
+        'n',
+        '<space>fk',
+        builtin.keymaps,
+        { desc = 'Fuzzy search keymaps' }
+      )
     end,
   },
 }
