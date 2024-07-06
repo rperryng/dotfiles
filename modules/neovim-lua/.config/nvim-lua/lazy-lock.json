@@ -1,4 +1,6 @@
 {
+  "CopilotChat.nvim": { "branch": "canary", "commit": "82923efe22b604cf9c0cad0bb2a74aa9247755ab" },
+  "copilot.lua": { "branch": "master", "commit": "86537b286f18783f8b67bccd78a4ef4345679625" },
   "formatter.nvim": { "branch": "master", "commit": "ad246d34ce7a32f752071ed81b09b94e6b127fad" },
   "gruvbox.nvim": { "branch": "main", "commit": "fa8138d25c061b9cbfacdd3f4dd1929e2a6d92ce" },
   "incsearch-fuzzy.vim": { "branch": "master", "commit": "b08fa8fbfd633e2f756fde42bfb5251d655f5403" },
