@@ -94,3 +94,12 @@ local utils = require('utils')
 vim.keymap.set('x', '<space>y', function()
   vim.fn.setreg('+', utils.getVisualSelectionContents())
 end, { desc = 'Yank visual selection' })
+
+vim.keymap.set('x', '<space>e', function()
+  -- :{range}lua
+  vim.api.nvim_feedkeys(
+    vim.api.nvim_replace_termcodes(':lua<cr>', true, false, true),
+    'm',
+    true
+  )
+end, { desc = 'Evaluate visual selection as neovim lua' })
