@@ -74,6 +74,9 @@ vim.keymap.set('n', '<c-l>', '<c-w>l', { desc = 'Move to Right Window' })
 -- Last buffer
 vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })
 
+-- Move to env of selection after yanking in visual mode
+vim.keymap.set('v', 'y', 'ygv<esc>')
+
 -- Normal Mode
 vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
 vim.keymap.set('i', '<c-s>', '<esc>', { desc = 'Normal mode' })
@@ -93,6 +96,13 @@ vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 local utils = require('utils')
 vim.keymap.set('x', '<space>y', function()
   vim.fn.setreg('+', utils.getVisualSelectionContents())
+
+  -- Exit visual mode
+  vim.api.nvim_feedkeys(
+    vim.api.nvim_replace_termcodes('<esc>', true, false, true),
+    'm',
+    true
+  )
 end, { desc = 'Yank visual selection' })
 
 vim.keymap.set('x', '<space>e', function()
