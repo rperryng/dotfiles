@@ -8,11 +8,13 @@
 --   * depug framework
 
 local function loadbaseconfig()
+  require('utils')
+
   require('options')
   require('keymaps')
   require('augroups')
   require('ui')
-  -- require('utils')
+  require('terminal')
 end
 
 xpcall(loadbaseconfig, function(err)
