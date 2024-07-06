@@ -17,9 +17,13 @@ local function loadbaseconfig()
 end
 
 xpcall(loadbaseconfig, function(err)
-  print(debug.traceback(err))
+  pint(debug.traceback(err))
 end)
 
 -- Load plugins separately from other configs, so that errors in my
 -- config files don't stop _everything_ from loading
 require('plugin')
+
+-- Load other local configs
+local utils = require('utils')
+utils.requireDir('local')

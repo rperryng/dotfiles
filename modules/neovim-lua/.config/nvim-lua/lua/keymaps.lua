@@ -121,6 +121,11 @@ vim.keymap.set('n', '<space>yb', function()
   vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
 end, { desc = 'Yank buffer contents' })
 
+-- Redirect vim cmd to new scratch buffer
+vim.keymap.set('n', '<space>yb', function()
+  vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
+end, { desc = 'Yank buffer contents' })
+
 -- Eval
 vim.keymap.set('x', '<space>e', function()
   -- :{range}lua

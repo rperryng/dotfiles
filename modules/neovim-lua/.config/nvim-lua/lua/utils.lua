@@ -23,4 +23,20 @@ M.getCurrentBufferContents = function()
   return table.concat(currentBufferLines, '\n')
 end
 
+M.requireDir = function(dir)
+  local baseDir = vim.fn.stdpath('config') .. '/lua'
+  local pattern = table.concat({ baseDir, dir, '*.lua' }, '/')
+  local paths = vim.split(vim.fn.glob(pattern), '\n')
+  local dirModuleName = dir:gsub('/', '.')
+  for _i, file in pairs(paths) do
+    local localModuleName = file:match('^.+/(.+).lua$')
+
+    xpcall(function()
+      require(dirModuleName .. '.' .. localModuleName)
+    end, function(err)
+      print(debug.traceback(err))
+    end)
+  end
+end
+
 return M
