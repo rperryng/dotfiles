@@ -75,7 +75,7 @@ vim.keymap.set('n', '<c-l>', '<c-w>l', { desc = 'Move to Right Window' })
 vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })
 
 -- Move to env of selection after yanking in visual mode
-vim.keymap.set('v', 'y', 'ygv<esc>')
+vim.keymap.set('v', 'y', '')
 
 -- Normal Mode
 vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
@@ -93,8 +93,11 @@ vim.keymap.set('n', '<space>7', '7gt', { desc = 'switch to tab 7' })
 vim.keymap.set('n', '<space>8', '8gt', { desc = 'switch to tab 8' })
 vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
+-- Utility Keymaps
+
+-- Yank-based utils
 local utils = require('utils')
-vim.keymap.set('x', '<space>y', function()
+vim.keymap.set('x', '<space>yv', function()
   vim.fn.setreg('+', utils.getVisualSelectionContents())
 
   -- Exit visual mode
@@ -105,11 +108,24 @@ vim.keymap.set('x', '<space>y', function()
   )
 end, { desc = 'Yank visual selection' })
 
+vim.keymap.set('n', '<space>yfr', function()
+  vim.fn.setreg('+', utils.getCurrentFileRelativePath())
+end, { desc = 'Yank file (relative to cwd)' })
+
+vim.keymap.set('n', '<space>yfa', function()
+  vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
+end, { desc = 'Yank file (absolute path)' })
+
+vim.keymap.set('n', '<space>yb', function()
+  vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
+end, { desc = 'Yank buffer contents' })
+
+-- Eval
 vim.keymap.set('x', '<space>e', function()
   -- :{range}lua
   vim.api.nvim_feedkeys(
     vim.api.nvim_replace_termcodes(':lua<cr>', true, false, true),
     'm',
-    true
+    false
   )
 end, { desc = 'Evaluate visual selection as neovim lua' })
