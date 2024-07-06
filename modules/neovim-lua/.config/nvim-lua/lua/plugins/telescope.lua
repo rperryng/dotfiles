@@ -8,6 +8,8 @@ return {
     tag = '0.1.8',
     dependencies = {
       'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-ui-select.nvim',
+      'nvim-telescope/telescope-fzf-native.nvim',
     },
     config = function()
       require('telescope').setup({
@@ -36,6 +38,7 @@ return {
         },
       })
       require('telescope').load_extension('fzf')
+      require('telescope').load_extension('ui-select')
 
       -- Builtin Pickers
       local builtin = require('telescope.builtin')
