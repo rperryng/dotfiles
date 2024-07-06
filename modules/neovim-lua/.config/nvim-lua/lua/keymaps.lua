@@ -1,7 +1,8 @@
 vim.g.mapleader = ' '
 
 -- Saving
-vim.keymap.set('n', '<space>q', '<cmd>quit!<cr>', { desc = 'Quit' })
+vim.keymap.set('n', '<space>q', '<cmd>quit!<cr>', { desc = 'Close window (no confirm)' })
+vim.keymap.set('n', '<space>gq', '<cmd>quitall!<cr>', { desc = 'Quit all (no confirm)' })
 vim.keymap.set(
   'n',
   '<space>wa',
@@ -75,7 +76,7 @@ vim.keymap.set('n', '<c-l>', '<c-w>l', { desc = 'Move to Right Window' })
 vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })
 
 -- Move to env of selection after yanking in visual mode
-vim.keymap.set('v', 'y', '')
+vim.keymap.set('v', 'y', 'ygv`]<esc>')
 
 -- Normal Mode
 vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
