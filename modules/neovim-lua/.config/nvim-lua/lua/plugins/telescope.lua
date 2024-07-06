@@ -122,6 +122,22 @@ return {
         builtin.search_history,
         { desc = 'Fuzzy search (old) search history' }
       )
+
+      vim.keymap.set(
+        'n',
+        '<space>f/',
+        builtin.current_buffer_fuzzy_find,
+        { desc = 'Fuzzy search buffer' }
+      )
+
+      -- Git pickers
+      vim.keymap.set(
+        'n',
+        '<space>gib',
+        builtin.git_branches,
+        { desc = 'Fuzzy search git branches' }
+      )
+
     end,
   },
 }

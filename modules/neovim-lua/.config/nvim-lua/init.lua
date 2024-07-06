@@ -2,10 +2,9 @@
 --   * Project picker
 --   * LSP
 --   * autocomplete
---   * tabline
 --   * terminal mappings
 --   * test framework
---   * depug framework
+--   * debug framework
 
 local function loadbaseconfig()
   require('utils')
