@@ -94,6 +94,12 @@ vim.keymap.set('n', '<space>7', '7gt', { desc = 'switch to tab 7' })
 vim.keymap.set('n', '<space>8', '8gt', { desc = 'switch to tab 8' })
 vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
+-- Quickfix movements
+vim.keymap.set('n', ']q', ':cnext<cr>', { desc = 'Go to next quickfix entry' })
+vim.keymap.set('n', '[q', ':cprevious<cr>', { desc = 'Go to next quickfix entry' })
+vim.keymap.set('n', ']Q', ':clast<cr>', { desc = 'Go to the last quickfix entry' })
+vim.keymap.set('n', '[Q', ':cfirst<cr>', { desc = 'Go to the first quickfix entry' })
+
 -- Utility Keymaps
 
 -- Yank-based utils
@@ -117,14 +123,9 @@ vim.keymap.set('n', '<space>yfa', function()
   vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
 end, { desc = 'Yank file (absolute path)' })
 
-vim.keymap.set('n', '<space>yb', function()
-  vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
-end, { desc = 'Yank buffer contents' })
-
--- Redirect vim cmd to new scratch buffer
-vim.keymap.set('n', '<space>yb', function()
-  vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
-end, { desc = 'Yank buffer contents' })
+vim.keymap.set('n', '<space>yff', function()
+  vim.fn.setreg('+', utils.getCurrentBufferContents())
+end, { desc = 'Yank file content' })
 
 -- Eval
 vim.keymap.set('x', '<space>e', function()

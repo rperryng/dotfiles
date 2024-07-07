@@ -24,7 +24,7 @@ return {
       desc = 'Open file and lines on GitHub',
     })
 
-    vim.keymap.set('v', '<space>ygh', ':OpenInGHFileLines+<cr>', {
+    vim.keymap.set('v', '<space>ygh', ':OpenInGHFileLines! +<cr>', {
       silent = true,
       noremap = true,
       desc = 'Yank GitHub link to system clipboard',
