@@ -54,7 +54,7 @@ local finders = require('telescope.finders')
 local pickers = require('telescope.pickers')
 local conf = require('telescope.config').values
 
-local projects = function(opts)
+local projectsPicker = function(opts)
   opts = opts or {}
   pickers
     .new(opts, {
@@ -72,7 +72,9 @@ local projects = function(opts)
         actions.select_default:replace(function()
           actions.close(prompt_bufnr)
           local selection = action_state.get_selected_entry()
-          M.open_project(selection[1])
+          if selection ~= nil then
+            M.open_project(selection[1])
+          end
         end)
         return true
       end,
@@ -80,8 +82,11 @@ local projects = function(opts)
     :find()
 end
 
-vim.keymap.set('n', '<space>fp', function()
-  projects(require('telescope.themes').get_dropdown({}))
-end, { desc = 'Fuzzy search projects' })
+vim.keymap.set(
+  'n',
+  '<space>fp',
+  projectsPicker,
+  { desc = 'Fuzzy search projects' }
+)
 
 return M
