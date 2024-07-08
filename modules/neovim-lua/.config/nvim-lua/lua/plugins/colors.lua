@@ -1,5 +1,9 @@
 return {
   {
+    -- justfile syntax highlighting
+    'NoahTheDuke/vim-just',
+  },
+  {
     'ellisonleao/gruvbox.nvim',
     priority = 1000,
     lazy = false,
@@ -12,10 +16,10 @@ return {
         operators = false,
         folds = false,
       },
-      contrast = 'hard'
+      contrast = 'hard',
     },
     init = function()
       vim.cmd('colorscheme gruvbox')
     end,
-  }
+  },
 }

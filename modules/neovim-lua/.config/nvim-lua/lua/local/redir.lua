@@ -1,7 +1,5 @@
 -- source: https://gist.github.com/Leenuus/db3607091a0cf2f7d8450adaff0132d3
 
-print('test')
-
 local function Redir(opts)
   local cmd = opts.fargs[1]
   local rng = opts.range

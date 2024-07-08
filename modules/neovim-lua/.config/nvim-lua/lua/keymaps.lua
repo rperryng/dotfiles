@@ -1,8 +1,18 @@
 vim.g.mapleader = ' '
 
 -- Saving
-vim.keymap.set('n', '<space>q', '<cmd>quit!<cr>', { desc = 'Close window (no confirm)' })
-vim.keymap.set('n', '<space>gq', '<cmd>quitall!<cr>', { desc = 'Quit all (no confirm)' })
+vim.keymap.set(
+  'n',
+  '<space>q',
+  '<cmd>quit!<cr>',
+  { desc = 'Close window (no confirm)' }
+)
+vim.keymap.set(
+  'n',
+  '<space>gq',
+  '<cmd>quitall!<cr>',
+  { desc = 'Quit all (no confirm)' }
+)
 vim.keymap.set(
   'n',
   '<space>wa',
@@ -83,7 +93,7 @@ vim.keymap.set('n', '<c-s>', '<esc>', { desc = 'Normal mode' })
 vim.keymap.set('i', '<c-s>', '<esc>', { desc = 'Normal mode' })
 vim.keymap.set('t', '<c-s>', '<c-\\><c-n>', { desc = 'Normal mode' })
 
--- Switch to tab by index
+-- Navigate tabs
 vim.keymap.set('n', '<space>1', '1gt', { desc = 'switch to tab 1' })
 vim.keymap.set('n', '<space>2', '2gt', { desc = 'switch to tab 2' })
 vim.keymap.set('n', '<space>3', '3gt', { desc = 'switch to tab 3' })
@@ -96,9 +106,46 @@ vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
 -- Quickfix movements
 vim.keymap.set('n', ']q', ':cnext<cr>', { desc = 'Go to next quickfix entry' })
-vim.keymap.set('n', '[q', ':cprevious<cr>', { desc = 'Go to next quickfix entry' })
-vim.keymap.set('n', ']Q', ':clast<cr>', { desc = 'Go to the last quickfix entry' })
-vim.keymap.set('n', '[Q', ':cfirst<cr>', { desc = 'Go to the first quickfix entry' })
+vim.keymap.set(
+  'n',
+  '[q',
+  ':cprevious<cr>',
+  { desc = 'Go to next quickfix entry' }
+)
+vim.keymap.set(
+  'n',
+  ']Q',
+  ':clast<cr>',
+  { desc = 'Go to the last quickfix entry' }
+)
+vim.keymap.set(
+  'n',
+  '[Q',
+  ':cfirst<cr>',
+  { desc = 'Go to the first quickfix entry' }
+)
+
+-- Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
+vim.api.set(
+  't',
+  '<C-\\><C-r>',
+  '<C-\\><C-n>"' .. vim.fn.nr2char(vim.fn.getchar()) .. 'pi',
+  { expr = true, desc = '' }
+)
+
+-- Copy this binding to normal/insert mode in case muscle memory takes over
+vim.api.nvim_set_keymap(
+  'i',
+  '<C-\\><C-r>',
+  '<C-r>',
+  { noremap = true, desc = 'Paste from register' }
+)
+vim.api.nvim_set_keymap(
+  'c',
+  '<C-\\><C-r>',
+  '<C-r>',
+  { noremap = true, desc = 'Paste from register' }
+)
 
 -- Utility Keymaps
 
