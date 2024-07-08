@@ -18,6 +18,12 @@ return {
       local chat = require('CopilotChat')
       chat.setup({
         debug = false,
+        mappings = {
+          reset = {
+            normal ='<c-c><c-c>',
+            insert = '<c-c><c-c>'
+          },
+        },
       })
 
       vim.keymap.set(

@@ -125,12 +125,15 @@ vim.keymap.set(
   { desc = 'Go to the first quickfix entry' }
 )
 
--- Use <C-\><C-r> in terminal insert mode to emulate <C-r> in insert mode
-vim.api.set(
+-- Paste from specified register in terminal mode
+vim.keymap.set(
   't',
   '<C-\\><C-r>',
-  '<C-\\><C-n>"' .. vim.fn.nr2char(vim.fn.getchar()) .. 'pi',
-  { expr = true, desc = '' }
+  function()
+    local register = vim.fn.nr2char(vim.fn.getchar())
+    return '<C-\\><C-N>"'..register..'pi'
+  end,
+  { expr = true, desc = 'Paste from register' }
 )
 
 -- Copy this binding to normal/insert mode in case muscle memory takes over
