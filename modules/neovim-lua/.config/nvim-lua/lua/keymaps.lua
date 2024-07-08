@@ -104,6 +104,9 @@ vim.keymap.set('n', '<space>7', '7gt', { desc = 'switch to tab 7' })
 vim.keymap.set('n', '<space>8', '8gt', { desc = 'switch to tab 8' })
 vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
+vim.keymap.set('n', '<c-n>', ':tabnext<cr>', { desc = 'Go to next tab' })
+vim.keymap.set('n', '<c-p>', ':tabprevious<cr>', { desc = 'Go to next tab' })
+
 -- Quickfix movements
 vim.keymap.set('n', ']q', ':cnext<cr>', { desc = 'Go to next quickfix entry' })
 vim.keymap.set(
@@ -126,15 +129,10 @@ vim.keymap.set(
 )
 
 -- Paste from specified register in terminal mode
-vim.keymap.set(
-  't',
-  '<C-\\><C-r>',
-  function()
-    local register = vim.fn.nr2char(vim.fn.getchar())
-    return '<C-\\><C-N>"'..register..'pi'
-  end,
-  { expr = true, desc = 'Paste from register' }
-)
+vim.keymap.set('t', '<C-\\><C-r>', function()
+  local register = vim.fn.nr2char(vim.fn.getchar())
+  return '<C-\\><C-N>"' .. register .. 'pi'
+end, { expr = true, desc = 'Paste from register' })
 
 -- Copy this binding to normal/insert mode in case muscle memory takes over
 vim.api.nvim_set_keymap(
