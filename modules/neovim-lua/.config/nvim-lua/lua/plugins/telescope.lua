@@ -42,101 +42,101 @@ return {
 
       -- Builtin Pickers
       local builtin = require('telescope.builtin')
-      vim.keymap.set(
-        'n',
-        '<space>ff',
-        builtin.find_files,
-        { desc = 'Fuzzy search files' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>ff',
+      --   builtin.find_files,
+      --   { desc = 'Fuzzy search files' }
+      -- )
 
-      vim.keymap.set('n', '<space>fg', function()
-        builtin.grep_string({
-          path_display = { 'smart' },
-          only_sort_text = false,
-          word_match = '-w',
-          search = '',
-        })
-      end, { desc = 'Fuzzy search code (match on filenames too)' })
+      -- vim.keymap.set('n', '<space>fg', function()
+      --   builtin.grep_string({
+      --     path_display = { 'smart' },
+      --     only_sort_text = false,
+      --     word_match = '-w',
+      --     search = '',
+      --   })
+      -- end, { desc = 'Fuzzy search code (match on filenames too)' })
 
-      vim.keymap.set('n', '<space>fG', function()
-        builtin.grep_string({
-          path_display = { 'smart' },
-          only_sort_text = true,
-          word_match = '-w',
-          search = '',
-        })
-      end, { desc = 'Fuzzy search code (no matching on filenames)' })
+      -- vim.keymap.set('n', '<space>fG', function()
+      --   builtin.grep_string({
+      --     path_display = { 'smart' },
+      --     only_sort_text = true,
+      --     word_match = '-w',
+      --     search = '',
+      --   })
+      -- end, { desc = 'Fuzzy search code (no matching on filenames)' })
 
-      vim.keymap.set(
-        'n',
-        '<space>fb',
-        builtin.buffers,
-        { desc = 'Fuzzy search buffers' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fb',
+      --   builtin.buffers,
+      --   { desc = 'Fuzzy search buffers' }
+      -- )
 
-      vim.keymap.set(
-        'n',
-        '<space>fh',
-        builtin.help_tags,
-        { desc = 'Fuzzy search help docs' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fh',
+      --   builtin.help_tags,
+      --   { desc = 'Fuzzy search help docs' }
+      -- )
 
-      vim.keymap.set(
-        'n',
-        '<space>fr',
-        builtin.registers,
-        { desc = 'Fuzzy search registers' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fr',
+      --   builtin.registers,
+      --   { desc = 'Fuzzy search registers' }
+      -- )
 
-      vim.keymap.set(
-        'n',
-        '<space>fk',
-        builtin.keymaps,
-        { desc = 'Fuzzy search keymaps' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fk',
+      --   builtin.keymaps,
+      --   { desc = 'Fuzzy search keymaps' }
+      -- )
 
-      vim.keymap.set(
-        'n',
-        '<space>fc',
-        builtin.commands,
-        { desc = 'Fuzzy search commands' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fc',
+      --   builtin.commands,
+      --   { desc = 'Fuzzy search commands' }
+      -- )
 
-      vim.keymap.set(
-        'n',
-        '<space>fof',
-        builtin.oldfiles,
-        { desc = 'Fuzzy search (old) command history' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fof',
+      --   builtin.oldfiles,
+      --   { desc = 'Fuzzy search (old) command history' }
+      -- )
 
-      vim.keymap.set(
-        'n',
-        '<space>foc',
-        builtin.command_history,
-        { desc = 'Fuzzy search (old) command history' }
-      )
-
-      vim.keymap.set(
-        'n',
-        '<space>fo/',
-        builtin.search_history,
-        { desc = 'Fuzzy search (old) search history' }
-      )
-
-      vim.keymap.set(
-        'n',
-        '<space>f/',
-        builtin.current_buffer_fuzzy_find,
-        { desc = 'Fuzzy search buffer' }
-      )
-
-      -- Git pickers
-      vim.keymap.set(
-        'n',
-        '<space>gib',
-        builtin.git_branches,
-        { desc = 'Fuzzy search git branches' }
-      )
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>foc',
+      --   builtin.command_history,
+      --   { desc = 'Fuzzy search (old) command history' }
+      -- )
+      --
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>fo/',
+      --   builtin.search_history,
+      --   { desc = 'Fuzzy search (old) search history' }
+      -- )
+      --
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>f/',
+      --   builtin.current_buffer_fuzzy_find,
+      --   { desc = 'Fuzzy search buffer' }
+      -- )
+      --
+      -- -- Git pickers
+      -- vim.keymap.set(
+      --   'n',
+      --   '<space>gib',
+      --   builtin.git_branches,
+      --   { desc = 'Fuzzy search git branches' }
+      -- )
 
     end,
   },

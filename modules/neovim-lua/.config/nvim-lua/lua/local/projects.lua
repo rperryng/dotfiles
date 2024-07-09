@@ -47,6 +47,11 @@ M.open_project = function(project_dir)
   vim.cmd('TabooRename ' .. project_name)
 end
 
+-- Fzf Lua
+local projectsPickerFzfLua = function()
+
+end
+
 -- Telescope picker
 local action_state = require('telescope.actions.state')
 local actions = require('telescope.actions')
@@ -86,6 +91,7 @@ vim.keymap.set(
   'n',
   '<space>fp',
   projectsPicker,
+  -- projectsPickerFzfLua,
   { desc = 'Fuzzy search projects' }
 )
 

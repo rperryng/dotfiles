@@ -52,3 +52,4 @@ mods = "Control"
 
 [window]
 decorations = "None"
+option_as_alt = "Both" # (macos only)
