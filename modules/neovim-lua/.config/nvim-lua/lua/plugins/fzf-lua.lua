@@ -135,7 +135,7 @@ return {
       vim.keymap.set(
         'n',
         '<space>foc',
-        fzf.commands,
+        fzf.command_history,
         { desc = 'Fuzzy search old commands' }
       )
 

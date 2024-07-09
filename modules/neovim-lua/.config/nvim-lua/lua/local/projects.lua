@@ -2,6 +2,7 @@
 -- 1. read from clone_urls path
 -- 2. clone the repo if it doesn't exist yet
 -- 3. re-run the refresh_clone_urls script after completion
+-- 4. extract to plugin
 
 local M = {}
 
@@ -48,50 +49,25 @@ M.open_project = function(project_dir)
 end
 
 -- Fzf Lua
-local projectsPickerFzfLua = function()
+local projects_picker_fzf_lua = function()
+  require('fzf-lua').fzf_exec(M.find_project_dirs(), {
+    actions = {
+      -- Use fzf-lua builtin actions or your own handler
+      ['default'] = function(selected, opts)
+        if #selected == 0 then
+          return
+        end
 
-end
-
--- Telescope picker
-local action_state = require('telescope.actions.state')
-local actions = require('telescope.actions')
-local finders = require('telescope.finders')
-local pickers = require('telescope.pickers')
-local conf = require('telescope.config').values
-
-local projectsPicker = function(opts)
-  opts = opts or {}
-  pickers
-    .new(opts, {
-      prompt_title = 'Projects',
-      finder = finders.new_table({
-        results = M.find_project_dirs(),
-      }),
-      entry_maker = function(entry)
-        return {
-          value = entry,
-        }
+        M.open_project(selected[1])
       end,
-      sorter = conf.generic_sorter(opts),
-      attach_mappings = function(prompt_bufnr, map)
-        actions.select_default:replace(function()
-          actions.close(prompt_bufnr)
-          local selection = action_state.get_selected_entry()
-          if selection ~= nil then
-            M.open_project(selection[1])
-          end
-        end)
-        return true
-      end,
-    })
-    :find()
+    },
+  })
 end
 
 vim.keymap.set(
   'n',
   '<space>fp',
-  projectsPicker,
-  -- projectsPickerFzfLua,
+  projects_picker_fzf_lua,
   { desc = 'Fuzzy search projects' }
 )
 
