@@ -26,9 +26,10 @@ return {
             layout = 'vertical',
           },
         },
-        -- grep = {
-        --   rg_glob = true,
-        -- },
+
+        grep = {
+          rg_opts = '--hidden --follow --column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e',
+        },
       })
 
       fzf.register_ui_select()
@@ -66,7 +67,9 @@ return {
 
       -- Grep
       vim.keymap.set('n', '<space>fg', function()
-        fzf.grep({ search = '', fzf_opts = { ['--nth'] = '..' } })
+        -- fzf.grep({ search = '', fzf_opts = { ['--nth'] = '..' } })
+        fzf.grep({ search = '' })
+        fzf.grep({ search = '', debug = 'true' })
 
         vim.keymap.set('n', '<space>f.', function()
           fzf.grep({ resume = true })
