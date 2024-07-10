@@ -57,7 +57,6 @@ local projects_picker_fzf_lua = function()
         if #selected == 0 then
           return
         end
-
         M.open_project(selected[1])
       end,
     },

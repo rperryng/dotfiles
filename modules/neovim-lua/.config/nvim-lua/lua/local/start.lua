@@ -1,8 +1,4 @@
 local function start()
-  if #vim.fn.argv() > 0 then
-    return
-  end
-
   local dotfiles_dir = os.getenv('DOTFILES_DIR')
   if dotfiles_dir then
     vim.api.nvim_command('cd ' .. dotfiles_dir)
@@ -14,4 +10,4 @@ local function start()
   vim.api.nvim_command('edit ' .. config_path)
 end
 
-start()
+vim.api.nvim_create_user_command('NStart', start, {})
