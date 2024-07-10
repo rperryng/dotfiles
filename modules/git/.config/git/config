@@ -24,8 +24,9 @@
 [branch]
   sort = -committerdate
 
-[merge]
-  conflictstyle = zdiff3
+; TODO: can this be enabled only if the git version is recent enough?
+; [merge]
+;   conflictstyle = zdiff3
 
 ; [gpg]
 ;   format = ssh

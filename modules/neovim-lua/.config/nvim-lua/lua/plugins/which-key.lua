@@ -1,3 +1,9 @@
+local utils = require('utils')
+
+if utils.is_wsl() then
+  return {}
+end
+
 return {
   'folke/which-key.nvim',
   event = 'VeryLazy',

@@ -4,7 +4,12 @@ set -eo pipefail
 
 install() {
   if [[ -x $(command -v delta) ]]; then
-    return 0;
+    return 0
+  fi
+
+  if [[ -x $(command -v cargo) ]]; then
+    cargo install git-delta
+    return 0
   fi
 
   if [[ -x $(command -v brew) ]];then

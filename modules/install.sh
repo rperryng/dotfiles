@@ -12,7 +12,7 @@ install() {
   source ./rust/install.sh
 
   local packages
-  packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")
+  packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf" | grep -v "rust")
 
   echo "============================"
   echo "Installing modules:"

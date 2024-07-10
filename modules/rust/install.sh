@@ -3,8 +3,8 @@
 set -e
 
 # Also see: modules/rust/.config/shell.d/rust.sh
-export RUSTUP_HOME="${XDG_CONFIG_HOME}/.rustup"
-export CARGO_HOME="${XDG_CONFIG_HOME}/.cargo"
+export RUSTUP_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/.rustup"
+export CARGO_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/.cargo"
 
 install_rustup() {
   if [[ -x "$(command -v rustup)" ]]; then
