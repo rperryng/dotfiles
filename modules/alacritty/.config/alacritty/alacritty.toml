@@ -45,10 +45,12 @@ style = "Italic"
 family = "MesloLGM Nerd Font Mono"
 style = "Regular"
 
-[[keyboard.bindings]]
-chars = "\u0011"
-key = "Q"
-mods = "Control"
+[keyboard]
+bindings = [
+  { key = "Right", mods = "Alt", chars = "\u001BF" },
+  { key = "Left",  mods = "Alt", chars = "\u001BB" },
+  { key = "Q", mods = "Control", chars = "\u0011" }
+]
 
 [window]
 decorations = "None"
