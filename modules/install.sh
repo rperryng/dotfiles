@@ -5,8 +5,11 @@ set -e -o pipefail
 install() {
   pushd "${DOTFILES_DIR:-$HOME/.dotfiles}/modules"
 
-  # Install ASDF first
+  echo "Installing Modules ..."
+
+  # Install ASDF and cargo first
   source ./asdf/install.sh
+  source ./rust/install.sh
 
   local packages
   packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf")

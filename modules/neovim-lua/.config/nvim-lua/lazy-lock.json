@@ -7,7 +7,7 @@
   "incsearch-fuzzy.vim": { "branch": "master", "commit": "b08fa8fbfd633e2f756fde42bfb5251d655f5403" },
   "incsearch.vim": { "branch": "master", "commit": "c83de6d1ac31d173d7c3ffee0ad61dc643ee4f08" },
   "indent-blankline.nvim": { "branch": "master", "commit": "65e20ab94a26d0e14acac5049b8641336819dfc7" },
-  "lazy.nvim": { "branch": "main", "commit": "6fdd904ee45b66d933c5d2f72bcec337e13744f8" },
+  "lazy.nvim": { "branch": "main", "commit": "407e65c7924989c1efed6bbc89e6287e2d140f02" },
   "mini.bufremove": { "branch": "main", "commit": "e6044aa28e61d4dd9ec86194d6f81743eced0c1c" },
   "mini.splitjoin": { "branch": "main", "commit": "3e92f6764e770ba392325cad3a4497adcada695f" },
   "nnn.vim": { "branch": "master", "commit": "e0104e369508fc12e3651ad4dee20261b5b3e87f" },
