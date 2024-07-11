@@ -65,12 +65,6 @@ vim.keymap.set(
   '<cmd>source $MYVIMRC<cr>',
   { desc = 'Reload' }
 )
-vim.keymap.set(
-  'n',
-  '<space>sl',
-  '<cmd>set nohlsearch<cr>',
-  { desc = 'Set No Search Highlight' }
-)
 
 -- Window Movements
 vim.keymap.set('n', '<c-h>', '<c-w>h', { desc = 'Move to Left Window' })

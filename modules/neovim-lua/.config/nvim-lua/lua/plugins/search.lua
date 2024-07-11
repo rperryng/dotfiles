@@ -50,7 +50,7 @@ return {
       )
       vim.keymap.set(
         'n',
-        '<silent> <space>sl',
+        '<space>sl',
         '<Plug>(searchhi-clear-all)',
         { silent = true, desc = 'clear all search highlighting' }
       )

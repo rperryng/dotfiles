@@ -34,133 +34,144 @@ return {
 
       fzf.register_ui_select()
 
-      -- Builtins
-      vim.keymap.set(
-        'n',
-        '<space>fd',
-        fzf.builtin,
-        { desc = 'Fuzzy search builtin pickers' }
-      )
+      local function keymap_with_resume(mode, lhs, rhs, opts)
+        vim.keymap.set(mode, lhs, function()
+          vim.print('debug1')
+          vim.print(rhs)
+          rhs.fn(rhs.fn_opts or {})
+
+          vim.print('debug2')
+          vim.keymap.set('n', '<space>f.', function()
+            vim.print('debug3')
+            rhs.fn({ resume = true })
+          end, { desc = 'Resume last fzf search' })
+        end, opts)
+      end
+
+      -- Builtin
+      keymap_with_resume('n', '<space>fz', {
+        fn = fzf.builtin,
+      }, { desc = 'Fuzzy search builtin pickers' })
 
       -- Files
-      vim.keymap.set(
-        'n',
-        '<space>ff',
-        fzf.files,
-        { desc = 'Fuzzy search files' }
-      )
+      keymap_with_resume('n', '<space>ff', {
+        fn = fzf.files,
+      }, { desc = 'Fuzzy search files' })
 
-      vim.keymap.set(
-        'n',
-        '<space>fof',
-        fzf.files,
-        { desc = 'Fuzzy search old files' }
-      )
+      keymap_with_resume('n', '<space>fof', {
+        fn = fzf.oldfiles,
+      }, { desc = 'Fuzzy search old files' })
 
       -- Buffers
-      vim.keymap.set(
-        'n',
-        '<space>fb',
-        fzf.buffers,
-        { desc = 'Fuzzy search buffers' }
-      )
+      keymap_with_resume('n', '<space>fb', {
+        fn = fzf.buffers,
+      }, { desc = 'Fuzzy search buffers' })
 
-      -- Grep
-      vim.keymap.set('n', '<space>fg', function()
-        -- fzf.grep({ search = '', fzf_opts = { ['--nth'] = '..' } })
-        fzf.grep({ search = '' })
-        fzf.grep({ search = '', debug = 'true' })
+      -- Grep (Ripgrep)
+      keymap_with_resume('n', '<space>rg', {
+        fn = function()
+          fzf.grep({ search = '', fzf_opts = { ['--nth'] = '..' } })
+        end,
+      }, { desc = 'Fuzzy search ripgrep (match on filenames as well)' })
 
-        vim.keymap.set('n', '<space>f.', function()
-          fzf.grep({ resume = true })
-        end, { desc = 'Resume last fuzzy search' })
-      end, { desc = 'Fuzzy search grep (match on filenames as well)' })
+      keymap_with_resume('n', '<space>rG', {
+        fn = function()
+          fzf.grep({ search = '', fzf_opts = { ['--nth'] = '2..' } })
+        end,
+      }, { desc = 'Fuzzy search ripgrep (do not match filenames)' })
 
-      vim.keymap.set('n', '<space>fG', function()
-        fzf.grep({ search = '', fzf_opts = { ['--nth'] = '2..' } })
-
-        vim.keymap.set('n', '<space>f.', function()
-          fzf.grep({ resume = true })
-        end, { desc = 'Resume last fuzzy search' })
-      end, { desc = 'Fuzzy search grep (do not match filenames)' })
-
-      vim.keymap.set('n', '<space>rg', function()
-        fzf.live_grep({ exec_empty_query = true, debug = true })
-
-        vim.keymap.set('n', '<space>f.', function()
-          fzf.live_grep({ resume = true })
-        end, { desc = 'Resume last fuzzy search' })
-      end, { desc = 'Search with ripgrep' })
+      keymap_with_resume('n', '<space>RG', {
+        fn = function()
+          fzf.live_grep({ exec_empty_query = true })
+        end,
+      }, { desc = 'Search directly with ripgrep' })
 
       -- help
-      vim.keymap.set(
-        'n',
-        '<space>fh',
-        fzf.helptags,
-        { desc = 'Fuzzy search help tags' }
-      )
+      keymap_with_resume('n', '<space>fh', {
+        fn = fzf.helptags,
+      }, { desc = 'Fuzzy search help tags' })
 
       -- registers
-      vim.keymap.set(
-        'n',
-        '<space>fr',
-        fzf.registers,
-        { desc = 'Fuzzy search registers' }
-      )
+      keymap_with_resume('n', '<space>fr', {
+        fn = fzf.registers,
+      }, { desc = 'Fuzzy search registers' })
 
       -- marks
-      vim.keymap.set(
-        'n',
-        '<space>fm',
-        fzf.registers,
-        { desc = 'Fuzzy search marks' }
-      )
+      keymap_with_resume('n', '<space>fm', {
+        fn = fzf.marks,
+      }, { desc = 'Fuzzy search marks' })
 
       -- keymaps
-      vim.keymap.set(
-        'n',
-        '<space>fk',
-        fzf.keymaps,
-        { desc = 'Fuzzy search keymaps' }
-      )
+      keymap_with_resume('n', '<space>fk', {
+        fn = fzf.keymaps,
+      }, { desc = 'Fuzzy search keymaps' })
 
       -- Commands
-      vim.keymap.set(
-        'n',
-        '<space>fc',
-        fzf.commands,
-        { desc = 'Fuzzy search commands' }
-      )
+      keymap_with_resume('n', '<space>fc', {
+        fn = fzf.commands,
+      }, { desc = 'Fuzzy search commands' })
 
-      vim.keymap.set(
-        'n',
-        '<space>foc',
-        fzf.command_history,
-        { desc = 'Fuzzy search old commands' }
-      )
+      keymap_with_resume('n', '<space>foc', {
+        fn = fzf.command_history,
+      }, { desc = 'Fuzzy search old commands' })
 
       -- Lines
-      vim.keymap.set(
-        'n',
-        '<space>flb',
-        fzf.blines,
-        { desc = 'Fuzzy search lines (current buffer only)' }
-      )
+      keymap_with_resume('n', '<space>flb', {
+        fn = fzf.blines,
+      }, { desc = 'Fuzzy search lines (current buffer only)' })
 
-      vim.keymap.set(
-        'n',
-        '<space>fla',
-        fzf.lines,
-        { desc = 'Fuzzy search lines (all open buffers)' }
-      )
+      keymap_with_resume('n', '<space>fla', {
+        fn = fzf.lines,
+      }, { desc = 'Fuzzy search lines (all open buffers)' })
 
       -- Search history
-      vim.keymap.set(
-        'n',
-        '<space>fo/',
-        fzf.search_history,
-        { desc = "Fuzzy search '/' search history" }
-      )
+      keymap_with_resume('n', '<space>fo/', {
+        fn = fzf.search_history,
+      }, { desc = "Fuzzy search '/' search history" })
+
+      -- Word under cursor
+      keymap_with_resume('n', '<space>f*', {
+        fn = fzf.grep_cword,
+      }, { desc = 'Fuzzy search word under cursor' })
+
+      keymap_with_resume('n', '<space>F*', {
+        fn = fzf.grep_cWORD,
+      }, {
+        desc = 'Fuzzy search word under cursor (only count spaces as word delimiter)',
+      })
+
+      keymap_with_resume('v', '<space>f*', {
+        fn = fzf.grep_visual,
+      }, { desc = 'Fuzzy search visual selection' })
+
+      -- Git
+      keymap_with_resume('n', '<space>fgf', {
+        fn = fzf.git_files,
+      }, { desc = 'Fuzzy search git files' })
+
+      keymap_with_resume('n', '<space>fgs', {
+        fn = fzf.git_status,
+      }, { desc = 'Fuzzy search git status' })
+
+      keymap_with_resume('n', '<space>fgcc', {
+        fn = fzf.git_commits,
+      }, { desc = 'Fuzzy search git commit log (project)' })
+
+      keymap_with_resume('n', '<space>fgcb', {
+        fn = fzf.git_bcommits,
+      }, { desc = 'Fuzzy search git commit log (buffer)' })
+
+      keymap_with_resume('n', '<space>fgb', {
+        fn = fzf.git_branches,
+      }, { desc = 'Fuzzy search git branches' })
+
+      keymap_with_resume('n', '<space>fgt', {
+        fn = fzf.git_tags,
+      }, { desc = 'Fuzzy search git tags' })
+
+      keymap_with_resume('n', '<space>fgS', {
+        fn = fzf.git_stash,
+      }, { desc = 'Fuzzy search git stash' })
     end,
   },
 }
