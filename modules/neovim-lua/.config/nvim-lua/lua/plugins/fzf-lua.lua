@@ -36,11 +36,9 @@ return {
 
       local function keymap_with_resume(mode, lhs, rhs, opts)
         vim.keymap.set(mode, lhs, function()
-          vim.print('debug1')
           vim.print(rhs)
           rhs.fn(rhs.fn_opts or {})
 
-          vim.print('debug2')
           vim.keymap.set('n', '<space>f.', function()
             vim.print('debug3')
             rhs.fn({ resume = true })
@@ -65,6 +63,10 @@ return {
       -- Buffers
       keymap_with_resume('n', '<space>fb', {
         fn = fzf.buffers,
+        fn_opts = {
+          debug = true,
+          show_unlisted = true,
+        },
       }, { desc = 'Fuzzy search buffers' })
 
       -- Grep (Ripgrep)

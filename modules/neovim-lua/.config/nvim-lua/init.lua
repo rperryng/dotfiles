@@ -13,11 +13,10 @@ local function loadbaseconfig()
   require('keymaps')
   require('augroups')
   require('ui')
-  require('terminal')
 end
 
 xpcall(loadbaseconfig, function(err)
-  pint(debug.traceback(err))
+  print(debug.traceback(err))
 end)
 
 -- Load plugins separately from other configs, so that errors in my

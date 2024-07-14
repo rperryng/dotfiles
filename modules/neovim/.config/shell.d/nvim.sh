@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+n_legacy() {
+  NVIM_APPNAME="" nvim
+}
+
 # nstart() {
 #   if [[ -n $DOTFILES_NVIM_LISTEN_ADDRESS ]]; then
 #     echo 'Already in a neovim session'
