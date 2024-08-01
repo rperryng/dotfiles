@@ -46,6 +46,13 @@ vim.keymap.set('n', '<space>tt', function()
   M.toggle_project_terminal()
 end, { desc = 'Toggle project terminal' })
 
+vim.keymap.set('n', '<space>term', function()
+  local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+  local terminal_buf_name = 'term-' .. project_name
+  vim.cmd('terminal')
+  vim.fn.feedkeys(':keepalt file ' .. terminal_buf_name .. '-')
+end, { desc = 'Open new misc terminal' })
+
 vim.keymap.set('n', '<space>test', function()
   dofile(
     '/Users/rperryng/.dotfiles/modules/neovim-lua/.config/nvim-lua/lua/local/terminal.lua'

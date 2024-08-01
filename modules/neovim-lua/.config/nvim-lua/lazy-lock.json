@@ -12,7 +12,7 @@
   "incsearch-fuzzy.vim": { "branch": "master", "commit": "b08fa8fbfd633e2f756fde42bfb5251d655f5403" },
   "incsearch.vim": { "branch": "master", "commit": "c83de6d1ac31d173d7c3ffee0ad61dc643ee4f08" },
   "indent-blankline.nvim": { "branch": "master", "commit": "65e20ab94a26d0e14acac5049b8641336819dfc7" },
-  "lazy.nvim": { "branch": "main", "commit": "6fdd904ee45b66d933c5d2f72bcec337e13744f8" },
+  "lazy.nvim": { "branch": "main", "commit": "cea5920abb202753004440f94ec39bcf2927e02e" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "37a336b653f8594df75c827ed589f1c91d91ff6c" },
   "mason.nvim": { "branch": "main", "commit": "f96a31855fa8aea55599cea412fe611b85a874ed" },
   "mini.bufremove": { "branch": "main", "commit": "e6044aa28e61d4dd9ec86194d6f81743eced0c1c" },
