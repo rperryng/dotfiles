@@ -3,18 +3,6 @@ vim.g.mapleader = ' '
 -- Saving
 vim.keymap.set(
   'n',
-  '<space>q',
-  '<cmd>quit!<cr>',
-  { desc = 'Close window (no confirm)' }
-)
-vim.keymap.set(
-  'n',
-  '<space>gq',
-  '<cmd>quitall!<cr>',
-  { desc = 'Quit all (no confirm)' }
-)
-vim.keymap.set(
-  'n',
   '<space>wa',
   '<cmd>silent! wall<cr><cmd>set nohlsearch<cr>',
   { desc = 'Write all', silent = true }
@@ -23,9 +11,15 @@ vim.keymap.set(
 -- Quit
 vim.keymap.set(
   'n',
-  '<space>sq',
-  '<cmd>qall!<cr>',
-  { desc = 'Write all', silent = true }
+  '<space>q',
+  '<cmd>quit<cr>',
+  { desc = 'Close window' }
+)
+vim.keymap.set(
+  'n',
+  '<space>gq',
+  '<cmd>quitall!<cr>',
+  { desc = 'Quit all (no confirm)' }
 )
 
 -- Beginning / End of line (no whitespace)
@@ -56,6 +50,14 @@ vim.keymap.set(
   'k',
   "v:count == 0 ? 'gk' : 'k'",
   { expr = true, silent = true }
+)
+
+-- set filetype (TODO: turn into a fuzzy picker?)
+vim.keymap.set(
+  'n',
+  'sf',
+  ':set filetype=',
+  { desc = 'Set filetype' }
 )
 
 -- Sourcing

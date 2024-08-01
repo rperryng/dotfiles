@@ -69,6 +69,13 @@ return {
         },
       }, { desc = 'Fuzzy search buffers' })
 
+      keymap_with_resume('n', '<space>fB', {
+        fn = fzf.buffers,
+        fn_opts = {
+          cwd_only = true,
+        },
+      }, { desc = 'Fuzzy search buffers' })
+
       -- Grep (Ripgrep)
       keymap_with_resume('n', '<space>rg', {
         fn = function()
