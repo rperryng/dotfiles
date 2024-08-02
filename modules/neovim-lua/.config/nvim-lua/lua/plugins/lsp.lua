@@ -78,8 +78,6 @@ return {
             vim.keymap.set(mode, lhs, rhs, opts)
           end
 
-          opts = { buffer = event.buf }
-
           keymap(
             'n',
             'K',
@@ -200,9 +198,55 @@ return {
   },
   {
     'ray-x/lsp_signature.nvim',
-    opts = {},
-    config = function(_, opts)
-      require('lsp_signature').setup(opts)
+    config = function()
+      require('lsp_signature').setup({
+        toggle_key = '<c-k>',
+      })
+
+    end,
+  },
+
+  {
+    'folke/trouble.nvim',
+    config = function()
+      require('trouble').setup()
+
+      vim.keymap.set(
+        'n',
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        { desc = 'Diagnostics (Trouble)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<leader>xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        { desc = 'Buffer Diagnostics (Trouble)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<leader>cs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        { desc = 'Symbols (Trouble)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<leader>cl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        { desc = 'LSP Definitions / references / ... (Trouble)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<leader>xL',
+        '<cmd>Trouble loclist toggle<cr>',
+        { desc = 'Location List (Trouble)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<leader>xQ',
+        '<cmd>Trouble qflist toggle<cr>',
+        { desc = 'Quickfix List (Trouble)' }
+      )
     end,
   },
 }
