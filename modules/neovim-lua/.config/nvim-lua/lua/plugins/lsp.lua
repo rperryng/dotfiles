@@ -1,3 +1,5 @@
+local utils = require('utils')
+
 return {
   -- LSP Config
   {
@@ -11,7 +13,7 @@ return {
     dependencies = {
       'williamboman/mason.nvim',
       'hrsh7th/cmp-nvim-lsp',
-   },
+    },
     config = function()
       local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
       local default_setup = function(server)
@@ -52,8 +54,16 @@ return {
       { 'williamboman/mason-lspconfig.nvim' },
     },
     config = function()
+      vim.diagnostic.config({ virtual_text = false })
+
       -- LSP-like features that don't actually require a running language server
-      vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
+      vim.keymap.set(
+        'n',
+        'gl',
+        '<cmd>lua vim.diagnostic.open_float()<cr>',
+        { desc = 'View diagnostic under cursor' }
+      )
+
       -- Default in nvim 0.10x
       -- vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
       -- vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
@@ -62,66 +72,76 @@ return {
       vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP actions',
         callback = function(event)
-          local opts = { buffer = event.buf }
+          local keymap = function(mode, lhs, rhs, opts)
+            opts = utils.table.deep_copy(opts)
+            opts.buffer = event.buf
+            vim.keymap.set(mode, lhs, rhs, opts)
+          end
 
-          -- these will be buffer-local keybindings
-          -- because they only work if you have an active language server
-          vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+          opts = { buffer = event.buf }
 
-          vim.keymap.set(
+          keymap(
+            'n',
+            'K',
+            '<cmd>lua vim.lsp.buf.hover()<cr>',
+            { desc = 'Show LSP Hover' }
+          )
+
+          keymap(
             'n',
             '<space>gd',
             '<cmd>lua vim.lsp.buf.definition()<cr>',
-            opts
+            { desc = 'Go to definition' }
           )
-          vim.keymap.set(
+          keymap(
             'n',
             '<space>gD',
             '<cmd>lua vim.lsp.buf.declaration()<cr>',
-            opts
+            { desc = 'Go to declaration' }
           )
-          vim.keymap.set(
-            'n',
-            '<space>gi',
-            '<cmd>lua vim.lsp.buf.implementation()<cr>',
-            opts
-          )
-          vim.keymap.set(
+          keymap(
             'n',
             '<space>go',
             '<cmd>lua vim.lsp.buf.type_definition()<cr>',
-            opts
+            { desc = 'Go to type definition' }
           )
-          vim.keymap.set(
+          keymap(
             'n',
             '<space>gr',
             '<cmd>lua vim.lsp.buf.references()<cr>',
-            opts
+            { desc = 'Go to references' }
           )
-          vim.keymap.set(
+          keymap(
             'n',
-            '<space>gs',
-            '<cmd>lua vim.lsp.buf.signature_help()<cr>',
-            opts
+            '<space>gi',
+            '<cmd>lua vim.lsp.buf.implementation()<cr>',
+            { desc = 'Go to implementations' }
           )
-          vim.keymap.set(
+          keymap(
             'n',
             '<space>gre',
             '<cmd>lua vim.lsp.buf.rename()<cr>',
-            opts
+            { desc = 'Rename (via LSP)' }
           )
-          vim.keymap.set(
+          keymap(
             'n',
             '<space>gf',
             '<cmd>lua vim.lsp.buf.format({async = true})<cr>',
-            opts
+            { desc = 'Format (via LSP)' }
           )
-          vim.keymap.set(
+          keymap(
             'n',
             '<space>gA',
             '<cmd>lua vim.lsp.buf.code_action()<cr>',
-            opts
+            { desc = 'Show Code Actions' }
           )
+
+          keymap('n', '<space>gs', function()
+            vim.diagnostic.enable(
+              not vim.diagnostic.is_enabled({ bufnr = event.buf }),
+              { bufnr = event.buf }
+            )
+          end, { desc = 'Toggle diagnostics' })
         end,
       })
     end,
@@ -133,19 +153,17 @@ return {
   { 'hrsh7th/cmp-path' },
   { 'hrsh7th/cmp-cmdline' },
   { 'L3MON4D3/LuaSnip' },
-
   {
-    "folke/lazydev.nvim",
-    ft = "lua", -- only load on lua files
+    'folke/lazydev.nvim',
+    ft = 'lua',
     opts = {
       library = {
-        -- See the configuration section for more details
         -- Load luvit types when the `vim.uv` word is found
-        { path = "luvit-meta/library", words = { "vim%.uv" } },
+        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
       },
     },
   },
-  { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
+  { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
   {
     'hrsh7th/nvim-cmp',
     config = function()
@@ -178,6 +196,13 @@ return {
       --     { name = 'buffer' },
       --   },
       -- })
+    end,
+  },
+  {
+    'ray-x/lsp_signature.nvim',
+    opts = {},
+    config = function(_, opts)
+      require('lsp_signature').setup(opts)
     end,
   },
 }

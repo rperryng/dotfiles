@@ -185,7 +185,7 @@ end, { desc = 'Yank file content' })
 vim.keymap.set('x', '<space>e', function()
   -- :{range}lua
   vim.api.nvim_feedkeys(
-    vim.api.nvim_replace_termcodes(':lua<cr>', true, false, true),
+    vim.api.nvim_replace_termcodes(':lua=<cr>', true, false, true),
     'm',
     false
   )
