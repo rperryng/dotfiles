@@ -135,6 +135,18 @@ return {
   { 'L3MON4D3/LuaSnip' },
 
   {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+  { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
+  {
     'hrsh7th/nvim-cmp',
     config = function()
       local cmp = require('cmp')
@@ -144,6 +156,7 @@ return {
           { name = 'luasnip' },
           { name = 'buffer' },
           { name = 'path' },
+          { name = 'lazydev' },
         }),
 
         mapping = cmp.mapping.preset.insert({

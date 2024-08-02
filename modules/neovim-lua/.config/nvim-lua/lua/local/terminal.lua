@@ -59,6 +59,4 @@ vim.keymap.set('n', '<space>test', function()
   )
 end, { desc = 'Reload test config' })
 
--- setup autocmd on `TermOpen` to :setlocal bufhidden
-
 return M

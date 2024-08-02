@@ -2,8 +2,6 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("rpn_" .. name, { clear = true })
 end
 
-local focusgroup = vim.api.nvim_create_augroup("focusGroup", { clear = true })
-
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
@@ -27,5 +25,6 @@ vim.api.nvim_create_autocmd("TermOpen", {
   group = augroup("terminal_buffers"),
   callback = function()
     vim.opt_local.number = false
+    vim.opt_local.scrollback = 50000
   end,
 })

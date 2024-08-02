@@ -37,6 +37,9 @@ M.open_project = function(project_dir)
     vim.cmd(tabnr .. 'tabnext')
     local tcd = vim.fn.getcwd()
     if tcd == project_dir then
+      -- switch back to the original tab before moving to the final tab
+      vim.cmd(current_tabnr .. 'tabnext')
+      vim.cmd(tabnr .. 'tabnext')
       return
     end
   end
