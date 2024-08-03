@@ -38,6 +38,13 @@ return {
         chat.reset,
         { desc = 'Reset copilot chat' }
       )
+
+      vim.keymap.set(
+        'n',
+        '<space>cot',
+        ':CopilotChatCommitStaged<cr>',
+        { desc = 'Copilot commit staged' }
+      )
     end,
   },
 }
