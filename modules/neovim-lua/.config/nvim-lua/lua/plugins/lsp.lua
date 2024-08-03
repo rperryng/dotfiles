@@ -27,6 +27,7 @@ return {
           'lua_ls',
           'tsserver',
           'denols',
+          'bashls',
           -- 'ruby_lsp',
         },
         handlers = {

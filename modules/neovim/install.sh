@@ -2,7 +2,19 @@
 
 set -e
 
-NVIM_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nvim"
+export NVIM_HOME="${XDG_OPT_HOME:-$HOME/.local/opt}/nvim"
+
+install_luajit() {
+  if [[ -x $(command -v luajit) ]]; then
+    return 0
+  fi
+
+  case ${DOTFILES_OS} in
+    "macos") brew install luajit ;;
+    "debian") sudo apt install liblua5.1-0-dev ;;
+    *) ;;
+  esac
+}
 
 install_neovim() {
   if [[ -x $(command -v nvim) ]]; then
@@ -34,6 +46,7 @@ install_vim_virtual_environments() {
   popd
 }
 
+install_luajit
 install_neovim
 install_vim_virtual_environments
 

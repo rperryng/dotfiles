@@ -34,7 +34,7 @@ install_nodejs() {
   set -e
 
   if [[ "${return_code}" -eq 0 ]]; then
-    return 0;
+    return 0
   fi
 
   case ${DOTFILES_OS} in

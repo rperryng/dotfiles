@@ -36,11 +36,9 @@ return {
 
       local function keymap_with_resume(mode, lhs, rhs, opts)
         vim.keymap.set(mode, lhs, function()
-          vim.print(rhs)
           rhs.fn(rhs.fn_opts or {})
 
           vim.keymap.set('n', '<space>f.', function()
-            vim.print('debug3')
             rhs.fn({ resume = true })
           end, { desc = 'Resume last fzf search' })
         end, opts)
