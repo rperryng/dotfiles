@@ -41,7 +41,7 @@ return {
 
       vim.keymap.set(
         'n',
-        '<space>cot',
+        '<space>cog',
         ':CopilotChatCommitStaged<cr>',
         { desc = 'Copilot commit staged' }
       )

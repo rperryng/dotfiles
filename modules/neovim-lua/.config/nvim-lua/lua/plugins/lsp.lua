@@ -195,7 +195,10 @@ return {
     config = function()
       require('lsp_signature').setup({
         toggle_key = '<c-k>',
+        toggle_key_flip_floatwin_setting = true,
         hint_enable = false,
+        floating_window_above_cur_line = true,
+        always_trigger = false,
       })
     end,
   },
