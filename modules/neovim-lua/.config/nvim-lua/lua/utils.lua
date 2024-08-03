@@ -28,7 +28,7 @@ M.requireDir = function(dir)
   local pattern = table.concat({ baseDir, dir, '*.lua' }, '/')
   local paths = vim.split(vim.fn.glob(pattern), '\n')
   local dirModuleName = dir:gsub('/', '.')
-  for _i, file in pairs(paths) do
+  for _, file in pairs(paths) do
     local localModuleName = file:match('^.+/(.+).lua$')
 
     xpcall(function()
@@ -46,7 +46,7 @@ M.is_wsl = function()
     return false
   end
 
-  content = file:read('*all')
+  local content = file:read('*all')
   file:close()
   if content:match('microsoft') then
     return true
