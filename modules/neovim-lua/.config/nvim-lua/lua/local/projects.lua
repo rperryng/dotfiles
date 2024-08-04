@@ -122,6 +122,7 @@ local function fzf_lua_projects()
 
     local opts = {
       fzf_opts = {
+        ['--no-sort'] = '',
         ['--no-multi'] = '',
         ['--prompt'] = 'Projects❯ ',
         ['--preview-window'] = 'hidden:right:0',

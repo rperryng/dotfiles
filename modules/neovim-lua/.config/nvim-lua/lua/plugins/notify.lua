@@ -6,18 +6,15 @@ local function fade_with_margin(direction)
   return {
     function(state)
       local next_height = state.message.height + 2
-      local next_row = stages_util.available_slot(
-        state.open_windows,
-        next_height,
-        direction
-      )
+      local next_row =
+        stages_util.available_slot(state.open_windows, next_height, direction)
       if not next_row then
         return nil
       end
 
       -- Add a margin if this is the "first" notification
       local is_first_window = #state.open_windows == 0
-      if (is_first_window) then
+      if is_first_window then
         if direction == stages_util.DIRECTION.TOP_DOWN then
           next_row = next_row + MARGIN_VERTICAL
         elseif direction == stages_util.DIRECTION.BOTTOM_UP then
@@ -74,5 +71,14 @@ return {
         stages = fade_with_margin(stages_util.DIRECTION.TOP_DOWN),
       })
     end,
+  },
+
+  {
+    'j-hui/fidget.nvim',
+    tag = 'v1.4.5',
+    config = function()
+      require('fidget').setup({
+      })
+    end
   },
 }

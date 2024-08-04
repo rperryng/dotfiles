@@ -63,6 +63,19 @@ M.try_require = function(module_name)
   end)
 end
 
+M.debug = function(value, level, opts)
+  if type(value) ~= "string" then
+    value = vim.inspect(value)
+  end
+  level = level or vim.log.levels.INFO
+  opts = opts or { render = 'minimal' }
+  local n = require('notify')
+  n.notify(value, level, opts)
+end
+
+-- global convenience
+Log = M.debug
+
 M.table = {
   deep_copy = function(obj, seen)
     if type(obj) ~= 'table' then
