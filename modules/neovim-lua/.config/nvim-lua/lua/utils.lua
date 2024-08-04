@@ -55,12 +55,20 @@ M.is_wsl = function()
   end
 end
 
+M.try_require = function(module_name)
+  return xpcall(function()
+    require(module_name)
+  end, function(err)
+    print(debug.traceback(err))
+  end)
+end
+
 M.table = {
   deep_copy = function(obj, seen)
-    -- Handle non-tables and previously-seen tables.
     if type(obj) ~= 'table' then
       return obj
     end
+
     if seen and seen[obj] then
       return seen[obj]
     end
@@ -73,6 +81,20 @@ M.table = {
       res[M.table.deep_copy(k, s)] = M.table.deep_copy(v, s)
     end
     return setmetatable(res, getmetatable(obj))
+  end,
+
+  uniq = function(t)
+    local hash = {}
+    local res = {}
+
+    for _, v in ipairs(t) do
+      if not hash[v] then
+        res[#res + 1] = v -- add to result table
+        hash[v] = true -- add to hash
+      end
+    end
+
+    return res
   end,
 }
 

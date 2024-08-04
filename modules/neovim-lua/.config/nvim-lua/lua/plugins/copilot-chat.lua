@@ -20,8 +20,8 @@ return {
         debug = false,
         mappings = {
           reset = {
-            normal ='<c-c><c-c>',
-            insert = '<c-c><c-c>'
+            normal = '<c-c><c-c>',
+            insert = '<c-c><c-c>',
           },
         },
       })
@@ -45,6 +45,13 @@ return {
         ':CopilotChatCommitStaged<cr>',
         { desc = 'Copilot commit staged' }
       )
+
+      vim.keymap.set('n', '<space>cof', function()
+        local actions = require('CopilotChat.actions')
+        require('CopilotChat.integrations.fzflua').pick(
+          actions.prompt_actions()
+        )
+      end, { desc = 'CopilotChat - Prompt actions' })
     end,
   },
 }

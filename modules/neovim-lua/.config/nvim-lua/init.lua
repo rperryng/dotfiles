@@ -7,12 +7,11 @@
 --   * debug framework
 
 local function loadbaseconfig()
-  require('utils')
-
-  require('options')
-  require('keymaps')
-  require('augroups')
-  require('ui')
+  local utils = require('utils')
+  utils.try_require('options')
+  utils.try_require('keymaps')
+  utils.try_require('augroups')
+  utils.try_require('ui')
 end
 
 xpcall(loadbaseconfig, function(err)
