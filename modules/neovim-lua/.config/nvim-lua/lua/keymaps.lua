@@ -183,10 +183,19 @@ end, { desc = 'Yank file content' })
 
 -- Eval
 vim.keymap.set('x', '<space>e', function()
+  local s = utils.getVisualSelectionContents();
+  vim.print('evaluating: ', s);
+  local result = assert(loadstring(s))()
+
+  result = result or "loadstring() result was nil"
+
+  local n = require('notify')
+  n.notify(vim.inspect(result), vim.log.levels.INFO, { render = 'minimal' })
+
   -- :{range}lua
-  vim.api.nvim_feedkeys(
-    vim.api.nvim_replace_termcodes(':lua=<cr>', true, false, true),
-    'm',
-    false
-  )
+  -- vim.api.nvim_feedkeys(
+  --   vim.api.nvim_replace_termcodes(':lua=<cr>', true, false, true),
+  --   'm',
+  --   false
+  -- )
 end, { desc = 'Evaluate visual selection as neovim lua' })

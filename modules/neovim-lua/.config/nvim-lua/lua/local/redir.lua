@@ -2,10 +2,9 @@
 
 local function Redir(opts)
   local cmd = opts.fargs[1]
-  local rng = opts.range
+  local range = opts.range
   local line1 = opts.line1 - 1
   local line2 = opts.line2
-  local vertical = opts.smods.vertical
   line2 = line1 == line2 and line1 + 1 or line2
 
   local output
@@ -22,7 +21,7 @@ local function Redir(opts)
       end
     end
 
-    if rng == 0 then
+    if range == 0 then
       -- NOTE: no input given, call command
       Job:new({
         command = command,

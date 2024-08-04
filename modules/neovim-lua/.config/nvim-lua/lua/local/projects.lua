@@ -19,8 +19,7 @@ M.find_project_dirs = function(max_depth)
     for depth = 1, max_depth do
       local search_path = search_root_path .. string.rep('/*', depth)
       for _, pattern in ipairs(patterns) do
-        local dirs = vim.fn.globpath(search_path, pattern)
-
+        local dirs = vim.fn.globpath(search_path, pattern, true, true)
         for _, dir in ipairs(dirs) do
           table.insert(project_dirs, vim.fn.fnamemodify(dir, ':h'))
         end

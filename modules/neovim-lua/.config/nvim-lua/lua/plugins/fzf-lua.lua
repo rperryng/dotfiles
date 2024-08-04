@@ -98,6 +98,11 @@ return {
         fn = fzf.helptags,
       }, { desc = 'Fuzzy search help tags' })
 
+      -- filetypes
+      keymap_with_resume('n', '<space>fF', {
+        fn = fzf.filetypes,
+      }, { desc = 'Fuzzy search help tags' })
+
       -- registers
       keymap_with_resume('n', '<space>fr', {
         fn = fzf.registers,
