@@ -13,6 +13,10 @@ return {
             require('formatter.filetypes.json').jq,
           },
 
+          ruby = {
+            require('formatter.filetypes.ruby').rubocop,
+          },
+
           ['*'] = {
             require('formatter.filetypes.any').remove_trailing_whitespace,
           },

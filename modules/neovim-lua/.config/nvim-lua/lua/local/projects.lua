@@ -16,6 +16,10 @@ local iconify = function(item, icon)
   return ('%s  %s'):format(icon, item)
 end
 
+local uniconify = function(line)
+  return line:match('^[^ ]+%s+(.+)')
+end
+
 M.find_project_dirs = function(max_depth)
   max_depth = max_depth or 2
   local search_root_paths = { os.getenv('HOME') .. '/code' }
@@ -79,34 +83,43 @@ vim.keymap.set(
 local function fzf_lua_projects()
   local project_dirs = M.find_project_dirs_decorated()
   local clone_urls = M.find_clone_urls_decorated()
-  local entries = {}
-  local ids = {}
-
-  for _, v in pairs(project_dirs) do
-    table.insert(entries, v)
-    local id = v:match('code/([%w-_%.]+/[%w-_%.].+)')
-    table.insert(ids, id)
-  end
-
-  for _, v in pairs(clone_urls) do
-    table.insert(entries, v)
-    local id = v:match('git@github.com:(%w-_/)%.git')
-
-    -- Skip if this repo is already cloned locally
-    if ids[id] ~= nil then
-      return
-    end
-
-    table.insert(ids, id)
-  end
 
   coroutine.wrap(function()
-    local fzf_fn = function(cb)
-      for _, entry in ipairs(entries) do
-        cb(entry)
+    local co = coroutine.running()
+
+    local fzf_fn = function(fzf_cb)
+      local ids = {}
+
+      local function add_entry(value, id)
+        if ids[id] ~= nil then
+          return
+        end
+
+        fzf_cb(value)
+        ids[id] = true
       end
-      cb(nil)
+
+      -- Add local projects
+      for _, value in ipairs(project_dirs) do
+        local id = value:match('code/([%w-_%.]+/[%w-_%.].+)')
+        assert(id, string.format('could not extract repo id from entry %s', value))
+        add_entry(value, id)
+      end
+
+      -- Add any uncloned GitHub projects
+      for _, value in ipairs(clone_urls) do
+        local id = uniconify(value)
+        assert(id, 'could not extract id from github repo line', id)
+
+        -- Only add the value if it's not already cloned
+        if ids[id] == nil then
+          add_entry(value, id)
+        end
+      end
+
+      fzf_cb()
     end
+
     local opts = {
       fzf_opts = {
         ['--no-multi'] = '',
@@ -116,14 +129,13 @@ local function fzf_lua_projects()
     }
 
     local selected = require('fzf-lua.core').fzf(fzf_fn, opts)
-
-    if selected == nil or #selected == 0 then
+    if selected == nil or #selected == 0 or selected[1] == 'esc' then
       return
     end
 
     -- Extract the "value" (no icon) from the selected line
     local line = selected[2]
-    local value = line:match('^[^ ]+%s+(.+)')
+    local value = uniconify(line)
 
     -- Open existing local project
     if string.find(line, ICONS.DIR) then

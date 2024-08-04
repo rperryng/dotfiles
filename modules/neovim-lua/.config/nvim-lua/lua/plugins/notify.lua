@@ -15,8 +15,6 @@ local function fade_with_margin(direction)
         return nil
       end
 
-      vim.print(state)
-
       -- Add a margin if this is the "first" notification
       local is_first_window = #state.open_windows == 0
       if (is_first_window) then
