@@ -21,9 +21,19 @@ return {
             ['ctrl-q'] = actions.file_sel_to_qf,
           },
         },
+
         winopts = {
           preview = {
             layout = 'vertical',
+          },
+        },
+
+        lsp = {
+          actions = {
+            code_actions = {
+              -- use 'git-delta' for diff
+              previewer = 'codeaction_native',
+            },
           },
         },
 
@@ -56,7 +66,16 @@ return {
 
       keymap_with_resume('n', '<space>fof', {
         fn = fzf.oldfiles,
-      }, { desc = 'Fuzzy search old files' })
+        fn_opts = {
+          winopts = {
+            preview = {
+              vertical = 'down:70%',
+            }
+          }
+        }
+      }, {
+        desc = 'Fuzzy search old files',
+      })
 
       -- Buffers
       keymap_with_resume('n', '<space>fb', {
