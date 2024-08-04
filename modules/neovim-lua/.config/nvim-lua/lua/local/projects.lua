@@ -1,13 +1,20 @@
 -- TODO:
--- 1. read from clone_urls path
--- 2. clone the repo if it doesn't exist yet
 -- 3. re-run the refresh_clone_urls script after completion
 -- 4. extract to plugin
 
 local M = {}
 
 local utils = require('utils')
-local CLONE_URLS_PATH = os.getenv('HOME') .. '/.clone_urls'
+local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
+
+local ICONS = {
+  DIR = '',
+  GITHUB = '',
+}
+
+local iconify = function(item, icon)
+  return ('%s  %s'):format(icon, item)
+end
 
 M.find_project_dirs = function(max_depth)
   max_depth = max_depth or 2
@@ -27,69 +34,131 @@ M.find_project_dirs = function(max_depth)
     end
   end
 
-  vim.print(project_dirs)
-  vim.print(utils.table)
   return utils.table.uniq(project_dirs)
 end
 
-local find_project_dirs_decorated = function(max_depth)
+M.find_project_dirs_decorated = function(max_depth)
   local entries = M.find_project_dirs(max_depth)
 
   local ansi_codes = require('fzf-lua.utils').ansi_codes
-  local dir_icon = ansi_codes['blue']('')
-  local iconify = function(item, icon)
-    icon = icon or dir_icon
-    return ('%s  %s'):format(icon, item)
+  local dir_icon = ansi_codes['blue'](ICONS.DIR)
+
+  for i, path in ipairs(entries) do
+    path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
+    path = '~/' .. path
+    entries[i] = iconify(path, dir_icon)
+  end
+
+  return entries
+end
+
+M.find_clone_urls = function()
+  return vim.fn.readfile(CLONE_URLS_PATH)
+end
+
+M.find_clone_urls_decorated = function()
+  local entries = M.find_clone_urls()
+  local ansi_codes = require('fzf-lua.utils').ansi_codes
+  local github_icon = ansi_codes['yellow'](ICONS.GITHUB)
+
+  for i, clone_url in ipairs(entries) do
+    local full_reponame = clone_url:match('git@github.com:(.+)%.git')
+    local owner, repo = full_reponame:match('([%w-_]+)/([%w-_%.]+)')
+    entries[i] = iconify(owner .. '/' .. repo, github_icon)
+  end
+
+  return entries
+end
+
+vim.keymap.set(
+  'n',
+  '<space>fP',
+  M.find_clone_urls_decorated,
+  { desc = 'testing' }
+)
+
+local function fzf_lua_projects()
+  local project_dirs = M.find_project_dirs_decorated()
+  local clone_urls = M.find_clone_urls_decorated()
+  local entries = {}
+  local ids = {}
+
+  for _, v in pairs(project_dirs) do
+    table.insert(entries, v)
+    local id = v:match('code/([%w-_%.]+/[%w-_%.].+)')
+    table.insert(ids, id)
+  end
+
+  for _, v in pairs(clone_urls) do
+    table.insert(entries, v)
+    local id = v:match('git@github.com:(%w-_/)%.git')
+
+    -- Skip if this repo is already cloned locally
+    if ids[id] ~= nil then
+      return
+    end
+
+    table.insert(ids, id)
   end
 
   coroutine.wrap(function()
-    -- prepend dirs with folder icon
-    for i, path in ipairs(entries) do
-      path = require('fzf-lua.path').relative_to(
-        path,
-        vim.fn.expand('$HOME')
-      )
-      entries[i] = iconify(path)
-    end
-
     local fzf_fn = function(cb)
       for _, entry in ipairs(entries) do
-        cb(entry, function(err)
-          if err then
-            return
-          end
-          cb(nil, function() end)
-        end)
+        cb(entry)
       end
+      cb(nil)
     end
     local opts = {
       fzf_opts = {
         ['--no-multi'] = '',
-        ['--prompt'] = 'Workdirs❯ ',
+        ['--prompt'] = 'Projects❯ ',
         ['--preview-window'] = 'hidden:right:0',
-      }
+      },
     }
+
     local selected = require('fzf-lua.core').fzf(fzf_fn, opts)
-    if not selected then
-      return
-    end
-    local pwd = require('fzf-lua.path').join({
-      vim.fn.expand('$HOME'),
-      selected[2]:match('[^ ]*$'),
-    })
 
-    if not pwd then
+    if selected == nil or #selected == 0 then
       return
     end
 
-    M.open_project(pwd)
+    -- Extract the "value" (no icon) from the selected line
+    local line = selected[2]
+    local value = line:match('^[^ ]+%s+(.+)')
+
+    -- Open existing local project
+    if string.find(line, ICONS.DIR) then
+      M.open_project(vim.fn.expand(value))
+      return
+    end
+
+    -- Clone project and then open it
+    if string.find(line, ICONS.GITHUB) then
+      local owner, repo = value:match('([%w-_]+)/([%w-_%.]+)')
+      if not owner or not repo then
+        return
+      end
+
+      local owner_path = vim.fn.expand('~/code/' .. owner)
+      if vim.fn.empty(vim.fn.glob(owner_path)) > 0 then
+        vim.fn.mkdir(owner_path, 'p')
+      end
+
+      local path = vim.fn.expand('~/code/' .. owner .. '/' .. repo)
+      if vim.fn.empty(vim.fn.glob(path)) then
+        local clone_url = 'git@github.com:' .. owner .. '/' .. repo .. '.git'
+        vim.fn.system('git clone ' .. clone_url .. ' ' .. path)
+      end
+
+      M.open_project(path)
+    end
   end)()
 end
 
 vim.keymap.set(
   'n',
   '<space>fp',
-  find_project_dirs_decorated,
+  fzf_lua_projects,
   { desc = 'Fuzzy search projects' }
 )
 
