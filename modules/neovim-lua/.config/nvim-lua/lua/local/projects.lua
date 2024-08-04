@@ -27,27 +27,71 @@ M.find_project_dirs = function(max_depth)
     end
   end
 
+  vim.print(project_dirs)
+  vim.print(utils.table)
   return utils.table.uniq(project_dirs)
 end
 
 local find_project_dirs_decorated = function(max_depth)
-  local dirs = M.find_project_dirs()
-  local entries = {}
+  local entries = M.find_project_dirs(max_depth)
 
-  -- local iconify = function(path, icon)
-  --   return string.format("%s  %s", icon, path)
-  -- end
-
-  local iconify = function(path, color, icon)
-    local ansi_codes = require('fzf-lua.utils').ansi_codes
-    local icon = ansi_codes[color](icon)
-    path = require('fzf-lua.path').relative(path, vim.fn.expand('$HOME'))
-    return ('%s  %s'):format(icon, path)
+  local ansi_codes = require('fzf-lua.utils').ansi_codes
+  local dir_icon = ansi_codes['blue']('')
+  local iconify = function(item, icon)
+    icon = icon or dir_icon
+    return ('%s  %s'):format(icon, item)
   end
 
-  for _, path in ipairs(M.find_project_dirs()) do
-  end
+  coroutine.wrap(function()
+    -- prepend dirs with folder icon
+    for i, path in ipairs(entries) do
+      path = require('fzf-lua.path').relative_to(
+        path,
+        vim.fn.expand('$HOME')
+      )
+      entries[i] = iconify(path)
+    end
+
+    local fzf_fn = function(cb)
+      for _, entry in ipairs(entries) do
+        cb(entry, function(err)
+          if err then
+            return
+          end
+          cb(nil, function() end)
+        end)
+      end
+    end
+    local opts = {
+      fzf_opts = {
+        ['--no-multi'] = '',
+        ['--prompt'] = 'Workdirs❯ ',
+        ['--preview-window'] = 'hidden:right:0',
+      }
+    }
+    local selected = require('fzf-lua.core').fzf(fzf_fn, opts)
+    if not selected then
+      return
+    end
+    local pwd = require('fzf-lua.path').join({
+      vim.fn.expand('$HOME'),
+      selected[2]:match('[^ ]*$'),
+    })
+
+    if not pwd then
+      return
+    end
+
+    M.open_project(pwd)
+  end)()
 end
+
+vim.keymap.set(
+  'n',
+  '<space>fp',
+  find_project_dirs_decorated,
+  { desc = 'Fuzzy search projects' }
+)
 
 M.open_project = function(project_dir)
   local project_name = vim.fn.fnamemodify(project_dir, ':t')
@@ -70,27 +114,5 @@ M.open_project = function(project_dir)
   vim.cmd('tchdir ' .. project_dir)
   vim.cmd('TabooRename ' .. project_name)
 end
-
--- Fzf Lua
-local projects_picker_fzf_lua = function()
-  require('fzf-lua').fzf_exec(M.find_project_dirs(), {
-    actions = {
-      -- Use fzf-lua builtin actions or your own handler
-      ['default'] = function(selected, opts)
-        if #selected == 0 then
-          return
-        end
-        M.open_project(selected[1])
-      end,
-    },
-  })
-end
-
-vim.keymap.set(
-  'n',
-  '<space>fp',
-  projects_picker_fzf_lua,
-  { desc = 'Fuzzy search projects' }
-)
 
 return M
