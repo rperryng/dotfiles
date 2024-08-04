@@ -99,9 +99,9 @@ return {
       }, { desc = 'Fuzzy search help tags' })
 
       -- filetypes
-      keymap_with_resume('n', '<space>fF', {
+      keymap_with_resume('n', '<space>F', {
         fn = fzf.filetypes,
-      }, { desc = 'Fuzzy search help tags' })
+      }, { desc = 'Fuzzy search filetypes' })
 
       -- registers
       keymap_with_resume('n', '<space>fr', {
@@ -145,12 +145,6 @@ return {
       keymap_with_resume('n', '<space>f*', {
         fn = fzf.grep_cword,
       }, { desc = 'Fuzzy search word under cursor' })
-
-      keymap_with_resume('n', '<space>F*', {
-        fn = fzf.grep_cWORD,
-      }, {
-        desc = 'Fuzzy search word under cursor (only count spaces as word delimiter)',
-      })
 
       keymap_with_resume('v', '<space>f*', {
         fn = fzf.grep_visual,

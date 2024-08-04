@@ -1,7 +1,5 @@
 -- TODOp:
---   * Project picker
 --   * LSP
---   * autocomplete
 --   * terminal mappings
 --   * test framework
 --   * debug framework

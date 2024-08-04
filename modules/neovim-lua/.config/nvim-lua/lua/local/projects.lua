@@ -19,7 +19,7 @@ end
 M.find_project_dirs = function(max_depth)
   max_depth = max_depth or 2
   local search_root_paths = { os.getenv('HOME') .. '/code' }
-  local patterns = { '.git', 'Gemfile' }
+  local patterns = { '.git', 'Gemfile', 'package.json' }
   local project_dirs = {}
 
   for _, search_root_path in ipairs(search_root_paths) do
@@ -39,7 +39,6 @@ end
 
 M.find_project_dirs_decorated = function(max_depth)
   local entries = M.find_project_dirs(max_depth)
-
   local ansi_codes = require('fzf-lua.utils').ansi_codes
   local dir_icon = ansi_codes['blue'](ICONS.DIR)
 

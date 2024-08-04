@@ -52,14 +52,6 @@ vim.keymap.set(
   { expr = true, silent = true }
 )
 
--- set filetype (TODO: turn into a fuzzy picker?)
-vim.keymap.set(
-  'n',
-  'sf',
-  ':set filetype=',
-  { desc = 'Set filetype' }
-)
-
 -- Sourcing
 vim.keymap.set(
   'n',
