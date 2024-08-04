@@ -102,7 +102,10 @@ local function fzf_lua_projects()
       -- Add local projects
       for _, value in ipairs(project_dirs) do
         local id = value:match('code/([%w-_%.]+/[%w-_%.].+)')
-        assert(id, string.format('could not extract repo id from entry %s', value))
+        assert(
+          id,
+          string.format('could not extract repo id from entry %s', value)
+        )
         add_entry(value, id)
       end
 
@@ -120,16 +123,14 @@ local function fzf_lua_projects()
       fzf_cb()
     end
 
-    local opts = {
+    local selected = require('fzf-lua.core').fzf(fzf_fn, {
       fzf_opts = {
         ['--no-sort'] = '',
         ['--no-multi'] = '',
         ['--prompt'] = 'Projects❯ ',
         ['--preview-window'] = 'hidden:right:0',
-      },
-    }
-
-    local selected = require('fzf-lua.core').fzf(fzf_fn, opts)
+      }
+    })
     if selected == nil or #selected == 0 or selected[1] == 'esc' then
       return
     end
@@ -156,13 +157,37 @@ local function fzf_lua_projects()
         vim.fn.mkdir(owner_path, 'p')
       end
 
-      local path = vim.fn.expand('~/code/' .. owner .. '/' .. repo)
-      if vim.fn.empty(vim.fn.glob(path)) then
-        local clone_url = 'git@github.com:' .. owner .. '/' .. repo .. '.git'
-        vim.fn.system('git clone ' .. clone_url .. ' ' .. path)
-      end
+      local full_reponame = string.format('%s/%s', owner, repo)
 
-      M.open_project(path)
+      local path = vim.fn.expand('~/code/' .. full_reponame)
+      if vim.fn.empty(vim.fn.glob(path)) then
+        local clone_url = 'git@github.com:' .. full_reponame .. '.git'
+
+        local fidget = require('fidget')
+        local n_opts = { key = clone_url }
+        local msg = string.format('Cloning %s', full_reponame)
+        fidget.notify(msg, vim.log.levels.INFO, n_opts)
+
+        local Job = require('plenary.job')
+        Job:new({
+          command = 'git',
+          args = { 'clone', clone_url, path },
+          on_exit = function(j, return_val)
+            if return_val == 0 then
+              msg = string.format('Done cloning %s', full_reponame)
+              fidget.notify(msg, vim.log.levels.INFO, n_opts)
+            else
+              local result = table.concat(j:result(), '\n')
+              msg = string.format('Error cloning %s\n%s', full_reponame, result)
+              fidget.notify(msg, vim.log.levels.ERROR, n_opts)
+            end
+
+            vim.schedule(function()
+              M.open_project(path)
+            end)
+          end,
+        }):start()
+      end
     end
   end)()
 end
