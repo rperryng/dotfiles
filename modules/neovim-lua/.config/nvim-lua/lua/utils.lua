@@ -64,7 +64,7 @@ M.try_require = function(module_name)
 end
 
 M.debug = function(value, level, opts)
-  if type(value) ~= "string" then
+  if type(value) ~= 'string' then
     value = vim.inspect(value)
   end
   level = level or vim.log.levels.INFO
@@ -74,7 +74,30 @@ M.debug = function(value, level, opts)
 end
 
 -- global convenience
-Log = M.debug
+local LOG_PATH = os.getenv('HOME') .. '/.local/neovim.log'
+-- Log = M.debug
+Log = function(value)
+  LogFileCleared = LogFileCleared or false
+  if not LogFileCleared then
+    vim.fn.writefile({ '' }, LOG_PATH)
+    LogFileCleared = true
+  end
+
+  if type(value) ~= 'string' then
+    value = vim.inspect(value)
+  end
+
+  vim.cmd('redir >> ' .. LOG_PATH)
+  vim.print(value)
+  vim.cmd('redir END')
+end
+
+vim.keymap.set(
+  'n',
+  '<space>ol',
+  ':edit ' .. LOG_PATH .. '<cr>',
+  { desc = 'open "Log" file' }
+)
 
 M.table = {
   deep_copy = function(obj, seen)

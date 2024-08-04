@@ -1,12 +1,10 @@
 -- TODO:
--- 3. re-run the refresh_clone_urls script after completion
 -- 4. extract to plugin
 
 local M = {}
 
 local utils = require('utils')
 local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
-
 local ICONS = {
   DIR = '',
   GITHUB = '',
@@ -19,6 +17,13 @@ end
 local uniconify = function(line)
   return line:match('^[^ ]+%s+(.+)')
 end
+
+vim.keymap.set('n', '<space>h', function()
+  local octokit = require('local.octokit')
+  local commits = octokit.commits()
+
+  Log(commits)
+end, { desc = 'test' })
 
 M.find_project_dirs = function(max_depth)
   max_depth = max_depth or 2
@@ -80,6 +85,70 @@ vim.keymap.set(
   { desc = 'testing' }
 )
 
+local function refresh_clone_urls()
+  local progress = require('fidget.progress')
+  local handle = progress.handle.create({
+    title = 'Fetching clone URLs',
+    message = 'Loading',
+    -- TODO
+    percentage = 0,
+    -- Stubbed out name
+    lsp_client = { name = 'GitHub' },
+  })
+
+  -- local fidget = require('fidget')
+  local Job = require('plenary.job')
+  Job:new({
+    command = 'bash',
+    args = { 'refresh_clone_urls' },
+    on_exit = function(j, return_val)
+      if return_val == 0 then
+        handle.message = 'Done'
+      else
+        local result = table.concat(j:result(), '\n')
+        local msg = string.format('Error running script\n', result)
+        handle.message = msg
+      end
+
+      handle:finish()
+    end,
+  }):start()
+end
+
+local function job_clone_repo(clone_url, reponame, path)
+  local progress = require('fidget.progress')
+  local handle = progress.handle.create({
+    title = reponame,
+    message = string.format('Cloning'),
+    percentage = 0,
+    -- Stubbed out name
+    lsp_client = { name = 'Git' },
+  })
+
+  -- local fidget = require('fidget')
+  local Job = require('plenary.job')
+  Job:new({
+    command = 'git',
+    args = { 'clone', clone_url, path },
+    on_exit = function(j, return_val)
+      if return_val == 0 then
+        handle.message = string.format('Done cloning %s', reponame)
+      else
+        local result = table.concat(j:result(), '\n')
+        local msg = string.format('Error cloning %s\n%s', reponame, result)
+        handle.message = msg
+      end
+
+      handle:finish()
+
+      vim.schedule(function()
+        M.open_project(path)
+        refresh_clone_urls()
+      end)
+    end,
+  }):start()
+end
+
 local function fzf_lua_projects()
   local project_dirs = M.find_project_dirs_decorated()
   local clone_urls = M.find_clone_urls_decorated()
@@ -129,7 +198,7 @@ local function fzf_lua_projects()
         ['--no-multi'] = '',
         ['--prompt'] = 'Projects❯ ',
         ['--preview-window'] = 'hidden:right:0',
-      }
+      },
     })
     if selected == nil or #selected == 0 or selected[1] == 'esc' then
       return
@@ -162,31 +231,7 @@ local function fzf_lua_projects()
       local path = vim.fn.expand('~/code/' .. full_reponame)
       if vim.fn.empty(vim.fn.glob(path)) then
         local clone_url = 'git@github.com:' .. full_reponame .. '.git'
-
-        local fidget = require('fidget')
-        local n_opts = { key = clone_url }
-        local msg = string.format('Cloning %s', full_reponame)
-        fidget.notify(msg, vim.log.levels.INFO, n_opts)
-
-        local Job = require('plenary.job')
-        Job:new({
-          command = 'git',
-          args = { 'clone', clone_url, path },
-          on_exit = function(j, return_val)
-            if return_val == 0 then
-              msg = string.format('Done cloning %s', full_reponame)
-              fidget.notify(msg, vim.log.levels.INFO, n_opts)
-            else
-              local result = table.concat(j:result(), '\n')
-              msg = string.format('Error cloning %s\n%s', full_reponame, result)
-              fidget.notify(msg, vim.log.levels.ERROR, n_opts)
-            end
-
-            vim.schedule(function()
-              M.open_project(path)
-            end)
-          end,
-        }):start()
+        job_clone_repo(clone_url, full_reponame, path)
       end
     end
   end)()
