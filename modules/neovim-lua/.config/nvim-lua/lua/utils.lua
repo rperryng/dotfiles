@@ -63,32 +63,31 @@ M.try_require = function(module_name)
   end)
 end
 
-M.debug = function(value, level, opts)
-  if type(value) ~= 'string' then
-    value = vim.inspect(value)
+local LOG_PATH = os.getenv('HOME') .. '/.local/neovim.log'
+local function init_logfile()
+  LogFileCleared = LogFileCleared or false
+  if LogFileCleared then
+    return
   end
-  level = level or vim.log.levels.INFO
-  opts = opts or { render = 'minimal' }
-  local n = require('notify')
-  n.notify(value, level, opts)
+
+  vim.fn.writefile({ '' }, LOG_PATH)
+  LogFileCleared = true
 end
 
 -- global convenience
-local LOG_PATH = os.getenv('HOME') .. '/.local/neovim.log'
--- Log = M.debug
 Log = function(value)
-  LogFileCleared = LogFileCleared or false
-  if not LogFileCleared then
-    vim.fn.writefile({ '' }, LOG_PATH)
-    LogFileCleared = true
-  end
+  init_logfile()
 
   if type(value) ~= 'string' then
     value = vim.inspect(value)
   end
 
+  -- Use a global value to avoid having to worry how to pass it to
+  -- the vimscript context
+  _LogValue = value
+
   vim.cmd('redir >> ' .. LOG_PATH)
-  vim.print(value)
+  vim.cmd('silent lua vim.print(_LogValue)')
   vim.cmd('redir END')
 end
 

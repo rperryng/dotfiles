@@ -20,9 +20,21 @@ end
 
 vim.keymap.set('n', '<space>h', function()
   local octokit = require('local.octokit')
-  local commits = octokit.commits()
+  octokit.fidget('/user/repos', function(result)
+    if not result.done then
+      return
+    end
 
-  Log(commits)
+    -- Log(result)
+
+    local clone_urls = {}
+    for _, v in ipairs(result.data) do
+      Log(v)
+    end
+
+    -- Get clone urls
+    -- write to file
+  end)
 end, { desc = 'test' })
 
 M.find_project_dirs = function(max_depth)
