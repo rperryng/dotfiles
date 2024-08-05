@@ -81,17 +81,32 @@ return {
       keymap_with_resume('n', '<space>fb', {
         fn = fzf.buffers,
         fn_opts = {
-          debug = true,
-          show_unlisted = true,
+          cwd_only = true,
         },
-      }, { desc = 'Fuzzy search buffers' })
+      }, { desc = 'Fuzzy search buffers (current working directory only)' })
 
       keymap_with_resume('n', '<space>fB', {
         fn = fzf.buffers,
         fn_opts = {
-          cwd_only = true,
+          cwd_only = false,
         },
       }, { desc = 'Fuzzy search buffers' })
+
+      keymap_with_resume('n', '<space>ft', {
+        fn = fzf.buffers,
+        fn_opts = {
+          query = "term",
+          cwd_only = true,
+        },
+      }, { desc = 'Fuzzy search terminals' })
+
+      keymap_with_resume('n', '<space>fT', {
+        fn = fzf.buffers,
+        fn_opts = {
+          query = "term",
+          cwd_only = false,
+        },
+      }, { desc = 'Fuzzy search terminals' })
 
       -- Grep (Ripgrep)
       keymap_with_resume('n', '<space>rg', {
