@@ -76,5 +76,5 @@ refresh_clone_urls() {
         ' > $temp_file && \
         rm -f $DOTFILES_CLONE_URLS_PATH && \
         mv $temp_file $DOTFILES_CLONE_URLS_PATH \
-  ) &
+  )
 }

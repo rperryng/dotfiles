@@ -18,25 +18,6 @@ local uniconify = function(line)
   return line:match('^[^ ]+%s+(.+)')
 end
 
-vim.keymap.set('n', '<space>h', function()
-  local octokit = require('local.octokit')
-  octokit.fidget('/user/repos', function(result)
-    if not result.done then
-      return
-    end
-
-    -- Log(result)
-
-    local clone_urls = {}
-    for _, v in ipairs(result.data) do
-      Log(v)
-    end
-
-    -- Get clone urls
-    -- write to file
-  end)
-end, { desc = 'test' })
-
 M.find_project_dirs = function(max_depth)
   max_depth = max_depth or 2
   local search_root_paths = { os.getenv('HOME') .. '/code' }
@@ -98,42 +79,32 @@ vim.keymap.set(
 )
 
 local function refresh_clone_urls()
-  local progress = require('fidget.progress')
-  local handle = progress.handle.create({
-    title = 'Fetching clone URLs',
-    message = 'Loading',
-    -- TODO
-    percentage = 0,
-    -- Stubbed out name
-    lsp_client = { name = 'GitHub' },
-  })
+  local octokit = require('local.octokit')
+  octokit.fidget('/user/repos', function(result)
+    if not result.done then
+      return
+    end
 
-  -- local fidget = require('fidget')
-  local Job = require('plenary.job')
-  Job:new({
-    command = 'bash',
-    args = { 'refresh_clone_urls' },
-    on_exit = function(j, return_val)
-      if return_val == 0 then
-        handle.message = 'Done'
-      else
-        local result = table.concat(j:result(), '\n')
-        local msg = string.format('Error running script\n', result)
-        handle.message = msg
+    local clone_urls = {}
+    for _, v in ipairs(result.data) do
+      if not v.archived then
+        table.insert(clone_urls, v.ssh_url)
       end
+    end
 
-      handle:finish()
-    end,
-  }):start()
+    vim.fn.writefile(clone_urls, CLONE_URLS_PATH)
+  end)
 end
+vim.keymap.set('n', '<space>rec', function()
+  refresh_clone_urls()
+end, { desc = 'refresh_clone_urls' })
+
 
 local function job_clone_repo(clone_url, reponame, path)
   local progress = require('fidget.progress')
   local handle = progress.handle.create({
     title = reponame,
-    message = string.format('Cloning'),
-    percentage = 0,
-    -- Stubbed out name
+    message = string.format('Cloning repo'),
     lsp_client = { name = 'Git' },
   })
 
@@ -155,7 +126,6 @@ local function job_clone_repo(clone_url, reponame, path)
 
       vim.schedule(function()
         M.open_project(path)
-        refresh_clone_urls()
       end)
     end,
   }):start()

@@ -2,25 +2,16 @@ local M = {}
 local curl = require('plenary.curl')
 
 local API_URL = 'https://api.github.com'
-
-local function u(path)
-  return API_URL .. path
-end
-
-local function headers(h)
-  return {
-    Authorization = string.format('Bearer %s', os.getenv('GITHUB_TOKEN')),
-    Accept = 'application/vnd.github+json',
-    ['X-GitHub-Api-Version'] = '2022-11-28',
-    -- table.unpack(h or {})
-  }
-end
+local DEFAULT_HEADERS = {
+  Authorization = string.format('Bearer %s', os.getenv('GITHUB_TOKEN')),
+  Accept = 'application/vnd.github+json',
+  ['X-GitHub-Api-Version'] = '2022-11-28',
+}
 
 local function parse_link_header(header)
   local result = {}
 
   for part in string.gmatch(header, '([^,]+)') do
-    -- Extract the URL and relation type
     local url = string.match(part, '<(.+)>')
     local rel = string.match(part, 'rel="(.+)"')
     assert(url, 'could not parse url', header)
@@ -40,92 +31,142 @@ local function parse_link_header(header)
   return result
 end
 
+local function resolve_link(headers)
+  local link_header = nil
+  for _, header in ipairs(headers) do
+    if header:match('^link:') then
+      link_header = header
+      break
+    end
+  end
+
+  if link_header == nil then
+    return nil
+  end
+
+  return parse_link_header(link_header)
+end
+
 local function parse_data(data)
-  -- If the data is an array, return that
   if data[1] ~= nil then
     return data
   end
 
-  -- Some endpoints respond with 204 No Content instead of empty array
-  -- when there is no data. In that case, return an empty array.
   if not data then
     return {}
   end
 
-  Log('keys:')
-  for k, _ in data do
-    Log(k)
-  end
-
-  -- Otherwise, the array of items that we want is in an object
-  -- Delete keys that don't include the array of items
   data.incomplete_results = nil
   data.repository_selection = nil
   data.total_count = nil
 
-  -- Pull out the array of items
   local namespace_key = data[1]
-  data = data[namespace_key]
-
-  return data
+  return data[namespace_key]
 end
 
-local function get_paginated_data(path)
-  local next_url = u(path)
+-- TODO: run X requests at a time instead of 1 at a time
+local function get_paginated_data(path, callback)
+  local next_url = API_URL .. path
   local data = {}
-  local count = 0
+  local page = 1
+  local last_page = nil
 
-  while next_url ~= nil do
-    count = count + 1
-    local response = curl.get(next_url, {
-      headers = headers(),
-    })
-
+  local function curl_cb(response)
     local parsed_data = parse_data(vim.fn.json_decode(response.body))
     for _, item in ipairs(parsed_data) do
       table.insert(data, item)
     end
 
-    local link_header = nil
-    for _, header in ipairs(response.headers) do
-      if header:match('^link:') then
-        link_header = header
-        break
-      end
-    end
+    local link = resolve_link(response.headers)
 
-    if link_header == nil then
+    if link == nil then
       next_url = nil
     else
-      local link = parse_link_header(link_header)
-      next_url = link and link.next and link.next.url
+      if last_page == nil and link.last then
+        last_page = link.last.page
+      end
+
+      next_url = link.next and link.next.url
+    end
+
+    if callback ~= nil then
+      callback({
+        data = parsed_data,
+        page = page,
+        last_page = last_page,
+        done = link == nil,
+      })
+    end
+
+    page = page + 1
+    if next_url then
+      callback({
+        data = parsed_data,
+        page = page,
+        last_page = last_page,
+        done = false,
+      })
+
+      curl.get(next_url, {
+        headers = DEFAULT_HEADERS,
+        callback = function(response)
+          vim.schedule(function()
+            curl_cb(response)
+          end)
+        end
+      })
+    else
+      callback({
+        data = data,
+        done = true,
+      })
     end
   end
 
-  return data
+  curl.get(next_url, {
+    headers = DEFAULT_HEADERS,
+    callback = function(response)
+      vim.schedule(function()
+        curl_cb(response)
+      end)
+    end,
+  })
 end
 
-function M.get_paginated_data(path)
-  return coroutine.wrap(function()
-    coroutine.yield(get_paginated_data(path))
+function M.fidget(path, callback)
+  local progress = require('fidget.progress')
+  local handle = progress.handle.create({
+    title = path,
+    message = 'Fetching ...',
+    percentage = 0,
+    lsp_client = { name = 'GitHub' },
+  })
+
+  get_paginated_data(path, function(result)
+    if result.done then
+      handle:finish()
+    elseif result.last_page then
+      local percentage = vim.fn.round(100 * (result.page / result.last_page))
+      handle:report({
+        message = string.format('Page %s / %s', result.page, result.last_page),
+        percentage = percentage,
+      })
+    else
+      handle:report({
+        message = string.format('Page %s ...', result.page),
+      })
+    end
+
+    callback(result)
   end)
 end
 
-function M.commits()
-  return get_paginated_data('/repos/rperryng/dotfiles/commits')
-  -- return curl.get(u('/repos/rperryng/dotfiles/commits'), {
-  --   headers = headers(),
-  -- })
+function M.commits(callback)
+  return get_paginated_data('/repos/rperryng/dotfiles/commits', callback)
 end
 
--- function M.repos()
---   return curl.get(u('/user/repos'), {
---     headers = headers(),
---   })
--- end
-
-function M.repos()
-  return get_paginated_data('/user/repos')
+function M.repos(callback)
+  return get_paginated_data('/user/repos', callback)
 end
 
 return M
