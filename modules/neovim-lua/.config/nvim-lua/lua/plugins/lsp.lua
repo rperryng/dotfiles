@@ -165,7 +165,7 @@ return {
   { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
   {
     'hrsh7th/nvim-cmp',
-    dependencies = { 'onsails/lspkind.nvim' },
+    dependencies = { 'onsails/lspkind.nvim', 'nvim-web-devicons' },
     config = function()
       local lspkind = require('lspkind')
       local cmp = require('cmp')
@@ -189,16 +189,6 @@ return {
           expand = function(args)
             require('luasnip').lsp_expand(args.body)
           end,
-        },
-
-        -- format = lspkind.cmp_format(),
-
-        formatting = {
-          format = lspkind.cmp_format({
-            mode = 'symbol_text',
-            maxwidth = 50,
-            symbol_map = { Copilot = '' },
-          }),
         },
 
         formatting = {
