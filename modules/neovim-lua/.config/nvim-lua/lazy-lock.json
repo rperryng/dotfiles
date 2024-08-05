@@ -46,6 +46,7 @@
   "vim-just": { "branch": "main", "commit": "2b413474987f085434d386b4090a768e3b9c54b3" },
   "vim-rsi": { "branch": "master", "commit": "45540637ead22f011e8215f1c90142e49d946a54" },
   "vim-searchhi": { "branch": "master", "commit": "6d3d595e84f12b2086b1c77db39da219c1736aa6" },
+  "vim-winlayout": { "branch": "master", "commit": "2bb3aa5a749abe887a15fae9d14201d125d0c7e6" },
   "which-key.nvim": { "branch": "main", "commit": "6c1584eb76b55629702716995cca4ae2798a9cca" },
   "winresizer": { "branch": "master", "commit": "9bd559a03ccec98a458e60c705547119eb5350f3" }
 }
