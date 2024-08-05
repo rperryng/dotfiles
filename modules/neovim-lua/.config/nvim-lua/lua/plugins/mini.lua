@@ -20,21 +20,21 @@ return {
           line_right = '',
           line_down = '',
           line_up = '',
-        }
+        },
       })
 
       local hydra = require('hydra')
       hydra({
         name = 'Move Visual Selection',
-        hint = false,
+        -- hint = false,
         config = {
           foreign_keys = nil,
-          on_exit = function()
-            -- exit visual mode
-            vim.cmd('normal Esc')
-          end,
+          hint = {
+            type = 'statusline',
+          }
         },
         mode = 'x',
+        body = '<leader>m',
         heads = {
           {
             'j',
@@ -60,9 +60,22 @@ return {
               MiniMove.move_selection('right')
             end,
           },
+          {
+            -- By default <esc> will only exit the 'hydra' mode
+            -- Remap esc to exit hydra mode _and_ exit visual mode
+            '<esc>',
+            function()
+              local esc =
+                vim.api.nvim_replace_termcodes('<esc>', true, false, true)
+              vim.api.nvim_feedkeys(esc, 'x', false)
+            end,
+            {
+              exit_before = true,
+              exit = true,
+            },
+          },
         },
-        body = '<leader>m',
       })
-    end
-  }
+    end,
+  },
 }

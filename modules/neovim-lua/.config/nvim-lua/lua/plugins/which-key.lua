@@ -10,8 +10,16 @@ return {
     event = 'VeryLazy',
     opts = {
       delay = function(_ctx)
-        return 200
+        return 1000
       end,
+      filter = function(mapping)
+        -- Hydra "move visual selection"
+        if (mapping.mode == 'x' and mapping.lhs:match(' m')) then
+          return false
+        end
+
+        return true
+      end
     },
     keys = {
       {

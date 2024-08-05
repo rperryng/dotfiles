@@ -13,8 +13,8 @@ for _, module_name in ipairs(base_config_modules) do
 end
 
 -- Load plugins
+local utils = require('utils')
 require('plugin')
 
 -- Load other local config modules
-local utils = require('utils')
 utils.requireDir('local')
