@@ -167,7 +167,6 @@ return {
     'hrsh7th/nvim-cmp',
     dependencies = { 'onsails/lspkind.nvim', 'nvim-web-devicons' },
     config = function()
-      local lspkind = require('lspkind')
       local cmp = require('cmp')
       cmp.setup({
         sources = cmp.config.sources({
@@ -179,10 +178,11 @@ return {
         }),
 
         mapping = cmp.mapping.preset.insert({
-          -- Enter key confirms completion item
-          ['<CR>'] = cmp.mapping.confirm({ select = false }),
+          ['<cr>'] = cmp.mapping.confirm({ select = false }),
+          ['<c-space>'] = cmp.mapping.complete(),
+
+          -- Tab always selects the first entry if none is already selected
           ['<tab>'] = cmp.mapping.confirm({ select = true }),
-          ['<C-Space>'] = cmp.mapping.complete(),
         }),
 
         snippet = {
