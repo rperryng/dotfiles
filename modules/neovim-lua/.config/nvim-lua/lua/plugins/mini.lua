@@ -26,7 +26,6 @@ return {
       local hydra = require('hydra')
       hydra({
         name = 'Move Visual Selection',
-        -- hint = false,
         config = {
           foreign_keys = nil,
           hint = {
@@ -34,7 +33,7 @@ return {
           }
         },
         mode = 'x',
-        body = '<leader>m',
+        body = '<space>m',
         heads = {
           {
             'j',
@@ -73,6 +72,44 @@ return {
               exit_before = true,
               exit = true,
             },
+          },
+        },
+      })
+
+      hydra({
+        name = 'Move Line',
+        config = {
+          foreign_keys = nil,
+          hint = {
+            type = 'statusline',
+          }
+        },
+        mode = 'n',
+        body = '<space>m',
+        heads = {
+          {
+            'j',
+            function()
+              MiniMove.move_line('down')
+            end,
+          },
+          {
+            'k',
+            function()
+              MiniMove.move_line('up')
+            end,
+          },
+          {
+            'h',
+            function()
+              MiniMove.move_line('left')
+            end,
+          },
+          {
+            'l',
+            function()
+              MiniMove.move_line('right')
+            end,
           },
         },
       })

@@ -33,5 +33,12 @@ return {
         { desc = 'Redo window layout change' }
       )
     end
+  },
+
+  {
+    'onsails/lspkind.nvim',
+    config = function()
+      require('lspkind').setup()
+    end
   }
 }

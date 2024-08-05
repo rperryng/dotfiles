@@ -77,7 +77,18 @@ return {
     'j-hui/fidget.nvim',
     tag = 'v1.4.5',
     config = function()
-      require('fidget').setup({})
+      local n = require('fidget')
+      n.setup({})
+
+      vim.keymap.set(
+        'n',
+        '<space>nt',
+        function()
+          -- no arg toggles
+          n.suppress()
+        end,
+        { desc = 'toggle fidget notifications' }
+      )
     end,
   },
 }

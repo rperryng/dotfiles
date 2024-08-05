@@ -165,7 +165,9 @@ return {
   { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
   {
     'hrsh7th/nvim-cmp',
+    dependencies = { 'onsails/lspkind.nvim' },
     config = function()
+      local lspkind = require('lspkind')
       local cmp = require('cmp')
       cmp.setup({
         sources = cmp.config.sources({
@@ -179,12 +181,45 @@ return {
         mapping = cmp.mapping.preset.insert({
           -- Enter key confirms completion item
           ['<CR>'] = cmp.mapping.confirm({ select = false }),
-
+          ['<tab>'] = cmp.mapping.confirm({ select = true }),
           ['<C-Space>'] = cmp.mapping.complete(),
         }),
+
         snippet = {
           expand = function(args)
             require('luasnip').lsp_expand(args.body)
+          end,
+        },
+
+        -- format = lspkind.cmp_format(),
+
+        formatting = {
+          format = lspkind.cmp_format({
+            mode = 'symbol_text',
+            maxwidth = 50,
+            symbol_map = { Copilot = '' },
+          }),
+        },
+
+        formatting = {
+          format = function(entry, vim_item)
+            if vim.tbl_contains({ 'path' }, entry.source.name) then
+              local icon, hl_group = require('nvim-web-devicons').get_icon(
+                entry:get_completion_item().label
+              )
+              if icon then
+                vim_item.kind = icon
+                vim_item.kind_hl_group = hl_group
+                return vim_item
+              end
+            end
+            return require('lspkind').cmp_format({
+              mode = 'symbol_text',
+              with_text = false
+            })(
+              entry,
+              vim_item
+            )
           end,
         },
       })

@@ -18,6 +18,10 @@ return {
           return false
         end
 
+        if (mapping.mode == 'n' and mapping.lhs:match(' m')) then
+          return false
+        end
+
         return true
       end
     },
