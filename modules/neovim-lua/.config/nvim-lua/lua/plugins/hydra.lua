@@ -49,22 +49,22 @@ return {
         name = 'Quickfix navigation',
         config = {
           hint = {
-            type = 'statusline'
+            type = 'window'
           }
         },
         mode = 'n',
-        body = '<space>]q',
+        body = '<space>hq',
         heads = {
           {
             'n',
             function()
-              vim.cmd('cnext')
+              vim.cmd('silent! cnext')
             end,
           },
           {
             'p',
             function()
-              vim.cmd('cprevious')
+              vim.cmd('silent! cprevious')
             end
           }
         }

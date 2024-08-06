@@ -12,21 +12,21 @@ return {
       -- Hunk Navigation
       vim.keymap.set(
         'n',
-        '<space>ghq',
+        '<space>gqg',
         ':GitGutterQuickFix | copen | cfirst<cr>',
         { desc = 'Load git hunks into quickfix list' }
       )
       vim.keymap.set(
         'n',
-        '<space>]g',
+        ']g',
         '<Plug>(GitGutterNextHunk)',
-        { desc = 'Next git hunk' }
+        { desc = 'Next git hunk', noremap = false }
       )
       vim.keymap.set(
         'n',
-        '<space>[g',
+        '[g',
         '<Plug>(GitGutterPrevHunk)',
-        { desc = 'Next git hunk' }
+        { desc = 'Next git hunk', noremap = false }
       )
 
       -- Hunk Operations

@@ -29,8 +29,8 @@ return {
         config = {
           foreign_keys = nil,
           hint = {
-            type = 'statusline',
-          }
+            type = 'window',
+          },
         },
         mode = 'x',
         body = '<space>m',
@@ -81,8 +81,8 @@ return {
         config = {
           foreign_keys = nil,
           hint = {
-            type = 'statusline',
-          }
+            type = 'window',
+          },
         },
         mode = 'n',
         body = '<space>m',

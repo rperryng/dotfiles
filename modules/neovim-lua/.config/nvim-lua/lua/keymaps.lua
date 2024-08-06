@@ -17,7 +17,7 @@ vim.keymap.set(
 )
 vim.keymap.set(
   'n',
-  '<space>gq',
+  '<space>QQ',
   '<cmd>quitall!<cr>',
   { desc = 'Quit all (no confirm)' }
 )
