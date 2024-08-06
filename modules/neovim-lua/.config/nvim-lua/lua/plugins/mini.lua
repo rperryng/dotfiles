@@ -27,6 +27,7 @@ return {
       hydra({
         name = 'Move Visual Selection',
         config = {
+          invoke_on_body = true,
           foreign_keys = nil,
           hint = {
             type = 'window',
@@ -79,6 +80,7 @@ return {
       hydra({
         name = 'Move Line',
         config = {
+          invoke_on_body = true,
           foreign_keys = nil,
           hint = {
             type = 'window',

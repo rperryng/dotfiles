@@ -68,7 +68,6 @@ return {
         '<Plug>(GitGutterTextObjectOuterVisual)',
         { desc = 'Git hunk inner' }
       )
-
     end,
   },
 }

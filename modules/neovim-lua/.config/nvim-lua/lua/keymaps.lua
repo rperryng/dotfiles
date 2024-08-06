@@ -9,12 +9,7 @@ vim.keymap.set(
 )
 
 -- Quit
-vim.keymap.set(
-  'n',
-  '<space>q',
-  '<cmd>quit<cr>',
-  { desc = 'Close window' }
-)
+vim.keymap.set('n', '<space>q', '<cmd>quit<cr>', { desc = 'Close window' })
 vim.keymap.set(
   'n',
   '<space>QQ',
@@ -101,7 +96,7 @@ vim.keymap.set(
   'n',
   '[q',
   ':cprevious<cr>',
-  { desc = 'Go to next quickfix entry' }
+  { desc = 'Go to previous quickfix entry' }
 )
 vim.keymap.set(
   'n',
@@ -114,6 +109,34 @@ vim.keymap.set(
   '[Q',
   ':cfirst<cr>',
   { desc = 'Go to the first quickfix entry' }
+)
+
+vim.keymap.set(
+  'n',
+  '<space>tq',
+  function()
+    Log('--BEFORE')
+    Log(vim.fn.getwininfo())
+    local quickfix_is_open = false
+    local current_tabnr = vim.api.nvim_tabpage_get_number(0)
+    local current_winnr = vim.api.nvim_win_get_number(0)
+
+    for _, win in ipairs(vim.fn.getwininfo()) do
+      if win.tabnr == current_tabnr and win.quickfix == 1 then
+        quickfix_is_open = true
+        break
+      end
+    end
+
+    if quickfix_is_open then
+      vim.cmd('cclose')
+    else
+      vim.cmd('copen')
+    end
+
+    vim.cmd(current_winnr .. 'wincmd w')
+  end,
+  { desc = 'Toggle quickfix terminal' }
 )
 
 -- Paste from specified register in terminal mode
@@ -144,7 +167,7 @@ vim.keymap.set('n', '<space>reb', function()
   else
     vim.fn.feedkeys(':keepalt file ')
   end
-end, { desc = 'Rename buffer'})
+end, { desc = 'Rename buffer' })
 
 -- Utility Keymaps
 
@@ -175,10 +198,11 @@ end, { desc = 'Yank file content' })
 
 -- Eval
 vim.keymap.set('x', '<space>e', function()
-  local s = utils.getVisualSelectionContents();
+  local s = utils.getVisualSelectionContents()
   local result = assert(loadstring(s))()
 
-  result = result or "loadstring() result was nil\n(does it end with a 'return' statement?)"
+  result = result
+    or "loadstring() result was nil\n(does it end with a 'return' statement?)"
 
   local n = require('notify')
   n.notify(vim.inspect(result), vim.log.levels.INFO, { render = 'minimal' })

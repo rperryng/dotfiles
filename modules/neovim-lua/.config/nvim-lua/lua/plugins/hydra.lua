@@ -48,6 +48,7 @@ return {
       hydra({
         name = 'Quickfix navigation',
         config = {
+          invoke_on_body = true,
           hint = {
             type = 'window'
           }
