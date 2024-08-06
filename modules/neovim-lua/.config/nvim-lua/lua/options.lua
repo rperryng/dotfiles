@@ -37,6 +37,8 @@ vim.opt.splitright = true
 vim.opt.number = true
 vim.opt.showtabline = 2
 
+vim.opt.updatetime = 200
+
 -- Search
 vim.opt.ignorecase = true
 vim.opt.smartcase = true

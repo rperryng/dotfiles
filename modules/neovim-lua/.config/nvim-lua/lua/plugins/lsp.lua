@@ -178,10 +178,10 @@ return {
         }),
 
         mapping = cmp.mapping.preset.insert({
-          ['<cr>'] = cmp.mapping.confirm({ select = false }),
           ['<c-space>'] = cmp.mapping.complete(),
 
           -- Tab always selects the first entry if none is already selected
+          ['<cr>'] = cmp.mapping.confirm({ select = false }),
           ['<tab>'] = cmp.mapping.confirm({ select = true }),
         }),
 

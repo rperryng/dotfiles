@@ -43,6 +43,32 @@ return {
 
       -- TODO: Fix status line highlight colors for hydra
       -- setup_statusline()
+      
+      local hydra = require('hydra')
+      hydra({
+        name = 'Quickfix navigation',
+        config = {
+          hint = {
+            type = 'statusline'
+          }
+        },
+        mode = 'n',
+        body = '<space>]q',
+        heads = {
+          {
+            'n',
+            function()
+              vim.cmd('cnext')
+            end,
+          },
+          {
+            'p',
+            function()
+              vim.cmd('cprevious')
+            end
+          }
+        }
+      })
     end
   }
 }
