@@ -113,7 +113,7 @@ vim.keymap.set(
 
 vim.keymap.set(
   'n',
-  '<space>tq',
+  '<space>gqq',
   function()
     Log('--BEFORE')
     Log(vim.fn.getwininfo())

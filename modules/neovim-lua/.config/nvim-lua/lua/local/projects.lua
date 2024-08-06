@@ -136,8 +136,6 @@ local function fzf_lua_projects()
   local clone_urls = M.find_clone_urls_decorated()
 
   coroutine.wrap(function()
-    local co = coroutine.running()
-
     local fzf_fn = function(fzf_cb)
       local ids = {}
 
@@ -152,7 +150,12 @@ local function fzf_lua_projects()
 
       -- Add local projects
       for _, value in ipairs(project_dirs) do
+        -- Match ~/code/{owner}/{repo}
         local id = value:match('code/([%w-_%.]+/[%w-_%.].+)')
+
+        -- (Legacy) Match ~/code/{repo}
+        id = id or value:match('code/([%w-_%.]+)')
+
         assert(
           id,
           string.format('could not extract repo id from entry %s', value)
