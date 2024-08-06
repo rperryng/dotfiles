@@ -1,40 +1,39 @@
 {
-  "$schema" : "https:\/\/app.linearmouse.org\/schema\/0.7.5",
   "schemes" : [
     {
+      "scrolling" : {
+        "reverse" : {
+          "vertical" : true,
+          "horizontal" : false
+        },
+        "distance" : 3
+      },
       "buttons" : {
         "universalBackForward" : true
       },
+      "pointer" : {
+        "speed" : 0.2965517241379308544,
+        "acceleration" : 0,
+        "disableAcceleration" : false
+      },
       "if" : {
         "device" : {
-          "productName" : "Razer Basilisk Ultimate Dongle",
           "productID" : "0x88",
+          "productName" : "Razer Basilisk Ultimate Dongle",
           "category" : "mouse",
           "vendorID" : "0x1532"
         }
-      },
-      "pointer" : {
-        "acceleration" : 0,
-        "speed" : 0.2965517241379308544,
-        "disableAcceleration" : false
-      },
-      "scrolling" : {
-        "reverse" : {
-          "horizontal" : false,
-          "vertical" : true
-        },
-        "distance" : 3
       }
     },
     {
       "if" : {
-        "app" : "org.mozilla.firefox",
         "device" : {
           "productName" : "Razer Basilisk Ultimate Dongle",
-          "productID" : "0x88",
+          "vendorID" : "0x1532",
           "category" : "mouse",
-          "vendorID" : "0x1532"
-        }
+          "productID" : "0x88"
+        },
+        "app" : "org.mozilla.firefox"
       },
       "scrolling" : {
         "distance" : 7
@@ -44,8 +43,8 @@
       "if" : {
         "device" : {
           "productName" : "Apple Internal Keyboard \/ Trackpad",
-          "productID" : "0x343",
           "category" : "trackpad",
+          "productID" : "0x343",
           "vendorID" : "0x5ac"
         }
       },
@@ -56,19 +55,56 @@
     {
       "if" : {
         "device" : {
+          "vendorID" : "0x3297",
           "productName" : "Moonlander Mark I",
-          "productID" : "0x1969",
           "category" : "mouse",
-          "vendorID" : "0x3297"
+          "productID" : "0x1969"
         }
       },
       "scrolling" : {
+        "distance" : 6,
         "reverse" : {
           "horizontal" : false,
           "vertical" : true
+        }
+      }
+    },
+    {
+      "pointer" : {
+        "acceleration" : 0.9,
+        "disableAcceleration" : true
+      },
+      "scrolling" : {
+        "modifiers" : {
+          "vertical" : {
+            "shift" : {
+              "type" : "changeSpeed",
+              "scale" : 3.5
+            }
+          }
         },
-        "distance" : 6
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "distance" : {
+          "vertical" : 3
+        },
+        "speed" : {
+          "vertical" : 0
+        },
+        "reverse" : {
+          "vertical" : true
+        }
+      },
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productName" : "USB Receiver",
+          "vendorID" : "0x46d",
+          "productID" : "0xc539"
+        }
       }
     }
-  ]
+  ],
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.9.5"
 }
