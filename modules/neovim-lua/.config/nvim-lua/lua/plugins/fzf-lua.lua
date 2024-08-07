@@ -135,6 +135,12 @@ return {
       -- filetypes
       keymap_with_resume('n', '<space>F', {
         fn = fzf.filetypes,
+        fn_opts = {
+          winopts = {
+            height = 0.5,
+            width = 0.3,
+          },
+        },
       }, { desc = 'Fuzzy search filetypes' })
 
       -- registers

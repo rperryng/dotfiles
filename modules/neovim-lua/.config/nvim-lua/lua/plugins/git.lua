@@ -70,4 +70,25 @@ return {
       )
     end,
   },
+
+  {
+    'sindrets/diffview.nvim',
+    config = function()
+    end
+  },
+
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "sindrets/diffview.nvim",
+      "ibhagwan/fzf-lua",
+    },
+    config = function()
+      local neogit = require('neogit')
+      neogit.setup()
+
+      vim.keymap.set('n', '<spaces>ghs', ':Neogit', { desc = 'Open neogit'})
+    end
+  }
 }
