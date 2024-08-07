@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
+FONT_BREW_NAME='font-meslo-lg-nerd-font'
+# FONT_BREW_NAME='font-inconsolata-lgc-nerd-font'
+
 install_nerd_fonts_macos() {
-  if [[ $(brew list) =~ "font-meslo-lg-nerd-font" ]]; then
+  if [[ $(brew list) =~ "$FONT_BREW_NAME" ]]; then
     return 0
   fi
 
-  brew install font-meslo-lg-nerd-font
+  echo "Installing font ${FONT_BREW_NAME}"
+  brew install "$FONT_BREW_NAME"
 }
 
 install() {

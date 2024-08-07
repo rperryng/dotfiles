@@ -17,6 +17,7 @@ return {
         folds = false,
       },
       contrast = 'hard',
+      -- transparent_mode = true,
     },
     init = function()
       vim.cmd('colorscheme gruvbox')
