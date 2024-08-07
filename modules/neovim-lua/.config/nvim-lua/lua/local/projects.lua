@@ -54,7 +54,11 @@ M.find_project_dirs_decorated = function(max_depth)
 end
 
 M.find_clone_urls = function()
-  return vim.fn.readfile(CLONE_URLS_PATH)
+  if vim.uv.fs_stat(CLONE_URLS_PATH) then
+    return vim.fn.readfile(CLONE_URLS_PATH)
+  else
+    return {}
+  end
 end
 
 M.find_clone_urls_decorated = function()

@@ -64,8 +64,16 @@ local function parse_data(data)
   return data[namespace_key]
 end
 
+local function checkToken(path)
+  if (os.getenv('GITHUB_TOKEN')) then
+    error(string.format('No $GITHUB_TOKEN found, can\'t make GitHub API request "%s"', path))
+  end
+end
+
 -- TODO: run X requests at a time instead of 1 at a time
 local function get_paginated_data(path, callback)
+  checkToken(path)
+
   local next_url = API_URL .. path
   local data = {}
   local page = 1
@@ -109,9 +117,9 @@ local function get_paginated_data(path, callback)
 
       curl.get(next_url, {
         headers = DEFAULT_HEADERS,
-        callback = function(response)
+        callback = function(next_response)
           vim.schedule(function()
-            curl_cb(response)
+            curl_cb(next_response)
           end)
         end
       })
