@@ -78,10 +78,55 @@ return {
       local gitsigns = require('gitsigns')
 
       -- Hydra for navigating hunks.  Possibly staging them as well?
-      -- local hydra = require('hydra')
-      -- hydra({
-      --
-      -- })
+      local hydra = require('hydra')
+      hydra({
+        name = 'Git Hunk Navigation',
+        config = {
+          invoke_on_body = true,
+          hint = {
+            type = 'window',
+          },
+        },
+        mode = 'n',
+        body = '<space>HG',
+        heads = {
+          {
+            ']',
+            function()
+              gitsigns.nav_hunk('next')
+            end,
+          },
+          {
+            '[',
+            function()
+              gitsigns.nav_hunk('previous')
+            end,
+          },
+
+          -- Mimic "git add --patch" commands
+          {
+            'y',
+            function()
+              gitsigns.stage_hunk()
+              gitsigns.nav_hunk('next')
+            end,
+          },
+          {
+            'n',
+            function()
+              gitsigns.stage_hunk()
+              gitsigns.nav_hunk('next')
+            end,
+          },
+          {
+            'q',
+            nil,
+            {
+              exit = true,
+            }
+          }
+        }
+      })
 
       vim.cmd([[
         highlight! link GitSignsAdd GruvboxGreenSign

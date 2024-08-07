@@ -34,7 +34,7 @@ return {
           },
         },
         mode = 'x',
-        body = '<space>m',
+        body = '<space>HM',
         heads = {
           {
             'j',
@@ -87,7 +87,7 @@ return {
           },
         },
         mode = 'n',
-        body = '<space>m',
+        body = '<space>HM',
         heads = {
           {
             'j',

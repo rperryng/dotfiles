@@ -45,11 +45,11 @@ return {
         config = {
           invoke_on_body = true,
           hint = {
-            type = 'window'
-          }
+            type = 'window',
+          },
         },
         mode = 'n',
-        body = '<space>hq',
+        body = '<space>HQ',
         heads = {
           {
             'n',
@@ -61,10 +61,10 @@ return {
             'p',
             function()
               vim.cmd('silent! cprevious')
-            end
-          }
-        }
+            end,
+          },
+        },
       })
-    end
-  }
+    end,
+  },
 }
