@@ -89,7 +89,7 @@ vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
 vim.keymap.set('n', '<c-n>', ':tabnext<cr>', { desc = 'Go to next tab' })
 vim.keymap.set('n', '<c-p>', ':tabprevious<cr>', { desc = 'Go to next tab' })
-vim.keymap.set('n', '<space>TQ', ':tabclose', { desc = 'Close tab' })
+vim.keymap.set('n', '<space>TQ', ':tabclose<cr>', { desc = 'Close tab' })
 
 -- Quickfix movements
 vim.keymap.set('n', ']q', ':cnext<cr>', { desc = 'Go to next quickfix entry' })
