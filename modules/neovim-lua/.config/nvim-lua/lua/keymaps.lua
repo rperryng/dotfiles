@@ -112,33 +112,26 @@ vim.keymap.set(
   { desc = 'Go to the first quickfix entry' }
 )
 
-vim.keymap.set(
-  'n',
-  '<space>gqq',
-  function()
-    Log('--BEFORE')
-    Log(vim.fn.getwininfo())
-    local quickfix_is_open = false
-    local current_tabnr = vim.api.nvim_tabpage_get_number(0)
-    local current_winnr = vim.api.nvim_win_get_number(0)
+vim.keymap.set('n', '<space>gqq', function()
+  local quickfix_is_open = false
+  local current_tabnr = vim.api.nvim_tabpage_get_number(0)
+  local current_winnr = vim.api.nvim_win_get_number(0)
 
-    for _, win in ipairs(vim.fn.getwininfo()) do
-      if win.tabnr == current_tabnr and win.quickfix == 1 then
-        quickfix_is_open = true
-        break
-      end
+  for _, win in ipairs(vim.fn.getwininfo()) do
+    if win.tabnr == current_tabnr and win.quickfix == 1 then
+      quickfix_is_open = true
+      break
     end
+  end
 
-    if quickfix_is_open then
-      vim.cmd('cclose')
-    else
-      vim.cmd('copen')
-    end
+  if quickfix_is_open then
+    vim.cmd('cclose')
+  else
+    vim.cmd('copen')
+  end
 
-    vim.cmd(current_winnr .. 'wincmd w')
-  end,
-  { desc = 'Toggle quickfix terminal' }
-)
+  vim.cmd(current_winnr .. 'wincmd w')
+end, { desc = 'Toggle quickfix terminal' })
 
 -- Paste from specified register in terminal mode
 vim.keymap.set('t', '<C-\\><C-r>', function()

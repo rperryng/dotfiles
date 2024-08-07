@@ -38,13 +38,8 @@ return {
   {
     'nvimtools/hydra.nvim',
     config = function()
-      -- Hydra has no setup function.
-      -- require('hydra').setup()
-
-      -- TODO: Fix status line highlight colors for hydra
-      -- setup_statusline()
-      
       local hydra = require('hydra')
+
       hydra({
         name = 'Quickfix navigation',
         config = {
