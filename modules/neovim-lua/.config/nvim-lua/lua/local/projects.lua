@@ -179,7 +179,7 @@ local function fzf_lua_projects()
 
     local selected = require('fzf-lua.core').fzf(fzf_fn, {
       fzf_opts = {
-        ['--no-sort'] = '',
+        ['--tiebreak'] = 'end',
         ['--no-multi'] = '',
         ['--prompt'] = 'Projects❯ ',
         ['--preview-window'] = 'hidden:right:0',
