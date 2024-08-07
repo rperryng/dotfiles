@@ -4,13 +4,15 @@ local config = {}
 config.color_scheme = 'GruvboxDarkHard'
 
 config.font = wezterm.font('MesloLGM Nerd Font Mono')
+-- config.font = wezterm.font('MesloLGM Nerd Font Mono', { weight = 'Bold' })
 -- config.font = wezterm.font('FiraCode Nerd Font', { weight = 'Bold' })
+config.font_size = 15.0
 
 config.enable_tab_bar = false
 config.enable_scroll_bar = false
 
 config.window_decorations = 'RESIZE'
-config.window_background_image = '/Users/rperryng/Downloads/2vfplourrmn81.png'
+-- config.window_background_image = '/Users/rperryng/Downloads/2vfplourrmn81.png'
 config.window_background_opacity = 1.0
 config.window_background_image_hsb = {
   brightness = 0.015,
