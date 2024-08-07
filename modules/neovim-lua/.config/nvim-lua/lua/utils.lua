@@ -91,6 +91,10 @@ Log = function(value)
   vim.cmd('redir END')
 end
 
+vim.keymap.set('n', '<space>rel', function()
+  vim.fn.writefile({ '' }, LOG_PATH)
+end, { desc = 'Clear Log file' })
+
 vim.keymap.set(
   'n',
   '<space>ol',
