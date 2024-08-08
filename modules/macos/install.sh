@@ -19,7 +19,8 @@ install() {
 
   brew install --cask \
     easy-move-plus-resize \
-    rectangle
+    rectangle \
+    jordanbaird-ice
 }
 
 install

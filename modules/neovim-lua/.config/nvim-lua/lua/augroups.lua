@@ -2,8 +2,8 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("rpn_" .. name, { clear = true })
 end
 
--- Check if we need to reload the file when it changed
-vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
+-- Reload files automatically
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
   command = "checktime",
 })

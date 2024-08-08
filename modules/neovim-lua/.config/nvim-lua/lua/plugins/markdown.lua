@@ -3,7 +3,9 @@ return {
     'MeanderingProgrammer/markdown.nvim',
     -- main = 'render-markdown',
     config = function()
-      require('render-markdown').setup({})
+      require('render-markdown').setup({
+        enabled = false,
+      })
 
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'markdown',
