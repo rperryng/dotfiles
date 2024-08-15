@@ -1,7 +1,6 @@
 local utils = require('utils')
 
 return {
-  -- LSP Config
   {
     'williamboman/mason.nvim',
     config = function()
@@ -16,12 +15,7 @@ return {
     },
     config = function()
       local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-      local default_setup = function(server)
-        require('lspconfig')[server].setup({
-          capabilities = lsp_capabilities,
-        })
-      end
-
+      local lsp_util = require('lspconfig.util')
       require('mason-lspconfig').setup({
         ensure_installed = {
           'lua_ls',
@@ -31,20 +25,34 @@ return {
           -- 'ruby_lsp',
         },
         handlers = {
-          default_setup,
+          -- The first entry (without a key) will be the default handler
+          -- and will be called for each installed server that doesn't have
+          -- a dedicated handler.
+          function(server)
+            require('lspconfig')[server].setup({
+              capabilities = lsp_capabilities,
+            })
+          end,
+
+          -- Remove '.git' as a root_dir pattern to avoid denols / tsserver colliding
+          ['denols'] = function()
+            require('lspconfig')['denols'].setup({
+              capabilities = lsp_capabilities,
+              root_dir = lsp_util.root_pattern('deno.json', 'deno.jsonc'),
+            })
+          end,
+          ['tsserver'] = function()
+            require('lspconfig')['tsserver'].setup({
+              capabilities = lsp_capabilities,
+              root_dir = lsp_util.root_pattern(
+                'tsconfig.json',
+                'jsconfig.json',
+                'package.json'
+              ),
+            })
+          end,
         },
       })
-
-      -- Disable tsserver in deno files
-      local lsp_util = require('local.lsp-util')
-      if lsp_util.get_config('denols') and lsp_util.get_config('tsserver') then
-        local is_deno =
-          require('lspconfig.util').root_pattern('deno.json', 'deno.jsonc')
-        lsp_util.disable('tsserver', is_deno)
-        lsp_util.disable('denols', function(root_dir)
-          return not is_deno(root_dir)
-        end)
-      end
     end,
   },
   {
@@ -205,11 +213,8 @@ return {
             end
             return require('lspkind').cmp_format({
               mode = 'symbol_text',
-              with_text = false
-            })(
-              entry,
-              vim_item
-            )
+              with_text = false,
+            })(entry, vim_item)
           end,
         },
       })
