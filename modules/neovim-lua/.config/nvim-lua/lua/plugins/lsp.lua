@@ -49,6 +49,7 @@ return {
                 'jsconfig.json',
                 'package.json'
               ),
+              single_file_support = false,
             })
           end,
         },
