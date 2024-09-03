@@ -48,6 +48,27 @@ install_nodejs() {
   asdf install nodejs
 }
 
+ASDF_PLUGIN_DENO_URL="https://github.com/asdf-community/asdf-deno.git"
+install_deno() {
+  set +e
+  asdf plugin list | grep --quiet 'deno'
+  local return_code=$?
+  set -e
+
+  if [[ "${return_code}" -eq 0 ]]; then
+    return 0
+  fi
+
+  case ${DOTFILES_OS} in
+    "macos") brew install gpg gawk ;;
+    "debian") sudo apt install -y dirmngr gpg curl gawk ;;
+    *) ;;
+  esac
+
+  asdf plugin add deno ${ASDF_PLUGIN_DENO_URL}
+  asdf install deno
+}
+
 ASDF_PLUGIN_RUBY_URL="https://github.com/asdf-vm/asdf-ruby.git"
 install_ruby() {
   set +e
@@ -163,3 +184,4 @@ install_ruby
 install_python
 install_neovim
 install_just
+install_deno
