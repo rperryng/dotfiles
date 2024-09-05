@@ -19,6 +19,7 @@ return {
           'helm',
           'javascript',
           'json',
+          'jsonc',
           'lua',
           'python',
           'ruby',
