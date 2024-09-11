@@ -112,6 +112,8 @@ local function job_clone_repo(clone_url, reponame, path)
     lsp_client = { name = 'Git' },
   })
 
+  vim.fn.system('mkdir -p ' .. path)
+
   -- local fidget = require('fidget')
   local Job = require('plenary.job')
   Job:new({

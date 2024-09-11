@@ -2,7 +2,9 @@ return {
   {
     'mhartington/formatter.nvim',
     event = 'VeryLazy',
-    init = function()
+    config = function()
+      local util = require('formatter.util')
+
       require('formatter').setup({
         filetype = {
           lua = {

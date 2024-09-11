@@ -65,7 +65,7 @@ local function parse_data(data)
 end
 
 local function checkToken(path)
-  if (os.getenv('GITHUB_TOKEN')) then
+  if (os.getenv('GITHUB_TOKEN') == nil) then
     error(string.format('No $GITHUB_TOKEN found, can\'t make GitHub API request "%s"', path))
   end
 end
