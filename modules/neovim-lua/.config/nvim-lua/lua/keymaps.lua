@@ -1,3 +1,5 @@
+local utils = require('utils')
+
 vim.g.mapleader = ' '
 
 -- Saving
@@ -89,7 +91,25 @@ vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
 vim.keymap.set('n', '<c-n>', ':tabnext<cr>', { desc = 'Go to next tab' })
 vim.keymap.set('n', '<c-p>', ':tabprevious<cr>', { desc = 'Go to next tab' })
-vim.keymap.set('n', '<space>TQ', ':tabclose<cr>', { desc = 'Close tab' })
+vim.keymap.set('n', '<space>tq', ':tabclose<cr>', { desc = 'Close tab' })
+
+-- vim.keymap.set('n', '<space>tq', '<cmd>tabedit %<cr>', { desc = 'Open buffer in new tab' })
+vim.keymap.set('n', '<space>t%', function()
+  vim.cmd('tabedit %')
+
+  local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+  local filename = vim.fn.fnamemodify(vim.fn.expand('%'), ':t')
+  local tab_name = string.format('%s (%s)', project_name, filename)
+  vim.cmd('TabooRename ' .. tab_name)
+end, { desc = 'Open buffer in new tab' })
+
+-- Open visual selection in external app
+vim.keymap.set('v', '<space>oo', function()
+  -- TODO: support wsl
+  local program = 'open'
+
+  vim.fn.system(program .. ' ' .. utils.getVisualSelectionContents())
+end, { desc = 'Open in external app' })
 
 -- Quickfix movements
 vim.keymap.set('n', ']q', ':cnext<cr>', { desc = 'Go to next quickfix entry' })
@@ -166,7 +186,6 @@ end, { desc = 'Rename buffer' })
 -- Utility Keymaps
 
 -- Yank-based utils
-local utils = require('utils')
 vim.keymap.set('x', '<space>yv', function()
   vim.fn.setreg('+', utils.getVisualSelectionContents())
 
@@ -186,7 +205,7 @@ vim.keymap.set('n', '<space>yfa', function()
   vim.fn.setreg('+', utils.getCurrentFileAbsolutePath())
 end, { desc = 'Yank file (absolute path)' })
 
-vim.keymap.set('n', '<space>yff', function()
+vim.keymap.set('n', '<space>YY', function()
   vim.fn.setreg('+', utils.getCurrentBufferContents())
 end, { desc = 'Yank file content' })
 

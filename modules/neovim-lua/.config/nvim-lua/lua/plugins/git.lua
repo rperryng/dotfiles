@@ -130,7 +130,18 @@ return {
 
   {
     'sindrets/diffview.nvim',
-    config = function() end,
+    config = function()
+      vim.keymap.set('n', 'sdd', '<cmd>DiffviewOpen<cr>', { desc = 'Diffview working tree' })
+      vim.keymap.set('n', 'sdd', '<cmd>DiffviewOpen<cr>', { desc = 'Diffview working tree' })
+      vim.keymap.set('n', 'sd%', '<cmd>DiffviewFileHistory %<cr>', { desc = 'Diffview against main' })
+    end,
+  },
+
+  {
+    'kdheepak/lazygit.nvim',
+    config = function()
+      vim.keymap.set('n', '<space>hg', '<cmd>LazyGit<cr>', { desc = 'LazyGit' })
+    end
   },
 
   {
