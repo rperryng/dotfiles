@@ -82,8 +82,8 @@ Log = function(value)
     value = vim.inspect(value)
   end
 
-  -- Use a global value to avoid having to worry how to pass it to
-  -- the vimscript context
+  -- Use a global value to avoid having to worry about how to properly
+  -- pass it from the lua context to the vimscript context
   _LogValue = value
 
   vim.cmd('redir >> ' .. LOG_PATH)

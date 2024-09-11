@@ -174,7 +174,7 @@ return {
   { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
   {
     'hrsh7th/nvim-cmp',
-    dependencies = { 'onsails/lspkind.nvim', 'nvim-web-devicons' },
+    dependencies = { 'onsails/lspkind.nvim', 'nvim-tree/nvim-web-devicons' },
     config = function()
       local cmp = require('cmp')
       cmp.setup({
@@ -240,7 +240,7 @@ return {
       -- Example mapping to toggle outline
       vim.keymap.set(
         'n',
-        '<space>o',
+        '<space>so',
         '<cmd>Outline<CR>',
         { desc = 'Toggle Outline' }
       )
