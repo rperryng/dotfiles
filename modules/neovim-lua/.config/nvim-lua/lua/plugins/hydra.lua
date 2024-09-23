@@ -44,9 +44,7 @@ return {
         name = 'Quickfix navigation',
         config = {
           invoke_on_body = true,
-          hint = {
-            type = 'window',
-          },
+          hint = false,
         },
         mode = 'n',
         body = '<space>HQ',

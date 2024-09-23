@@ -11,7 +11,7 @@ export ASDF_NPM_DEFAULT_PACKAGES_FILE="${XDG_CONFIG_HOME}/asdf/default-npm-packa
 export ASDF_GEM_DEFAULT_PACKAGES_FILE="${XDG_CONFIG_HOME}/asdf/default-gem-packages"
 
 # Load ASDF
-. "${XDG_OPT_HOME:-$HOME/.local/opt}/asdf/asdf.sh"
+# . "${XDG_OPT_HOME:-$HOME/.local/opt}/asdf/asdf.sh"
 
 # add completions
 fpath=(${ASDF_DIR}/completions $fpath)

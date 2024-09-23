@@ -1,0 +1,12 @@
+[settings]
+experimental = true
+
+status = {missing_tools = "if_other_versions_installed", show_env = false, show_tools = true}
+
+[tools]
+node   = '18.4.0'
+ruby   = '3.1.2'
+python = '3.10.4'
+just   = '1.29.1'
+neovim = '0.10.0'
+deno   = '1.46.1'

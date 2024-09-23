@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 
 # Also see: modules/rust/.config/shell.d/rust.sh
 export RUSTUP_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/.rustup"
@@ -38,9 +38,28 @@ install_rust() {
   fi
 }
 
+install_cargo_binstall() {
+  if [[ ! -x "$(command -v cargo)" ]]; then
+    echo "cargo not installed - cannot install 'cargo-binstall'" 1>&2
+    return 1;
+  fi
+
+  cargo install cargo-binstall
+}
+
 install() {
   install_rustup
   install_rust
+  install_cargo_binstall
+}
+
+cargo_binstall_available() {
+  if [[ ! -x "$(command -v cargo)" ]]; then
+    echo "cargo not installed - cannot install 'cargo-binstall'" 1>&2
+    return 1;
+  fi
+
+  cargo binstall --help &> /dev/null
 }
 
 install
