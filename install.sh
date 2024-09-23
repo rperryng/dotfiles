@@ -71,7 +71,7 @@ install_prerequisites() {
     "debian")
       setup_debian_prebuilt_mpr &&
         sudo apt update &&
-        sudo apt install -y build-essential &&
+        sudo apt install -y build-essential libz-dev &&
         sudo apt install -y $pkgs
       ;;
     "fedora")
