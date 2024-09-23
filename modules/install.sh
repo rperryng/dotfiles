@@ -7,13 +7,12 @@ install() {
 
   echo "Installing Modules ..."
 
-  # Install ASDF and cargo first
-  # source ./asdf/install.sh
+  # Install cargo (rust) and mise first
   source ./rust/install.sh
   source ./mise/install.sh
 
   local packages
-  packages=$(git ls-files | grep "./*/install.sh" | grep -v "asdf" | grep -v "rust")
+  packages=$(git ls-files | grep "./*/install.sh" | grep -v "mise" | grep -v "rust")
 
   echo "============================"
   echo "Installing modules:"

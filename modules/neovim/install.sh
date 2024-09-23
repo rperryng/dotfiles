@@ -20,14 +20,14 @@ install_neovim() {
   if [[ -x $(command -v nvim) ]]; then
     return 0
   else
-    echo "nvim not available; should have been installed by asdf?"
+    echo "nvim not available; should have been installed by mise?"
     return 1
   fi
 }
 
 install_vim_virtual_environments() {
-  if [[ ! -x "$(command -v asdf)" ]]; then
-    echo "asdf not installed - cannot setup virtual vim environments"
+  if [[ ! -x "$(command -v mise)" ]]; then
+    echo "mise not installed - cannot setup virtual vim environments"
     return 1
   fi
 
@@ -35,12 +35,14 @@ install_vim_virtual_environments() {
   pushd "${XDG_OPT_HOME}/nvim/virtualenvs"
 
   if [[ ! -d './neovim3' ]]; then
-    export ASDF_PYTHON_VERSION=${DOTFILES_PYTHON3_VERSION}
+    export MISE_PYTHON_VERSION=${DOTFILES_PYTHON3_VERSION}
     virtualenv neovim3
     source neovim3/bin/activate
     pip install neovim neovim-remote
     deactivate
-    asdf reshim python
+    mise reshim python
+
+    unset MISE_PYTHON_VERSION
   fi
 
   popd

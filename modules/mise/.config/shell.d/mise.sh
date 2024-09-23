@@ -18,3 +18,5 @@ mise_tool_version() {
 mise_python3_version() {
   mise_tool_version "python"
 }
+
+export DOTFILES_PYTHON3_VERSION=$(mise_python3_version)
