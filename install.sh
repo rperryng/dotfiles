@@ -58,7 +58,7 @@ setup_debian_prebuilt_mpr() {
 }
 
 install_prerequisites() {
-  local pkgs="curl file git"
+  local pkgs="curl file git gcc"
 
   case ${os_family} in
     "macos")
