@@ -36,24 +36,30 @@ verify:
   set -e
 
   echo "--- Default package files currently unlinked ---"
-  stow --no --verbose --target "${HOME}" --dir="{{modules_dir}}" --stow {{module_names}}
+  stow --simulate --verbose --target "${HOME}" --dir="{{modules_dir}}" --stow {{module_names}}
 
   echo "--- Local packages currently unlinked ---"
-  stow --no --verbose --target "${HOME}" --dir="{{justfile_directory()}}" --stow local
+  stow --simulate --verbose --target "${HOME}" --dir="{{justfile_directory()}}" --stow local
 
   echo "--- Checking bogus links ---"
   rm -f {{bogus_links_path}}
-  chkstow -a -b -t "${XDG_CONFIG_HOME}" | sed 's/Bogus link: //' >> {{bogus_links_path}}
-  chkstow -a -b -t "${XDG_DATA_HOME}" >> {{bogus_links_path}}
-  chkstow -a -b -t "${XDG_BIN_HOME}" >> {{bogus_links_path}}
-  chkstow -a -b -t "${XDG_LIB_HOME}" >> {{bogus_links_path}}
-  chkstow -a -b -t "${XDG_OPT_HOME}" >> {{bogus_links_path}}
-
+  just verify_dir "${XDG_CONFIG_HOME}"
+  just verify_dir "${XDG_DATA_HOME}"
+  just verify_dir "${XDG_BIN_HOME}"
+  just verify_dir "${XDG_BIN_HOME}"
+  just verify_dir "${XDG_OPT_HOME}"
   cat {{bogus_links_path}}
 
   if [[ -s "{{bogus_links_path}}" ]]; then
-   echo "run 'just clnlink' to remove these files"
+   echo "run 'just clean' to remove these files"
   fi
+
+[private]
+verify_dir dir:
+  #!/usr/bin/env bash
+  set -eo pipefail
+  echo "checking {{dir}}"
+  chkstow --aliens --badlinks --target={{dir}} | sed 's/Bogus link: //' >> {{bogus_links_path}}
 
 # Clean up bogus symlinks
 clean:
