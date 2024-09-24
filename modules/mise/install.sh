@@ -14,11 +14,12 @@ install_mise() {
 
   # prerequisites for ruby-build
   if [[ $DOTFILES_OS == 'debian' ]]; then
-    sudo apt install autoconf patch build-essential rustc libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+    sudo apt install -y autoconf patch build-essential rustc libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
   fi
 
   cargo binstall -y mise
   mise --yes install
+  . "${DOTFILES_DIR}/modules/mise/.config/shell.d/mise.sh"
 }
 
 install() {
