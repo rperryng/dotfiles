@@ -74,6 +74,18 @@ local function init_logfile()
   LogFileCleared = true
 end
 
+M.close_floating_windows = function()
+  local found_float = false
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_config(win).relative ~= '' then
+      vim.api.nvim_win_close(win, true)
+      found_float = true
+    end
+  end
+
+  return found_float
+end
+
 -- global convenience
 Log = function(value)
   init_logfile()

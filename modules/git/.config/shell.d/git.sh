@@ -18,6 +18,8 @@ alias gr="git rebase"
 alias grc="git rebase --continue"
 alias grcne="git rebase --continue --no-edit"
 
+alias gbb="git branch | head -10"
+
 # Push new local branch to remote under the same name
 alias gpsu="git push --set-upstream origin \$(git symbolic-ref --short -q HEAD)"
 
@@ -43,8 +45,8 @@ git_migrate_to_main() {
 point_branch_to_head() {
   local branch_name
   branch_name=$1
-  git branch -f $1 HEAD
-  git checkout $1
+  git branch -f "$branch_name" HEAD
+  git checkout "$branch_name"
 }
 
 rpn_test() {

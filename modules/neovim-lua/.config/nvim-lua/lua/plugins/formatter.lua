@@ -23,11 +23,15 @@ return {
             require('formatter.filetypes.javascript').prettier,
           },
 
+          toml = {
+            require('formatter.filetypes.toml').taplo,
+          },
+
           typescript = {
             function()
               local cwd = vim.fn.getcwd()
-              local is_deno = vim.fn.filereadable(cwd .. '/deno.json')
-                or vim.fn.filereadable(cwd .. '/deno.jsonc ')
+              local is_deno = vim.fn.filereadable(cwd .. '/deno.json') == 1
+                or vim.fn.filereadable(cwd .. '/deno.jsonc ') == 1
 
               if is_deno then
                 return {
@@ -60,7 +64,7 @@ return {
 
       vim.keymap.set(
         'n',
-        '<space>fo',
+        '<space>ef',
         '<cmd>Format<cr>',
         { desc = 'Format Buffer' }
       )

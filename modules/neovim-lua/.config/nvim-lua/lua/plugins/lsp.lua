@@ -127,7 +127,7 @@ return {
           )
           keymap(
             'n',
-            '<space>gre',
+            '<space>gR',
             '<cmd>lua vim.lsp.buf.rename()<cr>',
             { desc = 'Rename (via LSP)' }
           )

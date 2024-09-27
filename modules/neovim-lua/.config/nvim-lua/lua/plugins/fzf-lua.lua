@@ -67,12 +67,27 @@ return {
       keymap_with_resume('n', '<space>fof', {
         fn = fzf.oldfiles,
         fn_opts = {
+          cwd_only = true,
           winopts = {
             preview = {
               vertical = 'down:70%',
-            }
-          }
-        }
+            },
+          },
+        },
+      }, {
+        desc = 'Fuzzy search old files',
+      })
+
+      keymap_with_resume('n', '<space>foF', {
+        fn = fzf.oldfiles,
+        fn_opts = {
+          cwd_only = true,
+          winopts = {
+            preview = {
+              vertical = 'down:70%',
+            },
+          },
+        },
       }, {
         desc = 'Fuzzy search old files',
       })
@@ -95,7 +110,7 @@ return {
       keymap_with_resume('n', '<space>ft', {
         fn = fzf.buffers,
         fn_opts = {
-          query = "term",
+          query = 'term',
           cwd_only = true,
         },
       }, { desc = 'Fuzzy search terminals' })
@@ -103,7 +118,7 @@ return {
       keymap_with_resume('n', '<space>fT', {
         fn = fzf.buffers,
         fn_opts = {
-          query = "term",
+          query = 'term',
           cwd_only = false,
         },
       }, { desc = 'Fuzzy search terminals' })

@@ -11,9 +11,7 @@ return {
         name = 'Git Hunk Navigation',
         config = {
           invoke_on_body = true,
-          hint = {
-            type = 'window',
-          },
+          hint = false,
         },
         mode = 'n',
         body = '<space>HG',
