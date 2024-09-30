@@ -46,6 +46,17 @@ vim.keymap.set('n', '<space>tt', function()
   M.toggle_project_terminal()
 end, { desc = 'Toggle project terminal' })
 
+vim.keymap.set('n', '<space>tR', function()
+  local current_bufname = vim.fn.bufname()
+  if not current_bufname:match('^term-') then
+    return
+  end
+
+  require('mini.bufremove').delete()
+  vim.cmd('terminal')
+  vim.cmd('keepalt file ' .. current_bufname)
+end, { desc = 'Toggle project terminal' })
+
 vim.keymap.set('n', '<space>term', function()
   local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
   local terminal_buf_name = 'term-' .. project_name

@@ -21,8 +21,8 @@ fi
 # Use emacs key bindings
 bindkey -e
 
-# TODO: Change to FZF?
-# [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
+#
+# [Ctrl-r] - reverse incremental search.  unbound since fzf has a better version of this.
 # bindkey '^r' fzf
 
 # [Ctrl-RightArrow] - move forward one word

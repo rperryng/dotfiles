@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 
-CARGO_HOME="${XDG_CONFIG_HOME}/.cargo"
-MISE_CONFIG_FILE="${XDG_CONFIG_HOME}/mise/config.toml"
-
-if [[ -d "${CARGO_HOME}/bin" ]]; then
-  prepend_path "${CARGO_HOME}/bin"
-fi
-
-eval "$("${CARGO_HOME}/bin/mise" activate)"
+# see: ../shell_pre.d/mise.sh for config related
+# to "loading" mise
 
 mise_tool_version() {
   local tool_name

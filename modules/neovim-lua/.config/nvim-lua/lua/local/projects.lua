@@ -103,7 +103,6 @@ vim.keymap.set('n', '<space>rec', function()
   refresh_clone_urls()
 end, { desc = 'refresh_clone_urls' })
 
-
 local function job_clone_repo(clone_url, reponame, path)
   local progress = require('fidget.progress')
   local handle = progress.handle.create({
@@ -183,48 +182,52 @@ local function fzf_lua_projects()
       fzf_cb()
     end
 
-    local selected = require('fzf-lua.core').fzf(fzf_fn, {
+    local selected = require('fzf-lua').fzf_exec(fzf_fn, {
       fzf_opts = {
         ['--tiebreak'] = 'end',
         ['--no-multi'] = '',
         ['--prompt'] = 'Projects❯ ',
         ['--preview-window'] = 'hidden:right:0',
       },
+      actions = {
+        ['default'] = function(selected, opts)
+          if selected == nil or #selected == 0 or selected[1] == 'esc' then
+            return
+          end
+
+          -- Extract the "value" (no icon) from the selected line
+          local line = selected[1]
+          local value = uniconify(line)
+
+          -- Open existing local project
+          if string.find(line, ICONS.DIR) then
+            M.open_project(vim.fn.expand(value))
+            return
+          end
+
+          -- Clone project and then open it
+          if string.find(line, ICONS.GITHUB) then
+            local owner, repo = value:match('([%w-_]+)/([%w-_%.]+)')
+            if not owner or not repo then
+              return
+            end
+
+            local owner_path = vim.fn.expand('~/code/' .. owner)
+            if vim.fn.empty(vim.fn.glob(owner_path)) > 0 then
+              vim.fn.mkdir(owner_path, 'p')
+            end
+
+            local full_reponame = string.format('%s/%s', owner, repo)
+
+            local path = vim.fn.expand('~/code/' .. full_reponame)
+            if vim.fn.empty(vim.fn.glob(path)) then
+              local clone_url = 'git@github.com:' .. full_reponame .. '.git'
+              job_clone_repo(clone_url, full_reponame, path)
+            end
+          end
+        end,
+      },
     })
-    if selected == nil or #selected == 0 or selected[1] == 'esc' then
-      return
-    end
-
-    -- Extract the "value" (no icon) from the selected line
-    local line = selected[2]
-    local value = uniconify(line)
-
-    -- Open existing local project
-    if string.find(line, ICONS.DIR) then
-      M.open_project(vim.fn.expand(value))
-      return
-    end
-
-    -- Clone project and then open it
-    if string.find(line, ICONS.GITHUB) then
-      local owner, repo = value:match('([%w-_]+)/([%w-_%.]+)')
-      if not owner or not repo then
-        return
-      end
-
-      local owner_path = vim.fn.expand('~/code/' .. owner)
-      if vim.fn.empty(vim.fn.glob(owner_path)) > 0 then
-        vim.fn.mkdir(owner_path, 'p')
-      end
-
-      local full_reponame = string.format('%s/%s', owner, repo)
-
-      local path = vim.fn.expand('~/code/' .. full_reponame)
-      if vim.fn.empty(vim.fn.glob(path)) then
-        local clone_url = 'git@github.com:' .. full_reponame .. '.git'
-        job_clone_repo(clone_url, full_reponame, path)
-      end
-    end
   end)()
 end
 
