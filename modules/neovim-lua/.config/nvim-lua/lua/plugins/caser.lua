@@ -1,0 +1,5 @@
+return {
+  {
+    'arthurxavierx/vim-caser',
+  }
+}
