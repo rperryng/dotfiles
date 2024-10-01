@@ -48,10 +48,12 @@ verify:
   just verify_dir "${XDG_BIN_HOME}"
   just verify_dir "${XDG_BIN_HOME}"
   just verify_dir "${XDG_OPT_HOME}"
-  cat {{bogus_links_path}}
 
   if [[ -s "{{bogus_links_path}}" ]]; then
-   echo "run 'just clean' to remove these files"
+    cat {{bogus_links_path}}
+    echo "run 'just clean' to remove these files"
+  else
+    echo "No bogus links found - nothing to clean"
   fi
 
 [private]
