@@ -87,7 +87,14 @@ M.close_floating_windows = function()
 end
 
 -- global convenience
-Log = function(value)
+Log = function(...)
+  local args = table.pack(...)
+  for i = 1, args.n do
+    _Log(args[i])
+  end
+end
+
+_Log = function(value)
   init_logfile()
 
   if type(value) ~= 'string' then
@@ -113,6 +120,10 @@ vim.keymap.set(
   ':edit ' .. LOG_PATH .. '<cr>',
   { desc = 'open "Log" file' }
 )
+
+M.escape_pattern = function(text)
+  return text:gsub("([^%w])", "%%%1")
+end
 
 M.table = {
   deep_copy = function(obj, seen)

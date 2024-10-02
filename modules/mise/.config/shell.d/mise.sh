@@ -6,7 +6,7 @@
 mise_tool_version() {
   local tool_name
   tool_name=$1
-  yq ".tools.${tool_name}" "${MISE_CONFIG_FILE}"
+  mise current "${tool_name}"
 }
 
 mise_python3_version() {

@@ -90,7 +90,7 @@ local get_owner_repo = function()
     :wait().stdout
   assert(output)
 
-  local owner, repo = output:match('github.com:([%w-_]+)/([%w-_]+)%.git')
+  local owner, repo = output:match('github.com:([%w%-_]+)/([%w%-_]+)%.git')
   return owner, repo
 end
 
@@ -137,7 +137,7 @@ M.worktrees_picker = function()
           -- If git ref selected, add a new worktree to the canoncal worktree path
           local branch_name = value:match('%w+/(.+)$')
           worktree_path = build_worktree_path(branch_name)
-          vim.system({
+          local cmd = {
             'git',
             'worktree',
             'add',
@@ -145,7 +145,14 @@ M.worktrees_picker = function()
             branch_name,
             worktree_path,
             value,
-          })
+          }
+          local result = vim.system(cmd):wait()
+          local stringified_cmd = table.concat(cmd, ' ')
+
+          assert(
+            result.code == 0,
+            'Command faild: ' .. stringified_cmd .. '\n' .. result.stderr
+          )
         elseif string.find(line, ICONS.DIR) then
           worktree_path = build_worktree_path(value)
         end

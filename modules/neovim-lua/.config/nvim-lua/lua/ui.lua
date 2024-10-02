@@ -3,7 +3,8 @@
 
 -- Yield the current working directory (used for StatusLine pattern)
 function StatusLineCwdName()
-  return vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+  local projects = require('local.projects')
+  return projects.get_project_name()
 end
 
 -- Reset Statusline

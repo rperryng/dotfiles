@@ -8,6 +8,7 @@ local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
 local ICONS = {
   DIR = '',
   GITHUB = '',
+  GIT_WORKTREE = '',
 }
 
 local iconify = function(item, icon)
@@ -17,20 +18,32 @@ local uniconify = function(line)
   return line:match('^[^ ]+%s+(.+)')
 end
 
-M.find_project_dirs = function(max_depth)
-  max_depth = max_depth or 2
-  local search_root_paths = { os.getenv('HOME') .. '/code' }
-  local patterns = { '.git', 'Gemfile', 'package.json' }
-  local project_dirs = {}
+M.get_project_name = function()
+  local cwd = vim.fn.getcwd()
 
-  for _, search_root_path in ipairs(search_root_paths) do
-    for depth = 1, max_depth do
-      local search_path = search_root_path .. string.rep('/*', depth)
-      for _, pattern in ipairs(patterns) do
-        local dirs = vim.fn.globpath(search_path, pattern, true, true)
-        for _, dir in ipairs(dirs) do
-          table.insert(project_dirs, vim.fn.fnamemodify(dir, ':h'))
-        end
+  -- If worktree dir, return <repo>/<branch>
+  local _, repo, branch = cwd:match('code%-worktrees/([%w%.%-_]+)/([%w%.%-_]+)/([%w%.%-_]+)')
+  if (branch ~= nil) then
+    return string.format('%s/%s', repo, branch)
+  end
+
+  -- otherwise, simply return working directory name
+  return vim.fn.fnamemodify(cwd, ':t')
+end
+
+local search = function(opts)
+  local search_root_path = opts.root_path
+  local max_depth = opts.max_depth
+  local patterns = opts.patterns
+
+  local project_dirs = {}
+  for depth = 1, max_depth do
+    local search_path = search_root_path .. string.rep('/*', depth)
+    for _, pattern in ipairs(patterns) do
+      local dirs = vim.fn.globpath(search_path, pattern, true, true)
+
+      for _, dir in ipairs(dirs) do
+        table.insert(project_dirs, vim.fn.fnamemodify(dir, ':h'))
       end
     end
   end
@@ -38,10 +51,40 @@ M.find_project_dirs = function(max_depth)
   return utils.table.uniq(project_dirs)
 end
 
-M.find_project_dirs_decorated = function(max_depth)
-  local entries = M.find_project_dirs(max_depth)
+M.find_project_dirs = function()
+  return search({
+    root_path = os.getenv('HOME') .. '/code',
+    max_depth = 2,
+    patterns = { '.git', 'Gemfile', 'package.json' },
+  })
+end
+
+M.find_project_dirs_decorated = function()
+  local entries = M.find_project_dirs()
   local ansi_codes = require('fzf-lua.utils').ansi_codes
   local dir_icon = ansi_codes['blue'](ICONS.DIR)
+
+  for i, path in ipairs(entries) do
+    path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
+    path = '~/' .. path
+    entries[i] = iconify(path, dir_icon)
+  end
+
+  return entries
+end
+
+M.find_worktrees_dirs = function()
+  return search({
+    root_path = os.getenv('HOME') .. '/code-worktrees',
+    max_depth = 3,
+    patterns = { '.git', 'Gemfile', 'package.json' },
+  })
+end
+
+M.find_worktrees_dirs_decorated = function()
+  local entries = M.find_worktrees_dirs()
+  local ansi_codes = require('fzf-lua.utils').ansi_codes
+  local dir_icon = ansi_codes['green'](ICONS.GIT_WORKTREE)
 
   for i, path in ipairs(entries) do
     path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
@@ -67,7 +110,7 @@ M.find_clone_urls_decorated = function()
 
   for i, clone_url in ipairs(entries) do
     local full_reponame = clone_url:match('git@github.com:(.+)%.git')
-    local owner, repo = full_reponame:match('([%w-_]+)/([%w-_%.]+)')
+    local owner, repo = full_reponame:match('([%w%-_]+)/([%w%-_%.]+)')
     entries[i] = iconify(owner .. '/' .. repo, github_icon)
   end
 
@@ -136,6 +179,7 @@ local function job_clone_repo(clone_url, reponame, path)
 end
 
 local function fzf_lua_projects()
+  local worktree_dirs = M.find_worktrees_dirs_decorated()
   local project_dirs = M.find_project_dirs_decorated()
   local clone_urls = M.find_clone_urls_decorated()
 
@@ -152,17 +196,29 @@ local function fzf_lua_projects()
         ids[id] = true
       end
 
-      -- Add local projects
-      for _, value in ipairs(project_dirs) do
-        -- Match ~/code/{owner}/{repo}
-        local id = value:match('code/([%w-_%.]+/[%w-_%.].+)')
-
-        -- (Legacy) Match ~/code/{repo}
-        id = id or value:match('code/([%w-_%.]+)')
+      -- Add worktrees
+      for _, value in ipairs(worktree_dirs) do
+        -- match ~/code-worktrees/{owner}/{repo}/{branch}
+        local id = value:match('code%-worktrees/([%w%-_%.]+/[%w%-_%.]+/[%w%-_%.]+)')
 
         assert(
           id,
-          string.format('could not extract repo id from entry %s', value)
+          string.format('could not extract repo id from worktree entry %s', value)
+        )
+        add_entry(value, id)
+      end
+
+      -- Add local projects
+      for _, value in ipairs(project_dirs) do
+        -- Match ~/code/{owner}/{repo}
+        local id = value:match('code/([%w%-_%.]+/[%w-_%.]+)')
+
+        -- (Legacy) Match ~/code/{repo}
+        id = id or value:match('code/([%w%-_%.]+)')
+
+        assert(
+          id,
+          string.format('could not extract repo id from project dir %s', value)
         )
         add_entry(value, id)
       end
@@ -173,6 +229,7 @@ local function fzf_lua_projects()
         assert(id, 'could not extract id from github repo line', id)
 
         -- Only add the value if it's not already cloned
+        -- TODO: this is handled by 'add_entry' anyway?
         if ids[id] == nil then
           add_entry(value, id)
         end
@@ -197,6 +254,17 @@ local function fzf_lua_projects()
           -- Extract the "value" (no icon) from the selected line
           local line = selected[1]
           local value = uniconify(line)
+
+          -- Open existing worktree dir
+          if string.find(line, ICONS.GIT_WORKTREE) then
+
+            Log('selected:', line, value)
+            local repo, branch = value:match('code%-worktrees/[%w%.%-_]+/([%w%.%-_]+)/([%w%.%-_]+)')
+            M.open_project(value, {
+              tab_name = repo .. '/' .. branch,
+            })
+            return
+          end
 
           -- Open existing local project
           if string.find(line, ICONS.DIR) then

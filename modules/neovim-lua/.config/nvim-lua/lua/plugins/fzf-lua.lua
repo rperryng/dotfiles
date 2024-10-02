@@ -107,22 +107,6 @@ return {
         },
       }, { desc = 'Fuzzy search buffers' })
 
-      keymap_with_resume('n', '<space>ft', {
-        fn = fzf.buffers,
-        fn_opts = {
-          query = 'term',
-          cwd_only = true,
-        },
-      }, { desc = 'Fuzzy search terminals' })
-
-      keymap_with_resume('n', '<space>fT', {
-        fn = fzf.buffers,
-        fn_opts = {
-          query = 'term',
-          cwd_only = false,
-        },
-      }, { desc = 'Fuzzy search terminals' })
-
       -- Grep (Ripgrep)
       keymap_with_resume('n', '<space>rg', {
         fn = function()
@@ -233,6 +217,13 @@ return {
       keymap_with_resume('n', '<space>fgS', {
         fn = fzf.git_stash,
       }, { desc = 'Fuzzy search git stash' })
+
+      keymap_with_resume('n', '<space>ft', {
+        fn = fzf.tabs,
+        fn_opts = {
+          query = "'Tab "
+        },
+      }, { desc = 'Fuzzy search tabs' })
     end,
   },
 }

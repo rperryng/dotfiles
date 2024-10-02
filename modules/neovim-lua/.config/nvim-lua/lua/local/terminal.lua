@@ -1,5 +1,13 @@
 local M = {}
 
+local utils = require('utils')
+local projects = require('local.projects')
+local TERM_BUFFER_PREFIX = '[term]'
+
+local project_terminal_buffer_name = function()
+  return string.format('%s (%s)', TERM_BUFFER_PREFIX, projects.get_project_name())
+end
+
 M.terminal_resize = function()
   local currwin = vim.api.nvim_get_current_win()
   vim.cmd(vim.api.nvim_win_get_number(currwin) .. 'wincmd w')
@@ -10,19 +18,18 @@ M.terminal_resize = function()
 end
 
 M.toggle_project_terminal = function()
-  local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
   local current_win_number = vim.api.nvim_win_get_number(0)
 
   -- If bottom-most window is not already a terminal buffer, open a new
   -- split to open the terminal buffer in.
   vim.cmd('wincmd b')
-  if not string.match(vim.fn.bufname(), '^term-') then
+  if not string.match(vim.fn.bufname(), '^' .. utils.escape_pattern(TERM_BUFFER_PREFIX)) then
     vim.cmd('botright split')
   end
 
   -- If the terminal buffer is focused, close it and switch focus back to
   -- the original window
-  local terminal_buf_name = 'term-' .. project_name
+  local terminal_buf_name = project_terminal_buffer_name()
   if vim.fn.bufname() == terminal_buf_name then
     vim.cmd('quit')
     if vim.api.nvim_win_is_valid(current_win_number) then
@@ -48,7 +55,7 @@ end, { desc = 'Toggle project terminal' })
 
 vim.keymap.set('n', '<space>tR', function()
   local current_bufname = vim.fn.bufname()
-  if not current_bufname:match('^term-') then
+  if not current_bufname:match('^' .. utils.escape_pattern(TERM_BUFFER_PREFIX)) then
     return
   end
 
@@ -58,10 +65,9 @@ vim.keymap.set('n', '<space>tR', function()
 end, { desc = 'Toggle project terminal' })
 
 vim.keymap.set('n', '<space>term', function()
-  local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-  local terminal_buf_name = 'term-' .. project_name
+  local terminal_buf_name = project_terminal_buffer_name()
   vim.cmd('terminal')
-  vim.fn.feedkeys(':keepalt file ' .. terminal_buf_name .. '-')
+  vim.fn.feedkeys(':keepalt file ' .. terminal_buf_name .. ' ')
 end, { desc = 'Open new misc terminal' })
 
 vim.keymap.set('n', '<space>test', function()
