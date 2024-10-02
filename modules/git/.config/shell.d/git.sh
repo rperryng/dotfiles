@@ -80,3 +80,96 @@ refresh_clone_urls() {
         mv $temp_file $DOTFILES_CLONE_URLS_PATH \
   )
 }
+
+# Worktrees
+alias wt="git worktree"
+alias wta="git worktree add"
+
+WORKTREE_DIR="${HOME}/code-worktrees"
+
+_rpn_git_remote_refs() {
+  git for-each-ref --format='%(refname)' 'refs/remotes/'
+}
+
+_rpn_git_local_refs() {
+  git for-each-ref --format='%(refname)' 'refs/heads/'
+}
+
+wtan() {
+  local branch_name
+  local commit_ish
+  branch_name="$1"
+  commit_ish="$2"
+
+  if [[ -z "$branch_name" || -z "$commit_ish" ]]; then
+    echo "Usage: wta <new_branch_name> <commit-ish>" 1>&2
+    return 1
+  fi
+
+  # # If no commit_ish given, choose one from either a local or remote branch
+  # if [[ -z "$commit_ish" ]]; then
+  #   remote_refs=$(_rpn_git_local_refs)
+  #   commit_ish=$(echo "$remote_refs" | fzf)
+  #
+  #   if [[ -z "$commit_ish" ]]; then
+  #     echo "no commit_ish selected ..." 1>&2
+  #     return 1
+  #   fi
+  #
+  #   commit_ish=$(echo "$commit_ish" | rg --only-matching 'refs/remotes/(.+)' --replace '$1')
+  # fi
+
+  local remote_url=$(git config --get remote.origin.url)
+  owner=$(echo "$remote_url" | rg --only-matching ':(\w+)/(\w+)\.git' --replace '$1')
+  reponame=$(echo "$remote_url" | rg --only-matching ':(\w+)/(\w+)\.git' --replace '$2')
+  worktree_dir="${WORKTREE_DIR}/${owner}/${reponame}/${branch_name}"
+  git worktree add -b "$branch_name" "$worktree_dir" $commit_ish
+}
+
+# git worktree add "--remote" (not a real flag, but the mnemonic helps me)
+wtar() {
+  local source_ref
+  source_ref="$1"
+
+  if [[ -z "$source_ref" ]]; then
+    remote_refs=$(git for-each-ref --format='%(refname)' 'refs/remotes/origin/')
+    source_ref=$(echo "$remote_refs" | fzf)
+
+    if [[ -z "$source_ref" ]]; then
+      echo "no source_ref selected ..." 1>&2
+      return 1
+    fi
+  fi
+
+  branch_name=$(echo "$source_ref" | rg --only-matching 'refs/remotes/origin/(.+)' --replace '$1')
+  if [[ -z $branch_name ]]; then
+    echo "failed to parse branch_name from ref: ${source_ref}" 1>&2
+    return 1
+  fi
+
+  # see: man git-worktree
+  # This will be used as the remote ref (typically a branch name) to base the new worktree on
+  commit_ish=$(echo "$source_ref" | rg --only-matching 'refs/remotes/(origin/.+)' --replace '$1')
+
+  # Parse owner / repo from origin url
+  local remote_url=$(git config --get remote.origin.url)
+  owner=$(echo "$remote_url" | rg --only-matching ':(\w+)/(\w+)\.git' --replace '$1')
+  reponame=$(echo "$remote_url" | rg --only-matching ':(\w+)/(\w+)\.git' --replace '$2')
+  worktree_dir="${WORKTREE_DIR}/${owner}/${reponame}/${branch_name}"
+
+  if [[ -d "$worktree_dir" ]]; then
+    echo "worktree already exists, switching"
+    cd "$worktree_dir"
+    return 1
+  else
+    echo "git worktree add -b \"$branch_name\" \"$worktree_dir\" \"$commit_ish\""
+    git worktree add -b "$branch_name" "$worktree_dir" "$commit_ish"
+  fi
+}
+
+# Convert normal git clone repo into a bare-like repo for use with worktrees only
+git_convert_wt() {
+  git checkout -b rpn-worktree-base
+  git checkout --detach
+  git checkout $(git commit-tree $(git hash-object -t tree /dev/null) < /dev/null)
+}
