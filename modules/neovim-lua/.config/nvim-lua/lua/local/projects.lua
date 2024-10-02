@@ -13,7 +13,6 @@ local ICONS = {
 local iconify = function(item, icon)
   return ('%s  %s'):format(icon, item)
 end
-
 local uniconify = function(line)
   return line:match('^[^ ]+%s+(.+)')
 end
@@ -182,7 +181,7 @@ local function fzf_lua_projects()
       fzf_cb()
     end
 
-    local selected = require('fzf-lua').fzf_exec(fzf_fn, {
+    require('fzf-lua').fzf_exec(fzf_fn, {
       fzf_opts = {
         ['--tiebreak'] = 'end',
         ['--no-multi'] = '',
@@ -238,7 +237,8 @@ vim.keymap.set(
   { desc = 'Fuzzy search projects' }
 )
 
-M.open_project = function(project_dir)
+M.open_project = function(project_dir, opts)
+  opts = opts or {}
   local project_name = vim.fn.fnamemodify(project_dir, ':t')
   local current_tabnr = vim.fn.tabpagenr()
 
@@ -253,11 +253,13 @@ M.open_project = function(project_dir)
     end
   end
 
+  local tab_name = opts.tab_name or project_name
+
   -- Otherwise, create a new one with that working directory.
   vim.cmd(current_tabnr .. 'tabnext')
   vim.cmd('tabnew')
   vim.cmd('tchdir ' .. project_dir)
-  vim.cmd('TabooRename ' .. project_name)
+  vim.cmd('TabooRename ' .. tab_name)
 end
 
 return M
