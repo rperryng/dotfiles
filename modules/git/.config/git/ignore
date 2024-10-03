@@ -39,3 +39,6 @@ yarn-error.log
 .factorypath
 .classpath
 .settings/
+
+# File containing which files should be symlinked across worktrees
+.worktree-symlinks

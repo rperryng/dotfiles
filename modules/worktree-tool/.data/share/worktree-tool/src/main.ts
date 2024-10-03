@@ -10,6 +10,10 @@ const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME') ||
 const WORKTREE_SYMLINKS_IGNORE_PATH =
   `${XDG_CONFIG_HOME}/.worktree-symlinks-ignore`;
 
+function stripTrailingSlash(string: string): string {
+  return string.replace(/\/$/, '');
+}
+
 async function ignorePatterns(): Promise<string[]> {
   if (!existsSync(WORKTREE_SYMLINKS_IGNORE_PATH)) {
     return [];
@@ -30,9 +34,7 @@ async function findAllNonIgnoredFiles(): Promise<string[]> {
     fdArgs.push('--exclude', pattern);
   });
 
-  return await execLines('fd', {
-    args: fdArgs,
-  });
+  return (await execLines('fd', { args: fdArgs })).map(stripTrailingSlash);
 }
 
 async function gitTrackedFiles(): Promise<string[]> {
@@ -41,9 +43,9 @@ async function gitTrackedFiles(): Promise<string[]> {
   });
   const files = await execLines('git', { args: ['ls-files'] });
   return [
-    ...directories,
+    ...(directories.map(stripTrailingSlash)),
     ...files,
-  ]
+  ];
 }
 
 async function checkGitRoot(): Promise<void> {
@@ -68,17 +70,17 @@ async function main() {
 
   const gitTrackedSet = new Set(await gitTrackedFiles());
   const allFiles = await findAllNonIgnoredFiles();
-  const untrackedFiles = allFiles.filter((file) => !gitTrackedSet.has(file));
+  const fileSuggestions = allFiles.filter((file) => !gitTrackedSet.has(file));
 
   // Output the untracked files
-  //untrackedFiles.forEach((file) => console.log(file));
+  fileSuggestions.forEach((file) => console.log(file));
 
   await Deno.writeTextFile(
     '/tmp/git_tracked_set',
     (Array.from(gitTrackedSet)).join('\n'),
   );
   await Deno.writeTextFile('/tmp/fd_files', (Array.from(allFiles)).join('\n'));
-  await Deno.writeTextFile('/tmp/output', untrackedFiles.join('\n'));
+  await Deno.writeTextFile('/tmp/output', fileSuggestions.join('\n'));
 }
 
 main().catch((error) => {
