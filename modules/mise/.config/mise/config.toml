@@ -20,5 +20,6 @@ just = '1.29.1'
 yq = '4.44.3'
 delta = '0.18.2'
 fzf = 'latest'
+fd = 'latest'
 
 'cargo:taplo-cli' = 'latest'
