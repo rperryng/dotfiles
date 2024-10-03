@@ -30,8 +30,8 @@ return {
           typescript = {
             function()
               local cwd = vim.fn.getcwd()
-              local is_deno = vim.fn.filereadable(cwd .. '/deno.json') == 1
-                or vim.fn.filereadable(cwd .. '/deno.jsonc ') == 1
+              local is_deno = (vim.fn.filereadable(cwd .. '/deno.json') == 1)
+                or (vim.fn.filereadable(cwd .. '/deno.jsonc') == 1)
 
               if is_deno then
                 return {
