@@ -86,9 +86,7 @@ return {
         config = {
           invoke_on_body = true,
           foreign_keys = nil,
-          hint = {
-            type = 'window',
-          },
+          hint = false,
         },
         mode = 'n',
         body = '<space>HM',

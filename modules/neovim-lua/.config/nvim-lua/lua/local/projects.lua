@@ -3,6 +3,7 @@
 
 local M = {}
 
+local fzf_utils = require('fzf-lua.utils')
 local utils = require('utils')
 local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
 local ICONS = {
@@ -22,8 +23,9 @@ M.get_project_name = function()
   local cwd = vim.fn.getcwd()
 
   -- If worktree dir, return <repo>/<branch>
-  local _, repo, branch = cwd:match('code%-worktrees/([%w%.%-_]+)/([%w%.%-_]+)/([%w%.%-_]+)')
-  if (branch ~= nil) then
+  local _, repo, branch =
+    cwd:match('code%-worktrees/([%w%.%-_]+)/([%w%.%-_]+)/([%w%.%-_]+)')
+  if branch ~= nil then
     return string.format('%s/%s', repo, branch)
   end
 
@@ -61,8 +63,7 @@ end
 
 M.find_project_dirs_decorated = function()
   local entries = M.find_project_dirs()
-  local ansi_codes = require('fzf-lua.utils').ansi_codes
-  local dir_icon = ansi_codes['blue'](ICONS.DIR)
+  local dir_icon = fzf_utils.ansi_codes.blue(ICONS.DIR)
 
   for i, path in ipairs(entries) do
     path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
@@ -105,8 +106,7 @@ end
 
 M.find_clone_urls_decorated = function()
   local entries = M.find_clone_urls()
-  local ansi_codes = require('fzf-lua.utils').ansi_codes
-  local github_icon = ansi_codes['yellow'](ICONS.GITHUB)
+  local github_icon = fzf_utils.ansi_codes.yellow(ICONS.GITHUB)
 
   for i, clone_url in ipairs(entries) do
     local full_reponame = clone_url:match('git@github.com:(.+)%.git')
@@ -199,11 +199,15 @@ local function fzf_lua_projects()
       -- Add worktrees
       for _, value in ipairs(worktree_dirs) do
         -- match ~/code-worktrees/{owner}/{repo}/{branch}
-        local id = value:match('code%-worktrees/([%w%-_%.]+/[%w%-_%.]+/[%w%-_%.]+)')
+        local id =
+          value:match('code%-worktrees/([%w%-_%.]+/[%w%-_%.]+/[%w%-_%.]+)')
 
         assert(
           id,
-          string.format('could not extract repo id from worktree entry %s', value)
+          string.format(
+            'could not extract repo id from worktree entry %s',
+            value
+          )
         )
         add_entry(value, id)
       end
@@ -247,7 +251,7 @@ local function fzf_lua_projects()
       },
       actions = {
         ['default'] = function(selected, opts)
-          if selected == nil or #selected == 0 or selected[1] == 'esc' then
+          if selected == nil or #selected == 0 then
             return
           end
 
@@ -257,9 +261,10 @@ local function fzf_lua_projects()
 
           -- Open existing worktree dir
           if string.find(line, ICONS.GIT_WORKTREE) then
-
             Log('selected:', line, value)
-            local repo, branch = value:match('code%-worktrees/[%w%.%-_]+/([%w%.%-_]+)/([%w%.%-_]+)')
+            local repo, branch = value:match(
+              'code%-worktrees/[%w%.%-_]+/([%w%.%-_]+)/([%w%.%-_]+)'
+            )
             M.open_project(value, {
               tab_name = repo .. '/' .. branch,
             })
@@ -297,6 +302,42 @@ local function fzf_lua_projects()
     })
   end)()
 end
+
+-- Change the working directory to a path inside the current working directory
+local function inner_working_directory_picker() end
+
+vim.keymap.set('n', '<space>cdi', function()
+  require('fzf-lua').fzf_exec('fd --hidden --type d', {
+    prompt = 'Directory❯ ',
+    cwd = vim.fn.getcwd(),
+    actions = {
+      ['default'] = function(selected, _opts)
+        if selected == nil or #selected == 0 then
+          return
+        end
+        local dir = selected[1]
+        if dir:find('/$') then
+          dir = dir:match('(.+)/$')
+        end
+
+        local tab_name = vim.fn.fnamemodify(dir, ':t')
+        vim.cmd('tchdir ' .. vim.fn.getcwd() .. '/' .. dir)
+        vim.cmd('TabooRename ' .. tab_name)
+      end,
+    },
+  })
+end, { desc = 'Fuzzy search working directory' })
+
+vim.keymap.set('n', '<space>cdp', function()
+  local rev_parse = vim.system({'git', 'rev-parse', '--show-toplevel'}):wait()
+  assert(rev_parse.code == 0)
+  local dir = rev_parse.stdout
+  assert(dir ~= nil)
+
+  local tab_name = vim.fn.fnamemodify(dir, ':t')
+  vim.cmd('tchdir ' .. dir)
+  vim.cmd('TabooRename ' .. tab_name)
+end, { desc = 'Change working directory to git root' })
 
 vim.keymap.set(
   'n',
