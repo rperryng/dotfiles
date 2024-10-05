@@ -324,6 +324,18 @@ vim.keymap.set('n', '<space>cdi', function()
         vim.cmd('tchdir ' .. vim.fn.getcwd() .. '/' .. dir)
         vim.cmd('TabooRename ' .. tab_name)
       end,
+      ['ctrl-t'] = function(selected, _opts)
+        if selected == nil or #selected == 0 then
+          return
+        end
+        local dir = selected[1]
+        if dir:find('/$') then
+          dir = dir:match('(.+)/$')
+        end
+
+        local tab_name = vim.fn.fnamemodify(dir, ':t')
+        M.open_project(dir, tab_name)
+      end
     },
   })
 end, { desc = 'Fuzzy search working directory' })
