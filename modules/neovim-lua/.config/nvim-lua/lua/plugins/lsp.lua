@@ -137,12 +137,14 @@ return {
             '<cmd>lua vim.lsp.buf.format({async = true})<cr>',
             { desc = 'Format (via LSP)' }
           )
-          keymap(
-            'n',
-            '<space>gA',
-            '<cmd>lua vim.lsp.buf.code_action()<cr>',
-            { desc = 'Show Code Actions' }
-          )
+
+          -- fastaction instead
+          -- keymap(
+          --   'n',
+          --   '<space>gA',
+          --   '<cmd>lua vim.lsp.buf.code_action()<cr>',
+          --   { desc = 'Show Code Actions' }
+          -- )
 
           keymap('n', '<space>gs', function()
             vim.diagnostic.enable(
@@ -221,6 +223,8 @@ return {
       })
     end,
   },
+
+  -- Signature popup menu
   {
     'ray-x/lsp_signature.nvim',
     config = function()
@@ -234,6 +238,18 @@ return {
     end,
   },
 
+  --
+  {
+    'Chaitanyabsprip/fastaction.nvim',
+    config = function()
+      local fast_action = require('fastaction')
+      fast_action.setup({
+
+      })
+    end
+  },
+
+  -- High-level document tree
   {
     'hedyhli/outline.nvim',
     config = function()
@@ -248,6 +264,8 @@ return {
       require('outline').setup({})
     end,
   },
+
+  -- Quickfix alternative(?)
   {
     'folke/trouble.nvim',
     config = function()
