@@ -1,7 +1,9 @@
 #!/usr/bin/env -S deno run --allow-run --allow-write --allow-env --allow-read
 
 import { existsSync } from '@std/fs';
-import { execLines } from './exec.ts';
+import { execLines, execOutput } from './exec.ts';
+import { fzfExec } from './fzf.ts';
+import { assert } from '@std/assert';
 
 const { Command } = Deno;
 
@@ -9,6 +11,7 @@ const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME') ||
   `${Deno.env.get('HOME')}/.config`;
 const WORKTREE_SYMLINKS_IGNORE_PATH =
   `${XDG_CONFIG_HOME}/.worktree-symlinks-ignore`;
+const WORKTREE_SYMLINKS_FILENAME = '.worktree-symlinks';
 
 function stripTrailingSlash(string: string): string {
   return string.replace(/\/$/, '');
@@ -54,7 +57,6 @@ async function checkGitRoot(): Promise<void> {
     stdout: 'piped',
     stderr: 'piped',
   });
-
   const gitRootResult = await gitRootCommand.output();
 
   if (!gitRootResult.success) {
@@ -65,22 +67,80 @@ async function checkGitRoot(): Promise<void> {
   }
 }
 
-async function main() {
-  await checkGitRoot();
+interface Worktree {
+  path: string;
+  head: string;
+  branch: string | undefined;
+}
+async function listWorktrees(): Promise<Worktree[]> {
+  const worktreesOutput = await execOutput('git', {
+    args: ['worktree', 'list', '--porcelain'],
+  });
 
+  return worktreesOutput
+    .split('\n\n')
+    .filter((blob) => blob != '')
+    .map((blob) => {
+      const path = /^worktree (?<path>[^\n]+)$/m.exec(blob)?.groups?.path;
+      const head = /^HEAD (?<head>[\w]+)$/m.exec(blob)?.groups?.head;
+      const branch = /^branch (?<branch>[^\n]+)$/m.exec(blob)?.groups?.branch;
+
+      assert(path, `failed to parse path from worktree output:\n${blob}`);
+      assert(head, `failed to parse HEAD ref from worktree output:\n${blob}`);
+      if (!branch) {
+        assert(
+          /^detached$/m.test(blob),
+          `worktree did not have "branch" value, and also did not indicated it was detached \n${blob}`,
+        );
+      }
+
+      return {
+        path,
+        head,
+        branch,
+      };
+    });
+}
+
+async function fzfWorktreeFiles(): Promise<string[]> {
   const gitTrackedSet = new Set(await gitTrackedFiles());
   const allFiles = await findAllNonIgnoredFiles();
   const fileSuggestions = allFiles.filter((file) => !gitTrackedSet.has(file));
 
-  // Output the untracked files
   fileSuggestions.forEach((file) => console.log(file));
+  const selection = await fzfExec(fileSuggestions);
 
-  await Deno.writeTextFile(
-    '/tmp/git_tracked_set',
-    (Array.from(gitTrackedSet)).join('\n'),
-  );
-  await Deno.writeTextFile('/tmp/fd_files', (Array.from(allFiles)).join('\n'));
-  await Deno.writeTextFile('/tmp/output', fileSuggestions.join('\n'));
+  return selection;
+}
+
+async function getWorktreeSymlinkFiles(): Promise<string[]> {
+  const worktreeSymlinksFilePath = [Deno.cwd(), WORKTREE_SYMLINKS_FILENAME]
+  .join('/');
+
+  if (existsSync(worktreeSymlinksFilePath)) {
+    const symlinkFiles = (await Deno.readTextFile(worktreeSymlinksFilePath))
+    .split('\n');
+
+    if (symlinkFiles.length !== 0) {
+      return symlinkFiles
+    }
+  }
+
+  const symlinkFiles = await fzfWorktreeFiles();
+  await Deno.writeTextFile(worktreeSymlinksFilePath, symlinkFiles.join('\n'));
+  return symlinkFiles;
+}
+
+async function main() {
+  await checkGitRoot();
+
+  console.log(await getWorktreeSymlinkFiles());
+
+  // Iterate worktrees
+  // raise error if file exists (and is not a symlink)
+  // add symlink if none exists (use stow?...)
+  const worktrees = await listWorktrees();
+  console.log(JSON.stringify(worktrees, null, 2));
 }
 
 main().catch((error) => {

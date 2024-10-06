@@ -1,6 +1,7 @@
 {
   "imports": {
     "@std/fs": "jsr:@std/fs@^1.0.4"
+    "@std/assert": "jsr:@std/assert@^1.0.6"
   },
   "fmt": {
     "singleQuote": true,
