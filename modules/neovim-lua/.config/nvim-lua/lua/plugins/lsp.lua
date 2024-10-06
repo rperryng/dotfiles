@@ -238,14 +238,18 @@ return {
     end,
   },
 
-  --
+  -- LSP code actions
   {
     'Chaitanyabsprip/fastaction.nvim',
     config = function()
       local fast_action = require('fastaction')
       fast_action.setup({
-
+        keys = 'arstoiengmdkch',
       })
+
+      vim.keymap.set('n', '<space>gA', function()
+        fast_action.code_action()
+      end, { desc = 'LSP Actions' })
     end
   },
 
