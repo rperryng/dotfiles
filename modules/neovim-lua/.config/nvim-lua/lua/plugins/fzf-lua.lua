@@ -92,6 +92,14 @@ return {
         desc = 'Fuzzy search old files',
       })
 
+      -- Tabs
+      keymap_with_resume('n', '<space>ft', {
+        fn = fzf.tabs,
+        fn_opts = {
+          query = "'Tab "
+        },
+      }, { desc = 'Fuzzy search tabs' })
+
       -- Buffers
       keymap_with_resume('n', '<space>fb', {
         fn = fzf.buffers,
@@ -218,12 +226,50 @@ return {
         fn = fzf.git_stash,
       }, { desc = 'Fuzzy search git stash' })
 
-      keymap_with_resume('n', '<space>ft', {
-        fn = fzf.tabs,
-        fn_opts = {
-          query = "'Tab "
-        },
-      }, { desc = 'Fuzzy search tabs' })
+      -- Treesitter
+      keymap_with_resume('n', '<space>fir', {
+        fn = fzf.lsp_references,
+      }, { desc = 'Fuzzy search LSP References' })
+
+      keymap_with_resume('n', '<space>fiD', {
+        fn = fzf.lsp_definitions,
+      }, { desc = 'Fuzzy search LSP definitions' })
+
+      keymap_with_resume('n', '<space>fid', {
+        fn = fzf.lsp_declarations,
+      }, { desc = 'Fuzzy search LSP declarations' })
+
+      keymap_with_resume('n', '<space>fitd', {
+        fn = fzf.lsp_typedefs,
+      }, { desc = 'Fuzzy search LSP type definitions' })
+
+      keymap_with_resume('n', '<space>fii', {
+        fn = fzf.lsp_implementations,
+      }, { desc = 'Fuzzy search LSP implementations' })
+
+      keymap_with_resume('n', '<space>fibs', {
+        fn = fzf.lsp_document_symbols,
+      }, { desc = 'Fuzzy search LSP document (buffer) symbols' })
+
+      keymap_with_resume('n', '<space>fiwS', {
+        fn = fzf.lsp_workspace_symbols,
+      }, { desc = 'Fuzzy search LSP workspace symbols (live)' })
+
+      keymap_with_resume('n', '<space>fiws', {
+        fn = fzf.lsp_workspace_symbols,
+      }, { desc = 'Fuzzy search LSP workspace symbols' })
+
+      keymap_with_resume('n', '<space>find', {
+        fn = fzf.lsp_finder
+      }, { desc = 'Fuzzy search LSP locations (all-in-one)'})
+
+      keymap_with_resume('n', '<space>fix', { -- hehe
+        fn = fzf.lsp_finder
+      }, { desc = 'Fuzzy search LSP diagnostics (document)'})
+
+      keymap_with_resume('n', '<space>fiX', { -- hehe
+        fn = fzf.lsp_finder
+      }, { desc = 'Fuzzy search LSP diagnostics (workspace)'})
     end,
   },
 }
