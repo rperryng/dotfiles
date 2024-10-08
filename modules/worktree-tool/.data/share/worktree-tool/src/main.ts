@@ -102,31 +102,41 @@ async function listWorktrees(): Promise<Worktree[]> {
     });
 }
 
-async function fzfWorktreeFiles(): Promise<string[]> {
+async function fzfFileSuggestions(): Promise<string[]> {
   const gitTrackedSet = new Set(await gitTrackedFiles());
   const allFiles = await findAllNonIgnoredFiles();
-  const fileSuggestions = allFiles.filter((file) => !gitTrackedSet.has(file));
+  const fileSuggestions = allFiles
+    .filter((file) => !gitTrackedSet.has(file) && !file.endsWith(WORKTREE_SYMLINKS_FILENAME) && file !== '');
 
-  fileSuggestions.forEach((file) => console.log(file));
+  if (fileSuggestions.length === 0) {
+    throw new Error(
+      'No file suggestions available - are there any untracked files to be found?',
+    );
+  }
+
   const selection = await fzfExec(fileSuggestions);
+  if (selection.length === 0) {
+    throw new Error('No files selected. Aborting.');
+  }
 
   return selection;
 }
 
 async function getWorktreeSymlinkFiles(): Promise<string[]> {
   const worktreeSymlinksFilePath = [Deno.cwd(), WORKTREE_SYMLINKS_FILENAME]
-  .join('/');
+    .join('/');
 
   if (existsSync(worktreeSymlinksFilePath)) {
     const symlinkFiles = (await Deno.readTextFile(worktreeSymlinksFilePath))
-    .split('\n');
+      .split('\n')
+      .filter((line) => line !== '' && !line.endsWith(WORKTREE_SYMLINKS_FILENAME));
 
     if (symlinkFiles.length !== 0) {
-      return symlinkFiles
+      return symlinkFiles;
     }
   }
 
-  const symlinkFiles = await fzfWorktreeFiles();
+  const symlinkFiles = await fzfFileSuggestions();
   await Deno.writeTextFile(worktreeSymlinksFilePath, symlinkFiles.join('\n'));
   return symlinkFiles;
 }

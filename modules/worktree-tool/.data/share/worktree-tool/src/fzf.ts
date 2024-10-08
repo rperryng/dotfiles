@@ -11,5 +11,5 @@ export async function fzfExec(input: string[]): Promise<string[]> {
   writer.releaseLock();
   await process.stdin.close();
   const result = await process.output();
-  return (new TextDecoder().decode(result.stdout)).split('\n');
+  return (new TextDecoder().decode(result.stdout)).split('\n').filter((entry) => entry !== '');
 }
