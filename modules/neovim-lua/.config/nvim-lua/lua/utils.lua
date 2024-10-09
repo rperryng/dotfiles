@@ -86,6 +86,13 @@ M.close_floating_windows = function()
   return found_float
 end
 
+-- polyfill table.pack ...
+table.pack = function (...)
+    local t = { ... }
+    t.n = select('#', ...)
+    return t
+end
+
 -- global convenience
 Log = function(...)
   local args = table.pack(...)

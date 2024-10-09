@@ -7,7 +7,7 @@ ruby_install = true
 [tools]
 # language runtimes
 deno = '1.46.1'
-neovim = '0.10.0'
+neovim = '0.10.2'
 node = '18.4.0'
 python = '3.10.4'
 ruby = ['3.3', '3.2', '3.1']

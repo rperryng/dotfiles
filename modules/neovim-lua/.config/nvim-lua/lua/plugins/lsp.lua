@@ -244,6 +244,7 @@ return {
     config = function()
       local fast_action = require('fastaction')
       fast_action.setup({
+        dismiss_keys = { '<esc>', '<c-c>', 'j', 'k', 'q' },
         keys = 'arstoiengmdkch',
       })
 
