@@ -79,7 +79,7 @@ async function ensureGitRoot(): Promise<void> {
     Deno.exit(1);
   }
 
-  const gitRootPath = new TextDecoder().decode(gitRootResult.stdout);
+  const gitRootPath = new TextDecoder().decode(gitRootResult.stdout).trim();
   if (Deno.cwd() !== gitRootPath) {
     logger.info(`Changing working directory from ${Deno.cwd()} to ${gitRootPath}`);
     Deno.chdir(gitRootPath);
