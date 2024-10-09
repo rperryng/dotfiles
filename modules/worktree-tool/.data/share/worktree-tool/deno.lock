@@ -3,9 +3,13 @@
   "packages": {
     "specifiers": {
       "jsr:@std/assert@^1.0.6": "jsr:@std/assert@1.0.6",
+      "jsr:@std/fmt@^1.0.2": "jsr:@std/fmt@1.0.2",
       "jsr:@std/fs@^1.0.4": "jsr:@std/fs@1.0.4",
       "jsr:@std/internal@^1.0.4": "jsr:@std/internal@1.0.4",
-      "jsr:@std/path@^1.0.6": "jsr:@std/path@1.0.6"
+      "jsr:@std/io@^0.224.9": "jsr:@std/io@0.224.9",
+      "jsr:@std/log@^0.224.8": "jsr:@std/log@0.224.8",
+      "jsr:@std/path@^1.0.6": "jsr:@std/path@1.0.6",
+      "npm:zod@^3.23.8": "npm:zod@3.23.8"
     },
     "jsr": {
       "@std/assert@1.0.6": {
@@ -13,6 +17,9 @@
         "dependencies": [
           "jsr:@std/internal@^1.0.4"
         ]
+      },
+      "@std/fmt@1.0.2": {
+        "integrity": "87e9dfcdd3ca7c066e0c3c657c1f987c82888eb8103a3a3baa62684ffeb0f7a7"
       },
       "@std/fs@1.0.4": {
         "integrity": "2907d32d8d1d9e540588fd5fe0ec21ee638134bd51df327ad4e443aaef07123c",
@@ -23,8 +30,25 @@
       "@std/internal@1.0.4": {
         "integrity": "62e8e4911527e5e4f307741a795c0b0a9e6958d0b3790716ae71ce085f755422"
       },
+      "@std/io@0.224.9": {
+        "integrity": "4414664b6926f665102e73c969cfda06d2c4c59bd5d0c603fd4f1b1c840d6ee3"
+      },
+      "@std/log@0.224.8": {
+        "integrity": "8938225caf405cbf0a4871191fa3d55f2fabe3363f4235fdb20ebe2620ecda43",
+        "dependencies": [
+          "jsr:@std/fmt@^1.0.2",
+          "jsr:@std/fs@^1.0.4",
+          "jsr:@std/io@^0.224.9"
+        ]
+      },
       "@std/path@1.0.6": {
         "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
+      }
+    },
+    "npm": {
+      "zod@3.23.8": {
+        "integrity": "sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==",
+        "dependencies": {}
       }
     }
   },
@@ -32,7 +56,10 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@^1.0.6",
-      "jsr:@std/fs@^1.0.4"
+      "jsr:@std/fs@^1.0.4",
+      "jsr:@std/log@^0.224.8",
+      "jsr:@std/path@^1.0.6",
+      "npm:zod@^3.23.8"
     ]
   }
 }

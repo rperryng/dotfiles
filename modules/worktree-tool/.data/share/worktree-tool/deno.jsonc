@@ -1,9 +1,12 @@
 {
   "imports": {
-    "@std/fs": "jsr:@std/fs@^1.0.4"
-    "@std/assert": "jsr:@std/assert@^1.0.6"
+    "@std/assert": "jsr:@std/assert@^1.0.6",
+    "@std/fs": "jsr:@std/fs@^1.0.4",
+    "@std/log": "jsr:@std/log@^0.224.8",
+    "@std/path": "jsr:@std/path@^1.0.6",
+    "zod": "npm:zod@^3.23.8"
   },
   "fmt": {
-    "singleQuote": true,
+    "singleQuote": true
   }
 }
