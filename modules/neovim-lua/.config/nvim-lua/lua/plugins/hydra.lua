@@ -29,35 +29,100 @@ return {
         },
       })
 
+      -- Navigate diagnostics with 'n'/ 'N' similar to navigatin `/` search results
+      local diagnostic_next = function()
+        utils.close_floating_windows()
+        Log('diagnostic next ...')
+        Log(vim)
+        vim.diagnostic.goto_next()
+        vim.diagnostic.open_float()
+      end
+      local diagnostic_previous = function()
+        utils.close_floating_windows()
+        vim.diagnostic.goto_prev()
+        vim.diagnostic.open_float()
+      end
       hydra({
-        name = 'Diagnostic Navigation',
+        name = 'Diagnostic Navigation (forwards)',
         config = {
+          invoke_on_body = true,
           hint = false,
+          on_enter = function()
+            diagnostic_next()
+          end,
+          on_exit = function()
+            utils.close_floating_windows()
+          end,
         },
         mode = 'n',
-        body = '<space>HD',
-        on_exit = function()
-          utils.close_floating_windows()
-        end,
+        body = ']d',
         heads = {
           {
             'n',
-            function()
-              utils.close_floating_windows()
-              vim.diagnostic.goto_next()
-              vim.diagnostic.open_float()
-            end,
+            diagnostic_next,
           },
           {
-            'p',
-            function()
-              utils.close_floating_windows()
-              vim.diagnostic.goto_prev()
-              vim.diagnostic.open_float()
-            end,
+            'N',
+            diagnostic_previous,
           },
         },
       })
+      hydra({
+        name = 'Diagnostic Navigation (backwards)',
+        config = {
+          invoke_on_body = true,
+          hint = false,
+          on_enter = function()
+            diagnostic_previous()
+          end,
+          on_exit = function()
+            utils.close_floating_windows()
+          end,
+        },
+        mode = 'n',
+        body = '[d',
+        heads = {
+          {
+            'n',
+            diagnostic_previous,
+          },
+          {
+            'N',
+            diagnostic_next,
+          },
+        },
+      })
+
+      -- hydra({
+      --   name = 'Diagnostic Navigation',
+      --   config = {
+      --     invoke_on_body = true,
+      --     hint = false,
+      --   },
+      --   mode = 'n',
+      --   body = '<space>HD',
+      --   on_exit = function()
+      --     utils.close_floating_windows()
+      --   end,
+      --   heads = {
+      --     {
+      --       'n',
+      --       function()
+      --         utils.close_floating_windows()
+      --         vim.diagnostic.goto_next()
+      --         vim.diagnostic.open_float()
+      --       end,
+      --     },
+      --     {
+      --       'p',
+      --       function()
+      --         utils.close_floating_windows()
+      --         vim.diagnostic.goto_prev()
+      --         vim.diagnostic.open_float()
+      --       end,
+      --     },
+      --   },
+      -- })
     end,
   },
 }
