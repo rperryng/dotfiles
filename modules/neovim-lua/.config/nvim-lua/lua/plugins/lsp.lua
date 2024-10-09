@@ -245,13 +245,25 @@ return {
       local fast_action = require('fastaction')
       fast_action.setup({
         dismiss_keys = { '<esc>', '<c-c>', 'j', 'k', 'q' },
+        -- override_function = function(params)
+        --   Log(params)
+        --   params.invalid_keys[#params.invalid_keys + 1] =
+        --     tostring(#params.invalid_keys + 1)
+        --   return {
+        --     key = tostring(#params.invalid_keys),
+        --     order = 0
+        --   }
+        -- end,
         keys = 'arstoiengmdkch',
       })
 
-      vim.keymap.set('n', '<space>gA', function()
+      vim.keymap.set('n', '<space>ga', function()
         fast_action.code_action()
       end, { desc = 'LSP Actions' })
-    end
+      vim.keymap.set('v', '<space>ga', function()
+        fast_action.range_code_action()
+      end, { desc = 'LSP Actions' })
+    end,
   },
 
   -- High-level document tree
