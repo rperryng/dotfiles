@@ -58,8 +58,10 @@ async function linkTarget(
       if (shouldDeleteFile) {
         await Deno.remove(fullTargetPath);
         await Deno.symlink(desiredSource, fullTargetPath);
+        console.log(`Deleted ${fullTargetPath} and replaced with new symlink`);
+        continue;
       } else {
-        logger.info('Skipping file');
+        logger.info(`Skipping file ${fullTargetPath}`);
         continue;
       }
     }
