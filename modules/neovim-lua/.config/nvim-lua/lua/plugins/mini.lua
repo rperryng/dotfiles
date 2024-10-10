@@ -38,7 +38,7 @@ return {
           hint = false,
         },
         mode = 'x',
-        body = '<space>HM',
+        body = '<space>M',
         heads = {
           {
             'j',
@@ -89,7 +89,7 @@ return {
           hint = false,
         },
         mode = 'n',
-        body = '<space>HM',
+        body = '<space>M',
         heads = {
           {
             'j',

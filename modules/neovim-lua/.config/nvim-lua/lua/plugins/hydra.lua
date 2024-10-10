@@ -21,7 +21,7 @@ return {
             end,
           },
           {
-            'p',
+            'N',
             function()
               vim.cmd('silent! cprevious')
             end,
@@ -100,37 +100,6 @@ return {
           },
         },
       })
-
-      -- hydra({
-      --   name = 'Diagnostic Navigation',
-      --   config = {
-      --     invoke_on_body = true,
-      --     hint = false,
-      --   },
-      --   mode = 'n',
-      --   body = '<space>HD',
-      --   on_exit = function()
-      --     utils.close_floating_windows()
-      --   end,
-      --   heads = {
-      --     {
-      --       'n',
-      --       function()
-      --         utils.close_floating_windows()
-      --         vim.diagnostic.goto_next()
-      --         vim.diagnostic.open_float()
-      --       end,
-      --     },
-      --     {
-      --       'p',
-      --       function()
-      --         utils.close_floating_windows()
-      --         vim.diagnostic.goto_prev()
-      --         vim.diagnostic.open_float()
-      --       end,
-      --     },
-      --   },
-      -- })
     end,
   },
 }
