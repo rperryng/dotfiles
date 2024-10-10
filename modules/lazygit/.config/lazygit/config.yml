@@ -4,3 +4,11 @@ os:
   editCommand: 'nvr'
   editCommandTemplate: '{{editor}} --remote-wait +"setlocal bufhidden=wipe" +{{line}} -- {{filename}}'
   openCommand: 'nvr {{filename}}'
+keybinding:
+  universal:
+    filteringMenu: '<c-a>'
+
+git:
+  paging:
+    colorArg: always
+    pager: delta --side-by-side --paging=never
