@@ -59,11 +59,15 @@ return {
         heads = {
           {
             'n',
-            diagnostic_next,
+            function()
+              diagnostic_next()
+            end,
           },
           {
             'N',
-            diagnostic_previous,
+            function()
+              diagnostic_previous()
+            end,
           },
         },
       })
@@ -84,11 +88,15 @@ return {
         heads = {
           {
             'n',
-            diagnostic_previous,
+            function()
+              diagnostic_previous()
+            end,
           },
           {
             'N',
-            diagnostic_next,
+            function()
+              diagnostic_next()
+            end,
           },
         },
       })

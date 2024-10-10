@@ -5,52 +5,57 @@ return {
     config = function()
       local gitsigns = require('gitsigns')
 
-      -- Hydra for navigating hunks.  Possibly staging them as well?
       local hydra = require('hydra')
       hydra({
-        name = 'Git Hunk Navigation',
+        name = 'Git Hunk Navigation (forwards)',
         config = {
           invoke_on_body = true,
           hint = false,
+          on_enter = function()
+            gitsigns.nav_hunk('next')
+          end,
         },
         mode = 'n',
-        body = '<space>HG',
+        body = ']c',
         heads = {
           {
-            ']',
+            'n',
             function()
               gitsigns.nav_hunk('next')
             end,
           },
           {
-            '[',
+            'N',
             function()
               gitsigns.nav_hunk('previous')
             end,
           },
-
-          -- Mimic "git add --patch" commands
-          {
-            'y',
-            function()
-              gitsigns.stage_hunk()
-              gitsigns.nav_hunk('next')
-            end,
-          },
+        }
+      })
+      hydra({
+        name = 'Git Hunk Navigation (backwards)',
+        config = {
+          invoke_on_body = true,
+          hint = false,
+          on_enter = function()
+            gitsigns.nav_hunk('previous')
+          end,
+        },
+        mode = 'n',
+        body = '[c',
+        heads = {
           {
             'n',
             function()
-              gitsigns.stage_hunk()
-              gitsigns.nav_hunk('next')
+              gitsigns.nav_hunk('previous')
             end,
           },
           {
-            'q',
-            nil,
-            {
-              exit = true,
-            }
-          }
+            'N',
+            function()
+              gitsigns.nav_hunk('next')
+            end,
+          },
         }
       })
 
@@ -129,7 +134,6 @@ return {
   {
     'sindrets/diffview.nvim',
     config = function()
-      vim.keymap.set('n', 'sdd', '<cmd>DiffviewOpen<cr>', { desc = 'Diffview working tree' })
       vim.keymap.set('n', 'sdd', '<cmd>DiffviewOpen<cr>', { desc = 'Diffview working tree' })
       vim.keymap.set('n', 'sd%', '<cmd>DiffviewFileHistory %<cr>', { desc = 'Diffview against main' })
     end,

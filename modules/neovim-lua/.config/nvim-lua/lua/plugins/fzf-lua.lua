@@ -7,6 +7,7 @@ return {
 
       local fzf = require('fzf-lua')
       local actions = require('fzf-lua.actions')
+
       fzf.setup({
         actions = {
           files = {
