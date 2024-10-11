@@ -5,6 +5,7 @@ local M = {}
 
 local fzf_utils = require('fzf-lua.utils')
 local utils = require('utils')
+local set = require('local.set')
 local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
 local ICONS = {
   DIR = '',
@@ -75,11 +76,27 @@ M.find_project_dirs_decorated = function()
 end
 
 M.find_worktrees_dirs = function()
-  return search({
+  -- TODO: List worktrees by most recent branch
+  -- vim.fn.system('git for-each-ref' .. path)
+
+  local sorted_branches = vim.fn.system(
+    "git for-each-ref --sort=-committerdate --format='%(refname)' | rg --only-matching 'refs/heads/(.+)' --replace '$1'"
+  )
+  sorted_branches = vim.split(sorted_branches, '\n')
+
+  local worktree_dirs = search({
     root_path = os.getenv('HOME') .. '/code-worktrees',
     max_depth = 3,
     patterns = { '.git', 'Gemfile', 'package.json' },
   })
+
+  local final_list = {}
+  for _, branch_name in ipairs(sorted_branches) do
+    for _, worktree_dir in ipairs(worktree_dirs) do
+    end
+  end
+
+  return worktree_dirs
 end
 
 M.find_worktrees_dirs_decorated = function()
@@ -335,13 +352,13 @@ vim.keymap.set('n', '<space>cdi', function()
 
         local tab_name = vim.fn.fnamemodify(dir, ':t')
         M.open_project(dir, tab_name)
-      end
+      end,
     },
   })
 end, { desc = 'Fuzzy search working directory' })
 
 vim.keymap.set('n', '<space>cdp', function()
-  local rev_parse = vim.system({'git', 'rev-parse', '--show-toplevel'}):wait()
+  local rev_parse = vim.system({ 'git', 'rev-parse', '--show-toplevel' }):wait()
   assert(rev_parse.code == 0)
   local dir = rev_parse.stdout
   assert(dir ~= nil)
