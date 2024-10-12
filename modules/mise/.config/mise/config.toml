@@ -13,13 +13,14 @@ python = '3.10.4'
 ruby = ['3.3', '3.2', '3.1']
 
 # shell tools
+delta = '0.18.2'
+fd = 'latest'
+fzf = 'latest'
 jless = '0.9.0'
 jnv = '0.4.0'
 jq = '1.7.1'
 just = '1.29.1'
+stylua = 'latest'
 yq = '4.44.3'
-delta = '0.18.2'
-fzf = 'latest'
-fd = 'latest'
 
 'cargo:taplo-cli' = 'latest'
