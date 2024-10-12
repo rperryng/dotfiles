@@ -7,12 +7,11 @@ install() {
     return 0;
   fi
 
-  if [[ ! -x "$(command -v cargo)" ]]; then
-    echo "cargo not installed; can't install sd"
-    exit 1
+  if ! cargo_binstall_available; then
+    return 1;
   fi
 
-  cargo install sd
+  cargo binstall sd
 }
 
 install
