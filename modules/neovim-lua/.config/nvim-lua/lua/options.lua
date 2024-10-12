@@ -44,7 +44,22 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.inccommand = 'split'
 
-if (vim.fn.executable('rg')) then
-  vim.opt.grepprg='rg --vimgrep'
-  vim.opt.grepformat:prepend{"%f:%l:%c:%m"}
+if vim.fn.executable('rg') then
+  vim.opt.grepprg = 'rg --vimgrep'
+  vim.opt.grepformat:prepend({ '%f:%l:%c:%m' })
+end
+
+if vim.fn.has('wsl') == 1 then
+  vim.g.clipboard = {
+    name = 'WslClipboard',
+    copy = {
+      ['+'] = 'clip.exe',
+      ['*'] = 'clip.exe',
+    },
+    paste = {
+      ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+      ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    },
+    cache_enabled = 0,
+  }
 end

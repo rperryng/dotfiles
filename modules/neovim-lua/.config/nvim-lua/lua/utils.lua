@@ -39,22 +39,6 @@ M.requireDir = function(dir)
   end
 end
 
-M.is_wsl = function()
-  local version_path = '/proc/version'
-  local file = io.open(version_path, 'r')
-  if not file then
-    return false
-  end
-
-  local content = file:read('*all')
-  file:close()
-  if content:match('microsoft') then
-    return true
-  else
-    return false
-  end
-end
-
 M.try_require = function(module_name)
   return xpcall(function()
     require(module_name)

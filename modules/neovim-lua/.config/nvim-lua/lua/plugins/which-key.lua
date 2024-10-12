@@ -1,6 +1,6 @@
 local utils = require('utils')
 
-if utils.is_wsl() then
+if vim.fn.has('wsl') == 1 then
   return {}
 end
 
