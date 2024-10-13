@@ -67,6 +67,17 @@ vim.keymap.set('n', '<c-l>', '<c-w>l', { desc = 'Move to Right Window' })
 -- vim.keymap.set('n', '\'', '`', { desc = 'Jump to mark' })
 -- vim.keymap.set('n', '`', '\'', { desc = 'Jump to beginning of line of mark' })
 
+vim.keymap.set('n', '<esc>', function()
+  -- Simulate pressing <esc>
+  vim.api.nvim_feedkeys(
+    vim.api.nvim_replace_termcodes('<esc>', true, false, true),
+    'n',
+    true
+  )
+
+  utils.close_floating_windows()
+end, { desc = 'Esc (and close windows)' })
+
 -- Last buffer
 vim.keymap.set('n', '<space>l', '<c-^>', { desc = 'Jump to last Buffer' })
 
