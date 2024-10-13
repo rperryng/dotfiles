@@ -29,13 +29,15 @@ export async function listWorktrees(): Promise<Worktree[]> {
     if (!branch) {
       assert(
         /^detached$/m.test(blob),
-        `worktree did not have "branch" value, and also did not indicated it was detached \n${blob}`
+        `worktree did not have "branch" value, and also did not indicated it was detached \n${blob}`,
       );
     }
 
     const dotGitPath = join(path, '.git');
     if (!existsSync(dotGitPath)) {
-      throw new Error(`${dotGitPath} does not exist - can't determine type of worktree`);
+      throw new Error(
+        `${dotGitPath} does not exist - can't determine type of worktree`,
+      );
     }
     const info = await Deno.stat(dotGitPath);
     const type = info.isDirectory ? 'clone' : 'worktree';
@@ -50,4 +52,3 @@ export async function listWorktrees(): Promise<Worktree[]> {
 
   return worktrees;
 }
-

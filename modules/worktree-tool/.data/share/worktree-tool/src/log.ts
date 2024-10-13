@@ -1,6 +1,6 @@
 import * as log from '@std/log';
 import { z } from 'zod';
-import { bold, blue, yellow, red, gray } from '@std/fmt/colors';
+import { blue, bold, gray, red, yellow } from '@std/fmt/colors';
 
 import type { FormatterFunction, LogRecord } from '@std/log';
 //export type FormatterFunction = (logRecord: LogRecord) => string;
@@ -47,10 +47,12 @@ class StderrHandler extends log.BaseHandler {
       levelName,
       {
         formatter: (logRecord: LogRecord) => {
-          return `${formattedLogLevel(logRecord.levelName as log.LevelName)} ${logRecord.msg}`;
+          return `${
+            formattedLogLevel(logRecord.levelName as log.LevelName)
+          } ${logRecord.msg}`;
         },
-      }
-    )
+      },
+    );
   }
 
   override log(msg: string): void {
@@ -67,7 +69,7 @@ export function setup() {
       default: {
         level: levelName,
         handlers: ['stderr'],
-      }
-    }
+      },
+    },
   });
 }

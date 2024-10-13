@@ -78,7 +78,9 @@ async function chdirGitRoot(): Promise<void> {
 
   const gitRootPath = new TextDecoder().decode(gitRootResult.stdout).trim();
   if (Deno.cwd() !== gitRootPath) {
-    logger.info(`Changing working directory from ${Deno.cwd()} to ${gitRootPath}`);
+    logger.info(
+      `Changing working directory from ${Deno.cwd()} to ${gitRootPath}`,
+    );
     Deno.chdir(gitRootPath);
   }
 

@@ -7,8 +7,8 @@ export async function execOutput(
   options?: CommandOptions,
 ): Promise<string> {
   const cmdOptions: CommandOptions = {
-    stdout: "piped",
-    stderr: "piped",
+    stdout: 'piped',
+    stderr: 'piped',
     ...options,
   };
 
@@ -18,9 +18,9 @@ export async function execOutput(
   if (!result.success) {
     console.error();
     throw new Error([
-      `Failed to run command: ${[cmd, ...(cmdOptions?.args || [])].join(" ")}`,
+      `Failed to run command: ${[cmd, ...(cmdOptions?.args || [])].join(' ')}`,
       new TextDecoder().decode(result.stderr),
-    ].join("\n"));
+    ].join('\n'));
   }
 
   return new TextDecoder().decode(result.stdout);
@@ -31,7 +31,7 @@ export async function execLines(
   options?: CommandOptions,
 ): Promise<string[]> {
   return (await execOutput(cmd, options))
-    .split("\n")
+    .split('\n')
     .map((line) => line.trim())
-    .filter((line) => line !== "");
+    .filter((line) => line !== '');
 }

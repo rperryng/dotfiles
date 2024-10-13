@@ -6,8 +6,11 @@ log.setup();
 import { getLogger } from '@std/log';
 import { parseArgs } from '@std/cli';
 import chalk from 'chalk';
+import { blue, yellow, green, magenta, cyan, inverse } from '@std/fmt/colors';
 import { forEachRef, Ref } from '../git.ts';
-import { compareAsc } from 'date-fns';
+import { compareDesc } from 'date-fns';
+import { fzfExec } from '../fzf.ts';
+import { ICONS } from '../icons.ts';
 
 const logger = getLogger();
 
@@ -26,17 +29,36 @@ async function main() {
   const branch = args.b ?? args.branch;
   logger.debug(`args: ${JSON.stringify(args)}`);
 
+  const refs: Ref[] = (await forEachRef()).toSorted((a, b) => {
+    if (a.refType === undefined && b.refType !== undefined) {
+      return -1
+    } else if (a.refType !== undefined && b.refType === undefined) {
+      return 1;
+    }
 
-  const list: Ref[] = (await forEachRef()).toSorted((a, b) => {
+    if (a.refType === 'local_branch' && b.refType === 'remote_branch') {
+      return -1;
+    } else if (a.refType === 'remote_branch' && b.refType === 'local_branch') {
+      return 1;
+    }
+
+    return compareDesc(a.committerDate, b.committerDate);
   });
 
-  logger.debug(`allBranches: ${chalk.blue(JSON.stringify(list, null, 2))}`);
-  logger.critical(new Error('oh no'))
+  const currentDate = new Date();
+  const formattedLines = refs.map((ref) => {
+    return `${blue(ref.committerDate.toISOString())}`
+  });
+  //logger.debug(formattedLines.join('\n'));
+  logger.debug(JSON.stringify(refs, null, 2));
+
+  //const selection = await fzfExec();
+
+  //logger.debug(`allBranches: ${chalk.blue(JSON.stringify(list, null, 2))}`);
 }
 
 // TODO: single entrypoint?
 main().catch((error) => {
   logger.critical(error);
-  logger.info('destroying handlers');
   Deno.exit(1);
 });

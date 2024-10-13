@@ -1,7 +1,6 @@
 import { execLines } from './exec.ts';
 import { assert } from '@std/assert';
 import { z } from 'zod';
-import * as log from '@std/log';
 
 // see: `man git-for-each-ref` (FIELD NAMES)
 const GIT_FOR_EACH_REF_FORMAT =
@@ -9,14 +8,14 @@ const GIT_FOR_EACH_REF_FORMAT =
 const GIT_FOR_EACH_REF_REGEX =
   /^(?<refName>[\w\/\-_]+) @objecttype:(?<objectType>.+)@ @sha:(?<sha>.+)@ @author:(?<author>.+)@ @email:<(?<email>.+)>@ @committerdate:(?<committerDate>.+)@/;
 
-export const RefTypeEnum = z.enum(['local', 'remote']);
+export const RefTypeEnum = z.enum(['local_branch', 'remote_branch', 'tag']);
 export type RefType = z.infer<typeof RefTypeEnum> | undefined;
 export interface Ref {
   sha: string;
-  objectType: string,
-  type: string;
-  refName: string;
+  objectType: string;
   refType: RefType;
+  refName: string;
+  friendlyName: string;
   author: string;
   email: string;
   committerDate: Date;
@@ -33,7 +32,6 @@ export async function forEachRef(options?: {
       ...(refPattern ? [refPattern] : []),
     ],
   });
-  log.debug(`got line:\n${lines.join('\n')}`);
 
   const refs: Ref[] = lines.map((line) => {
     const { refName, sha, objectType, author, email, committerDate } =
@@ -43,20 +41,30 @@ export async function forEachRef(options?: {
       `Failed to parse fields for: ${line}`,
     );
 
-    let refType: RefType = undefined;
-    if (refName.startsWith('refs/heads')) {
-      refType = 'local';
-    } else if (refName.startsWith('refs/remote')) {
-      refType = 'remote';
+    const match = refName.match(
+      /^(?<refPrefix>refs\/heads\/|refs\/remotes\/|refs\/tags\/)(?<friendlyName>.+)/,
+    );
+    assert(match && match.groups, `Failed to parse refName: ${refName}`);
+    const { refPrefix, friendlyName } = match.groups;
+    let refType: RefType;
+    if (refPrefix === 'refs/heads/') {
+      refType = 'local_branch';
+    } else if (refPrefix === 'refs/remotes/') {
+      refType = 'remote_branch';
+    } else if (refPrefix === 'refs/tags/') {
+      refType = 'tag';
+    } else {
+      throw new Error(`Failed to parse refType from refName: ${refName}`);
     }
 
     return {
       sha,
       refName,
+      refType,
+      friendlyName,
       objectType,
       author,
       email,
-      refType,
       committerDate: new Date(committerDate),
     };
   });
