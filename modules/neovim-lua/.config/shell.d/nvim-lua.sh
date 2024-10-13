@@ -32,6 +32,24 @@ n() {
   )
 }
 
+# use as pager
+nman() {
+  if [[ -z $@ ]]; then
+    echo 'usage: nman [man options] [[section] page ...] ...' 1>&2
+    return 1
+  fi
+
+  local tmp_dir
+  tmp_dir=$(mktemp "/tmp/man.$1.tmp.XXXXXXXXXX")
+  man "$@" | cat > "$tmp_dir"
+
+  if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
+    eval $EDITOR -cc split "+'setlocal nomodifiable'" "$tmp_dir"
+  else
+    eval $EDITOR "+'setlocal nomodifiable'" "$tmp_dir"
+  fi
+}
+
 # Setup $EDITOR / $VISUAL
 if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
   # Set $EDITOR to the host neovim process if this terminal session was started
