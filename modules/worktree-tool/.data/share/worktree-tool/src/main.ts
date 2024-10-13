@@ -8,7 +8,7 @@ import { existsSync } from '@std/fs';
 import { getLogger } from '@std/log';
 
 import { execLines } from './exec.ts';
-import { fzfExec } from './fzf.ts';
+import { fzfLines } from './fzf.ts';
 import { linkTargets } from './linker.ts';
 import { listWorktrees } from './listWorktrees.ts';
 
@@ -110,7 +110,7 @@ async function fzfFileSuggestions(): Promise<string[]> {
     );
   }
 
-  const selection = await fzfExec(fileSuggestions);
+  const selection = await fzfLines(fileSuggestions);
   if (selection.length === 0) {
     throw new Error('No files selected. Aborting.');
   }

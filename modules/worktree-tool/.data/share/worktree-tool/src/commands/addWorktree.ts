@@ -4,12 +4,12 @@ import * as log from '../log.ts';
 log.setup();
 
 import { getLogger } from '@std/log';
+import { Table } from '@cliffy/table';
 import { parseArgs } from '@std/cli';
-import chalk from 'chalk';
-import { blue, yellow, green, magenta, cyan, inverse } from '@std/fmt/colors';
+import { blue, cyan, gray, magenta, yellow } from '@std/fmt/colors';
 import { forEachRef, Ref } from '../git.ts';
-import { compareDesc } from 'date-fns';
-import { fzfExec } from '../fzf.ts';
+import { compareDesc, formatRelative } from 'date-fns';
+import { fzfLines, fzfTable } from '../fzf.ts';
 import { ICONS } from '../icons.ts';
 
 const logger = getLogger();
@@ -31,7 +31,7 @@ async function main() {
 
   const refs: Ref[] = (await forEachRef()).toSorted((a, b) => {
     if (a.refType === undefined && b.refType !== undefined) {
-      return -1
+      return -1;
     } else if (a.refType !== undefined && b.refType === undefined) {
       return 1;
     }
@@ -47,14 +47,37 @@ async function main() {
 
   const currentDate = new Date();
   const formattedLines = refs.map((ref) => {
-    return `${blue(ref.committerDate.toISOString())}`
+    let icon;
+    switch (ref.refType) {
+      case 'local_branch': {
+        icon = blue(ICONS.DIR);
+        break;
+      }
+      case 'remote_branch': {
+        icon = yellow(ICONS.GITHUB);
+        break;
+      }
+      case 'tag': {
+        icon = magenta(ICONS.TAG);
+        break;
+      }
+      default: {
+        const unknown: never = ref.refType;
+        icon = unknown;
+      }
+    }
+
+    return [
+      icon,
+      yellow(ref.friendlyName),
+      blue(ref.author),
+      `<${cyan(ref.email)}>`,
+      gray(formatRelative(ref.committerDate, currentDate)),
+    ];
   });
-  //logger.debug(formattedLines.join('\n'));
-  logger.debug(JSON.stringify(refs, null, 2));
+  const selection = await fzfTable(formattedLines, { extraArgs: ['--ansi'] });
+  logger.debug(`selection: ${selection}`);
 
-  //const selection = await fzfExec();
-
-  //logger.debug(`allBranches: ${chalk.blue(JSON.stringify(list, null, 2))}`);
 }
 
 // TODO: single entrypoint?

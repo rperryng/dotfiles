@@ -9,7 +9,7 @@ const GIT_FOR_EACH_REF_REGEX =
   /^(?<refName>[\w\/\-_]+) @objecttype:(?<objectType>.+)@ @sha:(?<sha>.+)@ @author:(?<author>.+)@ @email:<(?<email>.+)>@ @committerdate:(?<committerDate>.+)@/;
 
 export const RefTypeEnum = z.enum(['local_branch', 'remote_branch', 'tag']);
-export type RefType = z.infer<typeof RefTypeEnum> | undefined;
+export type RefType = z.infer<typeof RefTypeEnum>;
 export interface Ref {
   sha: string;
   objectType: string;
