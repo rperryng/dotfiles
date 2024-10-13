@@ -1,9 +1,12 @@
 {
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.6",
+    "@std/cli": "jsr:@std/cli@^1.0.6",
     "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/log": "jsr:@std/log@^0.224.8",
     "@std/path": "jsr:@std/path@^1.0.6",
+    "chalk": "npm:chalk@^5.3.0",
+    "date-fns": "npm:date-fns@^4.1.0",
     "zod": "npm:zod@^3.23.8"
   },
   "fmt": {

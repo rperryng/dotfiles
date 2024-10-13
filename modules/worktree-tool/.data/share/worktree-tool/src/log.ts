@@ -11,15 +11,24 @@ const LogLevelSchema = z.enum([
 const logLevelValue = Deno.env.get('LOG_LEVEL') ?? 'DEBUG';
 const levelName = LogLevelSchema.parse(logLevelValue);
 
+// Use stderr so that stdout is easy to pipe
+class StderrHandler extends log.ConsoleHandler {
+  override log(msg: string): void {
+    console.error(msg);
+  }
+}
+
 export function setup() {
   log.setup({
     handlers: {
-      default: new log.ConsoleHandler(levelName),
+      stderr: new StderrHandler(levelName, {
+        useColors: false,
+      }),
     },
     loggers: {
       default: {
         level: levelName,
-        handlers: ['default'],
+        handlers: ['stderr'],
       }
     }
   });

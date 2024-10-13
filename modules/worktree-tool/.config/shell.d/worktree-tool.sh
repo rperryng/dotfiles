@@ -6,3 +6,8 @@
 wt-stow() {
   "${DOTFILES_DIR}"/modules/worktree-tool/.data/share/worktree-tool/src/main.ts
 }
+
+wt-add() {
+  # TODO: Single binary?
+  "${DOTFILES_DIR}"/modules/worktree-tool/.data/share/worktree-tool/src/commands/addWorktree.ts $@
+}

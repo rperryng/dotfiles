@@ -14,8 +14,6 @@ import { listWorktrees } from './listWorktrees.ts';
 
 const logger = getLogger();
 
-const { Command } = Deno;
-
 const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME') ||
   `${Deno.env.get('HOME')}/.config`;
 const WORKTREE_SYMLINKS_IGNORE_PATH =
@@ -64,7 +62,7 @@ async function gitTrackedFiles(): Promise<string[]> {
 // that has the main `.git` folder in it.
 async function chdirGitRoot(): Promise<void> {
   // Do I even need all this...
-  const gitRootCommand = new Command('git', {
+  const gitRootCommand = new Deno.Command('git', {
     args: ['rev-parse', '--show-toplevel'],
     stdout: 'piped',
     stderr: 'piped',
