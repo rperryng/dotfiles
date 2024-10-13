@@ -7,7 +7,7 @@ import { getLogger } from '@std/log';
 import { parseArgs } from '@std/cli';
 import chalk from 'chalk';
 import { forEachRef, Ref } from '../git.ts';
-import { compareAsc, compareDesc } from 'date-fns';
+import { compareAsc } from 'date-fns';
 
 const logger = getLogger();
 
@@ -31,6 +31,7 @@ async function main() {
   });
 
   logger.debug(`allBranches: ${chalk.blue(JSON.stringify(list, null, 2))}`);
+  logger.critical(new Error('oh no'))
 }
 
 // TODO: single entrypoint?
