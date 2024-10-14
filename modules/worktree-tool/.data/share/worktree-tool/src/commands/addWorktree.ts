@@ -2,16 +2,16 @@
 
 import * as log from '../log.ts';
 log.setup();
+const logger = getLogger();
 
 import { getLogger } from '@std/log';
 import { parseArgs } from '@std/cli';
-import { blue, cyan, gray, magenta, white, yellow } from '@std/fmt/colors';
+import { blue, cyan, gray, magenta, yellow } from '@std/fmt/colors';
 import { forEachRef, Ref } from '../git.ts';
 import { compareDesc, formatRelative } from 'date-fns';
 import { fzfTable } from '../fzf.ts';
 import { ICONS } from '../icons.ts';
-
-const logger = getLogger();
+import { assert } from '@std/assert';
 
 interface CliArgs {
   branch?: string;
@@ -23,30 +23,33 @@ async function main() {
   const branch = args.b ?? args.branch;
   logger.debug(`args: ${JSON.stringify(args)}`);
 
-  const refs: Ref[] = (await forEachRef()).toSorted((a, b) => {
-    if (a.refType === undefined && b.refType !== undefined) {
-      return -1;
-    } else if (a.refType !== undefined && b.refType === undefined) {
-      return 1;
-    }
-
-    if (a.refType === 'local_branch' && b.refType === 'remote_branch') {
-      return -1;
-    } else if (a.refType === 'remote_branch' && b.refType === 'local_branch') {
-      return 1;
-    }
-
-    return compareDesc(a.committerDate, b.committerDate);
-  });
-
+  const refs: Ref[] = (await forEachRef()).toSorted(refComparator);
   const selection = await fzfTable(refs, {
     extraArgs: ['--ansi'],
     serializeToRow,
   });
-  logger.debug(`selection: ${JSON.stringify(selection, null, 2)}`);
+  assert(selection.length === 1, `No ref was selected`);
+  const ref = selection[0];
+  logger.debug(`selected: ${JSON.stringify(ref, null, 2)}`);
 }
 
-function serializeToRow(ref: Ref) {
+function refComparator(a: Ref, b: Ref): number {
+  if (a.refType === undefined && b.refType !== undefined) {
+    return -1;
+  } else if (a.refType !== undefined && b.refType === undefined) {
+    return 1;
+  }
+
+  if (a.refType === 'local_branch' && b.refType === 'remote_branch') {
+    return -1;
+  } else if (a.refType === 'remote_branch' && b.refType === 'local_branch') {
+    return 1;
+  }
+
+  return compareDesc(a.committerDate, b.committerDate);
+}
+
+function serializeToRow(ref: Ref): string[] {
   let icon;
   switch (ref.refType) {
     case 'local_branch': {
