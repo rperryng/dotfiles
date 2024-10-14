@@ -1,11 +1,7 @@
 import * as log from '@std/log';
 import { z } from 'zod';
 import { blue, bold, gray, red, yellow } from '@std/fmt/colors';
-
-import type { FormatterFunction, LogRecord } from '@std/log';
-//export type FormatterFunction = (logRecord: LogRecord) => string;
-//const DEFAULT_FORMATTER: FormatterFunction = ({ levelName, msg }) =>
-//  `${levelName} ${msg}`;
+import type { LogRecord } from '@std/log';
 
 const LogLevelSchema = z.enum([
   'DEBUG',
@@ -47,9 +43,8 @@ class StderrHandler extends log.BaseHandler {
       levelName,
       {
         formatter: (logRecord: LogRecord) => {
-          return `${
-            formattedLogLevel(logRecord.levelName as log.LevelName)
-          } ${logRecord.msg}`;
+          const level = formattedLogLevel(logRecord.levelName as log.LevelName);
+          return `${level} ${logRecord.msg}`;
         },
       },
     );

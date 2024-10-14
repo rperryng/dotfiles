@@ -110,7 +110,7 @@ async function fzfFileSuggestions(): Promise<string[]> {
     );
   }
 
-  const selection = await fzfLines(fileSuggestions);
+  const selection = await fzfLines(fileSuggestions, { extraArgs: ['--multi'] });
   if (selection.length === 0) {
     throw new Error('No files selected. Aborting.');
   }

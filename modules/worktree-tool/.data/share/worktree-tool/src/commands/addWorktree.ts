@@ -4,20 +4,14 @@ import * as log from '../log.ts';
 log.setup();
 
 import { getLogger } from '@std/log';
-import { Table } from '@cliffy/table';
 import { parseArgs } from '@std/cli';
-import { blue, cyan, gray, magenta, yellow } from '@std/fmt/colors';
+import { blue, cyan, gray, magenta, white, yellow } from '@std/fmt/colors';
 import { forEachRef, Ref } from '../git.ts';
 import { compareDesc, formatRelative } from 'date-fns';
-import { fzfLines, fzfTable } from '../fzf.ts';
+import { fzfTable } from '../fzf.ts';
 import { ICONS } from '../icons.ts';
 
 const logger = getLogger();
-
-// list refs
-//   - local branches first (sorted by recent)
-//   - remote branches (sorted by recent)
-//   - refs
 
 interface CliArgs {
   branch?: string;
@@ -45,39 +39,41 @@ async function main() {
     return compareDesc(a.committerDate, b.committerDate);
   });
 
-  const currentDate = new Date();
-  const formattedLines = refs.map((ref) => {
-    let icon;
-    switch (ref.refType) {
-      case 'local_branch': {
-        icon = blue(ICONS.DIR);
-        break;
-      }
-      case 'remote_branch': {
-        icon = yellow(ICONS.GITHUB);
-        break;
-      }
-      case 'tag': {
-        icon = magenta(ICONS.TAG);
-        break;
-      }
-      default: {
-        const unknown: never = ref.refType;
-        icon = unknown;
-      }
-    }
-
-    return [
-      icon,
-      yellow(ref.friendlyName),
-      blue(ref.author),
-      `<${cyan(ref.email)}>`,
-      gray(formatRelative(ref.committerDate, currentDate)),
-    ];
+  const selection = await fzfTable(refs, {
+    extraArgs: ['--ansi'],
+    serializeToRow,
   });
-  const selection = await fzfTable(formattedLines, { extraArgs: ['--ansi'] });
-  logger.debug(`selection: ${selection}`);
+  logger.debug(`selection: ${JSON.stringify(selection, null, 2)}`);
+}
 
+function serializeToRow(ref: Ref) {
+  let icon;
+  switch (ref.refType) {
+    case 'local_branch': {
+      icon = blue(ICONS.DIR);
+      break;
+    }
+    case 'remote_branch': {
+      icon = yellow(ICONS.GITHUB);
+      break;
+    }
+    case 'tag': {
+      icon = magenta(ICONS.TAG);
+      break;
+    }
+    default: {
+      const unknown: never = ref.refType;
+      icon = unknown;
+    }
+  }
+
+  return [
+    icon,
+    ref.friendlyName,
+    blue(ref.author),
+    `(${cyan(ref.email)})`,
+    gray(formatRelative(ref.committerDate, new Date())),
+  ];
 }
 
 // TODO: single entrypoint?
