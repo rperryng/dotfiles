@@ -5,30 +5,6 @@ return {
       local hydra = require('hydra')
       local utils = require('utils')
 
-      hydra({
-        name = 'Quickfix navigation',
-        config = {
-          invoke_on_body = true,
-          hint = false,
-        },
-        mode = 'n',
-        body = '<space>HQ',
-        heads = {
-          {
-            'n',
-            function()
-              vim.cmd('silent! cnext')
-            end,
-          },
-          {
-            'N',
-            function()
-              vim.cmd('silent! cprevious')
-            end,
-          },
-        },
-      })
-
       -- Navigate diagnostics with 'n'/ 'N' similar to navigatin `/` search results
       local diagnostic_next = function()
         utils.close_floating_windows()
@@ -96,6 +72,66 @@ return {
             'N',
             function()
               diagnostic_next()
+            end,
+          },
+        },
+      })
+
+      -- Quickfix navigation
+      local quickfix_next = function()
+        vim.cmd('silent! cnext')
+      end
+      local quickfix_previous = function()
+        vim.cmd('silent! cprevious')
+      end
+      hydra({
+        name = 'Quickfix Navigation (forwards)',
+        config = {
+          invoke_on_body = true,
+          hint = false,
+          on_enter = function()
+            quickfix_next()
+          end,
+        },
+        mode = 'n',
+        body = ']q',
+        heads = {
+          {
+            'n',
+            function()
+              quickfix_next()
+            end,
+          },
+          {
+            'N',
+            function()
+              quickfix_previous()
+            end,
+          },
+        },
+      })
+      hydra({
+        name = 'Quickfix Navigation (backwards)',
+        config = {
+          invoke_on_body = true,
+          hint = false,
+          on_enter = function()
+            quickfix_previous()
+          end,
+        },
+        mode = 'n',
+        body = '[q',
+        heads = {
+          {
+            'n',
+            function()
+              quickfix_previous()
+            end,
+          },
+          {
+            'N',
+            function()
+              quickfix_next()
             end,
           },
         },
