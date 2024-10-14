@@ -119,7 +119,7 @@ vim.keymap.set('v', '<space>oo', function()
   -- TODO: support wsl
   local program = 'open'
 
-  vim.fn.system(program .. ' ' .. utils.getVisualSelectionContents())
+  vim.system(program .. ' ' .. utils.getVisualSelectionContents()):wait()
 end, { desc = 'Open in external app' })
 
 -- Quickfix movements

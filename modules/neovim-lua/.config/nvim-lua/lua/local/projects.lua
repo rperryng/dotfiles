@@ -153,7 +153,7 @@ local function job_clone_repo(clone_url, reponame, path)
     lsp_client = { name = 'Git' },
   })
 
-  vim.fn.system('mkdir -p ' .. path)
+  vim.system('mkdir -p ' .. path):wait()
 
   -- local fidget = require('fidget')
   local Job = require('plenary.job')
@@ -335,13 +335,13 @@ vim.keymap.set('n', '<space>cdi', function()
 
         local tab_name = vim.fn.fnamemodify(dir, ':t')
         M.open_project(dir, tab_name)
-      end
+      end,
     },
   })
 end, { desc = 'Fuzzy search working directory' })
 
 vim.keymap.set('n', '<space>cdp', function()
-  local rev_parse = vim.system({'git', 'rev-parse', '--show-toplevel'}):wait()
+  local rev_parse = vim.system({ 'git', 'rev-parse', '--show-toplevel' }):wait()
   assert(rev_parse.code == 0)
   local dir = rev_parse.stdout
   assert(dir ~= nil)
