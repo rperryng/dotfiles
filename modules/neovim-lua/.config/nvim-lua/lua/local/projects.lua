@@ -12,6 +12,9 @@ local ICONS = {
   GIT_WORKTREE = '',
 }
 
+local PROJECT_ROOT_FILES =
+  { '.git', 'Gemfile', 'package.json', 'deno.json', 'deno.jsonc' }
+
 local iconify = function(item, icon)
   return ('%s  %s'):format(icon, item)
 end
@@ -57,7 +60,7 @@ M.find_project_dirs = function()
   return search({
     root_path = os.getenv('HOME') .. '/code',
     max_depth = 2,
-    patterns = { '.git', 'Gemfile', 'package.json' },
+    patterns = PROJECT_ROOT_FILES,
   })
 end
 
@@ -78,7 +81,7 @@ M.find_worktrees_dirs = function()
   return search({
     root_path = os.getenv('HOME') .. '/code-worktrees',
     max_depth = 3,
-    patterns = { '.git', 'Gemfile', 'package.json' },
+    patterns = PROJECT_ROOT_FILES,
   })
 end
 
@@ -345,6 +348,38 @@ vim.keymap.set('n', '<space>cdp', function()
   assert(rev_parse.code == 0)
   local dir = rev_parse.stdout
   assert(dir ~= nil)
+
+  local tab_name = vim.fn.fnamemodify(dir, ':t')
+  vim.cmd('tchdir ' .. dir)
+  vim.cmd('TabooRename ' .. tab_name)
+end, { desc = 'Change working directory to git root' })
+
+vim.keymap.set('n', '<space>cdP', function()
+  local starting_dir = vim.fn.fnamemodify(vim.fn.expand('%'), ':p:h')
+  local project_root = nil
+
+  -- Start searching from the starting directory
+  local dir = starting_dir
+
+  while dir ~= '/' do
+    for _, file in ipairs(PROJECT_ROOT_FILES) do
+      Log('checking for: ' .. dir .. '/' .. file)
+      if vim.fn.glob(dir .. '/' .. file) ~= '' then
+        Log('found root: ' .. dir)
+        project_root = dir
+        break
+      end
+    end
+    if project_root then
+      Log('found root, aborting' .. project_root)
+      break
+    end
+    dir = vim.fn.fnamemodify(dir, ':h')
+  end
+
+  if not project_root then
+    error('Could not determine a project root from ' .. starting_dir)
+  end
 
   local tab_name = vim.fn.fnamemodify(dir, ':t')
   vim.cmd('tchdir ' .. dir)
