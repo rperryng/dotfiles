@@ -32,36 +32,23 @@ n() {
   )
 }
 
-# use as pager
-nman() {
-  if [[ -z $@ ]]; then
-    echo 'usage: nman [man options] [[section] page ...] ...' 1>&2
-    return 1
-  fi
-
-  local tmp_dir
-  tmp_dir=$(mktemp "/tmp/man.$1.tmp.XXXXXXXXXX")
-  man "$@" | cat > "$tmp_dir"
-
-  if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
-    local editor_no_wait
-    editor_no_wait=$(echo "$EDITOR" | sd '(.+) --remote-wait (.+)' '$1 $2')
-    eval $editor_no_wait -cc split "+'setlocal nomodifiable nonumber'" "$tmp_dir"
-  else
-    eval $EDITOR "+'setlocal nomodifiable nonumber'" "$tmp_dir"
-  fi
-}
-
-# Setup $EDITOR / $VISUAL
+# Setup $EDITOR / $VISUAL / $MANPAGER
 if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
-  # Set $EDITOR to the host neovim process if this terminal session was started
-  # from a neovim ':terminal' session.
+  # If running within a neovim `:terminal` process, open things in the
+  # host neovim process rather than a nested neovim session
   export NVIM_LISTEN_ADDRESS=$DOTFILES_NVIM_LISTEN_ADDRESS
+  export MANPAGER="nvr -c 'Man!' -o -"
   export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
   alias nvim="nvr"
 else
   # Otherwise, just point to regular ol' nvim
+  export MANPAGER=nvim
   export VISUAL=nvim
 fi
 
 export EDITOR="$VISUAL"
+
+# `man` will pre-format manpage using `groff`.
+# We want line-wraps to be handled by neovim, so "disable" hard-wraps.
+# see: ':h Man'
+export MANWIDTH=999
