@@ -44,9 +44,11 @@ nman() {
   man "$@" | cat > "$tmp_dir"
 
   if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
-    eval $EDITOR -cc split "+'setlocal nomodifiable'" "$tmp_dir"
+    local editor_no_wait
+    editor_no_wait=$(echo "$EDITOR" | sd '(.+) --remote-wait (.+)' '$1 $2')
+    eval $editor_no_wait -cc split "+'setlocal nomodifiable nonumber'" "$tmp_dir"
   else
-    eval $EDITOR "+'setlocal nomodifiable'" "$tmp_dir"
+    eval $EDITOR "+'setlocal nomodifiable nonumber'" "$tmp_dir"
   fi
 }
 
