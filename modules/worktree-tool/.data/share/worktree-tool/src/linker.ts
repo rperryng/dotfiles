@@ -1,6 +1,6 @@
 import * as log from '@std/log';
 import { existsSync } from '@std/fs';
-import { SEPARATOR } from '@std/path';
+import { join } from '@std/path';
 
 // TODO: colors?
 
@@ -68,8 +68,4 @@ async function linkTarget(
 
     logger.info('Symlink already exists and matches desired source');
   }
-}
-
-function join(...paths: string[]): string {
-  return paths.join(SEPARATOR);
 }

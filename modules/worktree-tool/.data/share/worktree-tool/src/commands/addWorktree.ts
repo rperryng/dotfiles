@@ -7,20 +7,26 @@ const logger = getLogger();
 import { getLogger } from '@std/log';
 import { parseArgs } from '@std/cli';
 import { blue, cyan, gray, magenta, yellow } from '@std/fmt/colors';
-import { forEachRef, Ref } from '../git.ts';
+import { forEachRef, getOwnerRepo, Ref } from '../git.ts';
 import { compareDesc, formatRelative } from 'date-fns';
 import { fzfTable } from '../fzf.ts';
 import { ICONS } from '../icons.ts';
+import { execOutput } from '../exec.ts';
 import { assert } from '@std/assert';
+import { join } from '@std/path';
+
+const HOME = Deno.env.get('XDG_CONFIG_HOME') ||
+  `${Deno.env.get('HOME')}/.config`;
+const WORKTREE_DIR = join(HOME, 'code-worktrees');
 
 interface CliArgs {
-  branch?: string;
+  branchName?: string;
   b?: string;
 }
 
 async function main() {
   const args = parseArgs<CliArgs>(Deno.args);
-  const branch = args.b ?? args.branch;
+  let branchName = args.b ?? args.branchName;
   logger.debug(`args: ${JSON.stringify(args)}`);
 
   const refs: Ref[] = (await forEachRef()).toSorted(refComparator);
@@ -31,6 +37,80 @@ async function main() {
   assert(selection.length === 1, `No ref was selected`);
   const ref = selection[0];
   logger.debug(`selected: ${JSON.stringify(ref, null, 2)}`);
+
+  if (!branchName) {
+    branchName = getBranchName(ref);
+  }
+  logger.debug(`Creating worktree with branch name ${branchName}`);
+
+  const { owner, repo } = await getOwnerRepo();
+  const newWorktreePath = join(WORKTREE_DIR, owner, repo, branchName);
+  await execOutput('git', {
+    args: [
+      'worktree',
+      'add',
+      '-b',
+      branchName,
+      newWorktreePath,
+      ref.friendlyName,
+    ],
+  });
+  logger.info(`New worktree created at ${cyan(newWorktreePath)} (points to ${magenta(ref.friendlyName)})`);
+
+  // todo: prompt `wt-link` if `.worktree-symlinks` file is present
+}
+
+function getBranchName(ref: Ref): string {
+  let suggestedBranchName: string | null = null;
+  logger.info(`new worktree will be based on ${yellow(ref.friendlyName)}`);
+
+  switch (ref.refType) {
+    case 'local_branch': {
+      while (!suggestedBranchName) {
+        suggestedBranchName = prompt(
+          `Enter a new branch name for this working tree to checkout:`,
+        );
+        if (!suggestedBranchName) {
+          logger.error(
+            `Since ${
+              yellow(ref.friendlyName)
+            } is already checked out, creating a new worktree based on this ref must have a different branch name`,
+          );
+        }
+      }
+      break;
+    }
+    case 'remote_branch': {
+      // TODO: prompt again if suggestedBranchName is already checked out
+      suggestedBranchName = ref.friendlyName.match(
+        /^(?:[^/]+)\/(?<remoteBranchName>.+)/,
+      )?.groups?.remoteBranchName ?? null;
+      assert(
+        suggestedBranchName,
+        `Failed to parse branch name from remote ref: ${ref.friendlyName}`,
+      );
+      while (suggestedBranchName === 'HEAD') {
+        logger.error(`${magenta('HEAD')} is not a valid branch name`);
+        suggestedBranchName = prompt(
+          `Enter a new branch name for this working tree to checkout`
+        );
+      }
+
+      break;
+    }
+    case 'tag': {
+      suggestedBranchName = ref.friendlyName;
+      break;
+    }
+    default: {
+      const unknown: never = ref.refType;
+      throw new Error(
+        `Failed to get branch name due to unrecognized ref type: ${unknown}`,
+      );
+    }
+  }
+
+  return suggestedBranchName;
 }
 
 function refComparator(a: Ref, b: Ref): number {

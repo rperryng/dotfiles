@@ -57,7 +57,6 @@ export async function fzfTable<T>(
   extraArgs.push(...[
     `--delimiter`,
     EN_SPACE,
-    '--nth=2..',
     `--with-nth=2..`,
   ]);
   const lines = table.toString().split('\n');
