@@ -1,22 +1,21 @@
 #!/usr/bin/env -S deno run --allow-env --allow-run --allow-read --allow-write
 
-import { setup as setupLogger } from "../log.ts";
+import { setup as setupLogger } from '../log.ts';
 setupLogger();
 
-import * as log from "@std/log";
-import { parseArgs } from "@std/cli";
-import { blue, cyan, gray, italic, magenta, yellow } from "@std/fmt/colors";
-import { forEachRef, getOwnerRepo, Ref } from "../git/index.ts";
-import { compareDesc, format } from "date-fns";
-import { fzfTable } from "../fzf.ts";
-import { ICONS } from "../icons.ts";
-import { execOutput } from "../exec.ts";
-import { assert } from "@std/assert";
-import { join } from "@std/path";
-import { listWorktrees, WORKTREE_DIR } from "../git/index.ts";
-import type { Worktree } from "../git/listWorktrees.ts";
+import * as log from '@std/log';
+import { parseArgs } from '@std/cli';
+import { blue, cyan, gray, italic, magenta, yellow } from '@std/fmt/colors';
+import { forEachRef, getOwnerRepo, Ref } from '../git/index.ts';
+import { compareDesc, format } from 'date-fns';
+import { fzfTable } from '../fzf.ts';
+import { ICONS } from '../icons.ts';
+import { execOutput } from '../exec.ts';
+import { assert } from '@std/assert';
+import { join } from '@std/path';
+import { WORKTREE_DIR } from '../git/index.ts';
 
-const ELLIPSIS = "…";
+const ELLIPSIS = '…';
 
 interface CliArgs {
   branchName?: string;
@@ -30,8 +29,8 @@ async function main() {
 
   const refs: Ref[] = (await forEachRef()).toSorted(refComparator);
   const selection = await fzfTable(refs, {
-    extraArgs: ["--ansi"],
-    header: ["", "Branch", "Author", "Email", "Message", "When"],
+    extraArgs: ['--ansi'],
+    header: ['', 'Branch', 'Author', 'Email', 'Message', 'When'],
     serializeToRow,
   });
   assert(selection.length === 1, `No ref was selected`);
@@ -39,41 +38,39 @@ async function main() {
   log.debug(`selected: ${JSON.stringify(ref, null, 2)}`);
 
   if (!branchName) {
-    const worktrees = await listWorktrees();
-    branchName = getBranchName(ref, worktrees, refs);
+    branchName = getBranchName(ref, refs);
   }
   log.debug(`Creating worktree with branch name ${branchName}`);
 
   const { owner, repo } = await getOwnerRepo();
   const newWorktreePath = join(WORKTREE_DIR, owner, repo, branchName);
-  await execOutput("git", {
+  await execOutput('git', {
     args: [
-      "worktree",
-      "add",
-      "-b",
+      'worktree',
+      'add',
+      '-b',
       branchName,
       newWorktreePath,
       ref.friendlyName,
     ],
   });
   log.info(
-    `New worktree created at ${cyan(newWorktreePath)} (points to ${magenta(
-      ref.friendlyName,
-    )})`,
+    `New worktree created at ${cyan(newWorktreePath)} (points to ${
+      magenta(
+        ref.friendlyName,
+      )
+    })`,
   );
-
-  // todo: prompt `wt-link` if `.worktree-symlinks` file is present
 }
 
 function getBranchName(
   ref: Ref,
-  worktrees: Worktree[],
   existingRefs: Ref[],
 ): string {
   let suggestedBranchName: string | null = null;
   log.info(`new worktree will be based on ${magenta(ref.friendlyName)}`);
 
-  if (ref.refType === "remote_branch") {
+  if (ref.refType === 'remote_branch') {
     suggestedBranchName =
       ref.friendlyName.match(/^(?:[^/]+)\/(?<remoteBranchName>.+)/)?.groups
         ?.remoteBranchName ?? null;
@@ -88,7 +85,11 @@ function getBranchName(
     if (!suggestedBranchAlreadyCheckedOut) {
       return suggestedBranchName;
     } else {
-      log.error(`the branch ${magenta(suggestedBranchName)} is already checked out somewhere else`);
+      log.error(
+        `the branch ${
+          magenta(suggestedBranchName)
+        } is already checked out somewhere else`,
+      );
       suggestedBranchName = null;
     }
   }
@@ -99,9 +100,11 @@ function getBranchName(
     );
     if (!suggestedBranchName) {
       log.error(
-        `Since ${yellow(
-          ref.friendlyName,
-        )} is already checked out, creating a new worktree based on this ref must have a different branch name`,
+        `Since ${
+          yellow(
+            ref.friendlyName,
+          )
+        } is already checked out, creating a new worktree based on this ref must have a different branch name`,
       );
       continue;
     }
@@ -110,7 +113,11 @@ function getBranchName(
       (r) => r.refName === `refs/heads/${suggestedBranchName}`,
     );
     if (branchAlreadyCheckedOut) {
-      log.error(`the branch ${magenta(suggestedBranchName)} is already checked out somewhere else`);
+      log.error(
+        `the branch ${
+          magenta(suggestedBranchName)
+        } is already checked out somewhere else`,
+      );
       suggestedBranchName = null;
       continue;
     }
@@ -126,9 +133,9 @@ function refComparator(a: Ref, b: Ref): number {
     return 1;
   }
 
-  if (a.refType === "local_branch" && b.refType === "remote_branch") {
+  if (a.refType === 'local_branch' && b.refType === 'remote_branch') {
     return -1;
-  } else if (a.refType === "remote_branch" && b.refType === "local_branch") {
+  } else if (a.refType === 'remote_branch' && b.refType === 'local_branch') {
     return 1;
   }
 
@@ -138,15 +145,15 @@ function refComparator(a: Ref, b: Ref): number {
 function serializeToRow(ref: Ref): string[] {
   let icon;
   switch (ref.refType) {
-    case "local_branch": {
+    case 'local_branch': {
       icon = blue(ICONS.DIR);
       break;
     }
-    case "remote_branch": {
+    case 'remote_branch': {
       icon = yellow(ICONS.GITHUB);
       break;
     }
-    case "tag": {
+    case 'tag': {
       icon = magenta(ICONS.TAG);
       break;
     }
@@ -169,7 +176,7 @@ function serializeToRow(ref: Ref): string[] {
     blue(ref.author),
     `(${cyan(ref.email)})`,
     gray(truncateString(ref.message)),
-    italic(gray(format(ref.committerDate, "yyyy-MM-dd"))),
+    italic(gray(format(ref.committerDate, 'yyyy-MM-dd'))),
   ];
 }
 

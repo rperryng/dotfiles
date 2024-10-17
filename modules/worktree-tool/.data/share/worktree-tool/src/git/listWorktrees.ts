@@ -4,7 +4,7 @@ import { join } from '@std/path';
 import { execOutput } from '../exec.ts';
 
 const HOME = Deno.env.get('HOME');
-assert(HOME)
+assert(HOME);
 export const WORKTREE_DIR = join(HOME, 'code-worktrees');
 
 export interface Worktree {
@@ -47,7 +47,7 @@ export async function listWorktrees(): Promise<Worktree[]> {
     const info = await Deno.stat(dotGitPath);
     const type = info.isDirectory ? 'clone' : 'worktree';
 
-    const friendlyName = path.replace(WORKTREE_DIR, '')
+    const friendlyName = path.replace(WORKTREE_DIR, '');
 
     worktrees.push({
       path,

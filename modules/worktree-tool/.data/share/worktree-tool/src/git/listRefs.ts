@@ -92,7 +92,8 @@ export async function forEachRef(options?: {
   const refs: Ref[] = lines
     .filter((line) => {
       // TODO Make this smarter
-      return !line.includes('refs/remotes/fork') && !line.includes('refs/stash');
+      return !line.includes('refs/remotes/fork') &&
+        !line.includes('refs/stash');
     })
     .map(parseRef);
   return refs;

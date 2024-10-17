@@ -14,15 +14,15 @@ export interface OwnerRepo {
 
 export async function getOwnerRepo(): Promise<OwnerRepo> {
   const remote = await getRemote();
-  const { owner, repo } = remote.match(/git@github\.com:(?<owner>[\w\-_]+)\/(?<repo>[\w\-_]+)\.git/)
-    ?.groups ?? {};
+  const { owner, repo } =
+    remote.match(/git@github\.com:(?<owner>[\w\-_]+)\/(?<repo>[\w\-_]+)\.git/)
+      ?.groups ?? {};
   assert(
     owner && repo,
-    `Failed to parse owner and repo from remote url: ${remote}`
+    `Failed to parse owner and repo from remote url: ${remote}`,
   );
   return {
     owner,
     repo,
   };
 }
-

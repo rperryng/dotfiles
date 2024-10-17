@@ -1,8 +1,8 @@
-import { assert } from "@std/assert";
-import { Table } from "@cliffy/table";
+import { assert } from '@std/assert';
+import { Table } from '@cliffy/table';
 
 // Special invisible unicode character to use as field delimiter with fzf
-const EN_SPACE = "\u2002";
+const EN_SPACE = '\u2002';
 
 /**
  * Common options for fzf-related functions
@@ -23,22 +23,22 @@ export async function fzfLines(
 ): Promise<string[]> {
   assert(input?.length > 0, `fzfExec input must be a non-empty array`);
 
-  const command = new Deno.Command("fzf", {
-    args: ["--reverse", ...(opts?.extraArgs || [])],
-    stdin: "piped",
-    stdout: "piped",
+  const command = new Deno.Command('fzf', {
+    args: ['--reverse', ...(opts?.extraArgs || [])],
+    stdin: 'piped',
+    stdout: 'piped',
   });
 
   const process = command.spawn();
   const writer = process.stdin.getWriter();
-  writer.write(new TextEncoder().encode(input.join("\n")));
+  writer.write(new TextEncoder().encode(input.join('\n')));
   writer.releaseLock();
   await process.stdin.close();
   const result = await process.output();
   return new TextDecoder()
     .decode(result.stdout)
-    .split("\n")
-    .filter((entry) => entry !== "");
+    .split('\n')
+    .filter((entry) => entry !== '');
 }
 
 /**
@@ -67,12 +67,12 @@ export async function fzfTable<T>(
     [rowIndex.toString(), ...row].map((value, index) => {
       // delimit fields with special space token
       return index === 0 ? value : `${EN_SPACE}${value}`;
-    }),
+    })
   );
 
   const table = new Table(...rows);
   if (opts.header) {
-    table.header(["index", ...opts.header.map((m) => `${EN_SPACE}${m}`)]);
+    table.header(['index', ...opts.header.map((m) => `${EN_SPACE}${m}`)]);
   }
 
   const extraArgs = opts?.extraArgs || [];
@@ -81,10 +81,10 @@ export async function fzfTable<T>(
       `--delimiter`,
       EN_SPACE,
       `--with-nth=2..`,
-      ...(opts?.header ? ["--header-lines=1"] : []),
+      ...(opts?.header ? ['--header-lines=1'] : []),
     ],
   );
-  const lines = table.toString().split("\n");
+  const lines = table.toString().split('\n');
   const selectedLines = await fzfLines(lines, { extraArgs });
 
   const selectedEntries: T[] = selectedLines.map((line) => {

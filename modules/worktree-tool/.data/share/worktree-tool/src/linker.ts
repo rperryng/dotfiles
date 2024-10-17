@@ -26,8 +26,8 @@ async function linkTarget(
   const friendlyName = targetDirectory.replace(WORKTREE_DIR, '');
   log.info(`${colors.cyan(friendlyName)}`);
   const info = (s: string) => {
-    log.info(indent(s))
-  }
+    log.info(indent(s));
+  };
 
   for (const path of source.filepaths) {
     const desiredSource = join(source.workingDirectory, path);
@@ -42,7 +42,9 @@ async function linkTarget(
     const fileInfo = await Deno.lstat(fullTargetPath);
     if (!fileInfo.isSymlink) {
       const shouldDeleteFile = confirm(
-        `${colors.magenta(path)} already exists but is not a symlink...\nDelete file and recreate symlink?`,
+        `${
+          colors.magenta(path)
+        } already exists but is not a symlink...\nDelete file and recreate symlink?`,
       );
       if (shouldDeleteFile) {
         await Deno.remove(fullTargetPath);
@@ -56,7 +58,11 @@ async function linkTarget(
     const actualSource = await Deno.readLink(fullTargetPath);
     if (actualSource !== desiredSource) {
       const shouldDeleteFile = confirm(
-        `${colors.magenta(path)} already exists but points to ${colors.magenta(actualSource)} instead of ${colors.magenta(desiredSource)}\nDelete file and recreate symlink?`,
+        `${colors.magenta(path)} already exists but points to ${
+          colors.magenta(actualSource)
+        } instead of ${
+          colors.magenta(desiredSource)
+        }\nDelete file and recreate symlink?`,
       );
       if (shouldDeleteFile) {
         await Deno.remove(fullTargetPath);
