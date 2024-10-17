@@ -42,7 +42,7 @@ if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
   alias nvim="nvr"
 else
   # Otherwise, just point to regular ol' nvim
-  export MANPAGER=nvim
+  export MANPAGER='nvim +Man!'
   export VISUAL=nvim
 fi
 

@@ -95,14 +95,13 @@ _rpn_git_local_refs() {
   git for-each-ref --format='%(refname)' 'refs/heads/'
 }
 
-# TODO: support http clone urls
 _rpn_git_owner() {
-  git config --get remote.origin.url \
+  git ls-remote --get-url origin \
     | rg --only-matching ':([\w\-_\.]+)/([\w\-_\.]+)\.git' --replace '$1'
 }
 
 _rpn_git_repo() {
-  git config --get remote.origin.url \
+  git ls-remote --get-url origin \
     | rg --only-matching ':([\w\-_\.]+)/([\w\-_\.]+)\.git' --replace '$2'
 }
 
@@ -131,12 +130,10 @@ wtan() {
   # fi
 
   local remote_url
-  remote_url=$(git config --get remote.origin.url)
+  remote_url=$(git ls-remote --get-url origin)
   worktree_dir="${WORKTREE_DIR}/$(_rpn_git_owner)/$(_rpn_git_repo)/${branch_name}"
   git worktree add -b "$branch_name" "$worktree_dir" "$commit_ish"
 }
-
-# TODO: Add util to symlink untracked / gitignored files chosen with fzf
 
 # git worktree add "--remote" (not a real flag, but the mnemonic helps me)
 wtar() {
@@ -164,7 +161,8 @@ wtar() {
   commit_ish=$(echo "$source_ref" | rg --only-matching 'refs/remotes/(origin/.+)' --replace '$1')
 
   # Parse owner / repo from origin url
-  local remote_url=$(git config --get remote.origin.url)
+  local remote_url
+  remote_url=$(git ls-remote --get-url origin)
   owner=$(echo "$remote_url" | rg --only-matching ':(\w+)/(\w+)\.git' --replace '$1')
   reponame=$(echo "$remote_url" | rg --only-matching ':(\w+)/(\w+)\.git' --replace '$2')
   worktree_dir="${WORKTREE_DIR}/${owner}/${reponame}/${branch_name}"
@@ -183,5 +181,5 @@ wtar() {
 git_convert_wt() {
   git checkout -b rpn-worktree-base
   git checkout --detach
-  git checkout $(git commit-tree $(git hash-object -t tree /dev/null) < /dev/null)
+  git checkout "$(git commit-tree "$(git hash-object -t tree /dev/null)" < /dev/null)"
 }

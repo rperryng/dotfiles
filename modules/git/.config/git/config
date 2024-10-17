@@ -24,6 +24,9 @@
 [branch]
   sort = -committerdate
 
+[url "git@github.com:"]
+  insteadOf = https://github.com/
+
 ; TODO: can this be enabled only if the git version is recent enough?
 ; [merge]
 ;   conflictstyle = zdiff3
