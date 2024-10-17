@@ -1,6 +1,7 @@
 {
   "imports": {
     "@cliffy/table": "jsr:@cliffy/table@^1.0.0-rc.7",
+    "@es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.25.2",
     "@std/assert": "jsr:@std/assert@^1.0.6",
     "@std/cli": "jsr:@std/cli@^1.0.6",
     "@std/fmt": "jsr:@std/fmt@^1.0.2",

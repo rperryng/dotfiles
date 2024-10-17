@@ -1,11 +1,16 @@
 import { assert } from '@std/assert';
 import { existsSync } from '@std/fs';
 import { join } from '@std/path';
-import { execOutput } from './exec.ts';
+import { execOutput } from '../exec.ts';
+
+const HOME = Deno.env.get('HOME');
+assert(HOME)
+export const WORKTREE_DIR = join(HOME, 'code-worktrees');
 
 export interface Worktree {
   path: string;
   head: string;
+  friendlyName: string;
   branch: string | undefined;
   type: 'clone' | 'worktree';
 }
@@ -42,8 +47,11 @@ export async function listWorktrees(): Promise<Worktree[]> {
     const info = await Deno.stat(dotGitPath);
     const type = info.isDirectory ? 'clone' : 'worktree';
 
+    const friendlyName = path.replace(WORKTREE_DIR, '')
+
     worktrees.push({
       path,
+      friendlyName,
       head,
       branch,
       type,

@@ -2,6 +2,7 @@
   "version": "4",
   "specifiers": {
     "jsr:@cliffy/table@^1.0.0-rc.7": "1.0.0-rc.7",
+    "jsr:@es-toolkit/es-toolkit@^1.25.2": "1.25.2",
     "jsr:@std/assert@^1.0.6": "1.0.6",
     "jsr:@std/cli@^1.0.6": "1.0.6",
     "jsr:@std/fmt@^1.0.2": "1.0.2",
@@ -21,6 +22,9 @@
       "dependencies": [
         "jsr:@std/fmt@~1.0.2"
       ]
+    },
+    "@es-toolkit/es-toolkit@1.25.2": {
+      "integrity": "90f17bcdad02f6dc16c705f65ddb83a2fe439045727e108b5075744ae8f8209e"
     },
     "@std/assert@1.0.6": {
       "integrity": "1904c05806a25d94fe791d6d883b685c9e2dcd60e4f9fc30f4fc5cf010c72207",
@@ -78,6 +82,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@cliffy/table@^1.0.0-rc.7",
+      "jsr:@es-toolkit/es-toolkit@^1.25.2",
       "jsr:@std/assert@^1.0.6",
       "jsr:@std/cli@^1.0.6",
       "jsr:@std/fmt@^1.0.2",

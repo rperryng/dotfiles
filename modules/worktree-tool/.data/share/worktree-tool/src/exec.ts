@@ -1,4 +1,6 @@
 const { Command } = Deno;
+import * as _ from '@es-toolkit';
+import { indent } from './string-utils.ts';
 
 type CommandOptions = ConstructorParameters<typeof Command>[1];
 
@@ -14,16 +16,22 @@ export async function execOutput(
 
   const command = new Command(cmd, cmdOptions);
   const result = await command.output();
+  const stdout = new TextDecoder().decode(result.stdout).trim();
 
   if (!result.success) {
-    console.error();
-    throw new Error([
-      `Failed to run command: ${[cmd, ...(cmdOptions?.args || [])].join(' ')}`,
-      new TextDecoder().decode(result.stderr),
-    ].join('\n'));
+    const stderr = new TextDecoder().decode(result.stderr).trim();
+    const fullCommand = [cmd, ...(cmdOptions?.args || [])].join(' ');
+    const errorMessage = [
+      `Failed to run command: ${fullCommand}`,
+      `stdout:`,
+      indent(stdout),
+      `stderr:`,
+      indent(stderr),
+    ].join('\n');
+    throw new Error(errorMessage);
   }
 
-  return new TextDecoder().decode(result.stdout);
+  return (new TextDecoder().decode(result.stdout)).trim();
 }
 
 export async function execLines(

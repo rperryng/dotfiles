@@ -1,23 +1,22 @@
 #!/usr/bin/env -S deno run --allow-env --allow-run --allow-read --allow-write
 
-import * as log from '../log.ts';
-log.setup();
-const logger = getLogger();
+import { setup as setupLogger } from '../log.ts';
+setupLogger();
 
-import { getLogger } from '@std/log';
+import * as log from '@std/log';
 import { parseArgs } from '@std/cli';
-import { blue, cyan, gray, magenta, yellow } from '@std/fmt/colors';
+import { blue, cyan, gray, italic, magenta, yellow } from '@std/fmt/colors';
 import { forEachRef, getOwnerRepo, Ref } from '../git.ts';
-import { compareDesc, formatRelative } from 'date-fns';
+import { compareDesc, format } from 'date-fns';
 import { fzfTable } from '../fzf.ts';
 import { ICONS } from '../icons.ts';
 import { execOutput } from '../exec.ts';
 import { assert } from '@std/assert';
 import { join } from '@std/path';
+import { listWorktrees, WORKTREE_DIR } from '../git/index.ts';
+import type { Worktree } from '../git/listWorktrees.ts';
 
-const HOME = Deno.env.get('XDG_CONFIG_HOME') ||
-  `${Deno.env.get('HOME')}/.config`;
-const WORKTREE_DIR = join(HOME, 'code-worktrees');
+const ELLIPSIS = '…';
 
 interface CliArgs {
   branchName?: string;
@@ -27,21 +26,23 @@ interface CliArgs {
 async function main() {
   const args = parseArgs<CliArgs>(Deno.args);
   let branchName = args.b ?? args.branchName;
-  logger.debug(`args: ${JSON.stringify(args)}`);
+  log.debug(`args: ${JSON.stringify(args)}`);
 
   const refs: Ref[] = (await forEachRef()).toSorted(refComparator);
   const selection = await fzfTable(refs, {
     extraArgs: ['--ansi'],
+    header: ['', 'Branch', 'Author', 'Email', 'Message', 'When'],
     serializeToRow,
   });
   assert(selection.length === 1, `No ref was selected`);
   const ref = selection[0];
-  logger.debug(`selected: ${JSON.stringify(ref, null, 2)}`);
+  log.debug(`selected: ${JSON.stringify(ref, null, 2)}`);
 
   if (!branchName) {
-    branchName = getBranchName(ref);
+    const worktrees = await listWorktrees();
+    branchName = getBranchName(ref, worktrees);
   }
-  logger.debug(`Creating worktree with branch name ${branchName}`);
+  log.debug(`Creating worktree with branch name ${branchName}`);
 
   const { owner, repo } = await getOwnerRepo();
   const newWorktreePath = join(WORKTREE_DIR, owner, repo, branchName);
@@ -55,59 +56,70 @@ async function main() {
       ref.friendlyName,
     ],
   });
-  logger.info(`New worktree created at ${cyan(newWorktreePath)} (points to ${magenta(ref.friendlyName)})`);
+  log.info(
+    `New worktree created at ${cyan(newWorktreePath)} (points to ${
+      magenta(ref.friendlyName)
+    })`,
+  );
 
   // todo: prompt `wt-link` if `.worktree-symlinks` file is present
 }
 
-function getBranchName(ref: Ref): string {
+function getBranchName(ref: Ref, worktrees: Worktree[]): string {
   let suggestedBranchName: string | null = null;
-  logger.info(`new worktree will be based on ${yellow(ref.friendlyName)}`);
+  log.info(`new worktree will be based on ${yellow(ref.friendlyName)}`);
 
-  switch (ref.refType) {
-    case 'local_branch': {
-      while (!suggestedBranchName) {
-        suggestedBranchName = prompt(
+  while (suggestedBranchName === null) {
+    let newBranchName: string | null = null;
+
+    switch (ref.refType) {
+      case 'local_branch': {
+        newBranchName = prompt(
           `Enter a new branch name for this working tree to checkout:`,
         );
-        if (!suggestedBranchName) {
-          logger.error(
+        if (!newBranchName) {
+          log.error(
             `Since ${
               yellow(ref.friendlyName)
             } is already checked out, creating a new worktree based on this ref must have a different branch name`,
           );
         }
+        break;
       }
-      break;
-    }
-    case 'remote_branch': {
-      // TODO: prompt again if suggestedBranchName is already checked out
-      suggestedBranchName = ref.friendlyName.match(
-        /^(?:[^/]+)\/(?<remoteBranchName>.+)/,
-      )?.groups?.remoteBranchName ?? null;
-      assert(
-        suggestedBranchName,
-        `Failed to parse branch name from remote ref: ${ref.friendlyName}`,
-      );
-      while (suggestedBranchName === 'HEAD') {
-        logger.error(`${magenta('HEAD')} is not a valid branch name`);
-        suggestedBranchName = prompt(
-          `Enter a new branch name for this working tree to checkout`
+      case 'remote_branch': {
+        suggestedBranchName = ref.friendlyName.match(
+          /^(?:[^/]+)\/(?<remoteBranchName>.+)/,
+        )?.groups?.remoteBranchName ?? null;
+        assert(
+          suggestedBranchName,
+          `Failed to parse branch name from remote ref: ${ref.friendlyName}`,
+        );
+        break;
+      }
+      case 'tag': {
+        suggestedBranchName = ref.friendlyName;
+        break;
+      }
+      default: {
+        const unknown: never = ref.refType;
+        throw new Error(
+          `Failed to get branch name due to unrecognized ref type: ${unknown}`,
         );
       }
+    }
 
-      break;
+    if (!newBranchName) {
+      log.debug(`No branch name provided, prompting again`);
+      continue;
     }
-    case 'tag': {
-      suggestedBranchName = ref.friendlyName;
-      break;
+
+    const existingWorktreeForBranch = worktrees.find((w) => w.branch === newBranchName);
+    if (newBranchName && existingWorktreeForBranch) {
+      log.error(`${yellow(newBranchName)} is already checked out at ${magenta(existingWorktreeForBranch.friendlyName)}`);
+      continue;
     }
-    default: {
-      const unknown: never = ref.refType;
-      throw new Error(
-        `Failed to get branch name due to unrecognized ref type: ${unknown}`,
-      );
-    }
+
+    suggestedBranchName = newBranchName;
   }
 
   return suggestedBranchName;
@@ -150,17 +162,25 @@ function serializeToRow(ref: Ref): string[] {
     }
   }
 
+  function truncateString(s: string, length = 60): string {
+    if (s.length < length) {
+      return s;
+    }
+    return `${s.slice(0, length - 1)}${ELLIPSIS}`;
+  }
+
   return [
     icon,
-    ref.friendlyName,
+    truncateString(ref.friendlyName, 50),
     blue(ref.author),
     `(${cyan(ref.email)})`,
-    gray(formatRelative(ref.committerDate, new Date())),
+    gray(truncateString(ref.message)),
+    italic(gray(format(ref.committerDate, 'yyyy-MM-dd'))),
   ];
 }
 
 // TODO: single entrypoint?
 main().catch((error) => {
-  logger.critical(error);
+  log.error(error);
   Deno.exit(1);
 });

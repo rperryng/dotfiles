@@ -10,7 +10,7 @@ import { getLogger } from '@std/log';
 import { execLines } from './exec.ts';
 import { fzfLines } from './fzf.ts';
 import { linkTargets } from './linker.ts';
-import { listWorktrees } from './listWorktrees.ts';
+import { listWorktrees } from './git/index.ts';
 
 const logger = getLogger();
 
