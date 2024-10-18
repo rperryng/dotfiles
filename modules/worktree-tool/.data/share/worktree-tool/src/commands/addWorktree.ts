@@ -14,8 +14,7 @@ import { execOutput } from '../exec.ts';
 import { assert } from '@std/assert';
 import { join } from '@std/path';
 import { WORKTREE_DIR } from '../git/index.ts';
-
-const ELLIPSIS = '…';
+import { truncateString } from '../string-utils.ts';
 
 interface CliArgs {
   branchName?: string;
@@ -38,9 +37,12 @@ async function main() {
   log.debug(`selected: ${JSON.stringify(ref, null, 2)}`);
 
   if (!branchName) {
-    branchName = getBranchName(ref, refs);
+    branchName = getBranchName({
+      ref,
+      existingRefs: refs,
+    });
   }
-  log.debug(`Creating worktree with branch name ${branchName}`);
+  log.debug(`Creating worktree with branch name ${magenta(branchName)}`);
 
   const { owner, repo } = await getOwnerRepo();
   const newWorktreePath = join(WORKTREE_DIR, owner, repo, branchName);
@@ -63,45 +65,46 @@ async function main() {
   );
 }
 
-function getBranchName(
-  ref: Ref,
-  existingRefs: Ref[],
-): string {
-  let suggestedBranchName: string | null = null;
-  log.info(`new worktree will be based on ${magenta(ref.friendlyName)}`);
+function getBranchName(opts: {
+  branchName?: string;
+  ref: Ref;
+  existingRefs: Ref[];
+}): string {
+  const { ref, existingRefs } = opts;
+  let branchName: string | undefined | null = opts?.branchName;
+  const branchCheckedOut = (branch: string): boolean => {
+    return existingRefs.some((r) => r.refName === `refs/heads/${branch}`);
+  };
 
-  if (ref.refType === 'remote_branch') {
-    suggestedBranchName =
-      ref.friendlyName.match(/^(?:[^/]+)\/(?<remoteBranchName>.+)/)?.groups
-        ?.remoteBranchName ?? null;
+  if (!branchName && ref.refType === 'remote_branch') {
+    branchName = ref.friendlyName.match(/^(?:[^/]+)\/(?<remoteBranchName>.+)/)
+      ?.groups
+      ?.remoteBranchName;
     assert(
-      suggestedBranchName,
+      branchName,
       `Failed to parse branch name from remote ref: ${ref.friendlyName}`,
     );
 
-    const suggestedBranchAlreadyCheckedOut = existingRefs.some(
-      (r) => r.refName === `refs/heads/${suggestedBranchName}`,
-    );
-    if (!suggestedBranchAlreadyCheckedOut) {
-      return suggestedBranchName;
+    if (!branchCheckedOut(branchName)) {
+      return branchName;
     } else {
       log.error(
         `the branch ${
-          magenta(suggestedBranchName)
+          magenta(branchName)
         } is already checked out somewhere else`,
       );
-      suggestedBranchName = null;
+      branchName = null;
     }
   }
 
-  while (suggestedBranchName === null) {
-    suggestedBranchName = prompt(
+  while (!branchName) {
+    branchName = prompt(
       `Enter a new branch name for this working tree to checkout:`,
     );
-    if (!suggestedBranchName) {
+    if (!branchName) {
       log.error(
         `Since ${
-          yellow(
+          magenta(
             ref.friendlyName,
           )
         } is already checked out, creating a new worktree based on this ref must have a different branch name`,
@@ -109,21 +112,19 @@ function getBranchName(
       continue;
     }
 
-    const branchAlreadyCheckedOut = existingRefs.some(
-      (r) => r.refName === `refs/heads/${suggestedBranchName}`,
-    );
-    if (branchAlreadyCheckedOut) {
+    if (!branchCheckedOut(branchName)) {
+      return branchName;
+    } else {
       log.error(
         `the branch ${
-          magenta(suggestedBranchName)
+          magenta(branchName)
         } is already checked out somewhere else`,
       );
-      suggestedBranchName = null;
-      continue;
+      branchName = undefined;
     }
   }
 
-  return suggestedBranchName;
+  return branchName;
 }
 
 function refComparator(a: Ref, b: Ref): number {
@@ -163,16 +164,9 @@ function serializeToRow(ref: Ref): string[] {
     }
   }
 
-  function truncateString(s: string, length = 60): string {
-    if (s.length < length) {
-      return s;
-    }
-    return `${s.slice(0, length - 1)}${ELLIPSIS}`;
-  }
-
   return [
     icon,
-    truncateString(ref.friendlyName, 50),
+    truncateString(ref.friendlyName, { length: 50 }),
     blue(ref.author),
     `(${cyan(ref.email)})`,
     gray(truncateString(ref.message)),

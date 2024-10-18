@@ -1,4 +1,4 @@
-import { execLines, execOutput } from '../exec.ts';
+import { execLines } from '../exec.ts';
 import { assert } from '@std/assert';
 import { z } from 'zod';
 
