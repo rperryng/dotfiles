@@ -7,11 +7,11 @@ install_jj() {
     return 0;
   fi
 
-  if ! cargo_binstall_available; then
+  if [[ ! cargo_binstall_available ]]; then
     return 1;
   fi
 
-  cargo binstall --strategies crate-meta-data jj-cli
+  cargo binstall --no-confirm --strategies crate-meta-data jj-cli
 }
 
 install_jj

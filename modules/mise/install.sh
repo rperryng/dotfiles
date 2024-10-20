@@ -7,9 +7,8 @@ install_mise() {
     return 0
   fi
 
-  if ! cargo_binstall_available; then
-    echo "cargo binstall not available; "
-    return 1
+  if [[ ! cargo_binstall_available ]]; then
+    return 1;
   fi
 
   # prerequisites for ruby-build
@@ -17,7 +16,7 @@ install_mise() {
     sudo apt install -y autoconf patch build-essential rustc libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
   fi
 
-  cargo binstall -y mise
+  cargo binstall --no-confirm mise
   mise --yes install
   . "${DOTFILES_DIR}/modules/mise/.config/shell.d/mise.sh"
 }
