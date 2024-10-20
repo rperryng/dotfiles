@@ -55,7 +55,9 @@ class StderrHandler extends log.BaseHandler {
   }
 }
 
-export function setup() {
+export function setup(opts?: {
+  debug: boolean,
+}) {
   log.setup({
     handlers: {
       stderr: new StderrHandler(levelName),

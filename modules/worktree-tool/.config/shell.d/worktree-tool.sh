@@ -13,3 +13,5 @@ wt-stow() {
 # }
 
 alias wt-add="${DOTFILES_DIR}/modules/worktree-tool/.data/share/worktree-tool/src/commands/addWorktree.ts"
+
+alias wtn="${DOTFILES_DIR}/modules/worktree-tool/.data/share/worktree-tool/src/commands/main.ts"
