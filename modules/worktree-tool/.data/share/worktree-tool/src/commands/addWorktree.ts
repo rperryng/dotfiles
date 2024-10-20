@@ -66,65 +66,74 @@ async function main() {
 }
 
 function getBranchName(opts: {
-  branchName?: string;
+  branch?: string;
   ref: Ref;
   existingRefs: Ref[];
 }): string {
   const { ref, existingRefs } = opts;
-  let branchName: string | undefined | null = opts?.branchName;
-  const branchCheckedOut = (branch: string): boolean => {
-    return existingRefs.some((r) => r.refName === `refs/heads/${branch}`);
-  };
+  const branch: string | undefined | null = opts?.branch;
 
-  if (!branchName && ref.refType === 'remote_branch') {
-    branchName = ref.friendlyName.match(/^(?:[^/]+)\/(?<remoteBranchName>.+)/)
+  function validateBranchName(
+    b: string | undefined | null,
+    opts?: { silent?: boolean },
+  ): boolean {
+    const silent = opts?.silent ?? true;
+    const elog = (message: string) => {
+      if (silent) {
+        return;
+      }
+      log.error(message);
+    };
+
+    if (!b) {
+      elog('branch name can not be empty');
+      return false;
+    }
+
+    if (b.toUpperCase() === 'HEAD') {
+      elog(`HEAD is not a valid branch name`);
+      return false;
+    }
+
+    const branchCheckedOut = existingRefs.some((r) =>
+      r.refName === `refs/heads/${b}`
+    );
+    if (branchCheckedOut) {
+      elog(`${yellow(b)} already checked out`);
+      return false;
+    }
+
+    return true;
+  }
+
+  if (branch && validateBranchName(branch, { silent: true })) {
+    return branch;
+  }
+
+  if (!branch && ref.refType === 'remote_branch') {
+    const b = ref.friendlyName.match(/^(?:[^/]+)\/(?<remoteBranchName>.+)/)
       ?.groups
       ?.remoteBranchName;
     assert(
-      branchName,
+      b,
       `Failed to parse branch name from remote ref: ${ref.friendlyName}`,
     );
 
-    if (!branchCheckedOut(branchName)) {
-      return branchName;
-    } else {
-      log.error(
-        `the branch ${
-          magenta(branchName)
-        } is already checked out somewhere else`,
-      );
-      branchName = null;
+    if (validateBranchName(b)) {
+      return b;
     }
   }
 
-  while (!branchName) {
-    branchName = prompt(
+  while (true) {
+    const b = prompt(
       `Enter a new branch name for this working tree to checkout:`,
     );
-    if (!branchName) {
-      log.error(
-        `Since ${
-          magenta(
-            ref.friendlyName,
-          )
-        } is already checked out, creating a new worktree based on this ref must have a different branch name`,
-      );
-      continue;
-    }
 
-    if (!branchCheckedOut(branchName)) {
-      return branchName;
-    } else {
-      log.error(
-        `the branch ${
-          magenta(branchName)
-        } is already checked out somewhere else`,
-      );
-      branchName = undefined;
+    if (validateBranchName(b)) {
+      assert(b);
+      return b;
     }
   }
-
-  return branchName;
 }
 
 function refComparator(a: Ref, b: Ref): number {
