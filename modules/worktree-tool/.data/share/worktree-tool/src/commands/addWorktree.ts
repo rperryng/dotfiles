@@ -1,30 +1,28 @@
-#!/usr/bin/env -S deno run --allow-env --allow-run --allow-read --allow-write
-
-import { setup as setupLogger } from '../log.ts';
-setupLogger();
-
 import * as log from '@std/log';
-import { parseArgs } from '@std/cli';
 import { blue, cyan, gray, italic, magenta, yellow } from '@std/fmt/colors';
-import { forEachRef, getOwnerRepo, Ref } from '../git/index.ts';
-import { compareDesc, format } from 'date-fns';
-import { fzfTable } from '../fzf.ts';
+import { Command } from '@cliffy/command';
 import { ICONS } from '../icons.ts';
-import { execOutput } from '../exec.ts';
-import { assert } from '@std/assert';
-import { join } from '@std/path';
 import { WORKTREE_DIR } from '../git/index.ts';
+import { assert } from '@std/assert';
+import { compareDesc, format } from 'date-fns';
+import { execOutput } from '../exec.ts';
+import { forEachRef, getOwnerRepo, Ref } from '../git/index.ts';
+import { fzfTable } from '../fzf.ts';
+import { join } from '@std/path';
 import { truncateString } from '../string-utils.ts';
 
-interface CliArgs {
-  branchName?: string;
-  b?: string;
-}
+export const addWorktreeCommand = new Command()
+  .description('Add a new worktree')
+  .option('-b, --branch <val:string>', 'Specify the new branch name to checkout')
+  .action((options) => {
+    log.debug(`add options: ${JSON.stringify(options)}`);
+    main({ branchName: options.branch })
+  });
 
-async function main() {
-  const args = parseArgs<CliArgs>(Deno.args);
-  let branchName = args.b ?? args.branchName;
-  log.debug(`args: ${JSON.stringify(args)}`);
+async function main(opts: {
+  branchName?: string;
+}) {
+  let branchName = opts?.branchName;
 
   const refs: Ref[] = (await forEachRef()).toSorted(refComparator);
   const selection = await fzfTable(refs, {
@@ -42,7 +40,6 @@ async function main() {
       existingRefs: refs,
     });
   }
-  log.debug(`Creating worktree with branch name ${magenta(branchName)}`);
 
   const { owner, repo } = await getOwnerRepo();
   const newWorktreePath = join(WORKTREE_DIR, owner, repo, branchName);
@@ -183,8 +180,10 @@ function serializeToRow(ref: Ref): string[] {
   ];
 }
 
-// TODO: single entrypoint?
-main().catch((error) => {
-  log.error(error);
-  Deno.exit(1);
-});
+// TODO: Remove once command is hooked up
+if (import.meta.main) {
+  main().catch((error) => {
+    log.error(error);
+    Deno.exit(1);
+  });
+}
