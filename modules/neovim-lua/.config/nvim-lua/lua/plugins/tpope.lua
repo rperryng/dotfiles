@@ -20,7 +20,7 @@ return {
             type = 'test',
           },
         },
-        ['package.json'] = {
+        ['package.json|deno.json|deno.jsonc'] = {
           ['package.json'] = {
             type = 'package',
             alternate = { 'yarn.lock', 'package-lock.json' },
@@ -31,10 +31,18 @@ return {
           ['yarn.lock'] = {
             alternate = 'package.json',
           },
+          ['deno.json|deno.jsonc'] = {
+            type = 'package',
+            alternate = 'deno.lock',
+          },
+          ['deno.lock'] = {
+            alternate = { 'deno.jsonc', 'deno.json' },
+          },
           ['src/*.ts'] = {
             type = 'source',
             alternate = {
               'src/{}.test.ts',
+              'src/{}_test.ts',
               'src/{}.spec.ts',
               'test/{}.test.ts',
               'test/{}.spec.ts',
@@ -42,7 +50,11 @@ return {
           },
           ['src/*.test.ts'] = {
             type = 'test',
-            alternate = 'src/{}.ts',
+            alternate = { 'src/{}.ts' },
+          },
+          ['src/*_test.ts'] = {
+            type = 'test',
+            alternate = { 'src/{}.ts' },
           },
           ['src/*.spec.ts'] = {
             type = 'test',
