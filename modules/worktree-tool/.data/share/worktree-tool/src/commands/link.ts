@@ -57,7 +57,6 @@ async function gitTrackedFiles(): Promise<string[]> {
 // Ensure the working directory is set to root directory of the Git worktree
 // that has the main `.git` folder in it.
 async function chdirGitRoot(): Promise<void> {
-  // Do I even need all this...
   const gitRootCommand = new Deno.Command('git', {
     args: ['rev-parse', '--show-toplevel'],
     stdout: 'piped',
@@ -67,8 +66,8 @@ async function chdirGitRoot(): Promise<void> {
 
   if (!gitRootResult.success) {
     const errorString = new TextDecoder().decode(gitRootResult.stderr);
-    console.error('Error: This directory is not part of a Git repository.');
-    console.error(errorString);
+    log.error('Error: This directory is not part of a Git repository.');
+    log.error(errorString);
     Deno.exit(1);
   }
 

@@ -156,7 +156,7 @@ local function job_clone_repo(clone_url, reponame, path)
     lsp_client = { name = 'Git' },
   })
 
-  vim.system('mkdir -p ' .. path):wait()
+  vim.system({ 'mkdir', '-p', 'path'}):wait()
 
   -- local fidget = require('fidget')
   local Job = require('plenary.job')
@@ -264,7 +264,6 @@ local function fzf_lua_projects()
 
           -- Open existing worktree dir
           if string.find(line, ICONS.GIT_WORKTREE) then
-            Log('selected:', line, value)
             local repo, branch = value:match(
               'code%-worktrees/[%w%.%-_]+/([%w%.%-_]+)/([%w%.%-_]+)'
             )
