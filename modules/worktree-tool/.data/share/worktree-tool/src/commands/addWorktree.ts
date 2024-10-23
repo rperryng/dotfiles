@@ -19,7 +19,7 @@ export const addWorktreeCommand = new Command()
     main({ branchName: options.branch })
   });
 
-async function main(opts: {
+async function main(opts?: {
   branchName?: string;
 }) {
   let branchName = opts?.branchName;

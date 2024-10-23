@@ -9,8 +9,10 @@ ruby_install = true
 deno = ['2', '1.46.1']
 neovim = '0.10.2'
 node = ['22', '18.4.0']
-python = '3.10.4'
 ruby = ['3.3', '3.2', '3.1']
+
+poetry = {version='latest', pyproject='pyproject.toml'}
+python = ['3.12'] # must be after poetry so the poetry bin is first in PATH
 
 # shell dev tools
 delta = '0.18.2'
@@ -23,6 +25,8 @@ just = '1.29.1'
 stylua = 'latest'
 yq = '4.44.3'
 
-mdbook = 'latest'
 pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'
+
+# Broken in osx, use a different fork with `[plugins]` declaration?
+# mdbook = 'latest'
