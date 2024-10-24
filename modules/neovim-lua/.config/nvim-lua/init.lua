@@ -1,8 +1,9 @@
 -- TODO:
---   * projectionist
---   * git worktrees
+--   * git worktree?
 --   * test framework
 --   * debug framework
+--   * fix search
+--   * snippets
 
 require('core')
 require('plugin')

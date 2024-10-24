@@ -6,7 +6,7 @@ vim.g.mapleader = ' '
 vim.keymap.set(
   'n',
   '<space>wa',
-  '<cmd>silent! wall<cr><cmd>set nohlsearch<cr>',
+  '<cmd>silent! wall<cr>',
   { desc = 'Write all', silent = true }
 )
 
@@ -75,7 +75,11 @@ vim.keymap.set('n', '<esc>', function()
     true
   )
 
+  -- Close floating window
   utils.close_floating_windows()
+
+  -- Turn off hlsearch
+  vim.opt.hlsearch = false
 end, { desc = 'Esc (and close windows)' })
 
 -- Last buffer
