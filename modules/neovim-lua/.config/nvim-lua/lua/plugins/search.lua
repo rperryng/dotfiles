@@ -1,21 +1,19 @@
 return {
   {
-    'backdround/improved-search.nvim',
+    'haya14busa/vim-asterisk',
     config = function()
-      -- Search without moving from current match
-      local search = require('improved-search')
-      vim.keymap.set('n', '*', search.current_word)
-      vim.keymap.set('x', '*', search.in_place)
-    end,
-  },
-  {
-    'asiryk/auto-hlsearch.nvim',
-
-    -- ensure auto-hlsearch loads after improved-search, since it extends
-    -- existings default binds
-    dependencies = { 'backdround/improved-search.nvim' },
-    config = function()
-      require('auto-hlsearch').setup()
+      vim.keymap.set(
+        'n',
+        '*',
+        '<Plug>(asterisk-z*)',
+        { desc = 'Search forward (do not move cursor)' }
+      )
+      vim.keymap.set(
+        'n',
+        '#',
+        '<Plug>(asterisk-z#)',
+        { desc = 'Search backwards (do not move cursor)' }
+      )
     end,
   },
   {
