@@ -116,6 +116,25 @@ M.escape_pattern = function(text)
   return text:gsub("([^%w])", "%%%1")
 end
 
+-- Call '<Plug>(name)' from lua
+M.call_plug_map = function(plug_map_name, mode_arg)
+  mode_arg = mode_arg or 'n'
+  local mode_map = {
+    n = 'normal',
+    v = 'visual',
+    x = 'visual',
+    i = 'insert',
+    c = 'command',
+    t = 'terminal'
+  }
+
+  local mode = mode_map[mode_arg]
+  if mode == nil then
+    error(mode_arg .. ' is not a valid mode shorthand')
+  end
+  vim.cmd(string.format('execute "%s \\%s"', mode, plug_map_name))
+end
+
 M.table = {
   deep_copy = function(obj, seen)
     if type(obj) ~= 'table' then

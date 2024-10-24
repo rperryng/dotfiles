@@ -5,7 +5,14 @@ return {
       vim.keymap.set(
         'n',
         '*',
-        '<Plug>(asterisk-z*)',
+        function ()
+          local utils = require('utils')
+          utils.call_plug_map('<Plug>(asterisk-z*)')
+
+          if vim.opt.hlsearch:get() ~= true then
+            vim.opt.hlsearch = true
+          end
+        end,
         { desc = 'Search forward (do not move cursor)' }
       )
       vim.keymap.set(

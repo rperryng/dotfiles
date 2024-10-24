@@ -162,7 +162,6 @@ return {
   { 'hrsh7th/cmp-buffer' },
   { 'hrsh7th/cmp-path' },
   { 'hrsh7th/cmp-cmdline' },
-  { 'L3MON4D3/LuaSnip' },
   {
     'folke/lazydev.nvim',
     ft = 'lua',
@@ -176,9 +175,14 @@ return {
   { 'Bilal2453/luvit-meta', lazy = true }, -- optional `vim.uv` typings
   {
     'hrsh7th/nvim-cmp',
-    dependencies = { 'onsails/lspkind.nvim', 'nvim-tree/nvim-web-devicons' },
+    dependencies = {
+      'onsails/lspkind.nvim',
+      'nvim-tree/nvim-web-devicons',
+      'L3MON4D3/LuaSnip',
+    },
     config = function()
       local cmp = require('cmp')
+      local luasnip = require('luasnip')
       cmp.setup({
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
@@ -193,7 +197,29 @@ return {
 
           -- Tab always selects the first entry if none is already selected
           ['<cr>'] = cmp.mapping.confirm({ select = false }),
-          ['<tab>'] = cmp.mapping.confirm({ select = true }),
+          -- ['<tab>'] = cmp.mapping.confirm({ select = true }),
+
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.confirm({ select = true })
+            elseif luasnip.locally_jumpable(1) then
+              luasnip.jump(1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+
+          -- Uh, this isn't actually doing anything with cmp since I only use
+          -- <tab> to confirm an entry, not to cycle results, but since <tab>
+          -- mapping is already here above, might as well define the shift-tab
+          -- mapping too.
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
         }),
 
         snippet = {
