@@ -4,6 +4,7 @@ return {
     config = function()
       require('various-textobjs').setup({
         useDefaultKeymaps = true,
+        disabledKeymaps = { 'gw' },
       })
 
       -- restore multi-line comment textobject
@@ -61,7 +62,7 @@ return {
 
         setLinewiseSelection(prevLnum + 1, nextLnum - 1)
       end
-      vim.keymap.set('v', 'ac', function ()
+      vim.keymap.set('v', 'ac', function()
         oldM.multiCommentedLines(5)
       end, { desc = 'Comment (text object)' })
     end,

@@ -24,6 +24,7 @@ jq = '1.7.1'
 just = '1.29.1'
 stylua = 'latest'
 yq = '4.44.3'
+shfmt = 'latest'
 
 pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'

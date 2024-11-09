@@ -70,13 +70,6 @@ M.close_floating_windows = function()
   return found_float
 end
 
--- polyfill table.pack ...
-table.pack = function (...)
-    local t = { ... }
-    t.n = select('#', ...)
-    return t
-end
-
 -- global convenience
 Log = function(...)
   local args = table.pack(...)
@@ -135,7 +128,29 @@ M.call_plug_map = function(plug_map_name, mode_arg)
   vim.cmd(string.format('execute "%s \\%s"', mode, plug_map_name))
 end
 
+-- polyfill table.pack ...
+table.pack = function (...)
+    local t = { ... }
+    t.n = select('#', ...)
+    return t
+end
+
 M.table = {
+  -- http://lua-users.org/wiki/CopyTable
+  shallow_copy = function(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+      copy = {}
+      for orig_key, orig_value in pairs(orig) do
+        copy[orig_key] = orig_value
+      end
+    else -- number, string, boolean, etc
+      copy = orig
+    end
+    return copy
+  end,
+
   deep_copy = function(obj, seen)
     if type(obj) ~= 'table' then
       return obj

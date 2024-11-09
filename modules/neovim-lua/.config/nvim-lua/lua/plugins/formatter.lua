@@ -3,7 +3,8 @@ return {
     'mhartington/formatter.nvim',
     event = 'VeryLazy',
     config = function()
-      local util = require('formatter.util')
+      local formatter_utils = require('formatter.util')
+      local utils = require('utils')
 
       require('formatter').setup({
         filetype = {
@@ -27,6 +28,61 @@ return {
             require('formatter.filetypes.toml').taplo,
           },
 
+          sh = {
+            function()
+              -- shfmt will only use the editorconfig file if:
+              --   * passing a real filepath (not stdin)
+              --   * no parser / printer arguments are provided
+
+              -- Build default args, which will be used if an .editorconfig
+              -- file doesn't exist
+              local indent = vim.opt.shiftwidth:get()
+              local expandtab = vim.opt.expandtab:get()
+              if not expandtab then
+                indent = 0
+              end
+              local default_shfmt_args = {
+                '--case-indent',
+                '--indent',
+                indent,
+              }
+
+              local buffer_path = formatter_utils.get_current_buffer_file_path()
+              local buffer_is_file = vim.fn.filereadable(buffer_path) == 1
+              if not buffer_is_file then
+                return {
+                  exe = 'shfmt',
+                  args = default_shfmt_args,
+                  stdin = true,
+                }
+              end
+
+              -- Use the .editorconfig file if it exists
+              local has_editorconfig = vim.fs.find('.editorconfig', {
+                path = formatter_utils.get_current_buffer_file_path(),
+                upward = true,
+              })[1] ~= nil
+
+              -- don't pass parser/printer flags since it will disable the
+              -- .editorconfig integration from shfmt
+              if has_editorconfig then
+                return {
+                  exe = 'shfmt',
+                  -- '--filename' is required for shfmt to be able to resolve
+                  -- the editorconfig path.
+                  args = { '--filename', buffer_path },
+                  stdin = true,
+                }
+              else
+                return {
+                  exe = 'shfmt',
+                  args = default_shfmt_args,
+                  stdin = true,
+                }
+              end
+            end,
+          },
+
           typescript = {
             function()
               local cwd = vim.fn.getcwd()
@@ -41,11 +97,13 @@ return {
                 }
               else
                 return {
-                  exe = "prettier",
+                  exe = 'prettier',
                   args = {
-                    "--stdin-filepath",
-                    util.escape_path(util.get_current_buffer_file_path()),
-                    "--parser",
+                    '--stdin-filepath',
+                    formatter_utils.escape_path(
+                      formatter_utils.get_current_buffer_file_path()
+                    ),
+                    '--parser',
                     'typescript',
                   },
                   stdin = true,
@@ -53,7 +111,6 @@ return {
                 }
               end
             end,
-            -- require('formatter.filetypes.typescript').prettier,
           },
 
           ['*'] = {
