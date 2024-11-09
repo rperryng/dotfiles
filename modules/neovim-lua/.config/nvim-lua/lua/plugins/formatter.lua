@@ -4,7 +4,6 @@ return {
     event = 'VeryLazy',
     config = function()
       local formatter_utils = require('formatter.util')
-      local utils = require('utils')
 
       require('formatter').setup({
         filetype = {
@@ -14,6 +13,17 @@ return {
 
           json = {
             require('formatter.filetypes.json').jq,
+          },
+
+          jsonc = {
+            function()
+              return {
+                exe = 'deno',
+                args = { 'fmt', },
+                -- stdin not working on standalone jsonc file for some reason...
+                stdin = false,
+              }
+            end
           },
 
           ruby = {

@@ -14,21 +14,23 @@ n() {
     return
   fi
 
+  local args=""
+  if [[ $# -gt 0 ]]; then
+    args="$@"
+  elif [[ "$(pwd)" == "$HOME" || "$(pwd)" == "$DOTFILES_DIR" ]]; then
+    args="+NStart"
+  fi
+
   # ensure the neovim server starts at a specified address so ':terminal'
   # commands can communicate with the host 'nvim' process.
   local rand=$(echo $((1 + $RANDOM % 100000000)))
   local socket_name="/tmp/nvimsocket.${rand}"
 
-  local args="+NStart"
-  if [ $# -gt 0 ]; then
-    args="$@"
-  fi
-
-  ( \
+  (
     DOTFILES_NVIM_LISTEN_ADDRESS="$socket_name" \
-    nvim \
+      nvim \
       --listen "$socket_name" \
-      $args \
+      $args
   )
 }
 
