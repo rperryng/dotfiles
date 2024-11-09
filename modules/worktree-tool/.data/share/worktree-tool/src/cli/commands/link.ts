@@ -1,10 +1,10 @@
 import { Command } from '@cliffy/command';
 import * as log from '@std/log';
 import { existsSync } from '@std/fs';
-import { execLines } from '../exec.ts';
+import { execLines } from '../../lib/exec.ts';
 import { fzfLines } from '../fzf.ts';
-import { linkTargets } from '../linker.ts';
-import { listWorktrees } from '../git/index.ts';
+import { linkTargets } from '../../lib/linker.ts';
+import { listWorktrees } from '../../git/index.ts';
 
 const XDG_CONFIG_HOME = Deno.env.get('XDG_CONFIG_HOME') ||
   `${Deno.env.get('HOME')}/.config`;

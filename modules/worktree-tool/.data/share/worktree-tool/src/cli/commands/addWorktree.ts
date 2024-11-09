@@ -2,14 +2,13 @@ import * as log from '@std/log';
 import { blue, cyan, gray, italic, magenta, yellow } from '@std/fmt/colors';
 import { Command } from '@cliffy/command';
 import { ICONS } from '../icons.ts';
-import { WORKTREE_DIR } from '../git/index.ts';
 import { assert } from '@std/assert';
 import { compareDesc, format } from 'date-fns';
-import { execOutput } from '../exec.ts';
-import { forEachRef, getOwnerRepo, Ref } from '../git/index.ts';
+import { execOutput } from '../../lib/exec.ts';
+import { forEachRef, getOwnerRepo, Ref, WORKTREE_DIR  } from '../../git/index.ts';
 import { fzfTable } from '../fzf.ts';
 import { join } from '@std/path';
-import { truncateString } from '../string-utils.ts';
+import { truncateString } from '../../lib/string-utils.ts';
 
 export const addWorktreeCommand = new Command()
   .description('Add a new worktree')

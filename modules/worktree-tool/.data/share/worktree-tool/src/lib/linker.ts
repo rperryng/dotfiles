@@ -2,7 +2,7 @@ import * as log from '@std/log';
 import { existsSync } from '@std/fs';
 import { join } from '@std/path';
 import * as colors from '@std/fmt/colors';
-import { WORKTREE_DIR } from './git/index.ts';
+import { WORKTREE_DIR } from './../git/index.ts';
 import { indent } from './string-utils.ts';
 
 export interface SymlinkSource {

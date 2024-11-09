@@ -1,7 +1,7 @@
 import { assert } from '@std/assert';
 import { existsSync } from '@std/fs';
 import { join } from '@std/path';
-import { execOutput } from '../exec.ts';
+import { execOutput } from '../lib/exec.ts';
 
 const HOME = Deno.env.get('HOME');
 assert(HOME);

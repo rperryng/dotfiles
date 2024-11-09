@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-env --allow-run --allow-read --allow-write
 
 import { Command } from '@cliffy/command';
-import { setup as setupLogs } from '../log.ts';
+import { setup as setupLogs } from '../../lib/log.ts';
 import * as log from '@std/log';
 
 import { addWorktreeCommand } from './addWorktree.ts';
@@ -20,4 +20,4 @@ await new Command()
   })
   .command('add', addWorktreeCommand)
   .command('link', linkWorktreeCommand)
-  .parse(Deno.args);
+  .parse(Deno.args)

@@ -1,5 +1,5 @@
 import { assert } from '@std/assert';
-import { execOutput } from '../exec.ts';
+import { execOutput } from '../lib/exec.ts';
 
 export async function getRemote(): Promise<string> {
   return await execOutput('git', {
