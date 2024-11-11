@@ -115,7 +115,7 @@ return {
           )
           keymap(
             'n',
-            '<space>gr',
+            '<space>gref',
             '<cmd>lua vim.lsp.buf.references()<cr>',
             { desc = 'Go to references' }
           )
@@ -127,7 +127,7 @@ return {
           )
           keymap(
             'n',
-            '<space>gR',
+            '<space>grn',
             '<cmd>lua vim.lsp.buf.rename()<cr>',
             { desc = 'Rename (via LSP)' }
           )
@@ -207,7 +207,7 @@ return {
             else
               fallback()
             end
-          end, { "i", "s" }),
+          end, { 'i', 's' }),
 
           -- Uh, this isn't actually doing anything with cmp since I only use
           -- <tab> to confirm an entry, not to cycle results, but since <tab>
@@ -352,6 +352,51 @@ return {
         '<space>xQ',
         '<cmd>Trouble qflist toggle<cr>',
         { desc = 'Quickfix List (Trouble)' }
+      )
+    end,
+  },
+
+  {
+    'saecki/live-rename.nvim',
+    config = function()
+      local live_rename = require('live-rename')
+
+      vim.keymap.set(
+        'n',
+        '<leader> grN',
+        live_rename.map({ insert = true }),
+        { desc = 'LSP rename' }
+      )
+    end,
+  },
+
+  {
+    'DNLHC/glance.nvim',
+    config = function()
+      require('glance').setup()
+      vim.keymap.set(
+        'n',
+        '<space>ggd',
+        '<CMD>Glance definitions<CR>',
+        { desc = 'Definitions (show inline)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<space>ggr',
+        '<CMD>Glance references<CR>',
+        { desc = 'References (show inline)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<space>ggy',
+        '<CMD>Glance type_definitions<CR>',
+        { desc = 'Type Definitions (show inline)' }
+      )
+      vim.keymap.set(
+        'n',
+        '<space>ggi',
+        '<CMD>Glance implementations<CR>',
+        { desc = 'Implementations (show inline)' }
       )
     end,
   },
