@@ -19,7 +19,7 @@ return {
       require('mason-lspconfig').setup({
         ensure_installed = {
           'lua_ls',
-          'tsserver',
+          'ts_ls',
           'denols',
           'bashls',
           -- 'ruby_lsp',
@@ -41,8 +41,8 @@ return {
               root_dir = lsp_util.root_pattern('deno.json', 'deno.jsonc'),
             })
           end,
-          ['tsserver'] = function()
-            require('lspconfig')['tsserver'].setup({
+          ['ts_ls'] = function()
+            require('lspconfig')['ts_ls'].setup({
               capabilities = lsp_capabilities,
               root_dir = lsp_util.root_pattern(
                 'tsconfig.json',
