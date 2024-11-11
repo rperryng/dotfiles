@@ -1,0 +1,6 @@
+font-style = MesloLGM Nerd Font Mono
+
+# Disable ligatures
+font-feature = -calt
+font-feature = -dlig
+font-feature = -liga
