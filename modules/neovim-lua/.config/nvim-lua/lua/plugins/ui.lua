@@ -34,6 +34,7 @@ return {
 
   {
     'tzachar/highlight-undo.nvim',
+    commit = 'c87a6ec1ded241ef223269077cbd5f97a6f0d5bf',
     -- Make sure this loads last (on keypress), since it relies
     -- on hijacking the u / ctrl-r keys
     keys = { { 'u' }, { '<C-r>' } },
