@@ -2,16 +2,16 @@
 
 set -eo pipefail
 
-QMK_FIRMWARE_REPO_PATH="${HOME}/code/qmk/qmk_firmware"
+QMK_HOME="${QMK_HOME:-${HOME}/code/qmk/qmk_firmware}"
 
 clone_qmk() {
-  if [[ -d "${QMK_FIRMWARE_REPO_PATH}" ]]; then
-    return 1
+  if [[ -d "${QMK_HOME}" ]]; then
+    return 0
   fi
 
   echo "Cloning qmk_firmware repo"
-  mkdir -p "${QMK_FIRMWARE_REPO_PATH}"
-  git clone git@github.com:qmk/qmk_firmware.git "${QMK_FIRMWARE_REPO_PATH}"
+  mkdir -p "${QMK_HOME}"
+  git clone git@github.com:qmk/qmk_firmware.git "${QMK_HOME}"
 }
 
 install() {
@@ -31,5 +31,5 @@ install() {
   qmk setup --yes
 }
 
-install
 clone_qmk
+install
