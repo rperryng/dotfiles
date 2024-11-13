@@ -127,7 +127,7 @@ return {
           )
           keymap(
             'n',
-            '<space>grn',
+            '<space>grN',
             '<cmd>lua vim.lsp.buf.rename()<cr>',
             { desc = 'Rename (via LSP)' }
           )
@@ -363,9 +363,9 @@ return {
 
       vim.keymap.set(
         'n',
-        '<leader> grN',
+        '<space>grn',
         live_rename.map({ insert = true }),
-        { desc = 'LSP rename' }
+        { desc = 'Rename (via LSP) (live)' }
       )
     end,
   },

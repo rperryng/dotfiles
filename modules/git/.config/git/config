@@ -9,7 +9,7 @@
   defaultBranch = main
 
 [pull]
-	ff = only
+  ff = only
 
 [push]
   default = simple

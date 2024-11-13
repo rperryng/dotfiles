@@ -96,16 +96,8 @@ return {
           typescript = {
             function()
               local cwd = vim.fn.getcwd()
-              local is_deno = (vim.fn.filereadable(cwd .. '/deno.json') == 1)
-                or (vim.fn.filereadable(cwd .. '/deno.jsonc') == 1)
-
-              if is_deno then
-                return {
-                  exe = 'deno',
-                  args = { 'fmt', '-' },
-                  stdin = true,
-                }
-              else
+              local is_node = vim.fn.filereadable(cwd .. '/package.json') == 1
+              if is_node then
                 return {
                   exe = 'prettier',
                   args = {
@@ -120,6 +112,20 @@ return {
                   try_node_modules = true,
                 }
               end
+
+              local has_deno_config = (vim.fn.filereadable(cwd .. '/deno.json') == 1)
+                or (vim.fn.filereadable(cwd .. '/deno.jsonc') == 1)
+
+              local args = { 'fmt' }
+              if not has_deno_config then
+                table.insert(args, '--single-quote')
+              end
+              table.insert(args, '-')
+              return {
+                exe = 'deno',
+                args = args,
+                stdin = true,
+              }
             end,
           },
 

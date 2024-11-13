@@ -2,6 +2,9 @@
 
 set -e
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+ADD_LOGIN_ITEMS_SCRIPT="${SCRIPT_DIR}/add-login-items.ts"
+
 set_defaults() {
   # normal minimum is 15 (225 ms)
   defaults write -g InitialKeyRepeat -int 10
@@ -12,7 +15,7 @@ set_defaults() {
 
 install() {
   if [[ "${DOTFILES_OS}" != 'macos' ]]; then
-    return 0;
+    return 0
   fi
 
   set_defaults
@@ -20,7 +23,11 @@ install() {
   brew install --cask \
     easy-move-plus-resize \
     rectangle \
-    jordanbaird-ice
+    jordanbaird-ice \
+    maccy \
+    karabiner-elements
+
+  "${ADD_LOGIN_ITEMS_SCRIPT}"
 }
 
 install
