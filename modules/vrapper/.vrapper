@@ -1,0 +1,8 @@
+set tabstop=2
+
+noremap <space>wa :writeall<cr>
+noremap sl $
+noremap sh ^
+
+noremap <c-n> :tabnext<cr>
+noremap <c-p> :tabprevious<cr>
