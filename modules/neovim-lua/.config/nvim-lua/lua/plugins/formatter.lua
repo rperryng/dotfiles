@@ -19,11 +19,11 @@ return {
             function()
               return {
                 exe = 'deno',
-                args = { 'fmt', },
+                args = { 'fmt' },
                 -- stdin not working on standalone jsonc file for some reason...
                 stdin = false,
               }
-            end
+            end,
           },
 
           ruby = {
@@ -31,7 +31,19 @@ return {
           },
 
           javascript = {
-            require('formatter.filetypes.javascript').prettier,
+            function()
+              return {
+                exe = 'prettier',
+                args = {
+                  '--stdin-filepath',
+                  formatter_utils.escape_path(
+                    formatter_utils.get_current_buffer_file_path()
+                  ),
+                },
+                stdin = true,
+                try_node_modules = true,
+              }
+            end,
           },
 
           toml = {
@@ -113,7 +125,9 @@ return {
                 }
               end
 
-              local has_deno_config = (vim.fn.filereadable(cwd .. '/deno.json') == 1)
+              local has_deno_config = (
+                vim.fn.filereadable(cwd .. '/deno.json') == 1
+              )
                 or (vim.fn.filereadable(cwd .. '/deno.jsonc') == 1)
 
               local args = { 'fmt' }
