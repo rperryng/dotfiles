@@ -1,6 +1,6 @@
 [user]
-	email = ryanperrynguyen@gmail.com
-	name = Ryan Perry-Nguyen
+  email = ryanperrynguyen@gmail.com
+  name = Ryan Perry-Nguyen
 
 [core]
   excludesfile = ~/.config/git/ignore
@@ -26,16 +26,3 @@
 
 [url "git@github.com:"]
   insteadOf = https://github.com/
-
-; TODO: can this be enabled only if the git version is recent enough?
-; [merge]
-;   conflictstyle = zdiff3
-
-; [gpg]
-;   format = ssh
-
-; [gpg "ssh"]
-;   program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
-
-; [commit]
-;   gpgsign = true

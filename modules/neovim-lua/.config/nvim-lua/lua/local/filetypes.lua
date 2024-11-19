@@ -7,11 +7,3 @@ vim.filetype.add({
     ['.vrapper'] = 'vim',
   },
 })
--- Log('this should be running ...')
---
--- vim.filetype.add({
---   pattern = {
---     ['$HOME/.config/git/*'] = 'gitconfig',
---     ['$HOME/.dotfiles/modules/git/.config/git/config*'] = 'gitconfig',
---   },
--- })
