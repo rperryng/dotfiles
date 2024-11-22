@@ -136,6 +136,91 @@ return {
           },
         },
       })
+
+      local scroll_up = function()
+        vim.api.nvim_feedkeys(
+          vim.api.nvim_replace_termcodes('<c-y>', true, false, true),
+          'n',
+          true
+        )
+      end
+
+      local scroll_down = function()
+        vim.api.nvim_feedkeys(
+          vim.api.nvim_replace_termcodes('<c-e>', true, false, true),
+          'n',
+          true
+        )
+      end
+
+      local scroll_right = function ()
+        vim.cmd('normal zl')
+      end
+
+      local scroll_left = function ()
+        vim.cmd('normal zh')
+      end
+
+      hydra({
+        name = 'Scroll',
+        config = {
+          invoke_on_body = true,
+          hint = false,
+          on_enter = function() end,
+        },
+        mode = 'n',
+        body = '<space>zs',
+        heads = {
+          {
+            'j',
+            function()
+              scroll_down()
+            end,
+          },
+          {
+            '<right>',
+            function ()
+              scroll_down()
+            end
+          },
+          {
+            'k',
+            function()
+              scroll_up()
+            end,
+          },
+          {
+            '<up>',
+            function ()
+              scroll_up()
+            end
+          },
+          {
+            'h',
+            function()
+              scroll_left()
+            end,
+          },
+          {
+            '<left>',
+            function()
+              scroll_left()
+            end,
+          },
+          {
+            'l',
+            function()
+              scroll_right()
+            end,
+          },
+          {
+            '<right>',
+            function()
+              scroll_right()
+            end,
+          },
+        },
+      })
     end,
   },
 }

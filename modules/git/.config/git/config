@@ -28,4 +28,4 @@
   insteadOf = https://github.com/
 
 [includeIf "gitdir:/Users/rperrynguyen/"]
-  path = "/Users/rperrynguyen/.config/git/config_work"
+  path = "/Users/rperrynguyen/.config/git/wealthsimple.gitconfig"

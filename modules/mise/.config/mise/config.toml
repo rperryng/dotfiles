@@ -27,6 +27,8 @@ just = '1.29.1'
 stylua = 'latest'
 yq = '4.44.3'
 shfmt = 'latest'
+kubectl = 'latest'
+colima = 'latest'
 
 pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'
