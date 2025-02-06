@@ -11,6 +11,10 @@ set_defaults() {
 
   # normal minimum is 2 (30 ms)
   defaults write -g KeyRepeat -int 1
+
+  # By default, pressing and holding will present a popup for picking character
+  # variants (e.g. accented e)
+  defaults write -g ApplePressAndHoldEnabled -bool false
 }
 
 install() {

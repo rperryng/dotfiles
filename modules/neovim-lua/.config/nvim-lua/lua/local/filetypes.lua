@@ -3,7 +3,7 @@ vim.filetype.add({
     ['.*/ghostty/config'] = { 'dosini', { priority = 10 } },
   },
   filename = {
-    ['.vrapper'] = 'vim',
+    ['.vrapperrc'] = 'vim',
   },
   extension = {
     gitconfig = 'gitconfig',
