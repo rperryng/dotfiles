@@ -1,0 +1,13 @@
+[user]
+  email = rperrynguyen@wealthsimple.com
+  name = Ryan Perry-Nguyen
+  signingkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXE9iQfOLWOygrFVTZdPZxmLSXwJ9SsukEo6y6K+y92"
+
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[commit]
+  gpgsign = true

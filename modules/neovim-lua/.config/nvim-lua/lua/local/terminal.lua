@@ -62,7 +62,7 @@ vim.keymap.set('n', '<space>tR', function()
   require('mini.bufremove').delete()
   vim.cmd('terminal')
   vim.cmd('keepalt file ' .. current_bufname)
-end, { desc = 'Toggle project terminal' })
+end, { desc = 'Restart project terminal' })
 
 vim.keymap.set('n', '<space>term', function()
   local terminal_buf_name = project_terminal_buffer_name()
