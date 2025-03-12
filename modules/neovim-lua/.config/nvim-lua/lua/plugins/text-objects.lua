@@ -4,7 +4,10 @@ return {
     config = function()
       require('various-textobjs').setup({
         useDefaultKeymaps = true,
-        disabledKeymaps = { 'gw' },
+        disabledKeymaps = {
+          'gw',
+          'r',
+        },
       })
 
       -- restore multi-line comment textobject

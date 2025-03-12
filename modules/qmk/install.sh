@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-QMK_HOME="${QMK_HOME:-${HOME}/code/qmk/qmk_firmware}"
+QMK_HOME="${QMK_HOME:-${HOME}/code/rperryng/qmk_firmware}"
 QMK_USERSPACE_PATH="${HOME}/code/rperryng/qmk_userspace"
 
 clone_qmk_firmware() {
@@ -12,7 +12,7 @@ clone_qmk_firmware() {
 
   echo "Cloning qmk_firmware repo"
   mkdir -p "${QMK_HOME}"
-  git clone git@github.com:qmk/qmk_firmware.git "${QMK_HOME}"
+  git clone git@github.com:rperryng/qmk_firmware.git "${QMK_HOME}"
 }
 
 clone_qmk_userspace() {

@@ -59,6 +59,24 @@ return {
           })
         end,
       })
+
+      -- DASBOB
+      vim.api.nvim_create_autocmd('BufEnter', {
+        desc = 'Format DASBOB layout',
+        group = augroup,
+        pattern = '*dasbob/keymaps/rperryng/keymap.c',
+        callback = function()
+          qmk.setup({
+            name = 'LAYOUT_split_3x5_3',
+            layout = {
+              'x x x x x _ _ _ x x x x x',
+              'x x x x x _ _ _ x x x x x',
+              'x x x x x _ _ _ x x x x x',
+              '_ _ _ x x x _ x x x _ _ _',
+            },
+          })
+        end,
+      })
     end,
   },
 }
