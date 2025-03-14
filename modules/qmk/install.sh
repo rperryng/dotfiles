@@ -13,6 +13,7 @@ clone_qmk_firmware() {
   echo "Cloning qmk_firmware repo"
   mkdir -p "${QMK_HOME}"
   git clone git@github.com:rperryng/qmk_firmware.git "${QMK_HOME}"
+  git -C "$QMK_HOME" remote add upstream git@github.com:qmk/qmk_firmware.git
 }
 
 clone_qmk_userspace() {
