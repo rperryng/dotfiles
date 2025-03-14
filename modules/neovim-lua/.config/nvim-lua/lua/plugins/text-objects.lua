@@ -6,7 +6,10 @@ return {
         useDefaultKeymaps = true,
         disabledKeymaps = {
           'gw',
+          'i_',
+          'a_',
           'r',
+          'R',
         },
       })
 
