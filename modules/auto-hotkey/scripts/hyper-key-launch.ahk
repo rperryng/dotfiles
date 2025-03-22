@@ -6,7 +6,9 @@
 ^+!#g::launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")
 ^+!#x::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\cursor\Cursor.exe")
 ^+!#v::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\Microsoft VS Code\Code.exe")
-^+!#t::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Telegram Desktop\Telegram.exe")
+^+!#m::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Telegram Desktop\Telegram.exe")
+^+!#t::launch_and_focus("C:\Users\ryanp\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe")
+^+!#e::launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")
 
 ^+!#r::Reload()
 
@@ -26,25 +28,20 @@
 
 ; Generic function to launch and focus an application
 launch_and_focus(path, exe := "", window_identifier := "") {
-    ; Extract exe name from path if not provided
     if (exe == "") {
         SplitPath(path, &exe)
     }
-    
-    ; Use default window identifier if not provided
+
     if (window_identifier == "") {
         window_identifier := "ahk_exe " . exe
     }
-    
-    ; checks if an app is already running
+
     process_exists := ProcessExist(exe)
-    
+
     if !process_exists {
-        ; IF NOT open and focus it.
         Run(path)
         WinWait(window_identifier)
     }
-    ; bring it to the front and in focus
     WinActivate(window_identifier)
 }
 
@@ -59,7 +56,7 @@ Windows(Direction) {
     a := WinExist("A")
     wClass := WinGetClass("A")
     exe := WinGetProcessName("A")
-    
+
     if (exe != last) {
         last := exe
         hWnds := []
@@ -70,7 +67,7 @@ Windows(Direction) {
         }
         total := hWnds.Length
     }
-    
+
     i := 1
     for index, hWnd in hWnds {
         if (a = hWnd) {
@@ -78,7 +75,7 @@ Windows(Direction) {
             break
         }
     }
-    
+
     i += Direction
     i := i > total ? 1 : i = 0 ? total : i
     WinActivate("ahk_id " hWnds[i])
