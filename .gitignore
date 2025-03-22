@@ -6,5 +6,4 @@
 .stow-bogus-links
 
 modules/karabiner/.config/karabiner/automatic_backups
-modules/karabiner/.config/karabiner/karabiner.json
 modules/git/.config/git/config_work

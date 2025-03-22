@@ -12,7 +12,7 @@ install_spoons() {
   mkdir "$SPOONS_INSTALL_DIR"
 
   echo "Installing SpoonInstall..."
-  curl \
+  curl -L \
     https://github.com/Hammerspoon/Spoons/raw/master/Spoons/SpoonInstall.spoon.zip |
     tar -zx -C "$SPOONS_INSTALL_DIR"
 }
