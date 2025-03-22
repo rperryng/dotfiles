@@ -4,7 +4,6 @@
 
 [core]
   excludesfile = ~/.config/git/ignore
-  autocrlf = true
 
 [init]
   defaultBranch = main
