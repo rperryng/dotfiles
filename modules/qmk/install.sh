@@ -47,7 +47,7 @@ install() {
   # config file is not viable.
   qmk config \
     user.overlay_dir="$(realpath "${QMK_USERSPACE_PATH}")" \
-    user.keyboard='zsa/moonlander' \
+    user.keyboard='dasbob' \
     user.keymap='rperryng'
 }
 

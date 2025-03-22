@@ -1,8 +1,11 @@
+-- Fix entrypoint
+hs.configdir = os.getenv('HOME') .. '/.config/hammerspoon'
+
 -- Load the spoon install manager
 hs.loadSpoon('SpoonInstall')
 spoon.SpoonInstall.use_syncinstall = true
 
--- Global hyper key
+-- Global hyper ke
 local hyper = { 'ctrl', 'alt', 'shift', 'cmd' }
 local meh = { 'ctrl', 'alt', 'shift' }
 
@@ -56,10 +59,13 @@ spoon.SpoonInstall:andUse('FadeLogo', {
 
 -- Application hotkeys
 hs.hotkey.bind(hyper, 'p', launchById('com.1password.1password'))
-hs.hotkey.bind(hyper, 'f', launchById('org.mozilla.firefox'))
+hs.hotkey.bind(hyper, 'f', launchById('org.mozilla.firefoxdeveloperedition'))
 hs.hotkey.bind(hyper, 's', launchById('com.spotify.client'))
-hs.hotkey.bind(hyper, 't', launchById('io.alacritty'))
+hs.hotkey.bind(hyper, 't', launchById('com.mitchellh.ghostty'))
 hs.hotkey.bind(hyper, 'c', launchById('com.tinyspeck.slackmacgap'))
 hs.hotkey.bind(hyper, 'm', launchById('com.tdesktop.Telegram'))
 hs.hotkey.bind(hyper, 'n', launchById('notion.id'))
+hs.hotkey.bind(hyper, 'e', launchById('com.apple.finder'))
+hs.hotkey.bind(hyper, 'g', launchById('app.tuple.app'))
+hs.hotkey.bind(hyper, 'x', launchById('com.todesktop.230313mzl4w4u92')) -- cursor
 hs.hotkey.bind(hyper, 'h', openWithFinder('~/Applications/Chrome Apps.localized/Google Meet.app'))
