@@ -30,4 +30,12 @@ vim.api.nvim_create_autocmd('TermOpen', {
     vim.opt_local.number = false
     vim.opt_local.scrollback = 50000
   end,
+});
+
+vim.api.nvim_create_autocmd('FileType', {
+  group = augroup('c'),
+  pattern = { 'c' },
+  callback = function()
+    vim.bo.commentstring = '// %s'
+  end,
 })
