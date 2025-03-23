@@ -1,9 +1,22 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-; Disable Windows key opening Start menu
-; Send {blind} so that windows key can still be used for other AHK based shortcuts.
+; Disable Windows key opening Start menu with debounce protection
 ~LWin:: Send("{Blind}{vk08}")
+
+; Remap Windows+Tab to Alt+Tab
+#Tab:: {
+  Send("{Alt down}{Tab}")
+  KeyWait("LWin")
+  Send("{Alt up}")
+}
+
+; Remap Shift-Windows-Tab to Alt-Shift-Tab
+#+Tab:: {
+  Send("{Alt down}{Shift down}{Tab}")
+  KeyWait("LWin")
+  Send("{Alt up}")
+}
 
 ; Launch Flow Launcher with Windows+Space
 #Space:: Run Format("C:\Users\{1}\AppData\Local\FlowLauncher\Flow.Launcher.exe", A_UserName)
