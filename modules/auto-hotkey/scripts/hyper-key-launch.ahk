@@ -1,37 +1,44 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
+; Disable Windows key opening Start menu
+; Send {blind} so that windows key can still be used for other AHK based shortcuts.
+~LWin:: Send("{Blind}{vk08}")
+
+; Launch Flow Launcher with Windows+Space
+#Space:: Run Format("C:\Users\{1}\AppData\Local\FlowLauncher\Flow.Launcher.exe", A_UserName)
+
 ; hyper-key shortcuts
 ; set a mapping for each key to avoid accidentally triggering the builtin windows shortcuts (microsoft office, linkedin, etc)
-^+!#a::return
-^+!#b::return
-^+!#c::return
-^+!#d::return
-^+!#e::launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")  ; Explorer
-^+!#f::launch_and_focus("C:\Program Files\Mozilla Firefox\firefox.exe")  ; Firefox
-^+!#g::launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")  ; Godot
-^+!#h::return
-^+!#i::return
-^+!#j::return
-^+!#k::return
-^+!#l::return
-^+!#m::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Telegram Desktop\Telegram.exe")  ; Telegram
-^+!#n::return
-^+!#o::return
-^+!#p::return
-^+!#q::return
-^+!#r::Reload()  ; Reload script
-^+!#s::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Spotify\Spotify.exe")  ; Spotify
-^+!#t::launch_and_focus("C:\Users\ryanp\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe")  ; Terminal
-^+!#u::return
-^+!#v::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\Microsoft VS Code\Code.exe")  ; VS Code
-^+!#w::return
-^+!#x::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\cursor\Cursor.exe")  ; Cursor
-^+!#y::return
-^+!#z::return
+^+!#a:: return
+^+!#b:: return
+^+!#c:: return
+^+!#d:: return
+^+!#e:: launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")  ; Explorer
+^+!#f:: launch_and_focus("C:\Program Files\Mozilla Firefox\firefox.exe")  ; Firefox
+^+!#g:: launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")  ; Godot
+^+!#h:: return
+^+!#i:: return
+^+!#j:: return
+^+!#k:: return
+^+!#l:: return
+^+!#m:: launch_and_focus(Format("C:\Users\{1}\AppData\Roaming\Telegram Desktop\Telegram.exe", A_UserName))  ; Telegram
+^+!#n:: return
+^+!#o:: return
+^+!#p:: return
+^+!#q:: return
+^+!#r:: Reload()  ; Reload script
+^+!#s:: launch_and_focus(Format("C:\Users\{1}\AppData\Roaming\Spotify\Spotify.exe", A_UserName))  ; Spotify
+^+!#t:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe", A_UserName))  ; Terminal
+^+!#u:: return
+^+!#v:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Programs\Microsoft VS Code\Code.exe", A_UserName))  ; VS Code
+^+!#w:: return
+^+!#x:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Programs\cursor\Cursor.exe", A_UserName))  ; Cursor
+^+!#y:: return
+^+!#z:: return
 
 ; explicit "cancel" mapping
-^+!#Esc::return
+^+!#Esc:: return
 
 launch_and_focus(path, exe := "", window_identifier := "") {
     if (exe == "") {
@@ -52,8 +59,8 @@ launch_and_focus(path, exe := "", window_identifier := "") {
 }
 
 ; osx "cmd-`" style window switching
-#`::Windows(+1)
-#+`::Windows(-1)
+#`:: Windows(+1)
+#+`:: Windows(-1)
 
 ; cycle through windows that belong to the currently focused app.
 Windows(Direction) {

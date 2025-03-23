@@ -6,3 +6,7 @@ keep_padding       = true
 
 indent_style = space
 indent_size  = 2
+
+[*.ahk]
+indent_style = space
+indent_size = 2
