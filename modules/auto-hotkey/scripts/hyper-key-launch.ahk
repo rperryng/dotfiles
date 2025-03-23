@@ -1,32 +1,38 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-^+!#s::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Spotify\Spotify.exe")
-^+!#f::launch_and_focus("C:\Program Files\Mozilla Firefox\firefox.exe")
-^+!#g::launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")
-^+!#x::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\cursor\Cursor.exe")
-^+!#v::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\Microsoft VS Code\Code.exe")
-^+!#m::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Telegram Desktop\Telegram.exe")
-^+!#t::launch_and_focus("C:\Users\ryanp\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe")
-^+!#e::launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")
-
-^+!#r::Reload()
-
-; no-ops
-^+!#Esc::return
-
-; disable builtin windows office / linkedin shortcuts
-^+!#w::return
-^+!#y::return
+; hyper-key shortcuts
+; set a mapping for each key to avoid accidentally triggering the builtin windows shortcuts (microsoft office, linkedin, etc)
+^+!#a::return
+^+!#b::return
+^+!#c::return
+^+!#d::return
+^+!#e::launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")  ; Explorer
+^+!#f::launch_and_focus("C:\Program Files\Mozilla Firefox\firefox.exe")  ; Firefox
+^+!#g::launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")  ; Godot
+^+!#h::return
+^+!#i::return
+^+!#j::return
+^+!#k::return
+^+!#l::return
+^+!#m::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Telegram Desktop\Telegram.exe")  ; Telegram
+^+!#n::return
 ^+!#o::return
 ^+!#p::return
-^+!#d::return
-^+!#l::return
-^+!#n::return
-; ^+!#t::return
-; ^+!#x::return
+^+!#q::return
+^+!#r::Reload()  ; Reload script
+^+!#s::launch_and_focus("C:\Users\%A_UserName%\AppData\Roaming\Spotify\Spotify.exe")  ; Spotify
+^+!#t::launch_and_focus("C:\Users\ryanp\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe")  ; Terminal
+^+!#u::return
+^+!#v::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\Microsoft VS Code\Code.exe")  ; VS Code
+^+!#w::return
+^+!#x::launch_and_focus("C:\Users\%A_UserName%\AppData\Local\Programs\cursor\Cursor.exe")  ; Cursor
+^+!#y::return
+^+!#z::return
 
-; Generic function to launch and focus an application
+; explicit "cancel" mapping
+^+!#Esc::return
+
 launch_and_focus(path, exe := "", window_identifier := "") {
     if (exe == "") {
         SplitPath(path, &exe)
@@ -45,7 +51,7 @@ launch_and_focus(path, exe := "", window_identifier := "") {
     WinActivate(window_identifier)
 }
 
-; switcher
+; osx "cmd-`" style window switching
 #`::Windows(+1)
 #+`::Windows(-1)
 
