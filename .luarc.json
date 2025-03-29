@@ -2,7 +2,9 @@
   "diagnostics": {
     "globals": [
       "MiniMove",
-      "vim"
+      "vim",
+      "hs",
+      "spoon"
     ]
   }
 }
