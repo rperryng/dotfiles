@@ -5,56 +5,71 @@ hs.configdir = os.getenv('HOME') .. '/.config/hammerspoon'
 hs.loadSpoon('SpoonInstall')
 spoon.SpoonInstall.use_syncinstall = true
 
--- Global hyper ke
-local hyper = { 'ctrl', 'alt', 'shift', 'cmd' }
-local meh = { 'ctrl', 'alt', 'shift' }
+-- Global hyper key
+local hyper = {'ctrl', 'alt', 'shift', 'cmd'}
+local meh = {'ctrl', 'alt', 'shift'}
 
--- Curried launch by app id
+-- Reload configuration hotkey
+spoon.SpoonInstall:andUse('ReloadConfiguration', {
+  watch_paths = os.getenv('HOME') .. '/.config/hammerspoon/',
+  hotkeys = {
+    reloadConfiguration = {hyper, 'r'}
+  },
+  start = true
+})
+
+-- Curried function utils
 local function launchById(id)
   return function()
     hs.application.launchOrFocusByBundleID(id)
   end
 end
-
 local function openWithFinder(path)
   return function()
-    os.execute('open '..path)
+    os.execute('open ' .. path)
     hs.application.launchOrFocus('Finder')
   end
 end
 
--- Reload config
-spoon.SpoonInstall:andUse('ReloadConfiguration', {
-  watch_paths = os.getenv('HOME') .. '/.config/hammerspoon/',
-  hotkeys = {
-    reloadConfiguration = { hyper, 'r' },
+-- Leader key binding
+spoon.SpoonInstall:andUse('RecursiveBinder')
+spoon.RecursiveBinder.escapeKey = {{}, 'escape'}
+spoon.RecursiveBinder.helperFormat = {
+  atScreenEdge = 2,
+  strokeColor = {
+    white = 0,
+    alpha = 2
   },
-  start = true,
-})
+  textFont = 'Courier',
+  textSize = 16
+}
+local singleKey = spoon.RecursiveBinder.singleKey
+local keyMap = {
+  [singleKey('1', '1Password')] = launchById('com.1password.1password'),
+  [singleKey('f', 'Firefox')] = launchById('org.mozilla.firefoxdeveloperedition'),
+  [singleKey('s', 'Spotify')] = launchById('com.spotify.client'),
+  [singleKey('t', 'Terminal')] = launchById('com.mitchellh.ghostty'),
+  [singleKey('c', 'Slack')] = launchById('com.tinyspeck.slackmacgap'),
+  [singleKey('m', 'Telegram')] = launchById('com.tdesktop.Telegram'),
+  [singleKey('n', 'Notion')] = launchById('notion.id'),
+  [singleKey('e', 'Finder')] = launchById('com.apple.finder'),
+  [singleKey('p', 'Tuple')] = launchById('app.tuple.app'),
+  [singleKey('g', 'Godot')] = launchById('org.godotengine.godot'),
+  [singleKey('x', 'Cursor')] = launchById('com.todesktop.230313mzl4w4u92'),
+  [singleKey('v', 'VSCode')] = launchById('com.microsoft.VSCode'),
+  [singleKey('h', 'Google Meet')] = openWithFinder('~/Applications/Chrome Apps.localized/Google Meet.app')
+}
+hs.hotkey.bind(hyper, 'w', spoon.RecursiveBinder.recursiveBind(keyMap, 'App Switcher'))
 
 -- Notification that config was loaded
 spoon.SpoonInstall:andUse('FadeLogo', {
   config = {
-    image_size = hs.geometry.size({w=75, h=75}),
+    image_size = hs.geometry.size({
+      w = 75,
+      h = 75
+    }),
     run_time = 0.5,
     zoom = false
   },
   start = true
 })
-
-spoon.SpoonInstall:andUse('RecursiveBinder');
-
--- Application hotkeys
-hs.hotkey.bind(hyper, '1', launchById('com.1password.1password'))
-hs.hotkey.bind(hyper, 'f', launchById('org.mozilla.firefoxdeveloperedition'))
-hs.hotkey.bind(hyper, 's', launchById('com.spotify.client'))
-hs.hotkey.bind(hyper, 't', launchById('com.mitchellh.ghostty'))
-hs.hotkey.bind(hyper, 'c', launchById('com.tinyspeck.slackmacgap'))
-hs.hotkey.bind(hyper, 'm', launchById('com.tdesktop.Telegram'))
-hs.hotkey.bind(hyper, 'n', launchById('notion.id'))
-hs.hotkey.bind(hyper, 'e', launchById('com.apple.finder'))
-hs.hotkey.bind(hyper, 'p', launchById('app.tuple.app'))
-hs.hotkey.bind(hyper, 'g', launchById('org.godotengine.godot'))
-hs.hotkey.bind(hyper, 'x', launchById('com.todesktop.230313mzl4w4u92')) -- cursor
-hs.hotkey.bind(hyper, 'v', launchById('com.microsoft.VSCode'))
-hs.hotkey.bind(hyper, 'h', openWithFinder('~/Applications/Chrome Apps.localized/Google Meet.app'))
