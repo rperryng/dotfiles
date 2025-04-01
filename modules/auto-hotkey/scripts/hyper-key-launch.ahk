@@ -1,7 +1,6 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-; Disable Windows key opening Start menu with debounce protection
 ~LWin:: Send("{Blind}{vk08}")
 
 ; Remap Windows+Tab to Alt+Tab
@@ -27,28 +26,28 @@
 ^+!#b:: return
 ^+!#c:: return
 ^+!#d:: return
-^+!#e:: launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")  ; Explorer
-^+!#f:: launch_and_focus("C:\Program Files\Mozilla Firefox\firefox.exe")  ; Firefox
-^+!#g:: launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")  ; Godot
+^+!#e:: launch_and_focus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass")
+^+!#f:: launch_and_focus("C:\Program Files\Mozilla Firefox\firefox.exe")
+^+!#g:: launch_and_focus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe")
 ^+!#h:: return
 ^+!#i:: return
 ^+!#j:: return
 ^+!#k:: return
 ^+!#l:: return
-^+!#m:: launch_and_focus(Format("C:\Users\{1}\AppData\Roaming\Telegram Desktop\Telegram.exe", A_UserName))  ; Telegram
+^+!#m:: launch_and_focus(Format("C:\Users\{1}\AppData\Roaming\Telegram Desktop\Telegram.exe", A_UserName))
 ^+!#n:: return
 ^+!#o:: return
 ^+!#p:: return
 ^+!#q:: return
-^+!#r:: Reload()  ; Reload script
-^+!#s:: launch_and_focus(Format("C:\Users\{1}\AppData\Roaming\Spotify\Spotify.exe", A_UserName))  ; Spotify
-^+!#t:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe", A_UserName))  ; Terminal
+^+!#r:: Reload()
+^+!#s:: launch_and_focus(Format("C:\Users\{1}\AppData\Roaming\Spotify\Spotify.exe", A_UserName))
+^+!#t:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe", A_UserName))
 ^+!#u:: return
-^+!#v:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Programs\Microsoft VS Code\Code.exe", A_UserName))  ; VS Code
+^+!#v:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Programs\Microsoft VS Code\Code.exe", A_UserName))
 ^+!#w:: return
-^+!#x:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Programs\cursor\Cursor.exe", A_UserName))  ; Cursor
+^+!#x:: launch_and_focus(Format("C:\Users\{1}\AppData\Local\Programs\cursor\Cursor.exe", A_UserName))
 ^+!#y:: return
-^+!#z:: return
+^+!#z:: launch_and_focus("C:\Program Files (x86)\Steam\steam.exe")
 
 ; explicit "cancel" mapping
 ^+!#Esc:: return
