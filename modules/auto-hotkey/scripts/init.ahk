@@ -4,6 +4,7 @@
 ; Include the recursive binder library
 #Include lib/recursive-binder.ahk
 #Include lib/window-utils.ahk
+#Include lib/hyper-key-utils.ahk
 
 ; Initialize the recursive binder
 InitRecursiveBinder()
@@ -35,31 +36,5 @@ RecursiveBind("^+!#w", "z", () => LaunchAndFocus("C:\Program Files (x86)\Steam\s
 ; reload config
 #+!r:: Reload()
 
-; iterate through sequences and log them
-for leaderKey, sequences in RecursiveBinder.sequences {
-    Logger.Info("Leader key: " leaderKey)
-    for sequence, action in sequences {
-        Logger.Info("Sequence: " sequence)
-    }
-}
-
-; setup hyper key mappings for all letters to avoid microsoft's default mappings
-for key in ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"] {
-    ; check if this key is already bound as a leader key
-    leaderKeyCandidate := Format("^+!#{1}", key)
-    isLeaderKey := false
-    for leaderKey, _ in RecursiveBinder.sequences {
-        if (leaderKey == leaderKeyCandidate) {
-            Logger.Info("Leader key " leaderKeyCandidate " already exists, skipping")
-            isLeaderKey := true
-            break
-        }
-    }
-
-    if (!isLeaderKey) {
-        Logger.Info("Mapping " leaderKeyCandidate " to no-op")
-        ; block the key with a dummy function
-        Hotkey(leaderKeyCandidate, (*) => {})
-    }
-}
+; Create no-op mappings for unused hyper key combinations
+HyperKeyUtils.CreateNoOpMappings()
