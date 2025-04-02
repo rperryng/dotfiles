@@ -2,7 +2,7 @@
 #SingleInstance Force
 
 ; Include the recursive binder library
-#Include lib/recursive-binder-lib.ahk
+#Include lib/recursive-binder.ahk
 #Include lib/window-utils.ahk
 
 ; Initialize the recursive binder
@@ -20,6 +20,7 @@ InitRecursiveBinder()
 #+`:: CycleAppWindows(-1)
 
 ; Sequence-based mappings (vim-style)
+RecursiveBind("^+!#d", "c", () => Run("notepad.exe"))
 RecursiveBind("^+!#w", "e", () => LaunchAndFocus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass"))
 RecursiveBind("^+!#w", "f", () => LaunchAndFocus("C:\Program Files\Mozilla Firefox\firefox.exe"))
 RecursiveBind("^+!#w", "g", () => LaunchAndFocus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe"))
