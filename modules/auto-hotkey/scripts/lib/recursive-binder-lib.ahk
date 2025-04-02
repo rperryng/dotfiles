@@ -1,7 +1,5 @@
 #Requires AutoHotkey v2.0
 
-debug := true
-
 ; Logging functionality
 global LogFile := A_ScriptDir "\recursive-binder.log"
 Log(message) {
@@ -13,8 +11,8 @@ Log(message) {
 global RecursiveBinder := {
     isActive: false,          ; Whether we're currently capturing a sequence
     currentSequence: "",      ; The current sequence being built
-    leaderKey: "^+!#w",       ; Ctrl+Shift+Alt+Win+W as the leader key
-    sequences: Map(),         ; Map of sequences to their actions
+    currentLeader: "",        ; The current leader key being used
+    sequences: Map(),         ; Map of leader keys to their sequence maps
     maxSequenceLength: 3      ; Maximum length of a sequence (including leader)
 }
 
@@ -32,15 +30,19 @@ NormalizeKey(key) {
 }
 
 ; Function to add a sequence binding
-AddSequence(sequence, action) {
-    Log("Adding sequence: " sequence)
-    RecursiveBinder.sequences.Set(sequence, action)
+AddSequence(leaderKey, sequence, action) {
+    Log("Adding sequence: " sequence " for leader: " leaderKey)
+    if !RecursiveBinder.sequences.Has(leaderKey) {
+        RecursiveBinder.sequences.Set(leaderKey, Map())
+    }
+    RecursiveBinder.sequences.Get(leaderKey).Set(sequence, action)
 }
 
 ; Function to handle key press events
 HandleKeyPress(key) {
     Log("HandleKeyPress called with key: " key)
     Log("RecursiveBinder.isActive: " RecursiveBinder.isActive)
+    Log("RecursiveBinder.currentLeader: " RecursiveBinder.currentLeader)
 
     if !RecursiveBinder.isActive {
         Log("Binder not active, returning false")
@@ -56,10 +58,11 @@ HandleKeyPress(key) {
     RecursiveBinder.currentSequence .= normalizedKey
     Log("Current sequence updated to: " RecursiveBinder.currentSequence)
 
-    ; Check if we have a matching sequence
-    if RecursiveBinder.sequences.Has(RecursiveBinder.currentSequence) {
+    ; Check if we have a matching sequence for the current leader
+    leaderSequences := RecursiveBinder.sequences.Get(RecursiveBinder.currentLeader)
+    if leaderSequences.Has(RecursiveBinder.currentSequence) {
         Log("Found matching sequence: " RecursiveBinder.currentSequence)
-        action := RecursiveBinder.sequences.Get(RecursiveBinder.currentSequence)
+        action := leaderSequences.Get(RecursiveBinder.currentSequence)
         action()
         ResetBinder()
         return true
@@ -79,13 +82,15 @@ ResetBinder() {
     Log("Resetting binder state")
     RecursiveBinder.isActive := false
     RecursiveBinder.currentSequence := ""
+    RecursiveBinder.currentLeader := ""
 }
 
 ; Function to start sequence capture
-StartSequence(*) {
-    Log("Starting sequence capture")
+StartSequence(leaderKey) {
+    Log("Starting sequence capture with leader: " leaderKey)
     RecursiveBinder.isActive := true
     RecursiveBinder.currentSequence := ""
+    RecursiveBinder.currentLeader := leaderKey
 }
 
 ; Function to create a hotkey handler for a specific key
@@ -111,11 +116,6 @@ InitRecursiveBinder() {
         FileDelete(LogFile)
     }
 
-    ; Define the leader key hotkey
-    Log("Setting up leader key hotkey: " RecursiveBinder.leaderKey)
-    HotIf IsSequenceInactive
-    Hotkey(RecursiveBinder.leaderKey, StartSequence)
-
     ; Define hotkeys for all alphabetic keys
     Log("Setting up alphabetic key hotkeys")
     for key in ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
@@ -132,4 +132,20 @@ InitRecursiveBinder() {
     Hotkey("Escape", (*) => ResetBinder())
 
     Log("Recursive binder initialization complete")
+}
+
+; Function to set up a recursive binding with a leader key
+RecursiveBind(leaderKey, sequence, action) {
+    Log("Setting up recursive binding for leader: " leaderKey)
+
+    ; Create a handler for this specific leader key
+    leaderHandler := (*) => StartSequence(leaderKey)
+
+    ; Set up the hotkey for this leader
+    Log("Setting up leader key hotkey: " leaderKey)
+    HotIf IsSequenceInactive
+    Hotkey(leaderKey, leaderHandler)
+
+    ; Add the sequence binding
+    AddSequence(leaderKey, sequence, action)
 }
