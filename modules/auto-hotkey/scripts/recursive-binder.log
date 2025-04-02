@@ -1,0 +1,157 @@
+2025-04-01 19:15:41 - Setting up leader key hotkey: ^+!#w
+2025-04-01 19:15:41 - Setting up alphabetic key hotkeys
+2025-04-01 19:15:41 - Setting up hotkey for: a
+2025-04-01 19:15:41 - Creating handler for key: a
+2025-04-01 19:15:41 - Setting up hotkey for: b
+2025-04-01 19:15:41 - Creating handler for key: b
+2025-04-01 19:15:41 - Setting up hotkey for: c
+2025-04-01 19:15:41 - Creating handler for key: c
+2025-04-01 19:15:41 - Setting up hotkey for: d
+2025-04-01 19:15:41 - Creating handler for key: d
+2025-04-01 19:15:41 - Setting up hotkey for: e
+2025-04-01 19:15:41 - Creating handler for key: e
+2025-04-01 19:15:41 - Setting up hotkey for: f
+2025-04-01 19:15:41 - Creating handler for key: f
+2025-04-01 19:15:41 - Setting up hotkey for: g
+2025-04-01 19:15:41 - Creating handler for key: g
+2025-04-01 19:15:41 - Setting up hotkey for: h
+2025-04-01 19:15:41 - Creating handler for key: h
+2025-04-01 19:15:41 - Setting up hotkey for: i
+2025-04-01 19:15:41 - Creating handler for key: i
+2025-04-01 19:15:41 - Setting up hotkey for: j
+2025-04-01 19:15:41 - Creating handler for key: j
+2025-04-01 19:15:41 - Setting up hotkey for: k
+2025-04-01 19:15:41 - Creating handler for key: k
+2025-04-01 19:15:41 - Setting up hotkey for: l
+2025-04-01 19:15:41 - Creating handler for key: l
+2025-04-01 19:15:41 - Setting up hotkey for: m
+2025-04-01 19:15:41 - Creating handler for key: m
+2025-04-01 19:15:41 - Setting up hotkey for: n
+2025-04-01 19:15:41 - Creating handler for key: n
+2025-04-01 19:15:41 - Setting up hotkey for: o
+2025-04-01 19:15:41 - Creating handler for key: o
+2025-04-01 19:15:41 - Setting up hotkey for: p
+2025-04-01 19:15:41 - Creating handler for key: p
+2025-04-01 19:15:41 - Setting up hotkey for: q
+2025-04-01 19:15:41 - Creating handler for key: q
+2025-04-01 19:15:41 - Setting up hotkey for: r
+2025-04-01 19:15:41 - Creating handler for key: r
+2025-04-01 19:15:41 - Setting up hotkey for: s
+2025-04-01 19:15:41 - Creating handler for key: s
+2025-04-01 19:15:41 - Setting up hotkey for: t
+2025-04-01 19:15:41 - Creating handler for key: t
+2025-04-01 19:15:41 - Setting up hotkey for: u
+2025-04-01 19:15:41 - Creating handler for key: u
+2025-04-01 19:15:41 - Setting up hotkey for: v
+2025-04-01 19:15:41 - Creating handler for key: v
+2025-04-01 19:15:41 - Setting up hotkey for: w
+2025-04-01 19:15:41 - Creating handler for key: w
+2025-04-01 19:15:41 - Setting up hotkey for: x
+2025-04-01 19:15:41 - Creating handler for key: x
+2025-04-01 19:15:41 - Setting up hotkey for: y
+2025-04-01 19:15:41 - Creating handler for key: y
+2025-04-01 19:15:41 - Setting up hotkey for: z
+2025-04-01 19:15:41 - Creating handler for key: z
+2025-04-01 19:15:41 - Setting up ESC hotkey
+2025-04-01 19:15:41 - Recursive binder initialization complete
+2025-04-01 19:15:41 - Adding sequence: wa
+2025-04-01 19:15:41 - Adding sequence: wb
+2025-04-01 19:15:41 - Adding sequence: y
+2025-04-01 19:15:44 - Starting sequence capture
+2025-04-01 19:15:46 - HandleKeyPress called with key: a
+2025-04-01 19:15:46 - RecursiveBinder.isActive: 1
+2025-04-01 19:15:46 - IsAlphabetic called with key: a
+2025-04-01 19:15:46 - NormalizeKey called with key: a
+2025-04-01 19:15:46 - Current sequence updated to: a
+2025-04-01 19:15:46 - HandleKeyPress called with key: b
+2025-04-01 19:15:46 - RecursiveBinder.isActive: 1
+2025-04-01 19:15:46 - IsAlphabetic called with key: b
+2025-04-01 19:15:46 - NormalizeKey called with key: b
+2025-04-01 19:15:46 - Current sequence updated to: ab
+2025-04-01 19:15:53 - HandleKeyPress called with key: w
+2025-04-01 19:15:53 - RecursiveBinder.isActive: 1
+2025-04-01 19:15:53 - IsAlphabetic called with key: w
+2025-04-01 19:15:53 - NormalizeKey called with key: w
+2025-04-01 19:15:53 - Current sequence updated to: abw
+2025-04-01 19:15:53 - Max sequence length reached, resetting
+2025-04-01 19:15:53 - Resetting binder state
+2025-04-01 19:15:56 - Starting sequence capture
+2025-04-01 19:15:57 - HandleKeyPress called with key: w
+2025-04-01 19:15:57 - RecursiveBinder.isActive: 1
+2025-04-01 19:15:57 - IsAlphabetic called with key: w
+2025-04-01 19:15:57 - NormalizeKey called with key: w
+2025-04-01 19:15:57 - Current sequence updated to: w
+2025-04-01 19:15:57 - HandleKeyPress called with key: a
+2025-04-01 19:15:57 - RecursiveBinder.isActive: 1
+2025-04-01 19:15:57 - IsAlphabetic called with key: a
+2025-04-01 19:15:57 - NormalizeKey called with key: a
+2025-04-01 19:15:57 - Current sequence updated to: wa
+2025-04-01 19:15:57 - Found matching sequence: wa
+2025-04-01 19:15:58 - Resetting binder state
+2025-04-01 19:16:01 - Starting sequence capture
+2025-04-01 19:16:01 - HandleKeyPress called with key: w
+2025-04-01 19:16:01 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:01 - IsAlphabetic called with key: w
+2025-04-01 19:16:01 - NormalizeKey called with key: w
+2025-04-01 19:16:01 - Current sequence updated to: w
+2025-04-01 19:16:01 - HandleKeyPress called with key: b
+2025-04-01 19:16:01 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:01 - IsAlphabetic called with key: b
+2025-04-01 19:16:01 - NormalizeKey called with key: b
+2025-04-01 19:16:01 - Current sequence updated to: wb
+2025-04-01 19:16:01 - Found matching sequence: wb
+2025-04-01 19:16:01 - Resetting binder state
+2025-04-01 19:16:14 - Starting sequence capture
+2025-04-01 19:16:18 - Resetting binder state
+2025-04-01 19:16:19 - Starting sequence capture
+2025-04-01 19:16:20 - HandleKeyPress called with key: w
+2025-04-01 19:16:20 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:20 - IsAlphabetic called with key: w
+2025-04-01 19:16:20 - NormalizeKey called with key: w
+2025-04-01 19:16:20 - Current sequence updated to: w
+2025-04-01 19:16:20 - HandleKeyPress called with key: b
+2025-04-01 19:16:20 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:20 - IsAlphabetic called with key: b
+2025-04-01 19:16:20 - NormalizeKey called with key: b
+2025-04-01 19:16:20 - Current sequence updated to: wb
+2025-04-01 19:16:20 - Found matching sequence: wb
+2025-04-01 19:16:20 - Resetting binder state
+2025-04-01 19:16:22 - Starting sequence capture
+2025-04-01 19:16:22 - HandleKeyPress called with key: w
+2025-04-01 19:16:22 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:22 - IsAlphabetic called with key: w
+2025-04-01 19:16:22 - NormalizeKey called with key: w
+2025-04-01 19:16:22 - Current sequence updated to: w
+2025-04-01 19:16:22 - HandleKeyPress called with key: b
+2025-04-01 19:16:22 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:22 - IsAlphabetic called with key: b
+2025-04-01 19:16:22 - NormalizeKey called with key: b
+2025-04-01 19:16:22 - Current sequence updated to: wb
+2025-04-01 19:16:22 - Found matching sequence: wb
+2025-04-01 19:16:22 - Resetting binder state
+2025-04-01 19:16:27 - Starting sequence capture
+2025-04-01 19:16:27 - HandleKeyPress called with key: w
+2025-04-01 19:16:27 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:27 - IsAlphabetic called with key: w
+2025-04-01 19:16:27 - NormalizeKey called with key: w
+2025-04-01 19:16:27 - Current sequence updated to: w
+2025-04-01 19:16:27 - HandleKeyPress called with key: b
+2025-04-01 19:16:27 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:27 - IsAlphabetic called with key: b
+2025-04-01 19:16:27 - NormalizeKey called with key: b
+2025-04-01 19:16:27 - Current sequence updated to: wb
+2025-04-01 19:16:27 - Found matching sequence: wb
+2025-04-01 19:16:27 - Resetting binder state
+2025-04-01 19:16:29 - Starting sequence capture
+2025-04-01 19:16:30 - HandleKeyPress called with key: w
+2025-04-01 19:16:30 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:30 - IsAlphabetic called with key: w
+2025-04-01 19:16:30 - NormalizeKey called with key: w
+2025-04-01 19:16:30 - Current sequence updated to: w
+2025-04-01 19:16:30 - HandleKeyPress called with key: a
+2025-04-01 19:16:30 - RecursiveBinder.isActive: 1
+2025-04-01 19:16:30 - IsAlphabetic called with key: a
+2025-04-01 19:16:30 - NormalizeKey called with key: a
+2025-04-01 19:16:30 - Current sequence updated to: wa
+2025-04-01 19:16:30 - Found matching sequence: wa
+2025-04-01 19:16:30 - Resetting binder state

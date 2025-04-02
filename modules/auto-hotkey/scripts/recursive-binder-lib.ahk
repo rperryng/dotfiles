@@ -1,14 +1,9 @@
 #Requires AutoHotkey v2.0
-#SingleInstance
+
+debug := true
 
 ; Logging functionality
 global LogFile := A_ScriptDir "\recursive-binder.log"
-
-; Clear log file on script start
-if FileExist(LogFile) {
-    FileDelete(LogFile)
-}
-
 Log(message) {
     timestamp := FormatTime(, "yyyy-MM-dd HH:mm:ss")
     FileAppend(timestamp " - " message "`n", LogFile)
@@ -109,32 +104,32 @@ IsSequenceInactive(*) {
     return !RecursiveBinder.isActive
 }
 
-; Define the leader key hotkey
-Log("Setting up leader key hotkey: " RecursiveBinder.leaderKey)
-HotIf IsSequenceInactive
-Hotkey(RecursiveBinder.leaderKey, StartSequence)
+; Function to initialize the recursive binder
+InitRecursiveBinder() {
+    ; Clear log file on script start
+    if FileExist(LogFile) {
+        FileDelete(LogFile)
+    }
 
-; Define hotkeys for all alphabetic keys
-Log("Setting up alphabetic key hotkeys")
-for key in ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-            "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"] {
-    Log("Setting up hotkey for: " key)
-    handler := CreateKeyHandler(key)
+    ; Define the leader key hotkey
+    Log("Setting up leader key hotkey: " RecursiveBinder.leaderKey)
+    HotIf IsSequenceInactive
+    Hotkey(RecursiveBinder.leaderKey, StartSequence)
+
+    ; Define hotkeys for all alphabetic keys
+    Log("Setting up alphabetic key hotkeys")
+    for key in ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+                "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"] {
+        Log("Setting up hotkey for: " key)
+        handler := CreateKeyHandler(key)
+        HotIf IsSequenceActive
+        Hotkey(key, handler)
+    }
+
+    ; ESC key to cancel sequence
+    Log("Setting up ESC hotkey")
     HotIf IsSequenceActive
-    Hotkey(key, handler)
+    Hotkey("Escape", (*) => ResetBinder())
+
+    Log("Recursive binder initialization complete")
 }
-
-; ESC key to cancel sequence
-Log("Setting up ESC hotkey")
-HotIf IsSequenceActive
-Hotkey("Escape", (*) => ResetBinder())
-
-; Example sequence bindings
-Log("Setting up example sequence bindings")
-AddSequence("wa", () => Run("notepad.exe"))
-AddSequence("wb", () => Run("firefox.exe"))
-; AddSequence("wc", () => Run("msedge.exe"))
-; AddSequence("x", () => Run("notepad.exe"))
-AddSequence("y", () => Run("calc.exe"))
-
-Log("Script initialization complete")
