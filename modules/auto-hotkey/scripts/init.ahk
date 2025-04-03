@@ -21,17 +21,25 @@ InitRecursiveBinder()
 #+`:: CycleAppWindows(-1)
 
 ; Sequence-based mappings (vim-style)
-RecursiveBind("^+!#d", "c", () => Run("notepad.exe"))
-RecursiveBind("^+!#w", "e", () => LaunchAndFocus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass"))
-RecursiveBind("^+!#w", "f", () => LaunchAndFocus("C:\Program Files\Mozilla Firefox\firefox.exe"))
-RecursiveBind("^+!#w", "g", () => LaunchAndFocus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe"))
-RecursiveBind("^+!#w", "m", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Roaming\Telegram Desktop\Telegram.exe", A_UserName)))
-RecursiveBind("^+!#w", "p", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\1Password\app\8\1Password.exe", A_UserName)))
-RecursiveBind("^+!#w", "s", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Roaming\Spotify\Spotify.exe", A_UserName)))
-RecursiveBind("^+!#w", "t", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe", A_UserName)))
-RecursiveBind("^+!#w", "v", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Programs\Microsoft VS Code\Code.exe", A_UserName)))
-RecursiveBind("^+!#w", "x", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Programs\cursor\Cursor.exe", A_UserName)))
-RecursiveBind("^+!#w", "z", () => LaunchAndFocus("C:\Program Files (x86)\Steam\steam.exe"))
+RecursiveBind("^+!#t", [
+  { key: "a", label: "test (a)", mappings: [
+    { key: "n", label: "notepad", callback: () => Run("notepad.exe") },
+    { key: "c", label: "calculator", callback: () => Run("calculator.exe") },
+  ]},
+])
+
+RecursiveBind("^+!#w", [
+    { key: "e", label: "explorer", callback: () => LaunchAndFocus("C:\Windows\explorer.exe", "explorer.exe", "ahk_class CabinetWClass") },
+    { key: "f", label: "firefox", callback: () => LaunchAndFocus("C:\Program Files\Mozilla Firefox\firefox.exe") },
+    { key: "g", label: "godot", callback: () => LaunchAndFocus("C:\Program Files\Godot\Godot_v4.4-stable_mono_win64\Godot_v4.4-stable_mono_win64.exe") },
+    { key: "m", label: "telegram", callback: () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Roaming\Telegram Desktop\Telegram.exe", A_UserName)) },
+    { key: "p", label: "1password", callback: () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\1Password\app\8\1Password.exe", A_UserName)) },
+    { key: "s", label: "spotify", callback: () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Roaming\Spotify\Spotify.exe", A_UserName)) },
+    { key: "t", label: "terminal", callback: () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe", A_UserName)) },
+    { key: "v", label: "vscode", callback: () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Programs\Microsoft VS Code\Code.exe", A_UserName)) },
+    { key: "x", label: "cursor", callback: () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Programs\cursor\Cursor.exe", A_UserName)) },
+    { key: "z", label: "steam", callback: () => LaunchAndFocus("C:\Program Files (x86)\Steam\steam.exe") }
+])
 
 ; Remap Windows+Tab to Alt+Tab
 #Tab:: {

@@ -10,9 +10,10 @@ global RecursiveBinder := {
     currentSequence: "",      ; The current sequence being built
     currentLeader: "",        ; The current leader key being used
     sequences: Map(),         ; Map of leader keys to their sequence maps
-    maxSequenceLength: 3,     ; Maximum length of a sequence (including leader)
+    maxSequenceLength: 10,    ; Maximum length of a sequence (including leader)
     popupGui: "",            ; GUI object for showing available keys
-    popupText: ""            ; Text control for the popup
+    popupText: "",           ; Text control for the popup
+    labels: Map()            ; Map to store labels for each key in sequences
 }
 
 ; Helper function to check if a key is alphabetic
@@ -32,33 +33,66 @@ NormalizeKey(key) {
 ShowAvailableKeys(availableKeys) {
     recursiveBinderLogger.Debug("Showing available keys: " availableKeys)
 
-    ; Create GUI if it doesn't exist
-    if !RecursiveBinder.popupGui {
-        RecursiveBinder.popupGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
-        RecursiveBinder.popupGui.BackColor := "000000"
-        RecursiveBinder.popupGui.SetFont("s12", "Consolas")
-        RecursiveBinder.popupText := RecursiveBinder.popupGui.Add("Text", "x10 y5 w180 h20 Center cFFFFFF", "")
+    ; Add consistent spacing between labels
+    availableKeys := RegExReplace(availableKeys, "\) ", ")    ")
+
+    ; Destroy existing GUI if it exists
+    if RecursiveBinder.popupGui {
+        RecursiveBinder.popupGui.Destroy()
     }
 
-    ; Update text and show window
-    RecursiveBinder.popupText.Value := availableKeys
-    RecursiveBinder.popupGui.Show("w200 h30 NoActivate")
+    ; Define padding (same for all sides)
+    padding := 15
 
-    ; Position window at bottom of screen
+    ; Create new GUI
+    RecursiveBinder.popupGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+    RecursiveBinder.popupGui.BackColor := "000000"
+    RecursiveBinder.popupGui.SetFont("s12", "Consolas")
+
+    ; Add text control with consistent padding
+    RecursiveBinder.popupText := RecursiveBinder.popupGui.AddText("x" padding " y" padding " c0xFFFFFF", availableKeys)
+
+    ; Get text size (returns x, y, width, height)
+    x := 0, y := 0, w := 0, h := 0
+    RecursiveBinder.popupText.GetPos(&x, &y, &w, &h)
+    width := w + (padding * 2)  ; Add padding for both left and right
+    height := h + (padding * 2)  ; Add padding for both top and bottom
+
+    ; Create region for rounded corners
+    hRegion := DllCall("CreateRoundRectRgn", "Int", 0, "Int", 0, "Int", width, "Int", height, "Int", 10, "Int", 10)
+    DllCall("SetWindowRgn", "Ptr", RecursiveBinder.popupGui.Hwnd, "Ptr", hRegion, "Int", true)
+
+    ; Show GUI with calculated size
+    RecursiveBinder.popupGui.Show("w" width " h" height " NoActivate")
+
+    ; Position window at bottom center of screen
     screenWidth := A_ScreenWidth
-    RecursiveBinder.popupGui.Move(screenWidth/2 - 100, A_ScreenHeight - 100)
+    screenHeight := A_ScreenHeight
+    xPos := (screenWidth - width) / 2
+    yPos := screenHeight - height - 100  ; 100 pixels from bottom
+
+    ; Ensure the window stays within screen bounds
+    xPos := Max(0, Min(xPos, screenWidth - width))
+
+    RecursiveBinder.popupGui.Move(xPos, yPos)
 }
 
 ; Function to hide the popup window
 HideAvailableKeys() {
     recursiveBinderLogger.Debug("Hiding available keys popup")
     if RecursiveBinder.popupGui {
-        RecursiveBinder.popupGui.Hide()
+        RecursiveBinder.popupGui.Destroy()
+        RecursiveBinder.popupGui := ""
+        RecursiveBinder.popupText := ""
     }
 }
 
 ; Function to get available next keys for current sequence
 GetAvailableNextKeys() {
+    recursiveBinderLogger.Debug("Getting available next keys")
+    recursiveBinderLogger.Debug("Current sequence: " RecursiveBinder.currentSequence)
+    recursiveBinderLogger.Debug("Current leader: " RecursiveBinder.currentLeader)
+
     if !RecursiveBinder.isActive || !RecursiveBinder.currentLeader {
         return ""
     }
@@ -68,26 +102,54 @@ GetAvailableNextKeys() {
         return ""
     }
 
-    availableKeys := ""
+    ; Create a map to store unique next keys and their labels
+    nextKeys := Map()
+
+    ; First, find all possible next keys from the sequences
+    currentSeqLen := StrLen(RecursiveBinder.currentSequence)
     for sequence, _ in leaderSequences {
-        if SubStr(sequence, 1, StrLen(RecursiveBinder.currentSequence)) = RecursiveBinder.currentSequence {
-            nextKey := SubStr(sequence, StrLen(RecursiveBinder.currentSequence) + 1, 1)
-            if nextKey {
-                availableKeys .= nextKey " "
+        recursiveBinderLogger.Debug("Checking sequence: " sequence)
+
+        ; Only look at sequences that start with our current sequence
+        if SubStr(sequence, 1, currentSeqLen) = RecursiveBinder.currentSequence {
+            ; Get the next key in the sequence (if any)
+            if StrLen(sequence) > currentSeqLen {
+                nextKey := SubStr(sequence, currentSeqLen + 1, 1)
+                recursiveBinderLogger.Debug("Found next key: " nextKey)
+
+                ; Only add if we haven't seen this key before
+                if nextKey && !nextKeys.Has(nextKey) {
+                    ; Get the label for this key's sequence
+                    fullSeq := RecursiveBinder.currentSequence nextKey
+                    label := RecursiveBinder.labels.Get(fullSeq, "")
+                    recursiveBinderLogger.Debug("Label for " fullSeq ": " label)
+                    nextKeys[nextKey] := label
+                }
             }
         }
     }
 
+    ; Build the display string with each key only once and more spacing
+    availableKeys := ""
+    for key, label in nextKeys {
+        if label
+            availableKeys .= key "(" label ") "  ; The ShowAvailableKeys function will add more spacing between labels
+    }
+
+    recursiveBinderLogger.Debug("Available keys: " availableKeys)
     return Trim(availableKeys)
 }
 
 ; Function to add a sequence binding
-AddSequence(leaderKey, sequence, action) {
+AddSequence(leaderKey, sequence, action, label := "") {
     recursiveBinderLogger.Debug("Adding sequence: " sequence " for leader: " leaderKey)
     if !RecursiveBinder.sequences.Has(leaderKey) {
         RecursiveBinder.sequences.Set(leaderKey, Map())
     }
     RecursiveBinder.sequences.Get(leaderKey).Set(sequence, action)
+    if label {
+        RecursiveBinder.labels.Set(sequence, label)
+    }
 }
 
 ; Function to handle key press events
@@ -123,9 +185,23 @@ HandleKeyPress(key) {
     if leaderSequences.Has(RecursiveBinder.currentSequence) {
         recursiveBinderLogger.Debug("Found matching sequence: " RecursiveBinder.currentSequence)
         action := leaderSequences.Get(RecursiveBinder.currentSequence)
-        action()
-        ResetBinder()
-        return true
+
+        ; Check if there are any longer sequences that start with the current sequence
+        hasLongerSequences := false
+        for sequence, _ in leaderSequences {
+            if SubStr(sequence, 1, StrLen(RecursiveBinder.currentSequence)) = RecursiveBinder.currentSequence
+               && StrLen(sequence) > StrLen(RecursiveBinder.currentSequence) {
+                hasLongerSequences := true
+                break
+            }
+        }
+
+        ; Only execute and reset if this is a leaf node (no longer sequences)
+        if !hasLongerSequences {
+            action()
+            ResetBinder()
+            return true
+        }
     }
 
     ; Check if we've exceeded max sequence length
@@ -205,7 +281,7 @@ InitRecursiveBinder() {
 }
 
 ; Function to set up a recursive binding with a leader key
-RecursiveBind(leaderKey, sequence, action) {
+RecursiveBind(leaderKey, mappings) {
     recursiveBinderLogger.Info("Setting up recursive binding for leader: " leaderKey)
 
     ; Create a handler for this specific leader key
@@ -216,6 +292,40 @@ RecursiveBind(leaderKey, sequence, action) {
     HotIf
     Hotkey(leaderKey, leaderHandler)
 
-    ; Add the sequence binding
-    AddSequence(leaderKey, sequence, action)
+    ; Process the mappings recursively
+    ProcessMappings(leaderKey, "", mappings)
+}
+
+; Helper function to process mappings recursively
+ProcessMappings(leaderKey, currentSequence, mappings) {
+    recursiveBinderLogger.Debug("Processing mappings for leader: " leaderKey " with current sequence: " currentSequence)
+
+    for mapping in mappings {
+        key := mapping.key
+        label := mapping.label
+        newSequence := currentSequence key
+
+        recursiveBinderLogger.Debug("Processing key: " key " with label: " label)
+        recursiveBinderLogger.Debug("New sequence: " newSequence)
+
+        ; Store label for this node in the sequence tree
+        if label {
+            recursiveBinderLogger.Debug("Storing label for sequence: " newSequence " = " label)
+            RecursiveBinder.labels.Set(newSequence, label)
+        }
+
+        if HasProp(mapping, "callback") {
+            ; This is a leaf node with a callback
+            recursiveBinderLogger.Debug("Adding leaf sequence: " newSequence)
+            AddSequence(leaderKey, newSequence, mapping.callback)
+        } else if HasProp(mapping, "mappings") {
+            ; This is a node with nested mappings
+            recursiveBinderLogger.Debug("Processing nested mappings for sequence: " newSequence)
+
+            ; Store this as a valid sequence even though it's not a leaf
+            AddSequence(leaderKey, newSequence, () => "")
+
+            ProcessMappings(leaderKey, newSequence, mapping.mappings)
+        }
+    }
 }
