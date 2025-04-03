@@ -33,6 +33,20 @@ RecursiveBind("^+!#w", "v", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Lo
 RecursiveBind("^+!#w", "x", () => LaunchAndFocus(Format("C:\Users\{1}\AppData\Local\Programs\cursor\Cursor.exe", A_UserName)))
 RecursiveBind("^+!#w", "z", () => LaunchAndFocus("C:\Program Files (x86)\Steam\steam.exe"))
 
+; Remap Windows+Tab to Alt+Tab
+#Tab:: {
+  Send("{Alt down}{Tab}")
+  KeyWait("LWin")
+  Send("{Alt up}")
+}
+
+; Remap Shift-Windows-Tab to Alt-Shift-Tab
+#+Tab:: {
+  Send("{Alt down}{Shift down}{Tab}")
+  KeyWait("LWin")
+  Send("{Alt up}")
+}
+
 ; reload config
 #+!r:: Reload()
 
