@@ -10,7 +10,9 @@ global RecursiveBinder := {
     currentSequence: "",      ; The current sequence being built
     currentLeader: "",        ; The current leader key being used
     sequences: Map(),         ; Map of leader keys to their sequence maps
-    maxSequenceLength: 3      ; Maximum length of a sequence (including leader)
+    maxSequenceLength: 3,     ; Maximum length of a sequence (including leader)
+    popupGui: "",            ; GUI object for showing available keys
+    popupText: ""            ; Text control for the popup
 }
 
 ; Helper function to check if a key is alphabetic
@@ -24,6 +26,59 @@ IsAlphabetic(key) {
 NormalizeKey(key) {
     recursiveBinderLogger.Debug("NormalizeKey called with key: " key)
     return StrLower(key)
+}
+
+; Function to create and show the popup window
+ShowAvailableKeys(availableKeys) {
+    recursiveBinderLogger.Debug("Showing available keys: " availableKeys)
+
+    ; Create GUI if it doesn't exist
+    if !RecursiveBinder.popupGui {
+        RecursiveBinder.popupGui := Gui("+AlwaysOnTop -Caption +ToolWindow")
+        RecursiveBinder.popupGui.BackColor := "000000"
+        RecursiveBinder.popupGui.SetFont("s12", "Consolas")
+        RecursiveBinder.popupText := RecursiveBinder.popupGui.Add("Text", "x10 y5 w180 h20 Center cFFFFFF", "")
+    }
+
+    ; Update text and show window
+    RecursiveBinder.popupText.Value := availableKeys
+    RecursiveBinder.popupGui.Show("w200 h30 NoActivate")
+
+    ; Position window at bottom of screen
+    screenWidth := A_ScreenWidth
+    RecursiveBinder.popupGui.Move(screenWidth/2 - 100, A_ScreenHeight - 100)
+}
+
+; Function to hide the popup window
+HideAvailableKeys() {
+    recursiveBinderLogger.Debug("Hiding available keys popup")
+    if RecursiveBinder.popupGui {
+        RecursiveBinder.popupGui.Hide()
+    }
+}
+
+; Function to get available next keys for current sequence
+GetAvailableNextKeys() {
+    if !RecursiveBinder.isActive || !RecursiveBinder.currentLeader {
+        return ""
+    }
+
+    leaderSequences := RecursiveBinder.sequences.Get(RecursiveBinder.currentLeader)
+    if !leaderSequences {
+        return ""
+    }
+
+    availableKeys := ""
+    for sequence, _ in leaderSequences {
+        if SubStr(sequence, 1, StrLen(RecursiveBinder.currentSequence)) = RecursiveBinder.currentSequence {
+            nextKey := SubStr(sequence, StrLen(RecursiveBinder.currentSequence) + 1, 1)
+            if nextKey {
+                availableKeys .= nextKey " "
+            }
+        }
+    }
+
+    return Trim(availableKeys)
 }
 
 ; Function to add a sequence binding
@@ -55,6 +110,14 @@ HandleKeyPress(key) {
     RecursiveBinder.currentSequence .= normalizedKey
     recursiveBinderLogger.Debug("Current sequence updated to: " RecursiveBinder.currentSequence)
 
+    ; Update available keys display
+    availableKeys := GetAvailableNextKeys()
+    if availableKeys {
+        ShowAvailableKeys(availableKeys)
+    } else {
+        HideAvailableKeys()
+    }
+
     ; Check if we have a matching sequence for the current leader
     leaderSequences := RecursiveBinder.sequences.Get(RecursiveBinder.currentLeader)
     if leaderSequences.Has(RecursiveBinder.currentSequence) {
@@ -80,6 +143,7 @@ ResetBinder() {
     RecursiveBinder.isActive := false
     RecursiveBinder.currentSequence := ""
     RecursiveBinder.currentLeader := ""
+    HideAvailableKeys()
 }
 
 ; Function to start sequence capture
@@ -95,6 +159,12 @@ StartSequence(leaderKey) {
         RecursiveBinder.currentSequence := ""
         RecursiveBinder.currentLeader := leaderKey
         recursiveBinderLogger.Debug("Started new sequence with leader: " leaderKey)
+    }
+
+    ; Show initial available keys
+    availableKeys := GetAvailableNextKeys()
+    if availableKeys {
+        ShowAvailableKeys(availableKeys)
     }
 }
 
