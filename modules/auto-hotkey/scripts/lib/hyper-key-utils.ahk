@@ -1,8 +1,10 @@
 #Requires AutoHotkey v2.0
 
 #Include recursive-binder.ahk
-#include "collections.ahk"
+#include collections.ahk
 #Include logger.ahk
+
+
 
 class HyperKeyUtils {
     static CreateNoOpMappings() {
