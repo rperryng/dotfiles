@@ -48,7 +48,7 @@ RecursiveBind("^+!#w", "z", () => LaunchAndFocus("C:\Program Files (x86)\Steam\s
 }
 
 ; reload config
-#+!r:: Reload()
+^#+!r:: Reload()
 
 ; Create no-op mappings for unused hyper key combinations
 HyperKeyUtils.CreateNoOpMappings()
