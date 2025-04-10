@@ -33,6 +33,7 @@ colima = 'latest'
 
 pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'
+jj = "latest"
 
 # Broken in osx, use a different fork with `[plugins]` declaration?
 # mdbook = 'latest'
