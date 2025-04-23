@@ -7,6 +7,7 @@ return {
 
       local fzf = require('fzf-lua')
       local actions = require('fzf-lua.actions')
+      local utils = require('utils')
 
       fzf.setup({
         actions = {
@@ -16,9 +17,18 @@ return {
             ['ctrl-s'] = actions.file_split,
             ['ctrl-v'] = actions.file_vsplit,
             ['ctrl-t'] = actions.file_tabedit,
-            ['alt-l'] = actions.file_sel_to_ll,
+            ['ctrl-space'] = function(selected, _opts)
+              local path = utils.uniconify(selected[1])
+              if path == nil then
+                vim.print('failed to extract path from: ' .. selected[1])
+                return
+              end
+              vim.api.nvim_put({ path }, '', true, true)
+            end,
 
-            -- rebind qw to ctrl-q instead of alt-q
+            -- toggles
+            ['ctrl-o'] = actions.toggle_ignore,
+            ['ctrl-h'] = actions.toggle_hidden,
             ['ctrl-q'] = actions.file_sel_to_qf,
           },
         },
@@ -64,6 +74,9 @@ return {
       keymap_with_resume('n', '<space>ff', {
         fn = fzf.files,
       }, { desc = 'Fuzzy search files' })
+      keymap_with_resume('t', '<c-x><c-f>', {
+        fn = fzf.files,
+      }, { desc = 'Fuzzy search files' })
 
       keymap_with_resume('n', '<space>fof', {
         fn = fzf.oldfiles,
@@ -97,7 +110,7 @@ return {
       keymap_with_resume('n', '<space>ft', {
         fn = fzf.tabs,
         fn_opts = {
-          query = "'Tab "
+          query = "'Tab ",
         },
       }, { desc = 'Fuzzy search tabs' })
 
@@ -261,16 +274,28 @@ return {
       }, { desc = 'Fuzzy search LSP workspace symbols' })
 
       keymap_with_resume('n', '<space>find', {
-        fn = fzf.lsp_finder
-      }, { desc = 'Fuzzy search LSP locations (all-in-one)'})
+        fn = fzf.lsp_finder,
+      }, { desc = 'Fuzzy search LSP locations (all-in-one)' })
 
       keymap_with_resume('n', '<space>fix', { -- hehe
-        fn = fzf.lsp_finder
-      }, { desc = 'Fuzzy search LSP diagnostics (document)'})
+        fn = fzf.lsp_finder,
+      }, { desc = 'Fuzzy search LSP diagnostics (document)' })
 
       keymap_with_resume('n', '<space>fiX', { -- hehe
-        fn = fzf.lsp_finder
-      }, { desc = 'Fuzzy search LSP diagnostics (workspace)'})
+        fn = fzf.lsp_finder,
+      }, { desc = 'Fuzzy search LSP diagnostics (workspace)' })
+
+      -- -- select file and past while in insert mode
+      -- vim.keymap.set('t', '<ctrl-\\>t', function()
+      --   local fzf = require('fzf-lua')
+      --   fzf.fzf_exec(fzf.actions.files, {
+      --     actions = {
+      --       ['default'] = function(selected, _opts)
+      --         print("selected item:", selected[1])
+      --       end
+      --     }
+      --   })
+      -- end, { desc = 'Insert filename' })
     end,
   },
 }
