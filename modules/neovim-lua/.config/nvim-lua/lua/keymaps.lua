@@ -190,9 +190,9 @@ vim.api.nvim_set_keymap(
 
 -- Rename buffer
 vim.keymap.set('n', '<space>reb', function()
-  if string.match(vim.fn.bufname(), '^term-') then
+  if string.match(vim.fn.bufname(), '[term]') then
     local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-    vim.fn.feedkeys(':keepalt file term-' .. project_name .. '-')
+    vim.fn.feedkeys(':keepalt file [term] (' .. project_name .. ') ')
   else
     vim.fn.feedkeys(':keepalt file ')
   end
