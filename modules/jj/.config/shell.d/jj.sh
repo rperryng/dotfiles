@@ -2,31 +2,73 @@
 
 export JJ_CONFIG="${XDG_CONFIG_HOME}/jj/config.toml"
 
-# n on colemak matches where j is on qwerty
-alias nn="jj"
-alias nlo="nn log"
-
+# jj fuzzy bookmark picker
 fzf-jj-bookmark-widget() {
-  setopt localoptions pipefail no_aliases 2> /dev/null
   local bookmark
-  bookmark=$(jj bookmark list --template 'name ++ "\n"' | fzf --height 40% --reverse --prompt="Select bookmark: ")
+  bookmark=$(
+    jj bookmark list \
+      --template 'name ++ "\n"' \
+      --sort author-date- \
+      | fzf --height 40% --reverse --prompt="Select bookmark: "\
+  )
+
   if [[ -n "$bookmark" ]]; then
     LBUFFER="${LBUFFER}${bookmark} "
   fi
   zle reset-prompt
 }
-
-# Bind the function to ctrl-b
 zle -N fzf-jj-bookmark-widget
 bindkey '^B' fzf-jj-bookmark-widget
 
+
+# n on colemak matches where j is on qwerty
+alias nn="jj"
+alias nlo="nn log"
+
 # jj moves tracked bookmarks automatically when running fetch.
 # in git, 'fetch' will only update remote references, not update local branch pointers.
-alias npl="jj git fetch"
-alias ngf="jj git fetch"
-alias nlo="jj log -n 6"
-alias nloa="jj log -r '@ | root() | bookmarks()'"
+alias nngf="jj git fetch"
+alias nnlo="jj log -n 6"
+alias nnloa="jj log -r '@ | root() | bookmarks()'"
 alias nnew="jj new 'trunk()'"
+alias nnps="jj git push"
+
+nn_pr() {
+  local rev="${1:-@}"
+  local bookmark="$(
+    jj bookmark list \
+      --tracked \
+      --template "if(tracking_present, name)" \
+      --revisions "${rev}"\
+  )"
+
+  if gh pr view --json url "$bookmark" 1> /dev/null; then
+    gh pr view --web "$bookmark"
+  else
+    gh pr create --web --head "$bookmark"
+  fi
+}
+
+# jj "bookmark update"
+nnbu() {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: jjbu <bookmark_revision> <destination_revision>" >&2
+    return 1
+  fi
+
+  local bookmark_rev="${1}"
+  local destination_rev="${2}"
+
+  local bookmark_name
+  bookmark_name=$(jj bookmark list --template "name" --revisions "${bookmark_rev}" | head -1)
+  if [[ -z "$bookmark_name" ]]; then
+    echo "Error: No bookmark found for revision ${bookmark_rev}" >&2
+    return 1
+  fi
+
+  # Update bookmark
+  jj bookmark set "${bookmark_name}" -r "${destination_rev}"
+}
 
 get_tracking_branch() {
   local rev="${1:-@}"
@@ -34,7 +76,10 @@ get_tracking_branch() {
     || die "Failed to get tracking branch"
 }
 
-nlor() {
+# nn "deref"
+alias nndr="get_tracking_branch"
+
+nnlor() {
   if [[ $# -ne 1 ]]; then
     echo "Usage: nlor <rev>"
     return 1
