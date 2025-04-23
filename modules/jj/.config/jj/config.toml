@@ -7,4 +7,4 @@ subprocess = true
 
 [ui]
 # this is the same as EDITOR, but I have to escape the ' tokens in this context?
-editor = "nvr --remote-wait +\"setlocal bufhidden=wipe\""
+editor = ["nvr", "--remote-wait", '+setlocal bufhidden=wipe']
