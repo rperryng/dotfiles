@@ -12,7 +12,6 @@ fi
 
 cargo_binstall_available() {
   if [[ ! -x "$(command -v cargo)" ]]; then
-    echo "cargo not installed - cannot install 'cargo-binstall'" 1>&2
     return 1;
   fi
 
