@@ -15,13 +15,6 @@ local ICONS = {
 local PROJECT_ROOT_FILES =
   { '.git', 'Gemfile', 'package.json', 'deno.json', 'deno.jsonc' }
 
-local iconify = function(item, icon)
-  return ('%s  %s'):format(icon, item)
-end
-local uniconify = function(line)
-  return line:match('^[^ ]+%s+(.+)')
-end
-
 M.get_project_name = function()
   local cwd = vim.fn.getcwd()
 
@@ -71,7 +64,7 @@ M.find_project_dirs_decorated = function()
   for i, path in ipairs(entries) do
     path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
     path = '~/' .. path
-    entries[i] = iconify(path, dir_icon)
+    entries[i] = utils.iconify(path, dir_icon)
   end
 
   return entries
@@ -93,7 +86,7 @@ M.find_worktrees_dirs_decorated = function()
   for i, path in ipairs(entries) do
     path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
     path = '~/' .. path
-    entries[i] = iconify(path, dir_icon)
+    entries[i] = utils.iconify(path, dir_icon)
   end
 
   return entries
@@ -114,7 +107,7 @@ M.find_clone_urls_decorated = function()
   for i, clone_url in ipairs(entries) do
     local full_reponame = clone_url:match('git@github.com:(.+)%.git')
     local owner, repo = full_reponame:match('([%w%-_]+)/([%w%-_%.]+)')
-    entries[i] = iconify(owner .. '/' .. repo, github_icon)
+    entries[i] = utils.iconify(owner .. '/' .. repo, github_icon)
   end
 
   return entries
@@ -232,7 +225,7 @@ local function fzf_lua_projects()
 
       -- Add any uncloned GitHub projects
       for _, value in ipairs(clone_urls) do
-        local id = uniconify(value)
+        local id = utils.uniconify(value)
         assert(id, 'could not extract id from github repo line', id)
 
         -- Only add the value if it's not already cloned
@@ -260,7 +253,7 @@ local function fzf_lua_projects()
 
           -- Extract the "value" (no icon) from the selected line
           local line = selected[1]
-          local value = uniconify(line)
+          local value = utils.uniconify(line)
 
           -- Open existing worktree dir
           if string.find(line, ICONS.GIT_WORKTREE) then

@@ -106,7 +106,7 @@ vim.keymap.set(
 )
 
 M.escape_pattern = function(text)
-  return text:gsub("([^%w])", "%%%1")
+  return text:gsub('([^%w])', '%%%1')
 end
 
 -- Call '<Plug>(name)' from lua
@@ -118,7 +118,7 @@ M.call_plug_map = function(plug_map_name, mode_arg)
     x = 'visual',
     i = 'insert',
     c = 'command',
-    t = 'terminal'
+    t = 'terminal',
   }
 
   local mode = mode_map[mode_arg]
@@ -128,11 +128,24 @@ M.call_plug_map = function(plug_map_name, mode_arg)
   vim.cmd(string.format('execute "%s \\%s"', mode, plug_map_name))
 end
 
+M.iconify = function(item, icon)
+  return ('%s  %s'):format(icon, item)
+end
+M.uniconify = function(line)
+  -- - `^` - Start of string
+  -- - `[^\32-\126]*` - Skip zero or more non-ASCII characters (including Unicode icons)
+  --   - `\32-\126` is the range of printable ASCII characters (space through ~)
+  --   - `[^\32-\126]` matches anything outside this range (like Unicode icons)
+  -- - `%s*` - Skip zero or more whitespace characters  
+  -- - `(.+)` - Capture one or more of any remaining characters
+  return line:match("^[^\32-\126]*%s*(.+)")
+end
+
 -- polyfill table.pack ...
-table.pack = function (...)
-    local t = { ... }
-    t.n = select('#', ...)
-    return t
+table.pack = function(...)
+  local t = { ... }
+  t.n = select('#', ...)
+  return t
 end
 
 M.table = {
