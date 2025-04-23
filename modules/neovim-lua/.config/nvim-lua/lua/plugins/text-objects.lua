@@ -3,14 +3,16 @@ return {
     'chrisgrieser/nvim-various-textobjs',
     config = function()
       require('various-textobjs').setup({
-        useDefaultKeymaps = true,
-        disabledKeymaps = {
-          'gw',
-          'i_',
-          'a_',
-          'r',
-          'R',
-        },
+        keymaps = {
+          disabledKeymaps = {
+            'gw',
+            'i_',
+            'a_',
+            'r',
+            'R',
+          },
+          useDefaultKeymaps = true,
+        }
       })
 
       -- restore multi-line comment textobject
