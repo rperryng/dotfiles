@@ -25,7 +25,6 @@ bindkey '^B' fzf-jj-bookmark-widget
 alias jjgf="jj git fetch"
 
 alias jjnew="jj new 'trunk()'"
-alias jjgf="jj git fetch"
 alias jjl="jj log"
 alias jjlo="jj log --limit 6"
 alias jjloa="jj log --revisions '@ | root() | bookmarks()'"
