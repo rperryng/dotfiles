@@ -6,5 +6,12 @@ email = "ryanperrynguyen@gmail.com"
 subprocess = true
 
 [ui]
-# this is the same as EDITOR, but I have to escape the ' tokens in this context?
+# this is the same as EDITOR, but escaping the '+setlocal ...' wasn't working
+# in this context
 editor = ["nvr", "--remote-wait", '+setlocal bufhidden=wipe']
+
+[revset-aliases]
+'closest_bookmark(to)' = 'heads(::to & bookmarks())'
+
+[aliases]
+tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]

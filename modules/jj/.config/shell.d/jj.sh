@@ -24,15 +24,17 @@ bindkey '^B' fzf-jj-bookmark-widget
 # in git, 'fetch' will only update remote references, not update local branch pointers.
 alias jjgf="jj git fetch"
 
-alias jjst="jj status"
+alias jjnew="jj new 'trunk()'"
+alias jjgf="jj git fetch"
 alias jjl="jj log"
-alias jjlo="jj log -n 6"
-alias jjloa="jj log -r '@ | root() | bookmarks()'"
-alias jjew="jj new 'trunk()'"
+alias jjlo="jj log --limit 6"
+alias jjloa="jj log --revisions '@ | root() | bookmarks()'"
 alias jjps="jj git push"
+alias jjpsu="jj git push --allow-new --revisions 'closest_bookmark(@)'"
+alias jjst="jj status"
 
 jjpr() {
-  local rev="${1:-@}"
+  local rev="${1:-"closest_bookmark(@)"}"
   local bookmark="$(
     jj bookmark list \
       --tracked \
@@ -85,19 +87,4 @@ jjlor() {
   local rev=$1
   local fork="fork_point(trunk() | $rev)"
   jj log --revisions "$fork::trunk() | $fork::$rev"
-}
-
-open_pr() {
-  # TODO...
-  revision="@"
-  jj git push --change "${revision}" || die "Failed to push changes"
-
-  local branch
-  branch=$(get_tracking_branch "${revision}") || die "Failed to get branch after push"
-  [ -z "${branch}" ] && die "No branch created after push"
-
-  gh pr create --web "${branch}" \
-    || die "Failed to create PR for branch '${branch}'"
-
-  echo "Successfully created$([ "${draft}" = "true" ] && echo " draft") PR for branch '${branch}'"
 }
