@@ -37,6 +37,7 @@ local singleKey = spoon.RecursiveBinder.singleKey
 local keyMap = {
   [singleKey('1', '1Password')] = app_utils.launchById('com.1password.1password'),
   [singleKey('f', 'Firefox')] = app_utils.launchById('org.mozilla.firefoxdeveloperedition'),
+  [singleKey('b', 'Brave')] = app_utils.launchById('com.brave.Browser'),
   [singleKey('s', 'Spotify')] = app_utils.launchById('com.spotify.client'),
   [singleKey('t', 'Terminal')] = app_utils.launchById('com.mitchellh.ghostty'),
   [singleKey('c', 'Slack')] = app_utils.launchById('com.tinyspeck.slackmacgap'),
