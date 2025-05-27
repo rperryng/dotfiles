@@ -20,20 +20,18 @@ fzf-jj-bookmark-widget() {
 zle -N fzf-jj-bookmark-widget
 bindkey '^B' fzf-jj-bookmark-widget
 
-
-# n on colemak matches where j is on qwerty
-alias nn="jj"
-alias nlo="nn log"
-
 # jj moves tracked bookmarks automatically when running fetch.
 # in git, 'fetch' will only update remote references, not update local branch pointers.
-alias nngf="jj git fetch"
-alias nnlo="jj log -n 6"
-alias nnloa="jj log -r '@ | root() | bookmarks()'"
-alias nnew="jj new 'trunk()'"
-alias nnps="jj git push"
+alias jjgf="jj git fetch"
 
-nn_pr() {
+alias jjst="jj status"
+alias jjl="jj log"
+alias jjlo="jj log -n 6"
+alias jjloa="jj log -r '@ | root() | bookmarks()'"
+alias jjew="jj new 'trunk()'"
+alias jjps="jj git push"
+
+jjpr() {
   local rev="${1:-@}"
   local bookmark="$(
     jj bookmark list \
@@ -50,7 +48,7 @@ nn_pr() {
 }
 
 # jj "bookmark update"
-nnbu() {
+jjbu() {
   if [[ $# -ne 2 ]]; then
     echo "Usage: jjbu <bookmark_revision> <destination_revision>" >&2
     return 1
@@ -70,16 +68,15 @@ nnbu() {
   jj bookmark set "${bookmark_name}" -r "${destination_rev}"
 }
 
+# "jj deref"
+alias jjdr="get_tracking_branch"
 get_tracking_branch() {
   local rev="${1:-@}"
   jj bookmark list --tracked --template "if(tracking_present, name)" --revisions "${rev}" \
     || die "Failed to get tracking branch"
 }
 
-# nn "deref"
-alias nndr="get_tracking_branch"
-
-nnlor() {
+jjlor() {
   if [[ $# -ne 1 ]]; then
     echo "Usage: nlor <rev>"
     return 1

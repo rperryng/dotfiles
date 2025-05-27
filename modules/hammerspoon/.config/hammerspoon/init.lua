@@ -36,19 +36,23 @@ spoon.RecursiveBinder.helperFormat = {
 local singleKey = spoon.RecursiveBinder.singleKey
 local keyMap = {
   [singleKey('1', '1Password')] = app_utils.launchById('com.1password.1password'),
+  [singleKey('c', 'Slack')] = app_utils.launchById('com.tinyspeck.slackmacgap'),
+  [singleKey('d', 'DBeaver')] = app_utils.launchById('org.jkiss.dbeaver.core.product'),
+  [singleKey('e', 'Finder')] = app_utils.launchById('com.apple.finder'),
   [singleKey('f', 'Firefox')] = app_utils.launchById('org.mozilla.firefoxdeveloperedition'),
   [singleKey('b', 'Brave')] = app_utils.launchById('com.brave.Browser'),
   [singleKey('s', 'Spotify')] = app_utils.launchById('com.spotify.client'),
   [singleKey('t', 'Terminal')] = app_utils.launchById('com.mitchellh.ghostty'),
   [singleKey('c', 'Slack')] = app_utils.launchById('com.tinyspeck.slackmacgap'),
+  [singleKey('g', 'Godot')] = app_utils.launchById('org.godotengine.godot'),
+  [singleKey('h', 'Google Meet')] = app_utils.launchByPath('/Applications/Google Meet.app'),
   [singleKey('m', 'Telegram')] = app_utils.launchById('com.tdesktop.Telegram'),
   [singleKey('n', 'Notion')] = app_utils.launchById('notion.id'),
-  [singleKey('e', 'Finder')] = app_utils.launchById('com.apple.finder'),
   [singleKey('p', 'Tuple')] = app_utils.launchById('app.tuple.app'),
-  [singleKey('g', 'Godot')] = app_utils.launchById('org.godotengine.godot'),
-  [singleKey('x', 'Cursor')] = app_utils.launchById('com.todesktop.230313mzl4w4u92'),
+  [singleKey('s', 'Spotify')] = app_utils.launchById('com.spotify.client'),
+  [singleKey('t', 'Terminal')] = app_utils.launchById('com.mitchellh.ghostty'),
   [singleKey('v', 'VSCode')] = app_utils.launchById('com.microsoft.VSCode'),
-  [singleKey('h', 'Google Meet')] = app_utils.launchByPath('/Applications/Google Meet.app')
+  [singleKey('x', 'Cursor')] = app_utils.launchById('com.todesktop.230313mzl4w4u92'),
 }
 hs.hotkey.bind(hyper, 'w', spoon.RecursiveBinder.recursiveBind(keyMap, 'App Switcher'))
 
