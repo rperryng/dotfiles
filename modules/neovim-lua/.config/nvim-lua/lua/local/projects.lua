@@ -5,6 +5,7 @@ local M = {}
 
 local fzf_utils = require('fzf-lua.utils')
 local utils = require('utils')
+local DOTFILES_DIR = os.getenv('DOTFILES_DIR')
 local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
 local ICONS = {
   DIR = '',
@@ -50,11 +51,17 @@ local search = function(opts)
 end
 
 M.find_project_dirs = function()
-  return search({
+  local project_dirs = search({
     root_path = os.getenv('HOME') .. '/code',
     max_depth = 2,
     patterns = PROJECT_ROOT_FILES,
   })
+
+  if DOTFILES_DIR and vim.fn.isdirectory(DOTFILES_DIR) == 1 then
+    table.insert(project_dirs, DOTFILES_DIR)
+  end
+
+  return project_dirs
 end
 
 M.find_project_dirs_decorated = function()
@@ -210,11 +217,19 @@ local function fzf_lua_projects()
 
       -- Add local projects
       for _, value in ipairs(project_dirs) do
-        -- Match ~/code/{owner}/{repo}
-        local id = value:match('code/([%w%-_%.]+/[%w-_%.]+)')
+        local id
 
-        -- (Legacy) Match ~/code/{repo}
-        id = id or value:match('code/([%w%-_%.]+)')
+        -- Special case for dotfiles directory (check for .dotfiles in the path)
+        print(value)
+        if value:match('%~/.dotfiles') then
+          id = 'rperryng/dotfiles'
+        else
+          -- Match ~/code/{owner}/{repo}
+          id = value:match('code/([%w%-_%.]+/[%w-_%.]+)')
+
+          -- (Legacy) Match ~/code/{repo}
+          id = id or value:match('code/([%w%-_%.]+)')
+        end
 
         assert(
           id,

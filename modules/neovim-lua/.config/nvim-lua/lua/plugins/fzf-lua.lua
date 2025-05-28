@@ -165,9 +165,9 @@ return {
       }, { desc = 'Fuzzy search filetypes' })
 
       -- registers
-      keymap_with_resume('n', '<space>fr', {
-        fn = fzf.registers,
-      }, { desc = 'Fuzzy search registers' })
+      -- keymap_with_resume('n', '<space>fr', {
+      --   fn = fzf.registers,
+      -- }, { desc = 'Fuzzy search registers' })
 
       -- marks
       keymap_with_resume('n', '<space>fm', {
