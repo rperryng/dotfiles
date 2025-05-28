@@ -100,6 +100,7 @@ return {
             'n',
             function()
               quickfix_next()
+              print('foo')
             end,
           },
           {

@@ -6,6 +6,9 @@ local cache_file = vim.fn.stdpath('cache') .. '/recent_buffers.json'
 -- Data structure: { global = {...}, projects = { [cwd] = {...} } }
 local data = { global = {}, projects = {} }
 
+-- Special invisible unicode character to use as field delimiter with fzf
+local EN_SPACE = '\u{2002}'
+
 -- Private function to add entry to list with limit
 local function add_to_list(list, entry, limit)
   -- Remove existing entry with same path if exists
@@ -90,7 +93,8 @@ local function track_buffer(bufnr)
   local cwd = vim.fn.getcwd()
   local entry = {
     path = name,
-    timestamp = os.time()
+    timestamp = os.time(),
+    project = cwd  -- Store the project path with each entry
   }
 
   -- Initialize project list if needed
@@ -106,9 +110,16 @@ local function track_buffer(bufnr)
   save_data()
 end
 
+-- Private function to extract project name from path
+local function get_project_name(project_path)
+  -- Get the last directory name from the path
+  return vim.fn.fnamemodify(project_path, ':t')
+end
+
 -- Private function to show recent buffers with fzf
 local function show_recent_buffers(project_only)
   local fzf = require('fzf-lua')
+  local ansi_codes = require('fzf-lua.utils').ansi_codes
   local buffers = project_only and M.get_project_buffers() or M.get_global_buffers()
 
   -- Check if we have any buffers to show
@@ -117,12 +128,33 @@ local function show_recent_buffers(project_only)
     return
   end
 
+  -- Calculate window height based on number of entries
+  -- Add extra lines for prompt, border, etc.
+  local window_height = math.min(#buffers + 3, 15) -- Cap at 15 lines max
+  print('window_height', window_height)
+
   fzf.fzf_exec(function(fzf_cb)
+    local current_cwd = vim.fn.getcwd()
+
     for _, buf in ipairs(buffers) do
-      -- Format: "filename.ext ~/path/to/file"
-      local filename = vim.fn.fnamemodify(buf.path, ':t')
-      local filepath = vim.fn.fnamemodify(buf.path, ':~')
-      local display = filename .. ' ' .. filepath
+      local display
+
+      if project_only then
+        -- For project-specific view: "path<EN_SPACE>filename ~/path/to/file"
+        local filename = vim.fn.fnamemodify(buf.path, ':t')
+        local filepath = vim.fn.fnamemodify(buf.path, ':~')
+        display = buf.path .. EN_SPACE .. filename .. ' ' .. filepath
+      else
+        -- For global view: "path<EN_SPACE>[project] filename ~/path/to/file"
+        local project_name = get_project_name(buf.project or current_cwd)
+        local filename = vim.fn.fnamemodify(buf.path, ':t')
+        local filepath = vim.fn.fnamemodify(buf.path, ':~')
+
+        -- Format with colored project name
+        local colored_project = ansi_codes.yellow('[' .. project_name .. ']')
+        display = buf.path .. EN_SPACE .. colored_project .. ' ' .. filename .. ' ' .. filepath
+      end
+
       fzf_cb(display)
     end
     fzf_cb() -- EOF
@@ -132,15 +164,23 @@ local function show_recent_buffers(project_only)
       relative = 'cursor',
       row = 1,
       col = 0,
-      height = 0.4,
+      height = window_height,
       width = 0.6,
       preview = { hidden = 'hidden' },
+    },
+    fzf_opts = {
+      ['--ansi'] = true,
+      ['--delimiter'] = EN_SPACE,
+      ['--with-nth'] = '2..',  -- Show everything after the delimiter (hide the full path)
     },
     actions = {
       ['default'] = function(selected)
         if not selected or #selected == 0 then return end
-        -- Extract path from "filename.ext ~/path/to/file" format
-        local path = selected[1]:match('%S+%s+(.+)$')
+
+        -- Extract the full path from before the delimiter
+        local line = selected[1]
+        local path = line:match('^(.-)' .. EN_SPACE)
+
         if path then
           -- Expand ~ to home directory
           path = vim.fn.expand(path)
@@ -149,7 +189,10 @@ local function show_recent_buffers(project_only)
       end,
       ['ctrl-s'] = function(selected)
         if not selected or #selected == 0 then return end
-        local path = selected[1]:match('%S+%s+(.+)$')
+
+        local line = selected[1]
+        local path = line:match('^(.-)' .. EN_SPACE)
+
         if path then
           path = vim.fn.expand(path)
           vim.cmd('split ' .. vim.fn.fnameescape(path))
@@ -157,7 +200,10 @@ local function show_recent_buffers(project_only)
       end,
       ['ctrl-v'] = function(selected)
         if not selected or #selected == 0 then return end
-        local path = selected[1]:match('%S+%s+(.+)$')
+
+        local line = selected[1]
+        local path = line:match('^(.-)' .. EN_SPACE)
+
         if path then
           path = vim.fn.expand(path)
           vim.cmd('vsplit ' .. vim.fn.fnameescape(path))
@@ -165,7 +211,10 @@ local function show_recent_buffers(project_only)
       end,
       ['ctrl-t'] = function(selected)
         if not selected or #selected == 0 then return end
-        local path = selected[1]:match('%S+%s+(.+)$')
+
+        local line = selected[1]
+        local path = line:match('^(.-)' .. EN_SPACE)
+
         if path then
           path = vim.fn.expand(path)
           vim.cmd('tabedit ' .. vim.fn.fnameescape(path))

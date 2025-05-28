@@ -123,7 +123,7 @@ vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
 vim.keymap.set('n', '<c-n>', ':tabnext<cr>', { desc = 'Go to next tab' })
 vim.keymap.set('n', '<c-p>', ':tabprevious<cr>', { desc = 'Go to next tab' })
-vim.keymap.set('n', '<space>tq', ':tabclose<cr>', { desc = 'Close tab' })
+vim.keymap.set('n', '<space>tc', ':tabclose<cr>', { desc = 'Close tab' })
 
 -- vim.keymap.set('n', '<space>tq', '<cmd>tabedit %<cr>', { desc = 'Open buffer in new tab' })
 vim.keymap.set('n', '<space>t%', function()
