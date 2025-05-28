@@ -25,12 +25,15 @@ bindkey '^B' fzf-jj-bookmark-widget
 alias jjgf="jj git fetch"
 
 alias jjnew="jj new 'trunk()'"
-alias jjl="jj log"
+alias jjl="jj log --limit 10"
+alias jjlc="jj log -T builtin_log_compact"
 alias jjlo="jj log --limit 6"
 alias jjloa="jj log --revisions '@ | root() | bookmarks()'"
 alias jjps="jj git push"
 alias jjpsu="jj git push --allow-new --revisions 'closest_bookmark(@)'"
 alias jjst="jj status"
+alias jjtp="jj tug && jj git push"
+alias jjd="jj describe"
 
 jjpr() {
   local rev="${1:-"closest_bookmark(@)"}"

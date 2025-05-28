@@ -8,10 +8,55 @@ subprocess = true
 [ui]
 # this is the same as EDITOR, but escaping the '+setlocal ...' wasn't working
 # in this context
+default-command = "status"
 editor = ["nvr", "--remote-wait", '+setlocal bufhidden=wipe']
+pager = "delta"
+
+[ui.diff]
+format = "git"
 
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
 
 [aliases]
 tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]
+
+[templates]
+log = '''
+  if(root,
+    format_root_commit(self),
+    label(
+      if(current_working_copy, "working_copy"),
+      concat(
+        separate(" ",
+          format_short_change_id_with_hidden_and_divergent_info(self),
+          if(empty, label("empty", "(empty)")),
+          if(description,
+            description.first_line(),
+            label(if(empty, "empty"), description_placeholder),
+          ),
+          bookmarks,
+          tags,
+          working_copies,
+          if(git_head, label("git_head", "HEAD")),
+          if(conflict, label("conflict", "conflict")),
+          if(config("ui.show-cryptographic-signatures").as_boolean(),
+            format_short_cryptographic_signature(signature)),
+        ) ++ "\n",
+      ),
+    )
+  )
+'''
+
+# Show diff in the $EDITOR
+draft_commit_description ='''
+  concat(
+    coalesce(description, default_commit_description, "\n"),
+    surround(
+      "\nJJ: This commit contains the following changes:\n", "",
+      indent("JJ:     ", diff.stat(72)),
+    ),
+    "\nJJ: ignore-rest\n",
+    diff.git(),
+  )
+'''
