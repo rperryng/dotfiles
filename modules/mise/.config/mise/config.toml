@@ -7,7 +7,7 @@ experimental = true
 [tools]
 # language runtimes
 deno = ['2', '1.46.1']
-neovim = '0.11.0'
+neovim = '0.11.2'
 node = ['22', '18.4.0']
 ruby = ['3.3', '3.2', '3.1']
 java = ['17.0']

@@ -2,15 +2,14 @@
 name = "Ryan Perry-Nguyen"
 email = "ryanperrynguyen@gmail.com"
 
-[git]
-subprocess = true
-
 [ui]
+default-command = "log"
+
 # this is the same as EDITOR, but escaping the '+setlocal ...' wasn't working
 # in this context
-default-command = "status"
 editor = ["nvr", "--remote-wait", '+setlocal bufhidden=wipe']
 pager = "delta"
+conflict_marker = "snapshot"
 
 [ui.diff]
 format = "git"
@@ -19,9 +18,11 @@ format = "git"
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
 
 [aliases]
-tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]
+tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@"]
 
 [templates]
+# compact one-line style that only shows change IDs
+# but shows commit ids for any conflicted changes
 log = '''
   if(root,
     format_root_commit(self),
@@ -30,6 +31,7 @@ log = '''
       concat(
         separate(" ",
           format_short_change_id_with_hidden_and_divergent_info(self),
+          commit_id.shortest(9),
           if(empty, label("empty", "(empty)")),
           if(description,
             description.first_line(),

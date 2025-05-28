@@ -26,14 +26,29 @@ alias jjgf="jj git fetch"
 
 alias jjnew="jj new 'trunk()'"
 alias jjl="jj log --limit 10"
-alias jjlc="jj log -T builtin_log_compact"
-alias jjlo="jj log --limit 6"
+# just more comfortable to press...
+alias jjt="jjl"
+alias jjlc="jj log --template builtin_log_compact"
+alias jjic="jj git init --colocate"
+alias jjlo="jj log --limit 10"
 alias jjloa="jj log --revisions '@ | root() | bookmarks()'"
 alias jjps="jj git push"
 alias jjpsu="jj git push --allow-new --revisions 'closest_bookmark(@)'"
 alias jjst="jj status"
 alias jjtp="jj tug && jj git push"
-alias jjd="jj describe"
+alias jjdm="jj describe --message"
+alias jjs="jj squash"
+
+jjfinish() {
+  local description=${1}
+  if [[ -z $description ]]; then
+    echo "description argument for current change missing" 1>&2
+    return 1
+  fi
+  jj describe --quiet --message $1
+  jj new --quiet
+  jj tug
+}
 
 jjpr() {
   local rev="${1:-"closest_bookmark(@)"}"
@@ -49,27 +64,6 @@ jjpr() {
   else
     gh pr create --web --head "$bookmark"
   fi
-}
-
-# jj "bookmark update"
-jjbu() {
-  if [[ $# -ne 2 ]]; then
-    echo "Usage: jjbu <bookmark_revision> <destination_revision>" >&2
-    return 1
-  fi
-
-  local bookmark_rev="${1}"
-  local destination_rev="${2}"
-
-  local bookmark_name
-  bookmark_name=$(jj bookmark list --template "name" --revisions "${bookmark_rev}" | head -1)
-  if [[ -z "$bookmark_name" ]]; then
-    echo "Error: No bookmark found for revision ${bookmark_rev}" >&2
-    return 1
-  fi
-
-  # Update bookmark
-  jj bookmark set "${bookmark_name}" -r "${destination_rev}"
 }
 
 # "jj deref"
