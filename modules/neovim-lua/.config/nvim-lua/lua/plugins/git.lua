@@ -121,13 +121,6 @@ return {
           map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end,
       })
-
-      vim.keymap.set(
-        'n',
-        '<space>tqg',
-        ':Gitsigns setqflist<cr>',
-        { desc = 'Add git hunks to quickfix list' }
-      )
     end,
   },
 
@@ -147,17 +140,9 @@ return {
   },
 
   {
-    'NeogitOrg/neogit',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'sindrets/diffview.nvim',
-      'ibhagwan/fzf-lua',
-    },
+    'tpope/vim-fugitive',
     config = function()
-      local neogit = require('neogit')
-      neogit.setup({})
-
-      vim.keymap.set('n', '<space>ghs', ':Neogit<cr>', { desc = 'Open neogit'})
+      vim.keymap.set('n', '<space>tqg', ':Git difftool<cr>', { desc = 'Load diffs into quickfix list'})
     end
   }
 }

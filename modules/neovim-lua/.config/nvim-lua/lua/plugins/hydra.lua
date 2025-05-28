@@ -10,12 +10,12 @@ return {
         utils.close_floating_windows()
         Log('diagnostic next ...')
         Log(vim)
-        vim.diagnostic.goto_next()
+        vim.diagnostic.jump({count=1, float=true})
         vim.diagnostic.open_float()
       end
       local diagnostic_previous = function()
         utils.close_floating_windows()
-        vim.diagnostic.goto_prev()
+        vim.diagnostic.jump({count=-1, float=true})
         vim.diagnostic.open_float()
       end
       hydra({
