@@ -112,7 +112,7 @@ install_package_managers() {
   case ${os_family} in
     "macos")
       # Always install homebrew on macos
-      "${DOTFILES_DIR}/modules/homebrew/install.sh"
+      source "${DOTFILES_DIR}/modules/homebrew/install.sh"
       ;;
     *) ;;
   esac

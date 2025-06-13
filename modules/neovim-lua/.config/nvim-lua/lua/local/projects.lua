@@ -160,6 +160,8 @@ local function job_clone_repo(clone_url, reponame, path)
 
   -- local fidget = require('fidget')
   local Job = require('plenary.job')
+
+  ---@diagnostic disable-next-line: missing-fields
   Job:new({
     command = 'git',
     args = { 'clone', clone_url, path },

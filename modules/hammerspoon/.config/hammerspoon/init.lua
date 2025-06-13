@@ -54,7 +54,7 @@ local keyMap = {
   [singleKey('v', 'VSCode')] = app_utils.launchById('com.microsoft.VSCode'),
   [singleKey('x', 'Cursor')] = app_utils.launchById('com.todesktop.230313mzl4w4u92'),
 }
-hs.hotkey.bind(hyper, 'w', spoon.RecursiveBinder.recursiveBind(keyMap, 'App Switcher'))
+hs.hotkey.bind(hyper, 'w', spoon.RecursiveBinder.recursiveBind(keyMap))
 
 -- Notification that config was loaded
 spoon.SpoonInstall:andUse('FadeLogo', {

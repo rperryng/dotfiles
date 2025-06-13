@@ -15,14 +15,14 @@
   default = simple
   autoSetupRemote = true
 
-[url "git@github.com:"]
-  pushInsteadOf = "https://github.com/"
-
 [diff]
   algorithm = histogram
 
 [branch]
   sort = -committerdate
+
+[url "git@github.com:"]
+  pushInsteadOf = "https://github.com/"
 
 [url "git@github.com:"]
   insteadOf = https://github.com/

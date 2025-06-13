@@ -12,7 +12,7 @@ pager = "delta"
 conflict_marker = "snapshot"
 
 [ui.diff]
-format = "git"
+formatter = "git"
 
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'

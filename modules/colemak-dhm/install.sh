@@ -8,12 +8,9 @@ COLEMAK_LAYOUTS_DIR="${SYSTEM_LAYOUTS_DIR}/Colemak DH.bundle"
 NO_COLOR='\033[0m'
 YELLOW='\033[0;33m'
 
-
 install_macos() {
-  #!/usr/bin/env bash
-
   if [[ ! -d "$CLONE_DIR" ]]; then
-    mkdir "$CLONE_DIR"
+    mkdir -p "$CLONE_DIR"
     git clone "${CLONE_URL}" "${CLONE_DIR}"
   fi
 
@@ -28,9 +25,6 @@ install() {
   case ${DOTFILES_OS} in
     "macos")
       install_macos
-      ;;
-    "debian")
-      sudo apt install ripgrep
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"

@@ -29,7 +29,8 @@ install() {
     rectangle \
     jordanbaird-ice \
     maccy \
-    karabiner-elements
+    karabiner-elements \
+    linearmouse
 
   "${ADD_LOGIN_ITEMS_SCRIPT}"
 }

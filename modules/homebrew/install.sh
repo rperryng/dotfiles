@@ -20,6 +20,7 @@ install() {
 
   echo "Loading shell config"
   source "${DOTFILES_DIR}/modules/homebrew/.config/shell.d/brew.sh"
+  echo "Successfully installed brew"
 }
 
 install
