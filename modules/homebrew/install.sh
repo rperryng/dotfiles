@@ -17,6 +17,8 @@ install() {
 
   sudo -v
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  echo "Loading shell config"
   source "${DOTFILES_DIR}/modules/homebrew/.config/shell.d/brew.sh"
 }
 
