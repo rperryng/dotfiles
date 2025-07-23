@@ -6,3 +6,5 @@ noremap sh ^
 
 noremap <c-n> :tabnext<cr>
 noremap <c-p> :tabprevious<cr>
+
+noremap <space>wa :writeall<cr>
