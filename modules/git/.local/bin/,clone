@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <owner>/<repo>"
+    exit 1
+fi
+
+REPO_IDENTIFIER=$1
+ORG=$(dirname "$REPO_IDENTIFIER")
+REPO=$(basename "$REPO_IDENTIFIER")
+
+TARGET_DIR_PARENT="$HOME/code/$ORG"
+TARGET_DIR="$TARGET_DIR_PARENT/$REPO"
+CLONE_URL="git@github.com:${REPO_IDENTIFIER}.git"
+
+# Check if the directory already exists
+if [ -d "$TARGET_DIR" ]; then
+  echo "Directory ${TARGET_DIR} already exists."
+  exit 1
+fi
+
+mkdir -p "$TARGET_DIR_PARENT"
+
+echo "Cloning ${CLONE_URL} into ${TARGET_DIR}..."
+git clone "$CLONE_URL" "$TARGET_DIR"
+
+echo "Done."
