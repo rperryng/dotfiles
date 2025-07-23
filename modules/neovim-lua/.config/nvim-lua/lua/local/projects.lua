@@ -393,7 +393,7 @@ vim.keymap.set('n', '<space>cdP', function()
   local tab_name = vim.fn.fnamemodify(dir, ':t')
   vim.cmd('tchdir ' .. dir)
   vim.cmd('TabooRename ' .. tab_name)
-end, { desc = 'Change working directory to git root' })
+end, { desc = 'Change working directory to "project" root' })
 
 vim.keymap.set(
   'n',
