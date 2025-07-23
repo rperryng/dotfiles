@@ -9,7 +9,7 @@ default-command = "log"
 # in this context
 editor = ["nvr", "--remote-wait", '+setlocal bufhidden=wipe']
 pager = "delta"
-conflict_marker = "snapshot"
+conflict-marker-style = "snapshot"
 
 [ui.diff]
 formatter = "git"
@@ -62,3 +62,6 @@ draft_commit_description ='''
     diff.git(),
   )
 '''
+
+[git]
+subprocess = true
