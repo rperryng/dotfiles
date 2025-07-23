@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+JIRA_CACHE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/jira/issues.txt"
+JIRA_JQL_QUERY_FILE="$HOME/.config/.jira/jira_issues_query.jql"
+
+_jira_jql_query() {
+  if [[ ! -f "$JIRA_JQL_QUERY_FILE" ]]; then
+    echo "Jira JQL query file not found: $JIRA_JQL_QUERY_FILE" >&2
+    return 1
+  fi
+  cat "$JIRA_JQL_QUERY_FILE" | tr -d "\n"
+}
+
+_jira_list_issues_cmd() {
+  jira issues list \
+    --plain \
+    --columns 'type,key,assignee,status,summary'\
+    --jql "$(_jira_jql_query)"
+}
+
+# Fetches new issues and updates the cache.
+# Does not print to stdout.
+_update_cache() {
+  local temp_file="${JIRA_CACHE_FILE}.tmp"
+  if _jira_list_issues_cmd > "$temp_file"; then
+    mkdir -p "$(dirname "$JIRA_CACHE_FILE")"
+    mv "$temp_file" "$JIRA_CACHE_FILE"
+  else
+    rm -f "$temp_file"
+    return 1
+  fi
+}
+
+# Fetches, prints to stdout, and caches the issues.
+# This is a blocking call.
+_fetch_print_and_cache() {
+  local temp_file="${JIRA_CACHE_FILE}.tmp"
+  # The script will exit here if the command fails due to "set -eo pipefail"
+  _jira_list_issues_cmd | tee "$temp_file"
+  mkdir -p "$(dirname "$JIRA_CACHE_FILE")"
+  mv "$temp_file" "$JIRA_CACHE_FILE"
+}
+
+main() {
+  local use_cache=1
+  if [[ "$1" == "--no-cache" ]]; then
+    use_cache=0
+  fi
+
+  if [[ "$use_cache" -eq 1 ]] && [[ -f "$JIRA_CACHE_FILE" ]]; then
+    cat "$JIRA_CACHE_FILE"
+    # Update cache in the background.
+    # The output is redirected to /dev/null to not interfere with the current shell.
+    _update_cache &>/dev/null &
+  else
+    # First run, or --no-cache was passed.
+    _fetch_print_and_cache
+  fi
+}
+
+main "$@"
