@@ -1,7 +1,5 @@
 #!/usr/bin/env zsh
 
-# export JJ_CONFIG="${XDG_CONFIG_HOME}/jj/config.toml"
-
 # jj fuzzy bookmark picker
 fzf-jj-bookmark-widget() {
   local bookmark
@@ -39,15 +37,10 @@ alias jjtp="jj tug && jj git push"
 alias jjdm="jj describe --message"
 alias jjs="jj squash"
 
-jjfinish() {
-  local description=${1}
-  if [[ -z $description ]]; then
-    echo "description argument for current change missing" 1>&2
-    return 1
-  fi
-  jj describe --quiet --message $1
-  jj new --quiet
-  jj tug
+jjbm() {
+  jj bookmark list \
+    --revisions "closest_bookmark(@)" \
+    --template "name\ "
 }
 
 jjpr() {

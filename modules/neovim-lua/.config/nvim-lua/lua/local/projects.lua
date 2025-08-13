@@ -16,18 +16,29 @@ local ICONS = {
 local PROJECT_ROOT_FILES =
   { '.git', 'Gemfile', 'package.json', 'deno.json', 'deno.jsonc' }
 
-M.get_project_name = function()
-  local cwd = vim.fn.getcwd()
+M.get_project_name = function(opts)
+  opts = opts or {}
+  local project_dir = opts.project_dir or vim.fn.getcwd()
 
   -- If worktree dir, return <repo>/<branch>
-  local _, repo, branch =
-    cwd:match('code%-worktrees/([%w%.%-_]+)/([%w%.%-_]+)/([%w%.%-_]+)')
-  if branch ~= nil then
-    return string.format('%s/%s', repo, branch)
+  do
+    local _, repo, branch =
+      project_dir:match('code%-worktrees/([%w%.%-_]+)/([%w%.%-_]+)/([%w%.%-_]+)')
+    if branch ~= nil then
+      return string.format('%s/%s', repo, branch)
+    end
+  end
+
+  -- If main-repo dir, return '<org>/<repo>'
+  do
+    local org, repo = project_dir:match('code/([%w%.%-_]+)/([%w%.%-_]+)')
+    if org ~= nil then
+      return string.format('%s/%s', org, repo)
+    end
   end
 
   -- otherwise, simply return working directory name
-  return vim.fn.fnamemodify(cwd, ':t')
+  return vim.fn.fnamemodify(project_dir, ':t')
 end
 
 local search = function(opts)
@@ -156,7 +167,7 @@ local function job_clone_repo(clone_url, reponame, path)
     lsp_client = { name = 'Git' },
   })
 
-  vim.system({ 'mkdir', '-p', 'path'}):wait()
+  vim.system({ 'mkdir', '-p', 'path' }):wait()
 
   -- local fidget = require('fidget')
   local Job = require('plenary.job')
@@ -404,10 +415,11 @@ vim.keymap.set(
 
 M.open_project = function(project_dir, opts)
   opts = opts or {}
-  local project_name = vim.fn.fnamemodify(project_dir, ':t')
-  local current_tabnr = vim.fn.tabpagenr()
+  local project_name = M.get_project_name({project_dir = project_dir})
+  local tab_name = opts.tab_name or project_name
 
   -- If an existing tab already uses this working directory, switch to it.
+  local current_tabnr = vim.fn.tabpagenr()
   for tabnr = 1, vim.fn.tabpagenr('$') do
     vim.cmd(tabnr .. 'tabnext')
     local tcd = vim.fn.getcwd()
@@ -417,8 +429,6 @@ M.open_project = function(project_dir, opts)
       return
     end
   end
-
-  local tab_name = opts.tab_name or project_name
 
   -- Otherwise, create a new one with that working directory.
   vim.cmd(current_tabnr .. 'tabnext')

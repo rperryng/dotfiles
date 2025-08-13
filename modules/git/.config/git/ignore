@@ -46,4 +46,8 @@ yarn-error.log
 CLAUDE.local.md
 **/.claude/settings.local.json
 
+# Local secrets
+.envrc.local
+
+# Ignore :)
 .ignore

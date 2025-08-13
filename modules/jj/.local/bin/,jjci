@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+description=${1}
+if [[ -z $description ]]; then
+  echo "description argument for current change missing" 1>&2
+  exit 1
+fi
+
+closest_bookmark="$(
+  jj log \
+    --revisions "closest_bookmark(@)" \
+    --template 'bookmarks.join("\n")' \
+    --no-graph \
+    --color 'never'
+  )"
+
+# Raise error if more than one bookmark is resolved
+num_bookmarks=0
+if [ -z "${closest_bookmark}" ]; then
+  num_bookmarks=0
+else
+  num_bookmarks=$(echo "${closest_bookmark}" | grep --count '^')
+fi
+if [ "${num_bookmarks}" -gt 1 ]; then
+  echo "Error: closest_bookmark(@) resolves to multiple bookmarks:" >&2
+  echo "${closest_bookmark}" >&2
+  exit 1
+fi
+
+trunk="$(,jjtrunk)"
+
+if [ "${closest_bookmark}" = "${trunk}" ]; then
+  echo -n "closest_bookmark is '${closest_bookmark}' (trunk()). Are you sure you want to proceed? (y/N) "
+  read -r response
+  if ! [[ "${response}" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    echo "Aborted."
+    exit 1
+  fi
+fi
+
+jj describe --quiet --message "${description}"
+jj tug
+jj new --quiet

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+jj log \
+  --revisions "trunk()" \
+  --template "local_bookmarks.filter(|s| s.name() == 'master' || s.name() == 'main' || s.name() == 'trunk')" \
+  --no-graph \
+  --color 'never'

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  mise task ls
+  exit 0
+fi
+
+mise task run "$1"

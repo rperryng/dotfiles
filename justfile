@@ -45,8 +45,9 @@ verify:
   rm -f {{bogus_links_path}}
   just verify_dir "${XDG_CONFIG_HOME}"
   just verify_dir "${XDG_DATA_HOME}"
+  just verify_dir "${XDG_CACHE_HOME}"
   just verify_dir "${XDG_BIN_HOME}"
-  just verify_dir "${XDG_BIN_HOME}"
+  just verify_dir "${XDG_LIB_HOME}"
   just verify_dir "${XDG_OPT_HOME}"
 
   if [[ -s "{{bogus_links_path}}" ]]; then

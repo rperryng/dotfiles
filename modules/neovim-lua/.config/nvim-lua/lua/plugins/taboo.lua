@@ -6,7 +6,8 @@ return {
       vim.g.taboo_renamed_tab_format = ' [%N-%l]%m '
 
       vim.keymap.set('n', '<space>ret', function()
-        local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+        local projects = require('local/projects')
+        local project_name = projects.get_project_name()
         vim.fn.feedkeys(':TabooRename ' .. project_name)
       end, { noremap = true, silent = true, desc = 'Rename tab' })
     end,

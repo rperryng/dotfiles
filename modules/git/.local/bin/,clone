@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
+BIN_NAME=$(basename $0)
+
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <owner>/<repo>"
+    echo "Usage: $BIN_NAME <owner>/<repo>"
     exit 1
 fi
 
@@ -25,5 +27,11 @@ mkdir -p "$TARGET_DIR_PARENT"
 
 echo "Cloning ${CLONE_URL} into ${TARGET_DIR}..."
 git clone "$CLONE_URL" "$TARGET_DIR"
+
+echo "Initializing jj repository..."
+(
+  cd "${TARGET_DIR}"
+  jj git init --colocate
+)
 
 echo "Done."
