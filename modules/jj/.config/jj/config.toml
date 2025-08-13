@@ -62,6 +62,3 @@ draft_commit_description ='''
     diff.git(),
   )
 '''
-
-[git]
-subprocess = true
