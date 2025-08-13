@@ -62,3 +62,12 @@ draft_commit_description ='''
     diff.git(),
   )
 '''
+
+[[--scope]]
+--when.repositories = ['~/code/wealthsimple']
+[--scope.git]
+sign-on-push = true
+[--scope.signing]
+backend = "ssh"
+key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHXE9iQfOLWOygrFVTZdPZxmLSXwJ9SsukEo6y6K+y92"
+backends.ssh.program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-export JJ_CONFIG="${XDG_CONFIG_HOME}/jj/config.toml"
+# export JJ_CONFIG="${XDG_CONFIG_HOME}/jj/config.toml"
 
 # jj fuzzy bookmark picker
 fzf-jj-bookmark-widget() {
