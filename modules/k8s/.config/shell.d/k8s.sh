@@ -39,6 +39,20 @@ select_kube_namespace() {
   kubectl get namespace | fzf_with_header '^([a-zA-Z0-9-]+)'
 }
 
+fkx() {
+  selected_context=$(
+    kubectl config get-contexts --output='name' \
+      | fzf --prompt 'Select a kubernetes context: ' --layout=reverse
+  )
+
+  if [ -z "${selected_context}" ]; then
+    echo "No context selected" 1&>2
+    return
+  fi
+
+  kubectl config use-context "$selected_context"
+}
+
 function klogs() {
   local pod_name=$(select_kube_pod_name)
   if [[ -n "${pod_name}" ]]; then

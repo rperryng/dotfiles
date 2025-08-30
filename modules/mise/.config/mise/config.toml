@@ -1,13 +1,17 @@
 [settings]
 experimental = true
+idiomatic_version_file_enable_tools = ["java", "node", "python", "ruby"]
 
 [settings.ruby]
+
+[settings.pipx]
+uvx = true
 # ruby_install = true
 
 [tools]
 # language runtimes
 deno = ['2', '1.46.1']
-neovim = '0.10.2'
+neovim = '0.11.2'
 node = ['22', '18.4.0']
 ruby = ['3.3', '3.2', '3.1']
 java = ['17.0']
@@ -30,9 +34,20 @@ yq = '4.44.3'
 shfmt = 'latest'
 kubectl = 'latest'
 colima = 'latest'
+maven = 'latest'
+gradle = 'latest'
 
 pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'
+jj = "latest"
 
 # Broken in osx, use a different fork with `[plugins]` declaration?
 # mdbook = 'latest'
+
+[alias.java.versions]
+11 = "temurin-11"
+"11.0" = "temurin-11"
+17 = "temurin-17"
+"17.0" = "temurin-17"
+21 = "temurin-21"
+"21.0" = "temurin-21"

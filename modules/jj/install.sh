@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+# jj installed with mise
 
-install_jj() {
-  if [[ -x "$(command -v jj)" ]]; then
+install_lazyjj() {
+  if [[ -x "$(command -v lazyjj)" ]]; then
     return 0;
   fi
 
@@ -11,7 +11,7 @@ install_jj() {
     return 1;
   fi
 
-  cargo binstall --no-confirm --strategies crate-meta-data jj-cli
+  cargo binstall --no-confirm lazyjj
 }
 
-install_jj
+install

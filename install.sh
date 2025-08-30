@@ -112,7 +112,7 @@ install_package_managers() {
   case ${os_family} in
     "macos")
       # Always install homebrew on macos
-      "${DOTFILES_DIR}/modules/homebrew/install.sh"
+      source "${DOTFILES_DIR}/modules/homebrew/install.sh"
       ;;
     *) ;;
   esac
@@ -202,7 +202,9 @@ main() {
   sudo -v
 
   # get OS family & preferred package manager
+  local os_family
   os_family="$(get_os_family)"
+  export DOTFILES_OS="${os_family}"
   package_manager="$(get_package_manager)"
 
   # pre-setup steps

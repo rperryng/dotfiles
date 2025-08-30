@@ -3,12 +3,29 @@ local utils = require('utils')
 vim.g.mapleader = ' '
 
 -- Saving
-vim.keymap.set(
-  'n',
-  '<space>wa',
-  '<cmd>silent! wall<cr>',
-  { desc = 'Write all', silent = true }
-)
+-- vim.keymap.set(
+--   'n',
+--   '<space>wa',
+--   '<cmd>silent! wall<cr>',
+--   { desc = 'Write all', silent = true }
+-- )
+
+-- Write all modified buffers
+-- using ":wa" can be unintended when running an llm agent that slowly modifies a file.
+-- I may end up accidentally overwriting changes made by the agent if the buffer is open
+-- and I haven't reloaded the buffer by then.
+vim.keymap.set('n', '<space>wa', function()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) then
+      vim.api.nvim_buf_call(buf, function()
+        if vim.bo.modified and vim.bo.modifiable and vim.fn.bufname() ~= '' then
+          vim.cmd('write')
+        end
+      end)
+    end
+  end
+end, { desc = 'Write all modified buffers' })
+
 
 -- Quit
 vim.keymap.set('n', '<space>q', '<cmd>quit<cr>', { desc = 'Close window' })
@@ -106,7 +123,7 @@ vim.keymap.set('n', '<space>9', '9gt', { desc = 'switch to tab 9' })
 
 vim.keymap.set('n', '<c-n>', ':tabnext<cr>', { desc = 'Go to next tab' })
 vim.keymap.set('n', '<c-p>', ':tabprevious<cr>', { desc = 'Go to next tab' })
-vim.keymap.set('n', '<space>tq', ':tabclose<cr>', { desc = 'Close tab' })
+vim.keymap.set('n', '<space>tc', ':tabclose<cr>', { desc = 'Close tab' })
 
 -- vim.keymap.set('n', '<space>tq', '<cmd>tabedit %<cr>', { desc = 'Open buffer in new tab' })
 vim.keymap.set('n', '<space>t%', function()
@@ -169,7 +186,7 @@ vim.keymap.set('n', '<space>gqq', function()
 end, { desc = 'Toggle quickfix terminal' })
 
 -- Paste from specified register in terminal mode
-vim.keymap.set('t', '<C-\\><C-r>', function()
+vim.keymap.set('t', '<C-x><C-r>', function()
   local register = vim.fn.nr2char(vim.fn.getchar())
   return '<C-\\><C-N>"' .. register .. 'pi'
 end, { expr = true, desc = 'Paste from register' })
@@ -190,9 +207,9 @@ vim.api.nvim_set_keymap(
 
 -- Rename buffer
 vim.keymap.set('n', '<space>reb', function()
-  if string.match(vim.fn.bufname(), '^term-') then
+  if string.match(vim.fn.bufname(), '[term]') then
     local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-    vim.fn.feedkeys(':keepalt file term-' .. project_name .. '-')
+    vim.fn.feedkeys(':keepalt file [term] (' .. project_name .. ') ')
   else
     vim.fn.feedkeys(':keepalt file ')
   end

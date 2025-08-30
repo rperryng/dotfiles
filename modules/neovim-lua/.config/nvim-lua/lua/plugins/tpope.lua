@@ -4,9 +4,10 @@ return {
   {
     'tpope/vim-projectionist',
     config = function()
-      vim.keymap.set('n', '<space>A', function()
+      vim.keymap.set('n', '<space>oa', function()
         vim.cmd('A')
-      end, { desc = 'Open alternate file'} )
+      end, { desc = 'Open alternate file (vim-projectionist)'} )
+
     end,
     init = function()
       vim.g.projectionist_heuristics = {

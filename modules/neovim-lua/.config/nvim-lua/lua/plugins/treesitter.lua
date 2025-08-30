@@ -17,6 +17,7 @@ return {
           'go',
           'graphql',
           'helm',
+          'http',
           'javascript',
           'json',
           'jsonc',

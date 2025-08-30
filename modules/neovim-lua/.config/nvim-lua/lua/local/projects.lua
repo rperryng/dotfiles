@@ -5,6 +5,7 @@ local M = {}
 
 local fzf_utils = require('fzf-lua.utils')
 local utils = require('utils')
+local DOTFILES_DIR = os.getenv('DOTFILES_DIR')
 local CLONE_URLS_PATH = os.getenv('DOTFILES_CLONE_URLS_PATH') or '~/.clone_urls'
 local ICONS = {
   DIR = '',
@@ -14,13 +15,6 @@ local ICONS = {
 
 local PROJECT_ROOT_FILES =
   { '.git', 'Gemfile', 'package.json', 'deno.json', 'deno.jsonc' }
-
-local iconify = function(item, icon)
-  return ('%s  %s'):format(icon, item)
-end
-local uniconify = function(line)
-  return line:match('^[^ ]+%s+(.+)')
-end
 
 M.get_project_name = function()
   local cwd = vim.fn.getcwd()
@@ -57,11 +51,17 @@ local search = function(opts)
 end
 
 M.find_project_dirs = function()
-  return search({
+  local project_dirs = search({
     root_path = os.getenv('HOME') .. '/code',
     max_depth = 2,
     patterns = PROJECT_ROOT_FILES,
   })
+
+  if DOTFILES_DIR and vim.fn.isdirectory(DOTFILES_DIR) == 1 then
+    table.insert(project_dirs, DOTFILES_DIR)
+  end
+
+  return project_dirs
 end
 
 M.find_project_dirs_decorated = function()
@@ -71,7 +71,7 @@ M.find_project_dirs_decorated = function()
   for i, path in ipairs(entries) do
     path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
     path = '~/' .. path
-    entries[i] = iconify(path, dir_icon)
+    entries[i] = utils.iconify(path, dir_icon)
   end
 
   return entries
@@ -93,7 +93,7 @@ M.find_worktrees_dirs_decorated = function()
   for i, path in ipairs(entries) do
     path = require('fzf-lua.path').relative_to(path, vim.fn.expand('$HOME'))
     path = '~/' .. path
-    entries[i] = iconify(path, dir_icon)
+    entries[i] = utils.iconify(path, dir_icon)
   end
 
   return entries
@@ -114,7 +114,7 @@ M.find_clone_urls_decorated = function()
   for i, clone_url in ipairs(entries) do
     local full_reponame = clone_url:match('git@github.com:(.+)%.git')
     local owner, repo = full_reponame:match('([%w%-_]+)/([%w%-_%.]+)')
-    entries[i] = iconify(owner .. '/' .. repo, github_icon)
+    entries[i] = utils.iconify(owner .. '/' .. repo, github_icon)
   end
 
   return entries
@@ -160,6 +160,8 @@ local function job_clone_repo(clone_url, reponame, path)
 
   -- local fidget = require('fidget')
   local Job = require('plenary.job')
+
+  ---@diagnostic disable-next-line: missing-fields
   Job:new({
     command = 'git',
     args = { 'clone', clone_url, path },
@@ -217,11 +219,19 @@ local function fzf_lua_projects()
 
       -- Add local projects
       for _, value in ipairs(project_dirs) do
-        -- Match ~/code/{owner}/{repo}
-        local id = value:match('code/([%w%-_%.]+/[%w-_%.]+)')
+        local id
 
-        -- (Legacy) Match ~/code/{repo}
-        id = id or value:match('code/([%w%-_%.]+)')
+        -- Special case for dotfiles directory (check for .dotfiles in the path)
+        print(value)
+        if value:match('%~/.dotfiles') then
+          id = 'rperryng/dotfiles'
+        else
+          -- Match ~/code/{owner}/{repo}
+          id = value:match('code/([%w%-_%.]+/[%w-_%.]+)')
+
+          -- (Legacy) Match ~/code/{repo}
+          id = id or value:match('code/([%w%-_%.]+)')
+        end
 
         assert(
           id,
@@ -232,7 +242,7 @@ local function fzf_lua_projects()
 
       -- Add any uncloned GitHub projects
       for _, value in ipairs(clone_urls) do
-        local id = uniconify(value)
+        local id = utils.uniconify(value)
         assert(id, 'could not extract id from github repo line', id)
 
         -- Only add the value if it's not already cloned
@@ -260,7 +270,7 @@ local function fzf_lua_projects()
 
           -- Extract the "value" (no icon) from the selected line
           local line = selected[1]
-          local value = uniconify(line)
+          local value = utils.uniconify(line)
 
           -- Open existing worktree dir
           if string.find(line, ICONS.GIT_WORKTREE) then
@@ -383,7 +393,7 @@ vim.keymap.set('n', '<space>cdP', function()
   local tab_name = vim.fn.fnamemodify(dir, ':t')
   vim.cmd('tchdir ' .. dir)
   vim.cmd('TabooRename ' .. tab_name)
-end, { desc = 'Change working directory to git root' })
+end, { desc = 'Change working directory to "project" root' })
 
 vim.keymap.set(
   'n',

@@ -52,6 +52,11 @@ else
   bindkey "\e[3~" delete-char
 fi
 
+# [Undo] - undo
+# by default this is bound to <c-_> but this bind doesn't seem to work well
+# in a neovim terminal
+bindkey -M emacs '^Z' undo
+
 # Edit the current command line in $EDITOR
 autoload -U edit-command-line
 zle -N edit-command-line

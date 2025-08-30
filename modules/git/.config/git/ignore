@@ -42,3 +42,8 @@ yarn-error.log
 
 # File containing which files should be symlinked across worktrees
 .worktree-symlinks
+
+CLAUDE.local.md
+**/.claude/settings.local.json
+
+.ignore
