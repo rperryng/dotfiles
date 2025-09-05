@@ -57,6 +57,7 @@
   "snacks.nvim": { "branch": "main", "commit": "bc0630e43be5699bb94dadc302c0d21615421d93" },
   "taboo.vim": { "branch": "master", "commit": "937f67ab9dc2ba1861fabc40ca367e5622c30d36" },
   "targets.vim": { "branch": "master", "commit": "6325416da8f89992b005db3e4517aaef0242602e" },
+  "tree-sitter-go-template": { "branch": "master", "commit": "65f4f86c3aaa9dabab36e3482584e8a111cf7db1" },
   "trouble.nvim": { "branch": "main", "commit": "85bedb7eb7fa331a2ccbecb9202d8abba64d37b3" },
   "undotree": { "branch": "master", "commit": "b951b87b46c34356d44aa71886aecf9dd7f5788a" },
   "vim-asterisk": { "branch": "master", "commit": "77e97061d6691637a034258cc415d98670698459" },

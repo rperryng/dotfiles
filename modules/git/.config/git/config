@@ -29,3 +29,8 @@
 
 [includeIf "gitdir:/Users/rperrynguyen/"]
   path = "/Users/rperrynguyen/.config/git/wealthsimple.gitconfig"
+[filter "lfs"]
+	process = git-lfs filter-process --skip
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge --skip -- %f

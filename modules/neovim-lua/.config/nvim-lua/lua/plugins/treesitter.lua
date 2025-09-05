@@ -1,5 +1,22 @@
 return {
   {
+    'ngalaiko/tree-sitter-go-template',
+    dependencies = { 'ngalaiko/tree-sitter-go-template' },
+    config = function()
+      vim.filetype.add({
+        extension = {
+          gotmpl = 'gotmpl',
+        },
+        pattern = {
+          [".*/templates/.*%.tpl"] = "helm",
+          [".*/templates/.*%.ya?ml"] = "helm",
+          ["helmfile.*%.ya?ml"] = "helm",
+        },
+      })
+    end
+  },
+
+  {
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
@@ -14,8 +31,10 @@ return {
           'bash',
           'c',
           'cpp',
+          'cue',
           'go',
           'graphql',
+          'gotmpl',
           'helm',
           'http',
           'javascript',
