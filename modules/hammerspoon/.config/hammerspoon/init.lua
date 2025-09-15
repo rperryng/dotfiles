@@ -53,6 +53,7 @@ local keyMap = {
   [singleKey('t', 'Terminal')] = app_utils.launchById('com.mitchellh.ghostty'),
   [singleKey('v', 'VSCode')] = app_utils.launchById('com.microsoft.VSCode'),
   [singleKey('x', 'Cursor')] = app_utils.launchById('com.todesktop.230313mzl4w4u92'),
+  [singleKey('o', 'Obsidian')] = app_utils.launchById('md.obsidian'),
 }
 hs.hotkey.bind(hyper, 'w', spoon.RecursiveBinder.recursiveBind(keyMap))
 

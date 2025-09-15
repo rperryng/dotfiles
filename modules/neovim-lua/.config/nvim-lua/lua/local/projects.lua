@@ -161,7 +161,7 @@ end, { desc = 'refresh_clone_urls' })
 
 local function job_clone_repo(clone_url, reponame, path)
   local progress = require('fidget.progress')
-  local handle = progress.handle.create({
+  local progress_handler = progress.handle.create({
     title = reponame,
     message = string.format('Cloning repo'),
     lsp_client = { name = 'Git' },
@@ -177,19 +177,35 @@ local function job_clone_repo(clone_url, reponame, path)
     command = 'git',
     args = { 'clone', clone_url, path },
     on_exit = function(j, return_val)
-      if return_val == 0 then
-        handle.message = string.format('Done cloning %s', reponame)
-      else
+      if return_val ~= 0 then
         local result = table.concat(j:result(), '\n')
         local msg = string.format('Error cloning %s\n%s', reponame, result)
-        handle.message = msg
+        progress_handler.message = msg
+        return
       end
 
-      handle:finish()
+      progress_handler.message = string.format('Done cloning %s. Initializing jj', reponame)
 
-      vim.schedule(function()
-        M.open_project(path)
-      end)
+      Job:new({
+        command = 'jj',
+        args = { 'git', 'init', '--colocate' },
+        cwd = path,
+        on_exit = function(j, return_val)
+
+          if return_val ~= 0 then
+            local result = table.concat(j:result(), '\n')
+            local msg = string.format('Error initializing jj for %s\n%s', reponame, result)
+            progress_handler.message = msg
+            return
+          end
+
+          progress_handler:finish()
+
+          vim.schedule(function()
+            M.open_project(path)
+          end)
+        end
+      }):start()
     end,
   }):start()
 end
