@@ -23,7 +23,7 @@ bindkey '^B' fzf-jj-bookmark-widget
 alias jjgf="jj git fetch"
 
 alias jjnew="jj new 'trunk()'"
-alias jjl="jj log --limit 10"
+alias jjl="jj log --limit 10 --revisions '..'"
 # just more comfortable to press...
 alias jjt="jjl"
 alias jjlc="jj log --template builtin_log_compact"

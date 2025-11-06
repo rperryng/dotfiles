@@ -12,6 +12,14 @@ return {
     init = function()
       vim.g.projectionist_heuristics = {
         ['Gemfile.lock|*.gemspec'] = {
+          ['Gemfile'] = {
+            alternate = 'Gemfile.lock',
+            type = 'package',
+          },
+          ['Gemfile.lock'] = {
+            alternate = 'Gemfile',
+            type = 'package',
+          },
           ['*.rb'] = {
             type = 'source',
             alternate = 'spec/{}_spec.rb',
