@@ -52,3 +52,6 @@ CLAUDE.local.md
 
 # Ignore :)
 .ignore
+
+.pr-draft.md
+docs/plans
