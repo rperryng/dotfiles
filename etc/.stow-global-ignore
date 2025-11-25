@@ -14,6 +14,9 @@
 test*
 tmp*
 
+# Opt-out of stowing entirely
+unstowed
+
 # common files
 Makefile
 install.*

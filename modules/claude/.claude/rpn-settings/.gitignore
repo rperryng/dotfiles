@@ -1,0 +1,4 @@
+# Work-specific settings (not checked into public dotfiles)
+02-work.jsonc
+*-work.jsonc
+*-private.jsonc
