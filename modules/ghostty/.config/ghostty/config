@@ -7,3 +7,4 @@ font-feature = -dlig
 font-feature = -liga
 
 macos-titlebar-style = hidden
+keybind = shift+enter=text:\x1b\r
