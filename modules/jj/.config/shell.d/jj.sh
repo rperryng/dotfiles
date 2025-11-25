@@ -40,7 +40,7 @@ alias jjs="jj squash"
 jjbm() {
   jj bookmark list \
     --revisions "closest_bookmark(@)" \
-    --template "name\ "
+    --template "name "
 }
 
 jjpr() {
