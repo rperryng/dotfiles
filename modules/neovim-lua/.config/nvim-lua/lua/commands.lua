@@ -1,0 +1,5 @@
+vim.api.nvim_create_user_command('StripWhitespace', function()
+  local save_cursor = vim.api.nvim_win_get_cursor(0)
+  pcall(vim.cmd, [[%s/\s\+$//e]])
+  vim.api.nvim_win_set_cursor(0, save_cursor)
+end, {})

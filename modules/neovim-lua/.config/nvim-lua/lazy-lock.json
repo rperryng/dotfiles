@@ -68,7 +68,9 @@
   "vim-projectionist": { "branch": "master", "commit": "5ff7bf79a6ef741036d2038a226bcb5f8b1cd296" },
   "vim-rsi": { "branch": "master", "commit": "45540637ead22f011e8215f1c90142e49d946a54" },
   "vim-sendtowindow": { "branch": "master", "commit": "abbaaa55e728167bee548fcec4d42c665fc7a042" },
+  "vim-varnish": { "branch": "main", "commit": "01458458f20831d43045423344bcb70a40d04b0f" },
   "vim-winlayout": { "branch": "master", "commit": "2bb3aa5a749abe887a15fae9d14201d125d0c7e6" },
   "which-key.nvim": { "branch": "main", "commit": "370ec46f710e058c9c1646273e6b225acf47cbed" },
-  "winresizer": { "branch": "master", "commit": "9bd559a03ccec98a458e60c705547119eb5350f3" }
+  "winresizer": { "branch": "master", "commit": "9bd559a03ccec98a458e60c705547119eb5350f3" },
+  "yanky.nvim": { "branch": "main", "commit": "04775cc6e10ef038c397c407bc17f00a2f52b378" }
 }

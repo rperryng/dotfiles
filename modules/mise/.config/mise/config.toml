@@ -19,6 +19,7 @@ java = ['17.0']
 python = ['3.12'] # must be after poetry so the poetry bin is first in PATH
 
 go = 'latest'
+uv = 'latest'
 
 # for poetry projects, automatic activation can be done with a local '.mise.toml'
 # poetry = {version='latest', pyproject='pyproject.toml'}

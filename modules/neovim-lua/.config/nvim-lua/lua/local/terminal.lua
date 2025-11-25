@@ -7,6 +7,7 @@ local TERM_BUFFER_PREFIX = '[term]'
 local project_terminal_buffer_name = function()
   return string.format('%s (%s)', TERM_BUFFER_PREFIX, projects.get_project_name())
 end
+M.project_terminal_buffer_name = project_terminal_buffer_name
 
 M.terminal_resize = function()
   local currwin = vim.api.nvim_get_current_win()

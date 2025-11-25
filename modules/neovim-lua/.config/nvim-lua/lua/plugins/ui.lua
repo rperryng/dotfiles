@@ -42,4 +42,8 @@ return {
       require('highlight-undo').setup()
     end,
   },
+
+  {
+    'varnishcache-friends/vim-varnish'
+  }
 }

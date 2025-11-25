@@ -10,9 +10,7 @@ default-command = "log"
 editor = ["nvr", "--remote-wait", '+setlocal bufhidden=wipe']
 pager = "delta"
 conflict-marker-style = "snapshot"
-
-[ui.diff]
-formatter = "git"
+diff-formatter = ["difft", "--color=always", "$left", "$right"]
 
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
@@ -30,7 +28,7 @@ log = '''
       if(current_working_copy, "working_copy"),
       concat(
         separate(" ",
-          format_short_change_id_with_hidden_and_divergent_info(self),
+          format_short_change_id_with_change_offset(self),
           commit_id.shortest(9),
           if(empty, label("empty", "(empty)")),
           if(description,
@@ -40,7 +38,6 @@ log = '''
           bookmarks,
           tags,
           working_copies,
-          if(git_head, label("git_head", "HEAD")),
           if(conflict, label("conflict", "conflict")),
           if(config("ui.show-cryptographic-signatures").as_boolean(),
             format_short_cryptographic_signature(signature)),
