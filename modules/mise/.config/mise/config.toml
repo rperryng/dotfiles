@@ -1,5 +1,6 @@
 [settings]
 experimental = true
+lockfile = true
 idiomatic_version_file_enable_tools = ["java", "node", "python", "ruby"]
 
 [settings.ruby]
@@ -43,6 +44,7 @@ gradle = 'latest'
 pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'
 jj = "latest"
+opencode = "latest"
 
 # Broken in osx, use a different fork with `[plugins]` declaration?
 # mdbook = 'latest'

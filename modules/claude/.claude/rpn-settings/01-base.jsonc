@@ -6,7 +6,7 @@
       "Skill(superpowers:*)",
       "Skill(draft-pr:*)",
       "Skill(reading-jira-tickets:*)",
-      // reado nly
+      // read-only
       "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
@@ -18,35 +18,37 @@
       "Bash(file:*)",
       "Bash(stat:*)",
       "Bash(tree:*)",
-      "--- OTHER FILE OPERATIONS ---",
+      // other file operations
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(pwd:*)",
       "Bash(cd:*)",
       "Bash(mkdir:*)",
-      "--- SEARCH OPERATIONS ---",
+      // search
       "Bash(grep:*)",
       "Bash(rg:*)",
       "Bash(find:*)",
       "Bash(fd:*)",
-      "--- UTILITIES ---",
+      // utils
       "Bash(jq:*)",
+      "Bash(yq:*)",
       "Bash(echo:*)",
-      "--- GIT ---",
+      // git and jj
       "Bash(git:*)",
       "Bash(jj:*)",
-      "--- GITHUB CLI ---",
+      // gh cli
       "Bash(gh pr list:*)",
       "Bash(gh pr view:*)",
       "Bash(gh pr diff:*)",
       "Bash(gh issue list:*)",
       "Bash(gh issue view:*)",
       "Bash(gh run view:*)",
-      "--- JIRA CLI ---",
-      "Bash(jira workitem view:*)",
-      "Bash(jira workitem comment list:*)",
-      "Bash(jira workitem search:*)",
-      "--- DEVELOPMENT ---",
+      // jira cli
+      "Bash(acli jira workitem view:*)",
+      "Bash(acli jira workitem comment list:*)",
+      "Bash(acli jira workitem search:*)",
+      "Bash(acli jira issue view:*)",
+      // language tools
       "Bash(bundle:*)",
       "Bash(node:*)",
       "Bash(yarn:*)",
@@ -56,13 +58,13 @@
     ],
     "deny": [
       "Bash(git commit:*)",
-      "Bash(jj commit:*)",
       "Read(.env*)",
       "Read(secrets/**)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
     ],
     "ask": [
+      "Bash(jj commit:*)",
       "Bash(yarn add:*)",
       "Bash(bundle add:*)",
       "Bash(gh pr create:*)",

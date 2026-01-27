@@ -183,7 +183,7 @@ vim.keymap.set('n', '<space>gqq', function()
   end
 
   vim.cmd(current_winnr .. 'wincmd w')
-end, { desc = 'Toggle quickfix terminal' })
+end, { desc = 'Toggle quickfix window' })
 
 -- Paste from specified register in terminal mode
 vim.keymap.set('t', '<C-x><C-r>', function()
