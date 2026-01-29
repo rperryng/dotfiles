@@ -2,7 +2,10 @@
 # Load any plugins
 #
 
-# Source mise first
+# Source homebrew before mise so PATH is correct when mise captures __MISE_ORIG_PATH
+source "${XDG_CONFIG_HOME}/shell_pre.d/brew.zsh"
+
+# Source mise
 source "${XDG_CONFIG_HOME}/shell_pre.d/mise.zsh"
 
 # Source common interactive shell scripts
