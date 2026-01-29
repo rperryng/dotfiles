@@ -7,6 +7,7 @@ fzf-jj-bookmark-widget() {
     jj bookmark list \
       --template 'name ++ "\n"' \
       --sort author-date- \
+      | uniq \
       | fzf --height 40% --reverse --prompt="Select bookmark: "\
   )
 
@@ -31,7 +32,6 @@ alias jjic="jj git init --colocate"
 alias jjlo="jj log --limit 10"
 alias jjloa="jj log --revisions '@ | root() | bookmarks()'"
 alias jjps="jj git push"
-alias jjpsu="jj git push --allow-new --revisions 'closest_bookmark(@)'"
 alias jjst="jj status"
 alias jjtp="jj tug && jj git push"
 alias jjdm="jj describe --message"
@@ -41,6 +41,19 @@ jjbm() {
   jj bookmark list \
     --revisions "closest_bookmark(@)" \
     --template "name "
+}
+
+jjpsu() {
+  local bookmark
+  bookmark=$(jjbm)
+
+  if [[ -z "$bookmark" ]]; then
+    echo "Error: Could not resolve closest bookmark"
+    return 1
+  fi
+
+  jj bookmark track "${bookmark}" 2>/dev/null || true
+  jj git push --bookmark "$bookmark"
 }
 
 jjpr() {
@@ -76,4 +89,16 @@ jjlor() {
   local rev=$1
   local fork="fork_point(trunk() | $rev)"
   jj log --revisions "$fork::trunk() | $fork::$rev"
+}
+
+jjrun() {
+  local bookmark
+  bookmark=$(jjbm)
+
+  if [[ -z "$bookmark" ]]; then
+    echo "Error: Could not resolve closest bookmark"
+    return 1
+  fi
+
+  gh run view --branch "$bookmark" "$@"
 }

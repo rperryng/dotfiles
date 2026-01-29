@@ -143,17 +143,29 @@ pr_body=$(cat .pr-draft.md)
 
 # Create the draft PR with explicit head and base branches
 # This is required because gh can't detect the current branch with jj
-gh pr create \
+# Capture the PR URL from the output
+pr_url=$(gh pr create \
   --draft \
   --head "$bookmark" \
   --base main \
   --title "type(scope): description" \
-  --body "$pr_body"
+  --body "$pr_body")
 ```
 
 If user chose "Reload", read .pr-draft.md again and show them the updated content before creating.
 
 **Note**: Use `--head` and `--base` flags explicitly since `gh` can't auto-detect branches in jj repos.
+
+### 10. Open PR in Browser
+
+After successfully creating the PR, open it in the browser:
+
+```bash
+# Open the PR URL in the default browser
+open "$pr_url"
+```
+
+**Note**: The `open` command works on macOS. For Linux, use `xdg-open` instead.
 
 ## Common Mistakes
 
@@ -170,6 +182,7 @@ If user chose "Reload", read .pr-draft.md again and show them the updated conten
 | Skipping reload option | User might have edited - always offer reload |
 | Not pushing bookmark before PR creation | gh requires remote branch - always push first with `jj git push` |
 | Not using --head and --base flags | gh can't detect branches in jj repos - use explicit flags |
+| Not opening PR after creation | Always open the PR in browser with `open` command |
 
 ## Red Flags - STOP and Validate
 
@@ -183,6 +196,7 @@ If user chose "Reload", read .pr-draft.md again and show them the updated conten
 - "User doesn't need to edit" → You don't know that - ask them
 - "gh will figure out the branch" → No it won't in jj repos - push bookmark and use --head/--base
 - "I'll skip pushing to remote" → gh requires remote branch to exist
+- "User can find the PR themselves" → Open it for them with `open` command
 
 **All of these mean: Slow down and follow the workflow.**
 
@@ -224,10 +238,13 @@ jj bookmark track "$bookmark" --remote=origin
 jj git push --bookmark "$bookmark"
 
 # 7. Create draft PR from file with explicit flags
-gh pr create \
+pr_url=$(gh pr create \
   --draft \
   --head "$bookmark" \
   --base main \
   --title "type(scope): desc" \
-  --body "$(cat .pr-draft.md)"
+  --body "$(cat .pr-draft.md)")
+
+# 8. Open PR in browser
+open "$pr_url"
 ```
