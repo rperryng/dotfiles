@@ -49,7 +49,7 @@ opencode = "latest"
 # Broken in osx, use a different fork with `[plugins]` declaration?
 # mdbook = 'latest'
 
-[alias.java.versions]
+[tool_alias.java.versions]
 11 = "temurin-11"
 "11.0" = "temurin-11"
 17 = "temurin-17"
