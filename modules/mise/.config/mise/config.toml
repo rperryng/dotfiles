@@ -28,6 +28,7 @@ uv = 'latest'
 
 # shell dev tools
 delta = '0.18.2'
+difftastic = 'latest'
 fd = 'latest'
 fzf = 'latest'
 jless = '0.9.0'

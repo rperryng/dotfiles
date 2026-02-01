@@ -1,0 +1,22 @@
+# ~/.claude is symlinked here, so Claude Code writes its runtime state
+# (transcripts, prompt history, caches, backups, credentials) into this dir.
+# Ignore everything and allowlist only hand-maintained config.
+# See: https://code.claude.com/docs/en/claude-directory
+.claude/*
+
+!.claude/CLAUDE.md
+!.claude/statusline.sh
+!.claude/keybindings.json
+!.claude/notification-sounds/
+!.claude/rpn-settings/
+!.claude/skills/
+!.claude/commands/
+!.claude/agents/
+!.claude/output-styles/
+!.claude/rules/
+!.claude/workflows/
+!.claude/themes/
+!.claude/hooks/
+!.claude/agent-memory/
+
+# settings.json is generated from rpn-settings/ by `merge-claude-settings`

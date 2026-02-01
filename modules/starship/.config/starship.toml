@@ -1,5 +1,7 @@
 # Starship prompt config: https://starship.rs/config/
 
+add_newline = false
+
 # default, plus "jj"
 format = """
 $username\
