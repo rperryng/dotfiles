@@ -13,7 +13,7 @@ conflict-marker-style = "snapshot"
 diff-formatter = ["difft", "--color=always", "$left", "$right"]
 
 [revset-aliases]
-'closest_bookmark(to)' = 'heads(::to & bookmarks())'
+'closest_bookmark(to)' = 'latest(heads(::to & bookmarks()), 1)'
 
 [aliases]
 tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@"]

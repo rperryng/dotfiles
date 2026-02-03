@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+export JJ_WORKSPACE_DIR="${HOME}/code-jj-workspaces"
+
 # jj fuzzy bookmark picker
 fzf-jj-bookmark-widget() {
   local bookmark
@@ -40,7 +42,7 @@ alias jjs="jj squash"
 jjbm() {
   jj bookmark list \
     --revisions "closest_bookmark(@)" \
-    --template "name "
+    --template 'if(!remote, name)'
 }
 
 jjpsu() {
@@ -54,6 +56,32 @@ jjpsu() {
 
   jj bookmark track "${bookmark}" 2>/dev/null || true
   jj git push --bookmark "$bookmark"
+}
+
+jjrvw() {
+  local bookmark
+  bookmark=$(jjbm)
+
+  if [[ -z "$bookmark" ]]; then
+    echo "Error: Could not resolve closest bookmark"
+    return 1
+  fi
+
+  local run_id
+  run_id=$(
+    {
+      printf '%s\t%s\t%s\t%s\t%s\t%s\n' "ID" "STATUS" "CONCLUSION" "WORKFLOW" "EVENT" "TITLE"
+      gh run list --branch "$bookmark" \
+        --json databaseId,displayTitle,status,conclusion,workflowName,event \
+        --jq '.[] | [.databaseId, .status, .conclusion // "-", .workflowName, .event, .displayTitle] | @tsv'
+    } | column -t -s $'\t' \
+      | fzf --header-lines=1 --reverse --prompt="Select run: " \
+      | awk '{print $1}'
+  )
+
+  if [[ -n "$run_id" ]]; then
+    gh run view --web "$run_id"
+  fi
 }
 
 jjpr() {

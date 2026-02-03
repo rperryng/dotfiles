@@ -74,7 +74,9 @@ return {
       keymap_with_resume('n', '<space>ff', {
         fn = fzf.files,
       }, { desc = 'Fuzzy search files' })
-      keymap_with_resume('t', '<c-x><c-f>', {
+
+      -- Insert Filename
+      keymap_with_resume({'t', 'i'}, '<c-x><c-f>', {
         fn = fzf.files,
       }, { desc = 'Fuzzy search files' })
 
