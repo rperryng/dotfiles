@@ -1,63 +1,8 @@
 return {
   {
     'lewis6991/gitsigns.nvim',
-    dependencies = { 'nvimtools/hydra.nvim' },
     config = function()
       local gitsigns = require('gitsigns')
-
-      local hydra = require('hydra')
-      hydra({
-        name = 'Git Hunk Navigation (forwards)',
-        config = {
-          invoke_on_body = true,
-          hint = false,
-          on_enter = function()
-            gitsigns.nav_hunk('next')
-          end,
-        },
-        mode = 'n',
-        body = ']c',
-        heads = {
-          {
-            'n',
-            function()
-              gitsigns.nav_hunk('next')
-            end,
-          },
-          {
-            'N',
-            function()
-              gitsigns.nav_hunk('previous')
-            end,
-          },
-        }
-      })
-      hydra({
-        name = 'Git Hunk Navigation (backwards)',
-        config = {
-          invoke_on_body = true,
-          hint = false,
-          on_enter = function()
-            gitsigns.nav_hunk('previous')
-          end,
-        },
-        mode = 'n',
-        body = '[c',
-        heads = {
-          {
-            'n',
-            function()
-              gitsigns.nav_hunk('previous')
-            end,
-          },
-          {
-            'N',
-            function()
-              gitsigns.nav_hunk('next')
-            end,
-          },
-        }
-      })
 
       vim.cmd([[
         highlight! link GitSignsAdd GruvboxGreenSign
