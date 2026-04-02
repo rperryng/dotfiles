@@ -54,6 +54,7 @@ gh_rate_limit_watch() {
 }
 
 alias open-pr="gh_openpr"
+alias gprr="gh_openpr"
 
 alias ghrw="gh run watch -i1"
 alias ghrvw="gh run view --web"

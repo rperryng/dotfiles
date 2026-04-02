@@ -57,13 +57,13 @@
       "Bash(pnpm:*)",
     ],
     "deny": [
-      "Bash(git commit:*)",
       "Read(.env*)",
       "Read(secrets/**)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
     ],
     "ask": [
+      "Bash(git commit:*)",
       "Bash(jj commit:*)",
       "Bash(yarn add:*)",
       "Bash(bundle add:*)",
