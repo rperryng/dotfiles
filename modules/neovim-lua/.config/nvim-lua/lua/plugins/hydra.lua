@@ -211,7 +211,7 @@ return {
         },
         mode = 'n',
         body = '<space>hh',
-        hint = '_d_: diagnostics  _q_: quickfix  _h_: hunks  _t_: treesitter  _<Esc>_: exit',
+        hint = '_d_: diagnostics  _q_: quickfix  _g_: git hunks  _t_: treesitter  _<Esc>_: exit',
         heads = {
           {
             'd',
