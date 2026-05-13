@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# tzz — parse a date and show it in UTC and a configurable zone.
+#
+# Zone is taken from $TZZ_TZ (default: America/Toronto). $TZ is intentionally
+# not honored, since setting it globally also changes the system's idea of
+# local time for everything else in the shell.
+set -euo pipefail
+
+zone="${TZZ_TZ:-America/Toronto}"
+
+if [ $# -gt 0 ]; then
+    input="$*"
+elif [ ! -t 0 ]; then
+    input="$(cat)"
+else
+    input=""
+fi
+
+if [ -z "${input//[[:space:]]/}" ]; then
+    echo "usage: tzz <date> | echo <date> | tzz" >&2
+    echo "       TZZ_TZ=Europe/London tzz <date>" >&2
+    exit 2
+fi
+
+exec python3 - "$input" "$zone" <<'PY'
+import re
+import sys
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+raw = sys.argv[1].strip()
+zone_name = sys.argv[2]
+
+
+def parse(s: str):
+    # Epoch seconds / ms / us / ns — auto-detected by magnitude.
+    if re.fullmatch(r"-?\d+(\.\d+)?", s):
+        v = float(s)
+        a = abs(v)
+        if a >= 1e16:
+            v /= 1e9
+        elif a >= 1e13:
+            v /= 1e6
+        elif a >= 1e11:
+            v /= 1e3
+        return datetime.fromtimestamp(v, tz=timezone.utc)
+
+    # ISO 8601. Normalize trailing Z and trim sub-microsecond precision so
+    # fromisoformat works on Pythons older than 3.11.
+    iso = s[:-1] + "+00:00" if s.endswith("Z") else s
+    iso = re.sub(r"(\.\d{6})\d+", r"\1", iso)
+    try:
+        dt = datetime.fromisoformat(iso)
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except ValueError:
+        pass
+
+    # RFC 2822, e.g. "Tue, 28 Apr 2026 13:57:36 GMT".
+    try:
+        dt = parsedate_to_datetime(s)
+        if dt is not None:
+            return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        pass
+
+    return None
+
+
+dt = parse(raw)
+if dt is None:
+    print(f"tzz: could not parse: {raw}", file=sys.stderr)
+    sys.exit(1)
+
+try:
+    zone = ZoneInfo(zone_name)
+except ZoneInfoNotFoundError:
+    print(f"tzz: unknown timezone: {zone_name}", file=sys.stderr)
+    sys.exit(1)
+
+fmt = "%a %Y-%m-%d %H:%M:%S %Z"
+label_w = max(len("UTC"), len(zone_name))
+print(f"{'UTC'.ljust(label_w)}  {dt.astimezone(timezone.utc).strftime(fmt)}")
+print(f"{zone_name.ljust(label_w)}  {dt.astimezone(zone).strftime(fmt)}")
+PY

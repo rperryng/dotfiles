@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec nvr --remote-wait +'setlocal bufhidden=wipe' "$@"

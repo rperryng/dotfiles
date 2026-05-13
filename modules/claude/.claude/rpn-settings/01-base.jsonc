@@ -63,7 +63,7 @@
       "Read(~/.aws/**)",
     ],
     "ask": [
-      "Bash(git commit:*)",
+      // "Bash(git commit:*)",
       "Bash(jj commit:*)",
       "Bash(yarn add:*)",
       "Bash(bundle add:*)",

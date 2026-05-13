@@ -36,12 +36,16 @@ n() {
 
 # Setup $EDITOR / $VISUAL / $MANPAGER
 if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
+  alias nvim="nvr"
+
   # If running within a neovim `:terminal` process, open things in the
   # host neovim process rather than a nested neovim session
   export NVIM_LISTEN_ADDRESS=$DOTFILES_NVIM_LISTEN_ADDRESS
   export MANPAGER="nvr -c 'Man!' -o -"
-  export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
-  alias nvim="nvr"
+
+  # some programs not respecting whitespace, wrap in a script instead
+  # export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
+  export VISUAL=nvr-editor
 else
   # Otherwise, just point to regular ol' nvim
   export MANPAGER='nvim +Man!'
