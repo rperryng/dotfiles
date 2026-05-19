@@ -59,6 +59,7 @@ alias gprr="gh_openpr"
 alias ghrw="gh run watch -i1"
 alias ghrvw="gh run view --web"
 alias ghprvw="gh pr view --web"
+alias ghs="gh stack"
 
 ghrwn() {
   gh run watch -i1
