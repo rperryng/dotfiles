@@ -1,0 +1,97 @@
+[tasks."prepare-directories"]
+hide = true
+run = '''
+#!/usr/bin/env bash
+set -e
+
+mkdir -p "${MISE_PROJECT_ROOT}/local"
+mkdir -p "${HOME}/.ssh/config.d"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/profile.d"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/shell.d"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/git"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/less"
+mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/zsh"
+mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/less"
+mkdir -p "${HOME}/.local/bin"
+mkdir -p "${HOME}/.local/lib"
+mkdir -p "${HOME}/.local/opt"
+mkdir -p "${HOME}/code"
+
+if [[ "${DOTFILES_OS}" == "macos" ]]; then
+  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/hammerspoon"
+  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/homebrew"
+fi
+'''
+
+[tasks.setup]
+hide = true
+run = 'stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}" --stow etc'
+
+[tasks.stow]
+description = "Setup dotfiles symlinks"
+depends = ["prepare-directories", "setup"]
+run = '''
+#!/usr/bin/env bash
+module_names=$(command ls -d "${MISE_PROJECT_ROOT}"/modules/*/ | sed "s|${MISE_PROJECT_ROOT}/modules/||" | sed "s|/||g" | tr "\n" " ")
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}" --stow local
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}/modules" --stow ${module_names}
+'''
+
+[tasks.unstow]
+description = "Remove dotfiles symlinks"
+run = '''
+#!/usr/bin/env bash
+module_names=$(command ls -d "${MISE_PROJECT_ROOT}"/modules/*/ | sed "s|${MISE_PROJECT_ROOT}/modules/||" | sed "s|/||g" | tr "\n" " ")
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}" --delete local
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}/modules" --delete ${module_names}
+'''
+
+[tasks.verify]
+description = "Verify stow symlinks are correctly setup"
+run = '''
+#!/usr/bin/env bash
+set -e
+bogus_links_path="${MISE_PROJECT_ROOT}/.stow-bogus-links"
+module_names=$(command ls -d "${MISE_PROJECT_ROOT}"/modules/*/ | sed "s|${MISE_PROJECT_ROOT}/modules/||" | sed "s|/||g" | tr "\n" " ")
+
+echo "--- Default package files currently unlinked ---"
+stow --simulate --verbose --target "${HOME}" --dir="${MISE_PROJECT_ROOT}/modules" --stow ${module_names}
+
+echo "--- Local packages currently unlinked ---"
+stow --simulate --verbose --target "${HOME}" --dir="${MISE_PROJECT_ROOT}" --stow local
+
+echo "--- Checking bogus links ---"
+rm -f "${bogus_links_path}"
+for dir in \
+  "${XDG_CONFIG_HOME:-$HOME/.config}" \
+  "${XDG_DATA_HOME:-$HOME/.local/share}" \
+  "${XDG_CACHE_HOME:-$HOME/.cache}" \
+  "${HOME}/.local/bin" \
+  "${HOME}/.local/lib" \
+  "${HOME}/.local/opt"; do
+  echo "checking ${dir}"
+  chkstow --aliens --badlinks --target="${dir}" | sed 's/Bogus link: //' >> "${bogus_links_path}"
+done
+
+if [[ -s "${bogus_links_path}" ]]; then
+  cat "${bogus_links_path}"
+  echo "run 'mise run clean' to remove these files"
+else
+  echo "No bogus links found - nothing to clean"
+fi
+'''
+
+[tasks.clean]
+description = "Clean up bogus symlinks"
+run = '''
+#!/usr/bin/env bash
+bogus_links_path="${MISE_PROJECT_ROOT}/.stow-bogus-links"
+if [[ ! -f "${bogus_links_path}" || ! -s "${bogus_links_path}" ]]; then
+  echo "no bogus links to clean"
+  exit 1
+fi
+
+echo "deleting bogus links at '${bogus_links_path}'"
+cat "${bogus_links_path}"
+xargs rm < "${bogus_links_path}"
+'''
