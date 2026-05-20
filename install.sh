@@ -199,9 +199,22 @@ setup_default_shells() {
   sudo chsh -s "$zsh_path" "${USER}"
 }
 
+setup_github_token() {
+  if [[ -n "${GITHUB_TOKEN}" ]]; then
+    return 0
+  fi
+  echo "A GitHub token avoids API rate limits during tool installation."
+  echo "Generate one at: https://github.com/settings/tokens (no scopes needed)"
+  read -rsp "GitHub token (press Enter to skip): " GITHUB_TOKEN
+  echo
+  [[ -n "${GITHUB_TOKEN}" ]] && export GITHUB_TOKEN
+}
+
 main() {
   # Prompt for admin password upfront
   sudo -v
+
+  setup_github_token
 
   # get OS family & preferred package manager
   local os_family
