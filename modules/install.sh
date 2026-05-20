@@ -11,6 +11,11 @@ install() {
   source ./rust/install.sh
   source ./mise/install.sh
 
+  # Ensure mise binary and shims are in PATH for the rest of this script.
+  # mise activation (eval "$(mise activate zsh)") only runs in interactive
+  # shells via shell_pre.d/; use shims here for non-interactive contexts.
+  export PATH="${HOME}/.local/bin:${HOME}/.local/share/mise/shims:${PATH}"
+
   local packages
   packages=$(git ls-files | grep "./*/install.sh" | grep -v "mise" | grep -v "rust")
 

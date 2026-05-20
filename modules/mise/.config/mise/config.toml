@@ -46,10 +46,9 @@ pandoc = 'latest'
 'cargo:taplo-cli' = 'latest'
 jj = "latest"
 opencode = "latest"
-tree-sitter = 'latest' # for nvim 0.12 native treesitter (parser compiler)
+'cargo:tree-sitter-cli' = 'latest'
 
-# Broken in osx, use a different fork with `[plugins]` declaration?
-# mdbook = 'latest'
+lazygit = 'latest'
 
 [tool_alias.java.versions]
 11 = "temurin-11"

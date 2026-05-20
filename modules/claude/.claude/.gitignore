@@ -1,0 +1,11 @@
+.credentials.json
+.last-cleanup
+backups
+cache
+file-history
+history.jsonl
+plugins
+projects
+sessions
+settings.json
+shell-snapshots
