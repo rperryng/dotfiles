@@ -28,7 +28,7 @@ install() {
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"
-      exit 1
+      exit 0
       ;;
   esac
 }
