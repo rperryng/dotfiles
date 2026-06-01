@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Setup dotfiles symlinks"
+#MISE depends=["prepare-directories", "setup"]
+module_names=$(command ls -d "${MISE_PROJECT_ROOT}"/modules/*/ | sed "s|${MISE_PROJECT_ROOT}/modules/||" | sed "s|/||g" | tr "\n" " ")
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}" --stow local
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}/modules" --stow ${module_names}

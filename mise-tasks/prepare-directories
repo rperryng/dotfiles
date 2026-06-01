@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#MISE hide=true
+set -e
+
+mkdir -p "${MISE_PROJECT_ROOT}/local"
+mkdir -p "${HOME}/.ssh/config.d"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/profile.d"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/shell.d"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/git"
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/less"
+mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/zsh"
+mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}/less"
+mkdir -p "${HOME}/.local/bin"
+mkdir -p "${HOME}/.local/lib"
+mkdir -p "${HOME}/.local/opt"
+mkdir -p "${HOME}/code"
+
+if [[ "${DOTFILES_OS}" == "macos" ]]; then
+  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/hammerspoon"
+  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/homebrew"
+fi

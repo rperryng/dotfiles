@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#MISE description="Clean up bogus symlinks"
+bogus_links_path="${MISE_PROJECT_ROOT}/.stow-bogus-links"
+if [[ ! -f "${bogus_links_path}" || ! -s "${bogus_links_path}" ]]; then
+  echo "no bogus links to clean"
+  exit 1
+fi
+
+echo "deleting bogus links at '${bogus_links_path}'"
+cat "${bogus_links_path}"
+xargs rm < "${bogus_links_path}"

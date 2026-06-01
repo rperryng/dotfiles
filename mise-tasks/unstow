@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Remove dotfiles symlinks"
+module_names=$(command ls -d "${MISE_PROJECT_ROOT}"/modules/*/ | sed "s|${MISE_PROJECT_ROOT}/modules/||" | sed "s|/||g" | tr "\n" " ")
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}" --delete local
+stow --target="${HOME}" --dir="${MISE_PROJECT_ROOT}/modules" --delete ${module_names}

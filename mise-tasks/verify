@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+#MISE description="Verify stow symlinks are correctly setup"
+set -e
+bogus_links_path="${MISE_PROJECT_ROOT}/.stow-bogus-links"
+module_names=$(command ls -d "${MISE_PROJECT_ROOT}"/modules/*/ | sed "s|${MISE_PROJECT_ROOT}/modules/||" | sed "s|/||g" | tr "\n" " ")
+
+echo "--- Default package files currently unlinked ---"
+stow --simulate --verbose --target "${HOME}" --dir="${MISE_PROJECT_ROOT}/modules" --stow ${module_names}
+
+echo "--- Local packages currently unlinked ---"
+stow --simulate --verbose --target "${HOME}" --dir="${MISE_PROJECT_ROOT}" --stow local
+
+echo "--- Checking bogus links ---"
+rm -f "${bogus_links_path}"
+for dir in \
+  "${XDG_CONFIG_HOME:-$HOME/.config}" \
+  "${XDG_DATA_HOME:-$HOME/.local/share}" \
+  "${XDG_CACHE_HOME:-$HOME/.cache}" \
+  "${HOME}/.local/bin" \
+  "${HOME}/.local/lib" \
+  "${HOME}/.local/opt"; do
+  echo "checking ${dir}"
+  chkstow --aliens --badlinks --target="${dir}" | sed 's/Bogus link: //' >> "${bogus_links_path}"
+done
+
+if [[ -s "${bogus_links_path}" ]]; then
+  cat "${bogus_links_path}"
+  echo "run 'mise run clean' to remove these files"
+else
+  echo "No bogus links found - nothing to clean"
+fi
