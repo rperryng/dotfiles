@@ -23,9 +23,15 @@ M.toggle_project_terminal = function()
 
   -- If bottom-most window is not already a terminal buffer, open a new
   -- split to open the terminal buffer in.
+  --
+  -- Use `belowright split` (splits the current content window) rather than
+  -- `botright split` (spans the whole tabpage width). The latter would slice
+  -- underneath the full-height tab panel (see local/tabpanel.lua) and cut it
+  -- off; `belowright` keeps the split within the content column so the panel
+  -- stays full height.
   vim.cmd('wincmd b')
   if not string.match(vim.fn.bufname(), '^' .. utils.escape_pattern(TERM_BUFFER_PREFIX)) then
-    vim.cmd('botright split')
+    vim.cmd('belowright split')
   end
 
   -- If the terminal buffer is focused, close it and switch focus back to
