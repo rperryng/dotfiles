@@ -1,5 +1,5 @@
 font-style = MesloLGM Nerd Font Mono
-theme = GruvboxDarkHard
+# theme = GruvboxDarkHard
 
 # Disable ligatures
 font-feature = -calt
@@ -7,4 +7,4 @@ font-feature = -dlig
 font-feature = -liga
 
 macos-titlebar-style = hidden
-keybind = shift+enter=text:\x1b\r
+keybind = shift+enter=text:\n

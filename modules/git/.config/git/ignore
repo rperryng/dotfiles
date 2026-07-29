@@ -53,5 +53,7 @@ CLAUDE.local.md
 # Ignore :)
 .ignore
 
+.yarn
+
 .pr-draft.md
 docs/plans
