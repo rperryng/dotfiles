@@ -131,12 +131,16 @@ M.find_clone_urls_decorated = function()
   return entries
 end
 
-vim.keymap.set(
-  'n',
-  '<space>fP',
-  M.find_clone_urls_decorated,
-  { desc = 'testing' }
-)
+M.switch_project = function(project_dir, opts)
+  opts = opts or {}
+  local project_name = M.get_project_name({ project_dir = project_dir })
+  local tab_name = opts.tab_name or project_name
+
+  vim.cmd('tchdir ' .. project_dir)
+  if not opts.no_rename then
+    vim.cmd('TabooRename ' .. tab_name)
+  end
+end
 
 local function refresh_clone_urls()
   local octokit = require('local.octokit')
@@ -427,6 +431,126 @@ vim.keymap.set(
   '<space>fp',
   fzf_lua_projects,
   { desc = 'Fuzzy search projects' }
+)
+
+local function fzf_lua_projects_switch()
+  local worktree_dirs = M.find_worktrees_dirs_decorated()
+  local project_dirs = M.find_project_dirs_decorated()
+  local clone_urls = M.find_clone_urls_decorated()
+
+  coroutine.wrap(function()
+    local fzf_fn = function(fzf_cb)
+      local ids = {}
+
+      local function add_entry(value, id)
+        if ids[id] ~= nil then
+          return
+        end
+
+        fzf_cb(value)
+        ids[id] = true
+      end
+
+      for _, value in ipairs(worktree_dirs) do
+        local id =
+          value:match('code%-worktrees/([%w%-_%.]+/[%w%-_%.]+/[%w%-_%.]+)')
+        assert(
+          id,
+          string.format(
+            'could not extract repo id from worktree entry %s',
+            value
+          )
+        )
+        add_entry(value, id)
+      end
+
+      for _, value in ipairs(project_dirs) do
+        local id
+        if value:match('%~/.dotfiles') then
+          id = 'rperryng/dotfiles'
+        else
+          id = value:match('code/([%w%-_%.]+/[%w-_%.]+)')
+          id = id or value:match('code/([%w%-_%.]+)')
+        end
+        assert(
+          id,
+          string.format('could not extract repo id from project dir %s', value)
+        )
+        add_entry(value, id)
+      end
+
+      for _, value in ipairs(clone_urls) do
+        local id = utils.uniconify(value)
+        assert(id, 'could not extract id from github repo line', id)
+        if ids[id] == nil then
+          add_entry(value, id)
+        end
+      end
+
+      fzf_cb()
+    end
+
+    require('fzf-lua').fzf_exec(fzf_fn, {
+      fzf_opts = {
+        ['--tiebreak'] = 'end',
+        ['--no-multi'] = '',
+        ['--prompt'] = 'Switch Project❯ ',
+        ['--preview-window'] = 'hidden:right:0',
+      },
+      actions = {
+        ['default'] = function(selected, opts)
+          if selected == nil or #selected == 0 then
+            return
+          end
+
+          local line = selected[1]
+          local value = utils.uniconify(line)
+
+          if string.find(line, ICONS.GIT_WORKTREE) then
+            local repo, branch = value:match(
+              'code%-worktrees/[%w%.%-_]+/([%w%.%-_]+)/([%w%.%-_]+)'
+            )
+            M.switch_project(value, {
+              tab_name = repo .. '/' .. branch,
+              no_rename = true,
+            })
+            return
+          end
+
+          if string.find(line, ICONS.DIR) then
+            M.switch_project(vim.fn.expand(value), { no_rename = true })
+            return
+          end
+
+          if string.find(line, ICONS.GITHUB) then
+            local owner, repo = value:match('([%w-_]+)/([%w-_%.]+)')
+            if not owner or not repo then
+              return
+            end
+
+            local owner_path = vim.fn.expand('~/code/' .. owner)
+            if vim.fn.empty(vim.fn.glob(owner_path)) > 0 then
+              vim.fn.mkdir(owner_path, 'p')
+            end
+
+            local full_reponame = string.format('%s/%s', owner, repo)
+            local path = vim.fn.expand('~/code/' .. full_reponame)
+            if vim.fn.empty(vim.fn.glob(path)) then
+              local clone_url = 'git@github.com:' .. full_reponame .. '.git'
+              job_clone_repo(clone_url, full_reponame, path)
+            end
+          end
+        end,
+      },
+    })
+  end)()
+end
+
+vim.keymap.set(
+  'n',
+  '<space>fP',
+  fzf_lua_projects_switch,
+  { desc = 'Fuzzy search projects (switch current tab, keep tab name)' }
 )
 
 M.open_project = function(project_dir, opts)
