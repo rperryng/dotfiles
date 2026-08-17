@@ -89,8 +89,10 @@ jjpr() {
   local bookmark="$(
     jj bookmark list \
       --tracked \
-      --template "if(tracking_present, name)" \
-      --revisions "${rev}"\
+      --template 'if(tracking_present, name) ++ "\n"' \
+      --revisions "${rev}" \
+      | sed '/^$/d' \
+      | uniq
   )"
 
   if gh pr view --json url "$bookmark" 1> /dev/null; then
@@ -104,7 +106,9 @@ jjpr() {
 alias jjdr="get_tracking_branch"
 get_tracking_branch() {
   local rev="${1:-@}"
-  jj bookmark list --tracked --template "if(tracking_present, name)" --revisions "${rev}" \
+  jj bookmark list --tracked --template 'if(tracking_present, name) ++ "\n"' --revisions "${rev}" \
+    | sed '/^$/d' \
+    | uniq \
     || die "Failed to get tracking branch"
 }
 
