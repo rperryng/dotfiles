@@ -49,6 +49,7 @@ opencode = "latest"
 'cargo:tree-sitter-cli' = 'latest'
 
 lazygit = 'latest'
+"npm:@devcontainers/cli" = "latest"
 
 [tool_alias.java.versions]
 11 = "temurin-11"
