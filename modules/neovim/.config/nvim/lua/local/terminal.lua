@@ -78,9 +78,7 @@ vim.keymap.set('n', '<space>term', function()
 end, { desc = 'Open new misc terminal' })
 
 vim.keymap.set('n', '<space>test', function()
-  dofile(
-    '/Users/rperryng/.dotfiles/modules/neovim-lua/.config/nvim-lua/lua/local/terminal.lua'
-  )
+  dofile(vim.fn.stdpath('config') .. '/lua/local/terminal.lua')
 end, { desc = 'Reload test config' })
 
 return M

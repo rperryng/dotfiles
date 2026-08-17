@@ -1,6 +1,6 @@
 -- Machine-local overrides not tracked in this repo.
 --
--- Any *.lua file dropped in <config>-local/ (e.g. ~/.config/nvim-lua-local/)
+-- Any *.lua file dropped in <config>-local/ (e.g. ~/.config/nvim-local/)
 -- is sourced here, letting a single machine extend the config without
 -- committing anything. Missing dir => no-op.
 --

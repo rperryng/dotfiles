@@ -1,47 +1,57 @@
 #!/usr/bin/env bash
 
-n_legacy() {
-  NVIM_APPNAME="" nvim
+n() {
+  if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
+    if [ $# -eq 0 ]; then
+      echo "Already in a neovim terminal; can't run 'n' without an argument"
+    else
+      nvr $@
+    fi
+
+    return
+  fi
+
+  local args=""
+  if [[ $# -gt 0 ]]; then
+    args="$@"
+  elif [[ "$(pwd)" == "$HOME" || "$(pwd)" == "$DOTFILES_DIR" ]]; then
+    args="+NStart"
+  fi
+
+  # ensure the neovim server starts at a specified address so ':terminal'
+  # commands can communicate with the host 'nvim' process.
+  local rand=$(echo $((1 + $RANDOM % 100000000)))
+  local socket_name="/tmp/nvimsocket.${rand}"
+
+  (
+    DOTFILES_NVIM_LISTEN_ADDRESS="$socket_name" \
+      nvim \
+      --listen "$socket_name" \
+      $args
+  )
 }
 
-# nstart() {
-#   if [[ -n $DOTFILES_NVIM_LISTEN_ADDRESS ]]; then
-#     echo 'Already in a neovim session'
-#     return 1
-#   fi
-#
-#   # ensure the neovim server starts at a specified address so ':terminal'
-#   # commands can communicate with the host 'nvim' process.
-#   local rand=$(echo $((1 + $RANDOM % 100000000)))
-#   local socket_name="/tmp/nvimsocket.${rand}"
-#
-#   clear
-#
-#   ( \
-#     DOTFILES_NVIM_LISTEN_ADDRESS="$socket_name" \
-#     nvim \
-#       --listen "$socket_name" \
-#       +'call NStart()' \
-#   )
-# }
-#
-# n() {
-#   if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
-#     nvr $@
-#   else
-#     nvim $@
-#   fi
-# }
-#
-# if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
-#   # Set $EDITOR to the host neovim process if this terminal session was started
-#   # from a neovim ':terminal' session.
-#   export NVIM_LISTEN_ADDRESS=$DOTFILES_NVIM_LISTEN_ADDRESS
-#   export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
-#   alias nvim="nvr"
-# else
-#   # Otherwise, just point to regular ol' nvim
-#   export VISUAL=nvim
-# fi
-#
-# export EDITOR="$VISUAL"
+# Setup $EDITOR / $VISUAL / $MANPAGER
+if [[ -n "$DOTFILES_NVIM_LISTEN_ADDRESS" ]]; then
+  alias nvim="nvr"
+
+  # If running within a neovim `:terminal` process, open things in the
+  # host neovim process rather than a nested neovim session
+  export NVIM_LISTEN_ADDRESS=$DOTFILES_NVIM_LISTEN_ADDRESS
+  export MANPAGER="nvr -c 'Man!' -o -"
+
+  # some programs not respecting whitespace, wrap in a script instead
+  # export VISUAL="nvr --remote-wait +'setlocal bufhidden=wipe'"
+  export VISUAL=nvr-editor
+else
+  # Otherwise, just point to regular ol' nvim
+  export MANPAGER='nvim +Man!'
+  export VISUAL=nvim
+fi
+
+export EDITOR="$VISUAL"
+
+# `man` will pre-format manpage using `groff`.
+# We want line-wraps to be handled by neovim, so "disable" hard-wraps.
+# see: ':h Man'
+export MANWIDTH=999
