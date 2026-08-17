@@ -9,6 +9,10 @@ return {
         local projects = require('local/projects')
         local project_name = projects.get_project_name()
         vim.fn.feedkeys(':TabooRename ' .. project_name)
+      end, { noremap = true, silent = true, desc = 'Rename tab (project)' })
+
+      vim.keymap.set('n', '<space>reT', function()
+        vim.fn.feedkeys(':TabooRename ')
       end, { noremap = true, silent = true, desc = 'Rename tab' })
     end,
   },
