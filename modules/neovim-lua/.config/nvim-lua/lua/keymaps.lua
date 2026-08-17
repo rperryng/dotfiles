@@ -49,8 +49,18 @@ vim.keymap.set(
   '^',
   { desc = 'Go to first non-whitespace character' }
 )
-vim.keymap.set('n', 'sl', '$', { desc = 'Go to last character on line' })
-vim.keymap.set('x', 'sl', '$h', { desc = 'Go to last character on line' })
+vim.keymap.set(
+  'n',
+  'sl',
+  'g_',
+  { desc = 'Go to last non-whitespace character' }
+)
+vim.keymap.set(
+  'x',
+  'sl',
+  'g_',
+  { desc = 'Go to last non-whitespace character' }
+)
 
 -- j/k respect line linewrap
 vim.keymap.set(
