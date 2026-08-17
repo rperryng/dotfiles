@@ -108,13 +108,69 @@ return {
         desc = 'Fuzzy search old files',
       })
 
-      -- Tabs
+      -- Buffers
+      keymap_with_resume('n', '<space>fr', {
+        fn = fzf.registers,
+      }, { desc = 'Fuzzy search registers' })
+
+      -- Tabs (by name; switch to selected tab)
+      local function fzf_tab_names(opts)
+        opts = opts or {}
+
+        local function tab_display_name(tabnr)
+          local name
+          if vim.fn.exists('*TabooTabName') == 1 then
+            name = vim.fn.TabooTabName(tabnr)
+          end
+          if name == nil or name == '' then
+            local tabpage = vim.api.nvim_list_tabpages()[tabnr]
+            local win = vim.api.nvim_tabpage_get_win(tabpage)
+            local buf = vim.api.nvim_win_get_buf(win)
+            local bufname = vim.api.nvim_buf_get_name(buf)
+            name = bufname ~= '' and vim.fn.fnamemodify(bufname, ':t')
+              or '[No Name]'
+          end
+          return name
+        end
+
+        local function get_entries()
+          local entries = {}
+          for tabnr = 1, vim.fn.tabpagenr('$') do
+            table.insert(
+              entries,
+              string.format('%d\t%d %s', tabnr, tabnr, tab_display_name(tabnr))
+            )
+          end
+          return entries
+        end
+
+        fzf.fzf_exec(
+          get_entries(),
+          vim.tbl_deep_extend('force', {
+            prompt = 'Tabs❯ ',
+            fzf_opts = {
+              ['--with-nth'] = '2..',
+              ['--delimiter'] = '\t',
+              ['--no-multi'] = '',
+            },
+            actions = {
+              ['default'] = function(selected)
+                if not selected or #selected == 0 then
+                  return
+                end
+                local tabnr = selected[1]:match('^(%d+)\t')
+                if tabnr then
+                  vim.cmd(tabnr .. 'tabnext')
+                end
+              end,
+            },
+          }, opts)
+        )
+      end
+
       keymap_with_resume('n', '<space>ft', {
-        fn = fzf.tabs,
-        fn_opts = {
-          query = "'Tab ",
-        },
-      }, { desc = 'Fuzzy search tabs' })
+        fn = fzf_tab_names,
+      }, { desc = 'Fuzzy search tab names (switch to tab)' })
 
       -- Buffers
       keymap_with_resume('n', '<space>fb', {
