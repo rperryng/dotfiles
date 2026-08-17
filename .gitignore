@@ -7,5 +7,3 @@
 
 modules/karabiner/.config/karabiner/automatic_backups
 modules/git/.config/git/config_work
-
-modules/jj/.config/jj/conf.d/wealthsimple-pci.toml
