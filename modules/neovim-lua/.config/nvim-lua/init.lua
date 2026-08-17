@@ -8,3 +8,4 @@
 require('core')
 require('plugin')
 require('utils').requireDir('local')
+require('local_overrides')
