@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e -o pipefail
+shopt -s nullglob
 
 install() {
   pushd "${DOTFILES_DIR:-$HOME/.dotfiles}/modules"
@@ -17,7 +18,7 @@ install() {
   export PATH="${HOME}/.local/bin:${HOME}/.local/share/mise/shims:${PATH}"
 
   local packages
-  packages=$(git ls-files | grep "./*/install.sh" | grep -v "mise" | grep -v "rust")
+  packages=$(printf '%s\n' */install.sh | grep -v "mise" | grep -v "rust")
 
   echo "============================"
   echo "Installing modules:"
