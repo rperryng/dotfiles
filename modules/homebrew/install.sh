@@ -15,7 +15,7 @@ install() {
     return 0
   fi
 
-  sudo -v
+  sudo apt-get install build-essential procps curl file git
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   echo "Loading shell config"

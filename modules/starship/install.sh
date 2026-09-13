@@ -12,7 +12,7 @@ function install() {
     "macos") brew install "starship" ;;
     *)
       echo "unsupported os '${DOTFILES_OS}'"
-      exit 1
+      return 1
       ;;
   esac
 }

@@ -19,7 +19,7 @@ install_wezterm() {
       ;;
     *)
       echo "OS family: '${DOTFILES_OS}' not supported"
-      exit 1
+      return 1
       ;;
   esac
 }
