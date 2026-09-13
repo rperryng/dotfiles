@@ -79,28 +79,25 @@ return {
         end,
       })
 
-      -- Keyball39
+      -- Keyball39 (right-ball build)
       --
-      -- Uses LAYOUT_universal (an alias for LAYOUT_no_ball), which is 42 keys:
-      -- 10 per row for the top three rows, then a 12-key thumb row. The thumb
-      -- row has no gap because the inner thumb keys tuck underneath the space
-      -- between the halves, so it spans all 12 columns.
-      --
-      -- Note: on a right-ball build three of those thumb positions (R31/R32/R33)
-      -- do not physically exist -- that is where the trackball sits -- but they
-      -- are still present in the layout macro, so they are counted here.
+      -- Uses LAYOUT_right_ball, which is 39 keys: 10 per row for the top
+      -- three rows, then a 9-key thumb row. The trackball sits on the right
+      -- board where R31/R32/R33 would otherwise be, so those positions don't
+      -- exist in the macro at all (unlike LAYOUT_universal/LAYOUT_no_ball,
+      -- which include them as unused slots).
       vim.api.nvim_create_autocmd('BufEnter', {
         desc = 'Format Keyball39 layout',
         group = augroup,
         pattern = '*keyball/keyball39/keymaps/rperryng/keymap.c',
         callback = function()
           qmk.setup({
-            name = 'LAYOUT_universal',
+            name = 'LAYOUT_right_ball',
             layout = {
               'x x x x x _ _ _ x x x x x',
               'x x x x x _ _ _ x x x x x',
               'x x x x x _ _ _ x x x x x',
-              'x x x x x x _ x x x x x x',
+              'x x x x x x _ x x _ _ _ x',
             },
           })
         end,
