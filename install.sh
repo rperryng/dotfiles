@@ -200,14 +200,47 @@ setup_default_shells() {
 }
 
 setup_github_token() {
+  local secrets_file="${XDG_CONFIG_HOME}/secrets.d/gh.env"
+
+  if [[ -z "${GITHUB_TOKEN}" && -f "${secrets_file}" ]]; then
+    # shellcheck disable=SC1090
+    source "${secrets_file}"
+  fi
+
   if [[ -n "${GITHUB_TOKEN}" ]]; then
+    export GITHUB_TOKEN
     return 0
   fi
+
   echo "A GitHub token avoids API rate limits during tool installation."
   echo "Generate one at: https://github.com/settings/tokens (no scopes needed)"
   read -rsp "GitHub token (press Enter to skip): " GITHUB_TOKEN
   echo
-  [[ -n "${GITHUB_TOKEN}" ]] && export GITHUB_TOKEN
+  [[ -z "${GITHUB_TOKEN}" ]] && return 0
+
+  export GITHUB_TOKEN
+  mkdir -p "${XDG_CONFIG_HOME}/secrets.d"
+  echo "GITHUB_TOKEN=${GITHUB_TOKEN}" >"${secrets_file}"
+  chmod 600 "${secrets_file}"
+}
+
+check_github_ssh_access() {
+  local output
+  output="$(ssh -T git@github.com -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new 2>&1)"
+
+  if [[ "${output}" == *"successfully authenticated"* ]]; then
+    echo "GitHub SSH access verified."
+    return 0
+  fi
+
+  echo "ERROR: SSH access to git@github.com failed." >&2
+  echo "Some modules install by cloning over SSH and will fail without it." >&2
+  echo "Set up your 1Password SSH agent and add its key to your GitHub account:" >&2
+  echo "  https://developer.1password.com/docs/ssh/get-started" >&2
+  echo >&2
+  echo "ssh output:" >&2
+  echo "${output}" >&2
+  exit 1
 }
 
 main() {
@@ -215,6 +248,7 @@ main() {
   sudo -v
 
   setup_github_token
+  check_github_ssh_access
 
   # get OS family & preferred package manager
   local os_family
