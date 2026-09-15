@@ -8,7 +8,8 @@ install() {
 
   echo "Installing Modules ..."
 
-  # Install cargo (rust) and mise first
+  # Install brew, cargo (rust) and mise first: other modules install through them
+  source ./homebrew/install.sh
   source ./rust/install.sh
   source ./mise/install.sh
 
@@ -18,7 +19,7 @@ install() {
   export PATH="${HOME}/.local/bin:${HOME}/.local/share/mise/shims:${PATH}"
 
   local packages
-  packages=$(printf '%s\n' */install.sh | grep -v "mise" | grep -v "rust")
+  packages=$(printf '%s\n' */install.sh | grep -v "homebrew" | grep -v "mise" | grep -v "rust")
 
   echo "============================"
   echo "Installing modules:"
