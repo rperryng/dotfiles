@@ -9,6 +9,14 @@ local project_terminal_buffer_name = function()
 end
 M.project_terminal_buffer_name = project_terminal_buffer_name
 
+local find_buffer_by_name = function(name)
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.fn.bufname(buf) == name then
+      return buf
+    end
+  end
+end
+
 M.terminal_resize = function()
   local currwin = vim.api.nvim_get_current_win()
   vim.cmd(vim.api.nvim_win_get_number(currwin) .. 'wincmd w')
@@ -74,11 +82,29 @@ end, { desc = 'Restart project terminal' })
 vim.keymap.set('n', '<space>term', function()
   local terminal_buf_name = project_terminal_buffer_name()
   vim.cmd('terminal')
-  vim.fn.feedkeys(':keepalt file ' .. terminal_buf_name .. ' ')
-end, { desc = 'Open new misc terminal' })
+  local new_buf = vim.api.nvim_get_current_buf()
 
-vim.keymap.set('n', '<space>test', function()
-  dofile(vim.fn.stdpath('config') .. '/lua/local/terminal.lua')
-end, { desc = 'Reload test config' })
+  vim.ui.input({ prompt = 'keepalt file ', default = terminal_buf_name .. ' ' }, function(input)
+    if not input then
+      return
+    end
+
+    local name = vim.trim(input)
+    if name == '' then
+      return
+    end
+
+    -- If a buffer with that name already exists, switch to it and throw away
+    -- the terminal buffer that was just created for the rename.
+    local existing_buf = find_buffer_by_name(name)
+    if existing_buf and existing_buf ~= new_buf then
+      vim.api.nvim_set_current_buf(existing_buf)
+      require('mini.bufremove').delete(new_buf, true)
+      return
+    end
+
+    vim.cmd('keepalt file ' .. name)
+  end)
+end, { desc = 'Open new misc terminal' })
 
 return M
