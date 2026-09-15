@@ -4,7 +4,6 @@ import $ from 'jsr:@david/dax';
 import { exists } from "jsr:@std/fs/exists";
 
 const DESIRED_LOGIN_APPS = [
-  'Ice',
   'Rectangle',
   'Maccy',
   'Karabiner-Elements',

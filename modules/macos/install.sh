@@ -27,7 +27,6 @@ install() {
   brew install --cask \
     easy-move-plus-resize \
     rectangle \
-    jordanbaird-ice \
     maccy \
     karabiner-elements \
     linearmouse
