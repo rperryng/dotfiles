@@ -262,3 +262,35 @@ vim.keymap.set('x', '<space>e', function()
   local n = require('notify')
   n.notify(vim.inspect(result), vim.log.levels.INFO, { render = 'minimal' })
 end, { desc = 'Evaluate visual selection as neovim lua' })
+
+-- Hot reload config (best effort)
+vim.keymap.set('n', '<space>rr', function()
+  if vim.bo.filetype ~= 'lua' and vim.bo.filetype ~= 'vim' then
+    vim.notify('not a lua/vim file', vim.log.levels.WARN)
+    return
+  end
+
+  local lua_dir = vim.fn.stdpath('config') .. '/lua/'
+  local path = vim.fn.expand('%:p')
+
+  -- Outside of `lua/` (init.lua, ftplugin, etc.) there's no module to evict
+  if not vim.startswith(path, lua_dir) then
+    vim.cmd('source %')
+    vim.notify('sourced ' .. vim.fn.expand('%:t'))
+    return
+  end
+
+  local module_name = path:sub(#lua_dir + 1):gsub('%.lua$', ''):gsub('/', '.')
+
+  if vim.startswith(module_name, 'plugins.') then
+    vim.notify(
+      module_name .. ' is a lazy spec, use `:Lazy reload {plugin}` instead',
+      vim.log.levels.WARN
+    )
+    return
+  end
+
+  package.loaded[module_name] = nil
+  require(module_name)
+  vim.notify('reloaded ' .. module_name)
+end, { desc = 'Reload lua module for current file' })
