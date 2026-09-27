@@ -24,13 +24,7 @@ install() {
 
   set_defaults
 
-  brew install --cask \
-    easy-move-plus-resize \
-    rectangle \
-    maccy \
-    karabiner-elements \
-    linearmouse
-
+  # The apps opened at login are installed via the Brewfile (modules/homebrew)
   "${ADD_LOGIN_ITEMS_SCRIPT}"
 }
 

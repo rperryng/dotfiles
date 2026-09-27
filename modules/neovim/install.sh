@@ -10,7 +10,7 @@ install_luajit() {
   fi
 
   case ${DOTFILES_OS} in
-    "macos") brew install luajit ;;
+    "macos") ;; # installed via the Brewfile (modules/homebrew)
     "debian") sudo apt install liblua5.1-0-dev ;;
     *) ;;
   esac

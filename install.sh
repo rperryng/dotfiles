@@ -142,13 +142,18 @@ install_packages() {
   esac
 }
 
+# Only what's needed before mise and stow exist; other tools come from mise
+# (modules/mise/.config/mise/config.toml) or the Brewfile.
 install_default_packages() {
+  # On macOS these are in the Brewfile, applied by install_package_managers
+  if [[ "${os_family}" == "macos" ]]; then
+    return 0
+  fi
+
   echo "installing default packages"
   install_packages "stow"
   install_packages "zsh"
-  install_packages "tldr"
-  install_packages "ripgrep"
-  install_packages "jq"
+  # unzip: not preinstalled on Debian/WSL; the wsl module needs it
   install_packages "unzip"
 }
 

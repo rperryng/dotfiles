@@ -13,7 +13,7 @@ function install() {
 
   case ${DOTFILES_OS} in
     "macos")
-      brew install --cask 1password/tap/1password-cli
+      # installed via the Brewfile (modules/homebrew)
       ;;
     "debian")
       # Add the key for the 1Password Apt repository:

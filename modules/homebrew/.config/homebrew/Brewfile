@@ -1,28 +1,37 @@
-tap "homebrew/bundle"
-tap "homebrew/cask"
-tap 'homebrew/cask-fonts'
-tap "homebrew/core"
-tap "homebrew/services"
-tap "jesseduffield/lazygit"
-tap "universal-ctags/universal-ctags"
-brew "awscli"
-brew "bat"
-brew "direnv"
-brew "gh"
-brew "jq"
-brew "nnn"
-brew "ripgrep"
-brew "rust-analyzer"
-brew "shellcheck"
-brew "sleepwatcher", restart_service: true
-brew "starship"
-brew "tldr"
-brew "tree"
+# macOS packages managed by Homebrew, applied by modules/homebrew/install.sh
+# via `brew bundle`.
+#
+# CLI tools that mise can provide belong in mise/config.toml instead; this file
+# is for GUI apps (casks), fonts, and libraries/CLIs mise doesn't cover.
+#
+#   brew bundle check    # is everything in this file installed?
+#   brew bundle cleanup  # what's installed but not listed here? (--force removes)
+
+# Third-party taps: Homebrew only loads their formulae/casks once trusted
+tap "1password/tap", trusted: true
+
+# Bootstrap: needed before mise and stow run
+brew "git"
+brew "stow"
 brew "zsh"
-brew "zsh-autosuggestions"
-brew "zsh-syntax-highlighting"
-brew "jesseduffield/lazygit/lazygit"
-cask "alacritty"
-cask "dozer"
-cask "easy-move-plus-resize"
+
+# CLI tools (nnn has no macOS release binaries, so it can't come from mise)
+brew "nnn"
+
+# Libraries
+brew "libyaml" # ruby-build prerequisite for mise's ruby
+brew "luajit"  # neovim
+
+# Apps
+cask "1password/tap/1password-cli"
+cask "easy-move+resize"
+cask "hammerspoon"
+cask "karabiner-elements"
+cask "linearmouse"
+cask "maccy"
 cask "rectangle"
+cask "thaw"
+cask "wezterm"
+
+# Fonts
+cask "font-meslo-lg-nerd-font"

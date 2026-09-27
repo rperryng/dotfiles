@@ -27,10 +27,7 @@ install() {
     return 0;
   fi
 
-  if [[ ! -d "/Applications/Hammerspoon.app" ]]; then
-    brew install --cask hammerspoon
-  fi
-
+  # Hammerspoon.app itself is installed via the Brewfile (modules/homebrew)
   install_spoons
   configure_hammerspoon
 }

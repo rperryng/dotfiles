@@ -5,7 +5,6 @@
       // skills
       "Skill(superpowers:*)",
       "Skill(draft-pr:*)",
-      "Skill(reading-jira-tickets:*)",
       // read-only
       "Bash(cat:*)",
       "Bash(head:*)",
@@ -43,11 +42,6 @@
       "Bash(gh issue list:*)",
       "Bash(gh issue view:*)",
       "Bash(gh run view:*)",
-      // jira cli
-      "Bash(acli jira workitem view:*)",
-      "Bash(acli jira workitem comment list:*)",
-      "Bash(acli jira workitem search:*)",
-      "Bash(acli jira issue view:*)",
       // language tools
       "Bash(bundle:*)",
       "Bash(node:*)",

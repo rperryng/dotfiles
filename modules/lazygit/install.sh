@@ -9,7 +9,7 @@ install() {
 
   case ${DOTFILES_OS} in
     "macos")
-      brew install jesseduffield/lazygit/lazygit
+      # installed via mise (modules/mise/.config/mise/config.toml)
       ;;
     "debian")
       release_version="Linux_$(uname -m)"

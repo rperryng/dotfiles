@@ -12,7 +12,7 @@ function install() {
 
   case ${DOTFILES_OS} in
     "macos")
-      brew install nnn
+      # installed via the Brewfile (modules/homebrew)
       ;;
     "debian")
       mkdir -p "${NNN_HOME}"
