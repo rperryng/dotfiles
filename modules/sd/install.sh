@@ -7,7 +7,7 @@ install() {
     return 0;
   fi
 
-  if [[ ! cargo_binstall_available ]]; then
+  if ! cargo_binstall_available; then
     return 1;
   fi
 

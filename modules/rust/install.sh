@@ -44,6 +44,10 @@ install_cargo_binstall() {
     return 1;
   fi
 
+  if [[ -x "$(command -v cargo-binstall)" ]]; then
+    return 0
+  fi
+
   cargo install cargo-binstall
 }
 

@@ -8,6 +8,7 @@ install() {
   case ${DOTFILES_OS} in
     "macos")
       brew tap ankitpokhrel/jira-cli
+      brew trust ankitpokhrel/jira-cli
       brew install jira-cli
       ;;
     *)

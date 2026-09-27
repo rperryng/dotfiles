@@ -36,7 +36,10 @@ install() {
     echo "           Installing module '$name'"
     echo "==================================================="
 
-    source "$package"
+    # Subshell so each module's functions/variables (e.g. every module's
+    # `install`) can't leak into the next. PATH and helpers from the
+    # homebrew/rust/mise installs above are still inherited.
+    ( source "$package" )
 
     echo "==================================================="
     echo "           Done installing '$name'"
@@ -50,6 +53,10 @@ install() {
   echo "..."
 
   popd
+
+  # Re-stow to link files that module installs generated (e.g. compiled
+  # binaries under a module's .local/bin), which didn't exist at first stow
+  (cd "${DOTFILES_DIR:-$HOME/.dotfiles}" && MISE_TASK_RUN_AUTO_INSTALL=false mise run stow)
 }
 
 install
