@@ -226,7 +226,7 @@ setup_github_token() {
 
 check_github_ssh_access() {
   local output
-  output="$(ssh -T git@github.com -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new 2>&1)"
+  output="$(ssh -T git@github.com -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new 2>&1 || echo "no SSH Access")"
 
   if [[ "${output}" == *"successfully authenticated"* ]]; then
     echo "GitHub SSH access verified."
