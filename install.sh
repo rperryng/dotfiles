@@ -272,7 +272,9 @@ main() {
 
   # configure dotfiles & shell
   setup_default_shells
-  mise run stow
+  # Don't let `mise run` auto-install the tools in mise/config.toml here:
+  # cargo-backed tools need rust, which modules/install.sh installs first.
+  MISE_TASK_RUN_AUTO_INSTALL=false mise run stow
 
   # Install the user modules in a ZSH session, so that proper envs are loaded
   "${DOTFILES_DIR}/modules/install.zsh"
