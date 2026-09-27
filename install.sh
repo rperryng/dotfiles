@@ -171,12 +171,14 @@ clone_dotfiles() {
 }
 
 install_mise_bootstrap() {
+  # Add mise binary and shims to PATH for the duration of this script.
+  # Shims are preferred over activation for non-interactive sessions.
+  # Done before the check so an existing ~/.local/bin/mise is found.
+  export PATH="${HOME}/.local/bin:${HOME}/.local/share/mise/shims:${PATH}"
+
   if ! command -v mise &>/dev/null; then
     curl https://mise.run | sh
   fi
-  # Add mise binary and shims to PATH for the duration of this script.
-  # Shims are preferred over activation for non-interactive sessions.
-  export PATH="${HOME}/.local/bin:${HOME}/.local/share/mise/shims:${PATH}"
 }
 
 setup_default_shells() {

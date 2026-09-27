@@ -10,6 +10,7 @@
 !.claude/notification-sounds/
 !.claude/rpn-settings/
 !.claude/skills/
+.claude/skills/synced/
 !.claude/commands/
 !.claude/agents/
 !.claude/output-styles/

@@ -4,4 +4,6 @@
 # the root install.sh could be executed from bash, so using a `.zsh` here
 # at least ensures that the zsh environment variables/config etc are present
 # before installing all the modules.
-source "${DOTFILES_DIR:-$HOME/.dotfiles}/modules/install.sh"
+# install.sh is bash (shopt, etc.), so run it with bash rather than sourcing it;
+# exported environment variables are inherited.
+bash "${DOTFILES_DIR:-$HOME/.dotfiles}/modules/install.sh"

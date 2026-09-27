@@ -17,7 +17,7 @@ install_spoons() {
     tar -zx -C "$SPOONS_INSTALL_DIR"
 }
 
-configire_hammerspoon() {
+configure_hammerspoon() {
   echo "Configuring Hammerspoon..."
   defaults write org.hammerspoon.Hammerspoon MJConfigFile "$HOME/.config/hammerspoon/init.lua"
 }
@@ -27,11 +27,9 @@ install() {
     return 0;
   fi
 
-  if [[ -d "/Applications/Hammerspoon.app" ]]; then
-    return 0;
+  if [[ ! -d "/Applications/Hammerspoon.app" ]]; then
+    brew install --cask hammerspoon
   fi
-
-  brew install --cask hammerspoon
 
   install_spoons
   configure_hammerspoon

@@ -14,10 +14,11 @@ install_macos() {
     git clone "${CLONE_URL}" "${CLONE_DIR}"
   fi
 
-  if [[ ! -f "$COLEMAK_LAYOUTS_DIR" ]]; then
+  # the .bundle is a directory, not a file
+  if [[ ! -d "$COLEMAK_LAYOUTS_DIR" ]]; then
     echo "copying 'Colemak DH.bundle' to system layouts directory"
     sudo cp -r "${CLONE_DIR}/macOS/Colemak DH.bundle" "${COLEMAK_LAYOUTS_DIR}"
-    echo -e "${YELLOW}Colemak DHm installed - this won't be available until logged out / in."
+    echo -e "${YELLOW}Colemak DHm installed - this won't be available until logged out / in.${NO_COLOR}"
   fi
 }
 

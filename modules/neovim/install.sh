@@ -48,8 +48,15 @@ install_vim_virtual_environments() {
   popd
 }
 
+install_plugins() {
+  # Install plugins at the versions pinned in lazy-lock.json, so the first
+  # interactive launch doesn't run config against half-installed plugins.
+  nvim --headless "+Lazy! restore" +qa
+}
+
 install_luajit
 install_neovim
 install_vim_virtual_environments
+install_plugins
 
 echo "installed neovim successfully"
